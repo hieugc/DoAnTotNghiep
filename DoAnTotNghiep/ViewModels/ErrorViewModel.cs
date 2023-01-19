@@ -1,4 +1,4 @@
-namespace DoAnTotNghiep.Models
+namespace DoAnTotNghiep.ViewModels
 {
     public class ErrorViewModel
     {
