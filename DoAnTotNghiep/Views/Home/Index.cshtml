@@ -1,11 +1,37 @@
-﻿@{
+﻿@using DoAnTotNghiep.Entity
+@model List<City>
+
+@{
     ViewData["Title"] = "Home Page";
 }
+
+
 
 <div class="text-center">
     <h1 class="display-4">Check: @ViewData["Check"]</h1>
     <h1 class="display-4">Number: @ViewData["Number"]</h1>
-    <h1 class="display-4">Welcome</h1>
+    <h1 class="display-4">Welcome Homepage</h1>
+
+    <ol>
+        @foreach(var item in Model)
+        {
+            <li>name: @item.Name<br />lat: @item.Lat</li>
+        }
+    </ol>
+
+    <ol>
+        @foreach (var item in ViewData["District"] as List<District>)
+        {
+            <li>
+                name: @item.Name<br />lat: @item.Lat <br /> CityId: @(item.IdCity == null ? 0: item.IdCity.Value)
+                <br />
+                @(item.Citys == null? "nullable": item.Citys.Name)
+            </li>
+        }
+    </ol>
+
+
+
     <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 </div>
 

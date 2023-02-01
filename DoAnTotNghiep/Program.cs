@@ -1,13 +1,13 @@
 using DoAnTotNghiep.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-#pragma warning disable CS8604 // Possible null reference argument.
 builder.Services.AddDbContext<DoAnTotNghiepContext>(options =>
-    options.UseSqlServer(connectionString: builder.Configuration.GetConnectionString("DataContext")));
-#pragma warning restore CS8604 // Possible null reference argument.
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DataContext") ?? throw new InvalidOperationException("Connection string 'DoAnTotNghiep' not found.")));
+
 
 builder.Services.AddControllersWithViews();
 
