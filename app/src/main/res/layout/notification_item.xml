@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/notificationImg"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_margin="16dp"
+        android:scaleType="fitXY"
+        android:src="@mipmap/location"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/notificationTitle"
+        style="@style/MediumText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="Bạn có 1 yêu cầu trao đổi mới"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/notificationIndicator"
+        app:layout_constraintStart_toEndOf="@+id/notificationImg"
+        app:layout_constraintTop_toTopOf="@+id/notificationImg" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/notificationIndicator"
+        android:layout_width="10dp"
+        android:layout_height="10dp"
+        android:layout_marginEnd="16dp"
+        android:src="@drawable/primary_bg_circle"
+        app:layout_constraintBottom_toBottomOf="@+id/notificationTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/notificationTitle" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/notificationContent"
+        style="@style/MediumText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:maxLines="3"
+        android:ellipsize="end"
+        android:text="Lê Minh Nhật đã yêu cầu trao đổi Nhà của Hiếu của bạn với Biệt thự ven biển của Lê Minh Nhật thông qua phương thức trao đổi nhà"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintVertical_bias="0"
+        app:layout_constraintStart_toStartOf="@+id/notificationTitle"
+        app:layout_constraintTop_toBottomOf="@id/notificationTitle"
+        app:layout_constraintBottom_toTopOf="@id/notificationDate"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/notificationDate"
+        style="@style/SmallText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:drawableStart="@drawable/ic_clock"
+        android:drawablePadding="4dp"
+        android:text="14:48 12-12-2022"
+        android:textColor="@color/grey_ba"
+        app:layout_constraintBottom_toBottomOf="@+id/notificationImg"
+        app:layout_constraintEnd_toEndOf="@+id/notificationContent"
+        app:layout_constraintStart_toStartOf="@+id/notificationContent"/>
+
+    <com.google.android.material.divider.MaterialDivider
+        android:id="@+id/materialDivider2"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        app:dividerColor="@color/divider"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

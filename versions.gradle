@@ -1,0 +1,52 @@
+ext.deps = [:]
+def versions = [:]
+versions.lifecycle = "2.5.0"
+versions.ktx = "1.5.0"
+versions.lifecycle_extensions = "2.2.0"
+versions.retrofit = '2.9.0'
+versions.okhttp_logging_interceptor = '5.0.0-alpha.2'
+versions.shimmer  = '0.5.0'
+versions.koin_version = "2.0.1"
+versions.cropme = "2.0.7"
+versions.stetho = "1.6.0"
+versions.dotsindicator = "4.3"
+
+def lifecycle = [:]
+lifecycle.viewmodel_ktx = "androidx.lifecycle:lifecycle-viewmodel-ktx:$versions.lifecycle"
+lifecycle.livedata_ktx = "androidx.lifecycle:lifecycle-livedata-ktx:$versions.lifecycle"
+lifecycle.extensions = "androidx.lifecycle:lifecycle-extensions:$versions.lifecycle_extensions"
+lifecycle.common_java8 ="androidx.lifecycle:lifecycle-common-java8:$versions.lifecycle"
+lifecycle.activity_ktx = "androidx.activity:activity-ktx:$versions.ktx"
+lifecycle.fragment_ktx = "androidx.fragment:fragment-ktx:$versions.ktx"
+deps.lifecycle = lifecycle
+
+def retrofit = [:]
+retrofit.runtime = "com.squareup.retrofit2:retrofit:$versions.retrofit"
+retrofit.gson = "com.squareup.retrofit2:converter-gson:$versions.retrofit"
+retrofit.mock = "com.squareup.retrofit2:retrofit-mock:$versions.retrofit"
+deps.retrofit = retrofit
+deps.okhttp_logging_interceptor = "com.squareup.okhttp3:logging-interceptor:${versions.okhttp_logging_interceptor}"
+
+def shimmer = [:]
+shimmer.facebook = "com.facebook.shimmer:shimmer:$versions.shimmer"
+deps.shimmer = shimmer
+
+def koin = [:]
+koin.scope = "org.koin:koin-androidx-scope:$versions.koin_version"
+koin.viewmodel = "org.koin:koin-androidx-viewmodel:$versions.koin_version"
+koin.ext = "org.koin:koin-androidx-ext:$versions.koin_version"
+deps.koin = koin
+
+def crop = [:]
+crop.cropme = "com.github.takusemba:cropme:$versions.cropme"
+deps.crop = crop
+
+def stetho = [:]
+stetho.common = "com.facebook.stetho:stetho:$versions.stetho"
+stetho.okhttp = "com.facebook.stetho:stetho-okhttp3:$versions.stetho"
+deps.stetho = stetho
+
+def tbuonomo = [:]
+tbuonomo.dotsindicator = "com.tbuonomo:dotsindicator:$versions.dotsindicator"
+deps.tbuonomo = tbuonomo
+

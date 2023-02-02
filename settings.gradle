@@ -1,0 +1,3 @@
+rootProject.name = "HomeX"
+include ':app'
+include ':core'
