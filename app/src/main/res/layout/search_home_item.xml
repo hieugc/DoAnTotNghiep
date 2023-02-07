@@ -3,8 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_marginStart="8dp"
-    android:layout_marginEnd="8dp"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
     app:cardCornerRadius="8dp"
     app:cardElevation="10dp"
     android:layout_marginBottom="16dp">
@@ -18,10 +18,39 @@
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/homeImg"
             android:layout_width="match_parent"
-            android:layout_height="220dp"
+            android:layout_height="170dp"
             android:scaleType="fitXY"
             app:layout_constraintTop_toTopOf="parent"
             android:src="@mipmap/location"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@id/homeImg"
+            android:background="@color/address_box"
+            android:orientation="horizontal"
+            android:padding="4dp">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_location"
+                app:tint="@color/white"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="4dp"/>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:ellipsize="end"
+                style="@style/SmallText"
+                android:layout_gravity="center_vertical"
+                android:text="Ngõ 157 xyz abc, Phường xxTiền Giang"
+                android:textColor="@color/white"/>
+
+
+        </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="wrap_content"
@@ -57,34 +86,12 @@
         <androidx.appcompat.widget.AppCompatImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/locationIcon"
-            app:layout_constraintTop_toBottomOf="@id/pplIcon"
-            android:src="@drawable/ic_location"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginEnd="24dp"
-            android:layout_marginTop="8dp"/>
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/locationTV"
-            style="@style/HomeLocation"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="Dĩ An, Bình Dương"
-            android:layout_marginEnd="8dp"
-            app:layout_constraintBottom_toBottomOf="@id/locationIcon"
-            app:layout_constraintEnd_toStartOf="@+id/locationIcon"
-            app:layout_constraintTop_toTopOf="@+id/locationIcon" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:id="@+id/ratingIcon"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/locationIcon"
+            app:layout_constraintTop_toBottomOf="@id/homeNOP"
             android:src="@drawable/ic_rating"
             android:layout_marginEnd="24dp"
-            android:layout_marginTop="8dp"/>
+            android:layout_marginTop="16dp"/>
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/ratingTV"

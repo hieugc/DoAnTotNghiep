@@ -14,7 +14,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:background="@color/white"
-            app:elevation="0dp">
+            app:elevation="5dp">
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbarHome"
@@ -65,19 +65,17 @@
                     app:tint="@color/secondary"/>
 
                 <androidx.appcompat.widget.AppCompatImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    style="@style/AppTheme.Icon"
                     android:layout_gravity="end"
                     android:id="@+id/btnMessage"
-                    android:padding="16dp"
+                    android:layout_marginEnd="10dp"
                     android:src="@drawable/ic_new_msg"/>
 
                 <androidx.appcompat.widget.AppCompatImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    style="@style/AppTheme.Icon"
                     android:layout_gravity="end"
                     android:id="@+id/btnMenu"
-                    android:padding="16dp"
+                    android:layout_marginEnd="10dp"
                     android:src="@drawable/ic_menu"/>
 
             </androidx.appcompat.widget.Toolbar>

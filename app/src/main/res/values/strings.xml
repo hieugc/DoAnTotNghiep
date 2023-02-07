@@ -60,4 +60,30 @@
     <string name="report">Báo cáo người dùng</string>
     <string name="block_user">Chặn người dùng</string>
     <string name="text">Nhắn tin</string>
+    <string name="search_hint">Tìm địa điểm, căn nhà</string>
+    <string name="from_date">Từ ngày</string>
+    <string name="to_date">Đến ngày</string>
+    <string name="number_of_people">Số người</string>
+    <string name="recent_search">Tìm kiếm gần đây</string>
+    <string name="filter">Bộ lọc</string>
+    <string name="closet_distance">Khoảng cách gần nhất</string>
+    <string name="high_to_low">Giá từ cao tới thấp</string>
+    <string name="low_to_high">Giá từ thấp tới cao</string>
+    <string name="highest_rating">Rating cao nhất</string>
+    <string name="price_range">Khoảng giá</string>
+    <string name="min_price">Giá tối thiểu</string>
+    <string name="max_price">Giá tối đa</string>
+    <string name="util">Tiện ích</string>
+    <string name="wifi">Wifi</string>
+    <string name="computer">Máy tính</string>
+    <string name="smart_tv">Smart TV</string>
+    <string name="bath_tub">Bồn tắm</string>
+    <string name="parking_lot">Bãi đỗ xe</string>
+    <string name="air_conditioner">Điều hòa</string>
+    <string name="washing_machine">Máy giặt</string>
+    <string name="fridge">Tủ lạnh</string>
+    <string name="pool">Bể bơi</string>
+    <string name="delete_filter">&lt;a href="">Xóa bộ lọc&lt;/a></string>
+    <string name="apply">Áp dụng</string>
+    <string name="see_maps">Xem bản đồ</string>
 </resources>

@@ -19,16 +19,16 @@ class PopularLocationAdapter(var list: ArrayList<String>? = arrayListOf()): Recy
     }
 
     override fun onBindViewHolder(holder: PopularLocationViewHolder, position: Int) {
-//        val params = holder.itemView.layoutParams as ViewGroup.LayoutParams
-//        val displayMetrics = DisplayMetrics()
-//        (holder.itemView.context as Activity).windowManager.defaultDisplay.getMetrics(displayMetrics)
-//        val width = displayMetrics.widthPixels
-//        params.width = (width * 0.9).toInt()
         holder.binding.locationTxt.text = list?.get(position) ?: ""
         if(position == list?.size!! - 1 )
         {
             val lastParams = holder.itemView.layoutParams as ViewGroup.MarginLayoutParams
             lastParams.rightMargin = 16f.dpToPx(holder.itemView.context)
+            holder.itemView.requestLayout()
+        }
+        if(position == 0){
+            val lastParams = holder.itemView.layoutParams as ViewGroup.MarginLayoutParams
+            lastParams.leftMargin = 16f.dpToPx(holder.itemView.context)
             holder.itemView.requestLayout()
         }
     }

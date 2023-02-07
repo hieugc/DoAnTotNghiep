@@ -5,24 +5,34 @@
       <map>
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/drawable/bg_white_corner_radius.xml" value="0.2075" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/drawable/bot_nav_color.xml" value="0.2035" />
+        <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/drawable/bottom_sheet_round_bg.xml" value="0.2075" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/drawable/button_outline_bg.xml" value="0.224" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/drawable/button_primary_bg.xml" value="0.2035" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/drawable/dialog_button_white.xml" value="0.2075" />
+        <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/drawable/filter_bg.xml" value="0.2075" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/drawable/ic_back.xml" value="0.154" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/drawable/ic_back_main.xml" value="0.2075" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/drawable/ic_check_circle.xml" value="0.154" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/drawable/ic_mail.xml" value="0.2075" />
+        <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/drawable/ic_menu.xml" value="0.1965" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/drawable/ic_message.xml" value="0.2035" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/drawable/ic_new_msg.xml" value="0.2075" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/drawable/ic_next.xml" value="0.2075" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/drawable/ic_phone.xml" value="0.2075" />
+        <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/drawable/ic_pluscircle.xml" value="0.1965" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/drawable/ic_search.xml" value="0.2075" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/drawable/ic_uncheck_circle.xml" value="0.154" />
+        <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/drawable/icon_check_circle.xml" value="0.1965" />
+        <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/drawable/icon_unchecked_circle.xml" value="0.1965" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/drawable/indicator.xml" value="0.2405" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/drawable/item_active_bg.xml" value="0.2075" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/drawable/item_bg.xml" value="0.2405" />
+        <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/drawable/pick_date_bg.xml" value="0.2075" />
+        <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/drawable/price_range_bg.xml" value="0.2075" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/drawable/primary_bg_circle.xml" value="0.2075" />
+        <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/drawable/radio_button.xml" value="0.1965" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/drawable/ripple_white_bg.xml" value="0.2075" />
+        <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/drawable/ripple_white_bg_circle.xml" value="0.2075" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/drawable/search_bg.xml" value="0.2075" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/drawable/search_bg_ripple.xml" value="0.2075" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/activity_auth.xml" value="0.25416666666666665" />
@@ -31,16 +41,19 @@
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/dialog_error.xml" value="0.264" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/dialog_loading.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/fragment_explore.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/fragment_filter_bottom_sheet.xml" value="0.33" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/fragment_forgot_password.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/fragment_forgot_password_verification.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/fragment_get_started.xml" value="0.264" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/fragment_home.xml" value="0.264" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/fragment_login.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/fragment_message.xml" value="0.2" />
-        <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/fragment_message_box.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/fragment_message_box.xml" value="0.2" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/fragment_new_password.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/fragment_notification.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/fragment_notification_dialog.xml" value="0.4" />
+        <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/fragment_search.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/fragment_search_result.xml" value="0.264" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/fragment_sign_in.xml" value="0.264" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/fragment_sign_in_verification.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/fragment_update_information.xml" value="0.4" />
@@ -52,9 +65,13 @@
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/my_message_item.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/notifcation_item.xml" value="0.264" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/notification_item.xml" value="0.25416666666666665" />
-        <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/popular_home_item.xml" value="0.253125" />
+        <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/pick_date_bg.xml" value="0.253125" />
+        <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/popular_home_item.xml" value="0.264" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/popular_location_item.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/search_home_item.xml" value="0.264" />
+        <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/search_home_map_item.xml" value="0.536" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/sex_item.xml" value="0.253125" />
+        <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/test.xml" value="0.365625" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/menu/bottom_nav_menu.xml" value="0.253125" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/menu/box_chat_menu.xml" value="0.25416666666666665" />
       </map>

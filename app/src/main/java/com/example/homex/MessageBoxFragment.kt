@@ -1,6 +1,7 @@
 package com.example.homex
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -50,5 +51,17 @@ class MessageBoxFragment : BaseFragment<FragmentMessageBoxBinding>() {
         val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         binding.messageRecView.layoutManager = layoutManager
 
+    }
+
+    override fun setEvent() {
+        binding.addBtn.setOnClickListener {
+            Log.e("add", "hello")
+        }
+        binding.sendBtn.setOnClickListener {
+            Log.e("send", "hello")
+        }
+        binding.msgInputLayout.setOnClickListener {
+            Log.e("layout", "hello")
+        }
     }
 }

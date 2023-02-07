@@ -8,13 +8,36 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardView"
+            android:layout_width="match_parent"
+            android:background="@drawable/search_bg"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            app:cardElevation="10dp"
+            app:cardCornerRadius="24dp">
 
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/searchEdtTxt"
+                style="@style/AppTheme.EditText"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:drawableStart="@drawable/ic_search"
+                android:drawablePadding="8dp"
+                android:hint="@string/search"
+                android:imeOptions="actionDone" />
+
+        </androidx.cardview.widget.CardView>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/msgSearchLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
+            android:visibility="gone"
             android:layout_marginTop="8dp"
             style="@style/AppTheme.TextInputLayout"
             android:layout_marginStart="16dp"
@@ -37,12 +60,12 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/messageBoxRecView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/messageBoxRecView"
-            app:layout_constraintTop_toBottomOf="@id/msgSearchLayout"
+            app:layout_constraintTop_toBottomOf="@+id/cardView"
             android:layout_marginTop="16dp"
-            tools:listitem="@layout/message_box_item"/>
+            tools:listitem="@layout/message_box_item" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

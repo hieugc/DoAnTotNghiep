@@ -22,6 +22,58 @@
         <item name="buttonStyle">@style/AppTheme.ButtonStyle</item>
         <item name="android:textColorHint">@color/transwhite</item>
         <item name="android:editTextColor">@color/white</item>
+        <item name="bottomSheetDialogTheme">@style/ThemeOverlay.App.BottomSheetDialog</item>
+        <item name="checkboxStyle">@style/AppTheme.CheckBox</item>
+        <item name="radioButtonStyle">@style/AppTheme.RadioButton</item>
+        <item name="extendedFloatingActionButtonStyle">@style/AppTheme.ExtendedFloatingActionButton</item>
+    </style>
+
+    <style name="AppTheme.ExtendedFloatingActionButton" parent="@style/Widget.MaterialComponents.ExtendedFloatingActionButton.Icon">
+        <item name="materialThemeOverlay">@style/ThemeOverlay.App.FloatingActionButton</item>
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.App.SmallComponent</item>
+    </style>
+
+    <style name="ThemeOverlay.App.FloatingActionButton" parent="">
+        <item name="colorSecondary">@color/primary</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="colorOnSurface">@color/white</item>
+    </style>
+
+    <style name="ThemeOverlay.App.BottomSheetDialog" parent="ThemeOverlay.MaterialComponents.BottomSheetDialog">
+        <item name="android:colorBackground">#000000</item>
+        <item name="bottomSheetStyle">@style/ModalBottomSheetDialog</item>
+    </style>
+
+    <style name="ModalBottomSheetDialog" parent="Widget.MaterialComponents.BottomSheet.Modal">
+        <item name="android:colorBackground">#000000</item>
+        <item name="background">@drawable/bottom_sheet_round_bg</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.App.LargeComponent</item>
+    </style>
+
+    <style name="ShapeAppearance.App.LargeComponent" parent="ShapeAppearance.MaterialComponents.LargeComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
+    </style>
+
+    <style name="ShapeAppearance.App.SmallComponent" parent="ShapeAppearance.MaterialComponents.SmallComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">6dp</item>
+    </style>
+
+    <style name="AppTheme.CheckBox" parent="Widget.Material3.CompoundButton.CheckBox">
+        <item name="android:buttonTint">@color/primary</item>
+    </style>
+
+    <style name="AppTheme.RadioButton" parent="Widget.Material3.CompoundButton.RadioButton">
+        <item name="android:buttonTint">@color/primary</item>
+        <item name="android:button">@drawable/radio_button</item>
+    </style>
+
+    <style name="AppTheme.Icon">
+        <item name="android:background">@drawable/ripple_white_bg_circle</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">36dp</item>
+        <item name="android:padding">6dp</item>
     </style>
 
     <style name="AppTheme.ButtonStyle" parent="@style/Widget.AppCompat.Button">
@@ -46,6 +98,8 @@
     </style>
 
     <style name="ButtonProfile">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/black</item>
         <item name="textAllCaps">false</item>
@@ -54,6 +108,12 @@
         <item name="android:paddingBottom">24dp</item>
         <item name="android:paddingTop">24dp</item>
         <item name="android:textStyle">normal</item>
+        <item name="android:drawablePadding">16dp</item>
+        <item name="android:letterSpacing">0.04</item>
+        <item name="android:background">@drawable/ripple_white_bg</item>
+        <item name="android:stateListAnimator">@null</item>
+        <item name="android:textAlignment">viewStart</item>
+        <item name="android:drawableEnd">@drawable/ic_next</item>
     </style>
 
     <style name="Widget.App.BottomNavigationView" parent="Widget.MaterialComponents.BottomNavigationView">
@@ -97,6 +157,25 @@
         <item name="android:textSize">18sp</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:layout_marginStart">16dp</item>
+    </style>
+
+    <style name="HomeTitle" parent="AppTheme.TextViewStyle">
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="HomeLocation" parent="AppTheme.TextViewStyle">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/gray6</item>
+    </style>
+
+    <style name="HomePrice" parent="AppTheme.TextViewStyle">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="HomeRating" parent="AppTheme.TextViewStyle">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
     <style name="LightText" parent="AppTheme.TextViewStyle">
