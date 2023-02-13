@@ -86,4 +86,12 @@
     <string name="delete_filter">&lt;a href="">Xóa bộ lọc&lt;/a></string>
     <string name="apply">Áp dụng</string>
     <string name="see_maps">Xem bản đồ</string>
+    <string name="update_profile">Cập nhật thông tin</string>
+    <string name="change_password">Đổi mật khẩu</string>
+    <string name="old_password">Mật khẩu cũ</string>
+    <string name="update_avatar">Chỉnh sửa ảnh đại diện</string>
+    <string name="update">Cập nhật</string>
+    <string name="user_profile">Hồ sơ cá nhân</string>
+    <string name="sign_in_sign_up">Đăng nhập/Đăng ký</string>
+    <string name="login_to_use">Hãy đăng nhập ngay để đột phá mọi trải nghiệm ngay nào!</string>
 </resources>

@@ -2,6 +2,7 @@ package com.example.homex.activity.home
 
 import android.os.Bundle
 import android.view.View
+import androidx.navigation.fragment.findNavController
 import com.example.homex.R
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentUserBinding
@@ -20,5 +21,11 @@ class UserFragment : BaseFragment<FragmentUserBinding>() {
             showBottomNav = true,
             showBoxChatLayout = Pair(false, ""),
         )
+    }
+
+    override fun setEvent() {
+        binding.btnMyProfile.setOnClickListener{
+            findNavController().navigate(R.id.action_userFragment_to_myProfileFragment)
+        }
     }
 }

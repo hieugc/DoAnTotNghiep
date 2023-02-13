@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true"
+        android:fitsSystemWindows="true">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingTop="24dp"
+            android:paddingBottom="24dp">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivAvatar"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_gravity="center"
+                android:scaleType="fitXY"
+                app:cardCornerRadius="80dp"
+                app:srcCompat="@mipmap/avatar" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvEditProfile"
+                style="@style/Regular"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:text="@string/update_avatar"
+                android:textColor="@color/blue_60"
+                android:textStyle="bold" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/middleLastInputLayout"
+                style="@style/AppTheme.TextInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="24dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/middleLastInputEdtTxt"
+                    style="@style/AppTheme.TextViewStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:inputType="text"
+                    android:text="Phạm Minh"
+                    android:textAlignment="center" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/firstNameInputLayout"
+                style="@style/AppTheme.TextInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="24dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/firstNameInputEdtTxt"
+                    style="@style/AppTheme.TextViewStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:inputType="text"
+                    android:text="Hiếu"
+                    android:textAlignment="center" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/emailInputLayout"
+                style="@style/AppTheme.TextInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="24dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/emailInputEdtTxt"
+                    style="@style/AppTheme.TextViewStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:inputType="textEmailAddress"
+                    android:text="hieu.phamchuanmen@hcmut.edu.vn"
+                    android:textAlignment="center" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/phoneInputLayout"
+                style="@style/AppTheme.TextInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="24dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/phoneInputEdtTxt"
+                    style="@style/AppTheme.TextViewStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:inputType="phone"
+                    android:text="+65 0973409127"
+                    android:textAlignment="center" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/dobInputLayout"
+                style="@style/AppTheme.TextInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="24dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/dobInputEdtTxt"
+                    style="@style/AppTheme.TextViewStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:inputType="datetime"
+                    android:text="07/07/1996"
+                    android:textAlignment="center" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnChangePwd"
+                style="@style/ButtonPrimary"
+                android:layout_width="match_parent"
+                android:layout_below="@id/checkPassword2"
+                android:layout_marginLeft="24dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginRight="24dp"
+                android:text="@string/update" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </androidx.core.widget.NestedScrollView>
+</layout>

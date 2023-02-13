@@ -28,7 +28,11 @@
         android:id="@+id/userFragment"
         android:name="com.example.homex.activity.home.UserFragment"
         android:label="fragment_user"
-        tools:layout="@layout/fragment_user" />
+        tools:layout="@layout/fragment_user" >
+        <action
+            android:id="@+id/action_userFragment_to_myProfileFragment"
+            app:destination="@id/myProfileFragment" />
+    </fragment>
     <fragment
         android:id="@+id/messageFragment"
         android:name="com.example.homex.activity.home.MessageFragment"
@@ -73,6 +77,26 @@
         android:name="com.example.homex.FilterBottomSheetFragment"
         android:label="FilterBottomSheetFragment"
         tools:layout="@layout/fragment_filter_bottom_sheet"/>
+    <fragment
+        android:id="@+id/myProfileFragment"
+        android:name="com.example.homex.activity.home.MyProfileFragment"
+        android:label="fragment_my_profile"
+        tools:layout="@layout/fragment_my_profile" >
+        <action
+            android:id="@+id/action_myProfileFragment_to_updateProfileFragment"
+            app:destination="@id/updateProfileFragment" />
+        <action
+            android:id="@+id/action_myProfileFragment_to_changePasswordFragment"
+            app:destination="@id/changePasswordFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/updateProfileFragment"
+        android:name="com.example.homex.activity.home.UpdateProfileFragment"
+        android:label="UpdateProfileFragment" />
+    <fragment
+        android:id="@+id/changePasswordFragment"
+        android:name="com.example.homex.activity.home.ChangePasswordFragment"
+        android:label="ChangePasswordFragment" />
 
 
 </navigation>
