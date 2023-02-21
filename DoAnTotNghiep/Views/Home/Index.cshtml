@@ -1,37 +1,98 @@
 ﻿@using DoAnTotNghiep.Entity
-@model List<City>
-
 @{
     ViewData["Title"] = "Home Page";
 }
 
-
-
-<div class="text-center">
-    <h1 class="display-4">Check: @ViewData["Check"]</h1>
-    <h1 class="display-4">Number: @ViewData["Number"]</h1>
-    <h1 class="display-4">Welcome Homepage</h1>
-
-    <ol>
-        @foreach(var item in Model)
-        {
-            <li>name: @item.Name<br />lat: @item.Lat</li>
-        }
-    </ol>
-
-    <ol>
-        @foreach (var item in ViewData["District"] as List<District>)
-        {
-            <li>
-                name: @item.Name<br />lat: @item.Lat <br /> CityId: @(item.IdCity == null ? 0: item.IdCity.Value)
-                <br />
-                @(item.Citys == null? "nullable": item.Citys.Name)
-            </li>
-        }
-    </ol>
-
-
-
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="group-banner">
+    <div class="w-100">
+        <img src="~/Image/banner.png" alt="Banner Website" class="banner" />
+    </div>
+    <div class="about shadow">
+        <div class="card text-primary">
+            <img src="~/Image/About_1.png" class="card-img" alt="Number of Home" class="">
+            <div class="card-img-overlay">
+                <h2 class="card-title">250</h2>
+                <p class="card-text">Căn nhà</p>
+                <p class="card-text"><i class="fa-solid fa-house"></i></p>
+            </div>
+        </div>
+        <div class="card text-primary">
+            <img src="~/Image/About_3.jpg" class="card-img" alt="Number of Location" class="">
+            <div class="card-img-overlay">
+                <h2 class="card-title">25</h2>
+                <p class="card-text">Tỉnh thành</p>
+                <p class="card-text"><i class="fa-solid fa-map-location-dot"></i></p>
+            </div>
+        </div>
+        <div class="card text-primary">
+            <img src="~/Image/About_2.png" class="card-img" alt="Slogan" class="">
+            <div class="card-img-overlay">
+                <p class="card-text">Giao dịch</p>
+                <p class="card-text">nhanh chóng</p>
+                <p class="card-text"><i class="fa-solid fa-clock"></i></p>
+            </div>
+        </div>
+    </div>
 </div>
 
+<div class="container-fluid">
+    <!--Frame 1-->
+    <div class="frame_1">
+        <div class="container-lg">
+            <div class="description">
+                <h1>Khám phá những địa điểm của chúng tôi</h1>
+                <p><strong>VExchangeHome</strong> cung cấp cho bạn những trải nghiệm mới nhất qua từng nơi trên mọi miền đất nước.</p>
+                <div><button class="btn btn-primary btn-lg">Khám phá</button></div>
+            </div>
+            <div class="list">
+                @for(var item = 0; item < 4; item++)
+                {
+                    <div class="img-container">
+                        <img src="~/Image/house-demo.png" alt="Notebook" style="width:100%;">
+                        <div class="content">
+                            <h2>TP. Hồ Chí Minh</h2>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <!--Frame 2-->
+    <div class="frame_2">
+        <div class="container-lg">
+            <h2>Những căn nhà nổi bật</h2>
+            <div class="list">
+                @for (var item = 0; item < 6; item++)
+                {
+                    <div class="house-card">
+                        <img src="~/Image/house-demo.png" alt="Mike" style="width:100%">
+                        <div class="house-img-container">
+                            <h2>Nhà của Hiếu</h2>                            
+                            <p class="attribute"><i class="fa-solid fa-map-location-dot"></i><span>268 Ly Thuong Kiet Street - Ward 14, District 10, HCMC, Ho Chi Minh City</span></p>
+                            <div class="list-attribute">
+                                <p class="attribute"><span>4</span><i class="fa-solid fa-star"></i></p>
+                                <p class="attribute"><i class="fa-solid fa-users"></i><span>4</span></p>
+                                <p class="attribute"><i class="fa-solid fa-bed"></i><span>2</span></p>
+                            </div>
+                            <p><button class="item-button">
+                                <span class="label-show">200point/night</span>
+                                <span class="label-hide">Xem chi tiết</span>
+                            </button></p>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div><div class="btn btn-primary btn-lg"><a href="@Url.Action("Index", "Explore")">Xem thêm</a></div></div>
+        </div>
+    </div>
+    <!--Frame 3-->
+    @*<div class="frame_3">
+        <div class="container-lg">
+            <div class="step-card">
+                <div class="step">
+                    <span>1</span>
+                </div>
+            </div>
+        </div>
+    </div>*@
+</div>

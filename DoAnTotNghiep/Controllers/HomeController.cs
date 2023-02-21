@@ -20,12 +20,7 @@ namespace DoAnTotNghiep.Controllers
 
         public IActionResult Index()
         {
-            ViewData["Check"] = this._context == null ? "null" : "not null";
-            ViewData["Number"] = this._context == null ? "null": this._context.Cities.Count();
-            List<City> cities = this._context == null ? new List<City>(): this._context.Cities.ToList();
-
-            ViewData["District"] = this._context == null ? new List<District>(): this._context.Districts.ToList();
-            return View(cities);
+            return View();
         }
 
         public IActionResult Privacy()

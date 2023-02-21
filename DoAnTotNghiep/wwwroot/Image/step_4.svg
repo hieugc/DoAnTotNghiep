@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 23.1.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="guarantee" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 132 132" style="enable-background:new 0 0 132 132;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#FFFFFF;}
+	.st1{fill:none;stroke:#E85710;stroke-width:3;stroke-linecap:round;stroke-miterlimit:10;}
+	.st2{fill:none;stroke:#E85710;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;}
+</style>
+<title>gp_reciprocal_orange</title>
+<g id="caution">
+	<circle class="st0" cx="66" cy="66" r="65"/>
+	<g id="reciprocal_icon">
+		<path class="st1" d="M82.9,88.2c-9.4,9.7-24.8,10-34.6,0.6c-0.1-0.1-0.1-0.1-0.2-0.2"/>
+		<polyline class="st2" points="78.7,87.5 85.3,85.1 83.9,92.5 		"/>
+		<polyline class="st2" points="52.2,87.4 45.4,85.2 47,92.7 		"/>
+		<polyline class="st2" points="66.2,47 78.4,36.3 99.6,55 		"/>
+		<polyline class="st2" points="70.5,76.6 95.8,76.6 95.8,51.7 78.4,36.3 		"/>
+		<polyline class="st2" points="32.4,55 53.5,36.3 74.7,55 		"/>
+		<polygon class="st2" points="53.5,36.3 36.2,51.7 36.2,76.6 70.9,76.6 70.9,51.7 		"/>
+		<path class="st2" d="M58.8,76.6H48.3V64.4c0-0.6,0.7-1.1,1.5-1.1h7.6c0.8,0,1.5,0.5,1.5,1.1L58.8,76.6z"/>
+	</g>
+</g>
+</svg>

@@ -18,8 +18,8 @@ namespace DoAnTotNghiep.Entity
         [Column("lat")]
         public double Lat { get; set; } = 0;
 
-        [Column("long")]
-        public double Long { get; set; } = 0;
+        [Column("lng")]
+        public double Lng { get; set; } = 0;
 
         [Column("id_district")]
         public virtual int? IdDistrict { get; set; }

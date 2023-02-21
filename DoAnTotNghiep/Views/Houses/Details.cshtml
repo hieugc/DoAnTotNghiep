@@ -1,0 +1,351 @@
+﻿@model DoAnTotNghiep.Entity.House
+
+@{
+    ViewData["Title"] = "Chi tiết nhà";
+}
+
+<div class="Banner">
+    <div class="row">
+        <div class="column">
+            <img src="~/Image/Demo/1713577385683372.jpg" style="width:100%" onclick="openModal();currentSlide(1)" class="hover-shadow cursor">
+        </div>
+        <div class="column">
+            <img src="~/Image/Demo/1713900527240594.jpg" style="width:100%" onclick="openModal();currentSlide(2)" class="hover-shadow cursor">
+        </div>
+        <div class="column">
+            <img src="~/Image/Demo/1714621217557489.jpg" style="width:100%" onclick="openModal();currentSlide(3)" class="hover-shadow cursor">
+        </div>
+        <div class="column">
+            <img src="~/Image/Demo/1713577385683372.jpg" style="width:100%" onclick="openModal();currentSlide(4)" class="hover-shadow cursor">
+        </div>
+    </div>
+
+    @*<div id="myModal" class="modal">
+        <span class="close cursor" onclick="closeModal()">&times;</span>
+        <div class="modal-content">
+            <div class="mySlides">
+                <img src="~/Image/Demo/1713577385683372.jpg" style="width:100%">
+            </div>
+
+            <div class="mySlides">
+                <img src="~/Image/Demo/1713900527240594.jpg" style="width:100%">
+            </div>
+
+            <div class="mySlides">
+                <img src="~/Image/Demo/1714621217557489.jpg" style="width:100%">
+            </div>
+
+            <div class="mySlides">
+                <img src="~/Image/Demo/1713577385683372.jpg" style="width:100%">
+            </div>
+
+            <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+            <a class="next" onclick="plusSlides(1)">&#10095;</a>
+
+            <div class="row">
+                <div class="col-3">
+                    <img class="demo cursor" src="~/Image/Demo/1713577385683372.jpg" style="width:100%" onclick="currentSlide(1)" alt="Nature and sunrise">
+                </div>
+                <div class="col-3">
+                    <img class="demo cursor" src="~/Image/Demo/1713900527240594.jpg" style="width:100%" onclick="currentSlide(2)" alt="Snow">
+                </div>
+                <div class="col-3">
+                    <img class="demo cursor" src="~/Image/Demo/1714621217557489.jpg" style="width:100%" onclick="currentSlide(3)" alt="Mountains and fjords">
+                </div>
+                <div class="col-3">
+                    <img class="demo cursor" src="~/Image/Demo/1713577385683372.jpg" style="width:100%" onclick="currentSlide(4)" alt="Northern Lights">
+                </div>
+            </div>
+        </div>
+    </div>*@
+</div>
+
+<div class="frame">
+    <div class="left">
+        <div class="option-control">
+            <div class="tab-pane tab-active"><a href="#tab1">Thông tin chung</a></div>
+            <div class="tab-pane"><a href="#tab2">Giới thiệu</a></div>
+            <div class="tab-pane"><a href="#tab3">Tiện nghi</a></div>
+            <div class="tab-pane"><a href="#tab4">Quy tắc</a></div>
+            <div class="tab-pane"><a href="#tab5">Địa chỉ</a></div>
+            <div class="tab-pane"><a href="#tab6">Đánh giá</a></div>
+        </div>
+        <div class="content">
+            <div id="tab1">
+                <div class="general">
+                    <div>Nhà của Hiếu</div>
+                    <div>
+                        <div class="rating"><span>4.3</span><i class="fa-solid fa-star"></i></div>
+                        <div class="point"><strong>200p/ngày</strong></div>
+                    </div>
+                </div>
+                <div class="">
+                    <div><i class="fa-solid fa-house"></i><span>Căn hộ</span></div>
+                    <div><i class="fa-solid fa-bed"></i><span>2</span></div>
+                    <div><i class="fa-solid fa-users"></i><span>4</span></div>
+                    <div><i class="fa-solid fa-bath"></i><span>1</span></div>
+                    <div><i class="fa-solid fa-maximize"></i><span>100 &#13217;</span></div>
+                </div>
+            </div>
+
+            <div id="tab2">
+                <h5>Giới thiệu</h5>
+                <p>
+                    Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                    Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
+                    when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+                    It has survived not only five centuries, but also the leap into electronic typesetting, remaining
+                    essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing
+                    Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including
+                    versions of Lorem Ipsum.
+                </p>
+            </div>
+
+            <div id="tab3">
+                <h5>Tiện nghi</h5>
+                <div>
+                    <div class="item-show">
+                        @for (var item = 0; item < 8; item++)
+                        {
+                            <div class="item-frame item-checked">
+                                <i class="fa-solid fa-wifi"></i>
+                                <span>Wifi</span>
+                            </div>
+                        }
+                    </div>
+                    <div class="item-hide">
+                        <a href="#utilities-hide" data-bs-toggle="collapse" onclick="changeName(this)" class="show-more">Xem thêm</a>
+
+                        <div id="utilities-hide" class="collapse">
+                            <div>
+                                @for (var item = 0; item < 20; item++)
+                                {
+                                    <div class="item-frame">
+                                        <i class="fa-solid fa-wifi"></i>
+                                        <span>Wifi</span>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab4">
+                <h5>Quy tắc</h5>
+                <div>
+                    <div class="item-show">
+                        @for (var item = 0; item < 8; item++)
+                        {
+                            <div class="item-frame">
+                                <i class="fa-solid fa-wifi"></i>
+                                <span>Wifi</span>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab5">
+                <h5>Địa chỉ</h5>
+                <div class="frame-map">
+                    <div id="myMap" class="BingMap" onload="GetMap();"></div>
+                </div>
+            </div>
+
+            <div id="tab6">
+                <span class="heading">Người dung đánh giá</span>
+                <span class="fa fa-star checked"></span>
+                <span class="fa fa-star checked"></span>
+                <span class="fa fa-star checked"></span>
+                <span class="fa fa-star checked"></span>
+                <span class="fa fa-star"></span>
+                <p>Dựa trên 251 đánh giá từ người dùng.</p>
+                <hr style="border:3px solid #f1f1f1">
+
+                <div class="rate-overview">
+                    <div class="line-star">
+                        <div class="side">
+                            <div>5 Sao</div>
+                        </div>
+                        <div class="middle">
+                            <div class="bar-container">
+                                <div class="bar-5"></div>
+                            </div>
+                        </div>
+                        <div class="side right">
+                            <div>150</div>
+                        </div>
+                    </div>
+
+                    <div class="line-star">
+                        <div class="side">
+                            <div>4 Sao</div>
+                        </div>
+                        <div class="middle">
+                            <div class="bar-container">
+                                <div class="bar-4"></div>
+                            </div>
+                        </div>
+                        <div class="side right">
+                            <div>63</div>
+                        </div>
+                    </div>
+
+                    <div class="line-star">
+                        <div class="side">
+                            <div>3 Sao</div>
+                        </div>
+                        <div class="middle">
+                            <div class="bar-container">
+                                <div class="bar-3"></div>
+                            </div>
+                        </div>
+                        <div class="side right">
+                            <div>15</div>
+                        </div>
+                    </div>
+
+                    <div class="line-star">
+                        <div class="side">
+                            <div>2 Sao</div>
+                        </div>
+                        <div class="middle">
+                            <div class="bar-container">
+                                <div class="bar-2"></div>
+                            </div>
+                        </div>
+                        <div class="side right">
+                            <div>6</div>
+                        </div>
+                    </div>
+
+                    <div class="line-star">
+                        <div class="side">
+                            <div>1 Sao</div>
+                        </div>
+                        <div class="middle">
+                            <div class="bar-container">
+                                <div class="bar-1"></div>
+                            </div>
+                        </div>
+                        <div class="side right">
+                            <div>20</div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="frame-list-comment">
+                    @for (var item = 0; item < 6; item++)
+                    {
+                        <div class="comment">
+                            <div class="comment-head">
+                                <div class="avt"><img src="~/Image/logo.png" alt="avt-user" /></div>
+                                <div class="info">
+                                    <h5><span class="name">Phạm Minh Hiếu</span><span class="rating"><span>4.3</span><i class="fa-solid fa-star"></i></span></h5>
+                                    <div class="date"><span>20/02/2023</span></div>
+                                </div>
+                            </div>
+                            <div class="comment-content">
+                                <p class="comment-show">
+                                    Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                                    Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
+                                    when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+                                </p>
+                                <p>
+                                    <span id="comment-@item" class="collapse">
+                                        It has survived not only five centuries, but also the leap into electronic typesetting, remaining
+                                        essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing
+                                        Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including
+                                        versions of Lorem Ipsum.
+                                    </span>
+                                    <a href="#comment-@item" data-bs-toggle="collapse" onclick="changeName(this)" class="show-more">Xem thêm</a>
+                                </p>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="right">
+        <div class="top">
+            <div class="user-info">
+                <div class="avt"><img src="~/Image/logo.png" alt="avt-user" /></div>
+                <div class="info">
+                    <h5><span class="name">Phạm Minh Hiếu</span></h5>
+                    <div class="rating"><span>4.3</span><i class="fa-solid fa-star"></i></div>
+                </div>
+            </div>
+            <div class="validate">
+                <div>
+                    <i class="fa-solid fa-star"></i><span>2 căn nhà</span>
+                </div>
+                <div>
+                    <i class="fa-solid fa-star"></i><span>Đã xác thực</span>
+                </div>
+                <div>
+                    <i class="fa-solid fa-star"></i><span>Đã xác thực</span>
+                </div>
+            </div>
+        </div>
+        <div class="bot">
+            <div><button class="btn btn-primary">Liên hệ</button></div>
+            <div><button class="btn btn-danger" type="button" data-bs-toggle="modal" data-bs-target="#reportModal">Báo cáo</button></div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="text-danger fw-semibold branch">Báo cáo người dùng</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="refreshLoginForm()"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="mb-3">
+                        <label for="userReport">Tên người dùng</label>
+                        <input type="text" class="form-control" name="userReport" id="userReport" placeholder="Phạm Minh Hiếu" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="houseReport">Căn nhà báo cáo</label>
+                        <select class="form-control" id="houseReport" name="houseReport">
+                            <option value="12">Nhà 1</option>
+                            <option value="13">Nhà 2</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="contentReport">Lí do báo cáo</label>
+                        <textarea class="form-control" id="contentReport" name="contentReport" rows="5"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="fileReport">Tệp đính kèm <i class="fa-solid fa-file"></i></label>
+                        <input class="form-control" type="file" name="fileReport" id="fileReport" />
+                    </div>
+                </form>
+                <button type="button" class="btn btn-danger">Báo cáo</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script src="~/js/House/detail.js" type="text/javascript"></script>
+    <!--BingMap-->
+    <script type='text/javascript'
+        src='https://www.bing.com/api/maps/mapcontrol?callback=GetMap&key=Asf_PRzBpUJVcb9lcAg48BLOuAuaBItg4ZzCqaNQaSIFReqieYA02KBcovVD08Jk'
+        async defer></script>
+
+    <script type='text/javascript'>
+        function GetMap() {
+            var map = new Microsoft.Maps.Map('#myMap');
+
+            //Add your post map load code here.
+        }
+    </script>
+}

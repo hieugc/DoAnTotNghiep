@@ -1,0 +1,263 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/DoAnTotNghiep.styles.css" asp-append-version="true" />
+    <link rel="shortcut icon" href="~/Image/tiny-logo.png" type="image/x-icon" />
+
+    <!--Start Icon Kit-->
+    <script src="https://kit.fontawesome.com/19075407b9.js" crossorigin="anonymous"></script>
+    @*<link rel="stylesheet" href="https://kit.fontawesome.com/19075407b9.css" crossorigin="anonymous">*@
+    <!--End Icon Kit-->
+</head>
+<body>
+    <nav class="nav-app">
+        <div class="container-lg">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><img src="~/Image/logo.png" class="logo" alt="logo" /></a>
+                </div>
+                <div class="nav-left">
+                    <div class="lg-device">
+                    <div class="lg-device-control">
+                    <div class="turn-off">
+                    <div>
+                    <i class="fa-sharp fa-solid fa-chevron-right"></i>
+                    </div>
+                    </div>
+                    <form name="search" class="d-flex">
+                    <input type="search" class="rounded-start rounded-0 form-control" placeholder="Bạn muốn đi đâu?" name="explore" id="explore-1" />
+                    <button class="btn btn-sm btn-dark rounded-0 rounded-end"><i class="fa-sharp fa-solid fa-magnifying-glass"></i></button>
+                    </form>
+                    </div>
+                    </div>
+                    <div class="authorize">
+                    <div>
+                    <a class="position-relative" href="#" role="button" id="dropdownMenuNotification" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fa-solid fa-bell"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle">
+                    <span class="visually-hidden">New alerts</span>
+                    </span>
+                    </a>
+
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuNotification">
+                    <div class="title"><h5>Thông báo</h5></div>
+                    <div class="filter">
+                    <div class="btn btn-sm btn-primary">Tất cả</div>
+                    <div class="text-primary">Chưa đọc</div>
+                    </div>
+                    <div class="alert-frame">
+                    <div class="dropdown-item">
+                    <div class="avt"><img src="~/Image/logo.png" alt="avt" /></div>
+                    <div class="content">
+                    <strong>Phạm Minh Hiếu</strong>
+                    đã gửi yêu cầu trao đổi
+                    <span class="time">17/02/2023</span>
+                    </div>
+                    <div class="status"><i class="fa-solid fa-circle"></i></div>
+                    </div>
+                    <div class="dropdown-item">
+                    <div class="avt"><img src="~/Image/logo.png" alt="avt" /></div>
+                    <div class="content">
+                    <span class="user-info">Phạm Minh Hiếu</span>
+                    <span> đã gửi yêu cầu trao đổi</span>
+                    <span class="time">17/02/2023</span>
+                    </div>
+                    <div class="status seen"><i class="fa-solid fa-circle"></i></div>
+                    </div>
+                    <div class="dropdown-item">
+                    <div class="avt"><img src="~/Image/logo.png" alt="avt" /></div>
+                    <div class="content">
+                    <span class="user-info">Phạm Minh Hiếu</span>
+                    <span> đã gửi yêu cầu trao đổi</span>
+                    <span class="time">17/02/2023</span>
+                    </div>
+                    <div class="status"><i class="fa-solid fa-circle"></i></div>
+                    </div>
+                    <div class="dropdown-item">
+                    <div class="avt"><img src="~/Image/logo.png" alt="avt" /></div>
+                    <div class="content">
+                    <span class="user-info">Phạm Minh Hiếu</span>
+                    <span> đã gửi yêu cầu trao đổi</span>
+                    <span class="time">17/02/2023</span>
+                    </div>
+                    <div class="status seen"><i class="fa-solid fa-circle"></i></div>
+                    </div>
+                    <div class="dropdown-item">
+                    <div class="avt"><img src="~/Image/logo.png" alt="avt" /></div>
+                    <div class="content">
+                    <span class="user-info">Phạm Minh Hiếu</span>
+                    <span> đã gửi yêu cầu trao đổi</span>
+                    <span class="time">17/02/2023</span>
+                    </div>
+                    <div class="status"><i class="fa-solid fa-circle"></i></div>
+                    </div>
+                    <div class="dropdown-item">
+                    <div class="avt"><img src="~/Image/logo.png" alt="avt" /></div>
+                    <div class="content">
+                    <span class="user-info">Phạm Minh Hiếu</span>
+                    <span> đã gửi yêu cầu trao đổi</span>
+                    <span class="time">17/02/2023</span>
+                    </div>
+                    <div class="status seen"><i class="fa-solid fa-circle"></i></div>
+                    </div>
+                    </div>
+                    </div>
+                    </div>
+                    <div>
+                    <a class="position-relative" href="#" role="button" id="dropdownMenuChat" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fa-solid fa-message"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle">
+                    <span class="visually-hidden">New chats</span>
+                    </span>
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuNotification">
+                    <div class="title"><h5>Tin nhắn</h5></div>
+                    <div class="alert-frame">
+                    <div class="dropdown-item">
+                    <div class="avt"><img src="~/Image/logo.png" alt="avt" /></div>
+                    <div class="content">
+                    <strong>Phạm Minh Hiếu</strong>
+                    đã gửi yêu cầu trao đổi
+                    <span class="time">17/02/2023</span>
+                    </div>
+                    <div class="status"><i class="fa-solid fa-circle"></i></div>
+                    </div>
+                    <div class="dropdown-item">
+                    <div class="avt"><img src="~/Image/logo.png" alt="avt" /></div>
+                    <div class="content">
+                    <span class="user-info">Phạm Minh Hiếu</span>
+                    <span> đã gửi yêu cầu trao đổi</span>
+                    <span class="time">17/02/2023</span>
+                    </div>
+                    <div class="status seen"><i class="fa-solid fa-circle"></i></div>
+                    </div>
+                    <div class="dropdown-item">
+                    <div class="avt"><img src="~/Image/logo.png" alt="avt" /></div>
+                    <div class="content">
+                    <span class="user-info">Phạm Minh Hiếu</span>
+                    <span> đã gửi yêu cầu trao đổi</span>
+                    <span class="time">17/02/2023</span>
+                    </div>
+                    <div class="status"><i class="fa-solid fa-circle"></i></div>
+                    </div>
+                    <div class="dropdown-item">
+                    <div class="avt"><img src="~/Image/logo.png" alt="avt" /></div>
+                    <div class="content">
+                    <span class="user-info">Phạm Minh Hiếu</span>
+                    <span> đã gửi yêu cầu trao đổi</span>
+                    <span class="time">17/02/2023</span>
+                    </div>
+                    <div class="status seen"><i class="fa-solid fa-circle"></i></div>
+                    </div>
+                    <div class="dropdown-item">
+                    <div class="avt"><img src="~/Image/logo.png" alt="avt" /></div>
+                    <div class="content">
+                    <span class="user-info">Phạm Minh Hiếu</span>
+                    <span> đã gửi yêu cầu trao đổi</span>
+                    <span class="time">17/02/2023</span>
+                    </div>
+                    <div class="status"><i class="fa-solid fa-circle"></i></div>
+                    </div>
+                    <div class="dropdown-item">
+                    <div class="avt"><img src="~/Image/logo.png" alt="avt" /></div>
+                    <div class="content">
+                    <span class="user-info">Phạm Minh Hiếu</span>
+                    <span> đã gửi yêu cầu trao đổi</span>
+                    <span class="time">17/02/2023</span>
+                    </div>
+                    <div class="status seen"><i class="fa-solid fa-circle"></i></div>
+                    </div>
+                    </div>
+                    </div>
+                    </div>
+                    <div class="avt">
+                    <a class="position-relative" href="#" role="button" id="dropdownMenuMember" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src="~/Image/logo.png" alt="avatar" />
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuMember">
+                    <a class="dropdown-item" href="#">Thông tin tài khoản</a>
+                    <a class="dropdown-item" href="#">Danh sách căn hộ</a>
+                    <a class="dropdown-item" href="#">Yêu cầu đã đăng</a>
+                    <a class="dropdown-item" href="#">Lịch sử giao dịch</a>
+                    <a class="dropdown-item" href="#">Tin nhắn</a>
+                    <a class="dropdown-item" href="#">Hộp thư góp ý</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item text-danger" href="#">Đăng xuất <i class="fa-solid fa-arrow-right-from-bracket"></i></a>
+                    </div>
+                    </div>
+                    </div>
+                    <div class="sm-device">
+                        <div class="menu-tab"><i class="fa-solid fa-bars"></i></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <main role="main">
+        <div class="tab-left">
+            <div class="infomation">
+                <div class="avt"><img src="~/Image/logo.png" alt="avt-name" /></div>
+                <div class="name">
+                    <span>Phạm Minh Hiếu</span>
+                    <span>350Point</span>
+                </div>
+            </div>
+            <div class="info-frame">
+                <div class="tab-attr tab-attr-active">
+                    <div>
+                    <i class="fa-solid fa-circle-info"></i>
+                        <span>Thông tin tài khoản</span>
+                    </div>
+                </div>
+                <div class="tab-attr">
+                    <div>
+                        <i class="fa-solid fa-house"></i><span>Danh sách căn hộ</span>
+                    </div>
+                </div>
+                <div class="tab-attr">
+                    <div>
+                        <i class="fa-solid fa-bullhorn"></i><span>Yêu cầu đã đăng</span>
+                    </div>
+                </div>
+                <div class="tab-attr">
+                    <div>
+                        <i class="fa-solid fa-clock-rotate-left"></i><span>Lịch sử giao dịch</span>
+                    </div>
+                </div>
+                <div class="tab-attr">
+                    <div>
+                        <i class="fa-solid fa-comment-dots"></i><span>Tin nhắn</span>
+                    </div>
+                </div>
+                <div class="tab-attr">
+                    <div><i class="fa-solid fa-envelope"></i>
+                    <span>Hộp thư góp ý</span>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <a href="#" class="btn btn-danger">Đăng xuất</a>
+            </div>
+        </div>
+        <div class="tab-right">
+            @RenderBody()
+        </div>
+    </main>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2023 - DoAnTotNghiep - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/Nav/nav.js" type="text/javascript"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

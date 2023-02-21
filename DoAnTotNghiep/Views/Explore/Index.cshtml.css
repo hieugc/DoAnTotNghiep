@@ -1,0 +1,241 @@
+﻿.container-fluid{
+    position: relative;
+    display: flex;
+}
+.frame-map {
+    height: calc(100vh - 160px);
+    width: calc(100% - 700px);
+}
+.BingMap {
+    position: relative;
+    height: 100%;
+    width: 100%;
+}
+
+.search-tool {
+    box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, .1);
+    padding: 12px;
+    margin-top: 12px;
+    position: sticky;
+    top: 0;
+    background: white;
+}
+.search-tool > .d-flex{
+    margin-top: 12px;
+}
+.search-tool > .d-flex > .attribute i{
+    margin-right: 6px;
+}
+.result > p{
+    margin-top: 24px;
+}
+.result > p > span:first-child{
+    margin-right: 12px;
+}
+
+.frame-result {
+    width: 700px;
+    top: 0;
+    z-index: 100;
+    background-color: white;
+    padding: 0 12px;
+    max-height: calc(100vh - 160px);
+    overflow: auto;
+}
+.list-house {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    overflow: auto;
+}
+
+.house-card {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+}
+
+/* Some left and right padding inside the container */
+.house-img-container {
+    padding: 0 16px;
+}
+
+.house-img-container .title {
+    color: grey;
+}
+
+.house-img-container .title .checked {
+    color: orange;
+}
+
+.house-img-container .attribute {
+    display: flex;
+    align-items: center;
+}
+
+.house-img-container .attribute i {
+    margin-right: 24px;
+    font-size: 18px;
+}
+
+.house-img-container .list-attribute {
+    display: flex;
+    gap: 12px;
+}
+
+.house-img-container .list-attribute .attribute i,
+.house-img-container .list-attribute .attribute span {
+    margin-right: 6px;
+}
+
+.house-img-container .item-button {
+    border: none;
+    outline: 0;
+    display: inline-block;
+    padding: 8px;
+    color: white;
+    background-color: #000;
+    text-align: center;
+    cursor: pointer;
+    width: 100%;
+}
+
+.house-img-container .item-button:hover {
+background-color: #555;
+}
+
+.house-img-container .item-button .label-hide {
+display: none;
+}
+
+.house-img-container .item-button:hover .label-hide {
+display: inline-block;
+}
+
+.house-img-container .item-button:hover .label-show {
+display: none;
+}
+
+.pagination {
+    margin-top: 24px;
+}
+
+@media (max-width: 1200px){
+    .list-house {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .frame-result {
+        width: 400px;
+    }
+    .frame-map{
+        width: calc(100% - 400px);
+    }
+}
+
+@media (max-width: 800px) {
+    .list-house {
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+    }
+
+    .attribute span {
+        font-size: small;
+    }
+
+    .frame-result {
+        width: 100%;
+    }
+
+    .frame-map {
+        display: none;
+    }
+}
+@media (max-width: 576px) {
+    .list-house {
+        grid-template-columns: 1fr;
+    }
+
+    .attribute span {
+        font-size: medium;
+    }
+}
+
+#filterModal .modal-content{
+    height: 100%;
+}
+
+#filterModal .modal-header {
+    border-bottom: unset;
+}
+
+#filterModal .modal-body {
+    overflow: hidden;
+}
+
+#filterModal .btn-close {
+    background-color: #fff;
+    border-radius: 0.5rem;
+    opacity: 1;
+    padding: 0.635rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(161, 172, 184, 0.4);
+    transition: all 0.23s ease 0.1s;
+    transform: translate(23px, -25px);
+}
+
+    #filterModal .btn-close:hover, .modal .btn-close:focus, .modal .btn-close:active {
+        opacity: 1;
+        outline: none;
+        transform: translate(20px, -20px);
+    }
+
+
+#filterModal > .modal-dialog{
+    margin: 0;
+    height: 100%;
+    overflow: auto;
+}
+#filterModal .modal-header{
+    display: flex;
+    justify-content: end;
+    padding-bottom: 0;
+}
+#filterModal .modal-header i{
+    cursor: pointer;
+}
+#filterModal .modal-header i:hover{
+    color: #0d6efd;
+}
+
+#filterModal .filter-frame,
+#filterModal .filter-price,
+#filterModal .filter-rangedate {
+    margin-top: 12px;
+}
+#filterModal .filter-frame .contain-option{
+    padding: 12px;
+    border: 1px solid;
+    border-radius: 12px;
+}
+#filterModal .filter-frame .contain-option .filter-option{
+    display: flex;
+    justify-content: space-between;
+}
+#filterModal .filter-price .contain-price {
+    display: flex;
+    justify-content: center;
+}
+#filterModal .filter-price .contain-price span{
+    margin: 0 12px;
+    font-size: 20px;
+    font-weight: 700;
+}
+#filterModal .filter-rangedate .contain-filter input{
+    width: 100%;
+}
+    #filterModal .modal-body {
+        display: flex;
+        flex-flow: column;
+    }
+#filterModal .btn{
+    margin-top: auto;
+}

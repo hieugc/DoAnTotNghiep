@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using DoAnTotNghiep.Entity;
+using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
 
 namespace DoAnTotNghiep.Data
 {
@@ -13,6 +14,20 @@ namespace DoAnTotNghiep.Data
             : base(options)
         {
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<CircleExchangeHouseOfUser>().HasKey(m => new { m.IdUser, m.IdCircleExchangeHouse });
+            modelBuilder.Entity<FileInAdminReport>().HasKey(m => new { m.IdFile, m.IdAdminReport });
+            modelBuilder.Entity<FileInUserReport>().HasKey(m => new { m.IdFile, m.IdUserReport });
+            modelBuilder.Entity<FileInUserResponse>().HasKey(m => new { m.IdFile, m.IdUserResponse });
+            modelBuilder.Entity<FileOfHouse>().HasKey(m => new { m.IdFile, m.IdHouse });
+            modelBuilder.Entity<RequestInCircleExchangeHouse>().HasKey(m => new { m.IdWaitingRequest, m.IdCircleExchangeHouse });
+            modelBuilder.Entity<RulesInHouse>().HasKey(m => new { m.IdRules, m.IdHouse });
+            modelBuilder.Entity<UtilitiesInHouse>().HasKey(m => new { m.IdHouse, m.IdUtilities });
+            modelBuilder.Entity<UsersInChatRoom>().HasKey(m => new { m.IdChatRoom, m.IdUser });
+        }
+
 
         public DbSet<City> Cities { get; set; }
         public DbSet<District> Districts { get; set; }

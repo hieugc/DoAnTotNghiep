@@ -18,8 +18,8 @@ namespace DoAnTotNghiep.Entity
         [Column("lat")]
         public double Lat { get; set; } = 0;//địa điểm trung tâm
 
-        [Column("long")]
-        public double Long { get; set; } = 0;//địa điểm trung tâm
+        [Column("lng")]
+        public double Lng { get; set; } = 0;//địa điểm trung tâm
 
         [Column("count")]
         public int Count { get; set; } = 0;

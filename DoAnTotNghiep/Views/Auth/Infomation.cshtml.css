@@ -1,0 +1,38 @@
+﻿.infomation {
+    max-height: 100%;
+    overflow: auto;
+    padding: 24px;
+    margin: 24px auto;
+    max-width: 1200px;
+    border-radius: 12px;
+    box-shadow: 0 0.25rem 0.75rem 0 rgba(161, 172, 184, 0.12);
+}
+.infomation-head {
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(161, 172, 184, 0.4);
+}
+.infomation-details-frame-title{
+    margin-bottom: 12px;
+    font-size: 18px;
+    font-weight: 600;
+}
+.infomation-details-frame .avt {
+    height: 200px;
+    width: 200px;
+    border: 1px solid rgba(161, 172, 184, 0.4);
+    border-radius: 50%;
+}
+.infomation-details-frame-avt{
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+.control{
+    display: flex;
+    gap: 12px;
+}
+fieldset > div{
+    gap: 12px;
+    align-items: center;
+}

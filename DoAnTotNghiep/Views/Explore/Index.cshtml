@@ -1,0 +1,181 @@
+﻿@using DoAnTotNghiep.Entity
+@{
+    ViewData["Title"] = "Khám phá";
+    Layout = "_LayoutExplore";
+}
+<div class="container-fluid">
+    <div class="frame-result">
+        <div class="search-tool">
+            <div>
+                <form name="search" class="d-flex">
+                    <input type="search" class="rounded-start rounded-0 form-control" placeholder="Bạn muốn đi đâu?" name="explore" id="explore-1" />
+                    <button class="btn btn-sm btn-dark rounded-0 rounded-end"><i class="fa-sharp fa-solid fa-magnifying-glass"></i></button>
+                </form>
+            </div>
+            <div class="d-flex">
+                <span class="attribute"><i class="fa-solid fa-users"></i><span>4</span></span>
+                <span class="px-4">|</span>
+                <span class="attribute" data-bs-toggle="modal" data-bs-target="#filterModal"><i class="fa-sharp fa-solid fa-filter"></i><span>Tùy chỉnh</span></span>
+            </div>
+        </div>
+
+        <!--Result-->
+        <div class="result">
+            <p><span>Kết quả tìm kiếm:</span><span><strong>48</strong></span></p>
+
+            <div class="list-house">
+                @for (var item = 0; item < 6; item++)
+                {
+                    <div class="house-card">
+                        <img src="~/Image/house-demo.png" alt="Mike" style="width:100%">
+                        <div class="house-img-container">
+                            <h2>Nhà của Hiếu</h2>
+                            <p class="attribute"><i class="fa-solid fa-map-location-dot"></i><span>268 Ly Thuong Kiet Street - Ward 14, District 10, HCMC, Ho Chi Minh City</span></p>
+                            <div class="list-attribute">
+                                <p class="attribute"><span>4</span><i class="fa-solid fa-star"></i></p>
+                                <p class="attribute"><i class="fa-solid fa-users"></i><span>4</span></p>
+                                <p class="attribute"><i class="fa-solid fa-bed"></i><span>2</span></p>
+                            </div>
+                            <p>
+                                <button class="item-button">
+                                    <span class="label-show">200point/night</span>
+                                    <span class="label-hide">Xem chi tiết</span>
+                                </button>
+                            </p>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item">
+                        <a class="page-link" href="#" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+    <div class="frame-map">
+        <div id="myMap" class="BingMap" onload="GetMap();"></div>
+    </div>
+</div>
+
+<div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <i class="fa-solid fa-chevron-left" data-bs-dismiss="modal" aria-label="Close"></i>
+            </div>
+            <div class="modal-body">
+                <div class="filter-frame">
+                    <h5>Sắp xếp</h5>
+                    <div class="contain-option">
+                        <div class="filter-option">
+                            <label for="filter-sort-1" class="form-check-label">Đánh giá cao đến thấp</label>
+                            <input type="radio" name="filter-sort" id="filter-sort-1" value="1" checked class="form-check-input" />
+                        </div>
+                        <div class="filter-option">
+                            <label for="filter-sort-2" class="form-check-label">Đánh giá thấp đến cao</label>
+                            <input type="radio" name="filter-sort" id="filter-sort-2" value="2" class="form-check-input" />
+                        </div>
+                        <div class="filter-option">
+                            <label for="filter-sort-3" class="form-check-label">Giá cao đến thấp</label>
+                            <input type="radio" name="filter-sort" id="filter-sort-3" value="3" class="form-check-input" />
+                        </div>
+                        <div class="filter-option">
+                            <label for="filter-sort-4" class="form-check-label">Giá thấp đến cao</label>
+                            <input type="radio" name="filter-sort" id="filter-sort-4" value="4" class="form-check-input" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="filter-price">
+                    <h5>Khoảng giá</h5>
+                    <div class="contain-price">
+                        <input type="text" placeholder="0" name="min-value" id="min-value" class="form-control"/>
+                        <span>-</span>
+                        <input type="text" placeholder="200" name="max-value" id="max-value" class="form-control" />
+                    </div>
+                </div>
+
+                <div class="filter-frame">
+                    <h5>Tiện ích</h5>
+                    <div class="contain-option">
+                        <div class="filter-option">
+                            <label for="filter-check-1" class="form-check-label">Wifi</label>
+                            <input type="checkbox" name="filter-check-1" id="filter-check-1" checked class="form-check-input" />
+                        </div>
+                        <div class="filter-option">
+                            <label for="filter-check-2" class="form-check-label">Wifi</label>
+                            <input type="checkbox" name="filter-check-1" id="filter-check-2" checked class="form-check-input" />
+                        </div>
+                        <div class="filter-option">
+                            <label for="filter-check-3" class="form-check-label">Wifi</label>
+                            <input type="checkbox" name="filter-check-1" id="filter-check-3" checked class="form-check-input" />
+                        </div>
+                        <div class="filter-option">
+                            <label for="filter-check-4" class="form-check-label">Wifi</label>
+                            <input type="checkbox" name="filter-check-1" id="filter-check-4" checked class="form-check-input" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="filter-rangedate">
+                    <h5>Ngày đến</h5>
+                    <div class="contain-option">
+                        <input type="text" name="daterange" id="daterange" value="01/01/2018 - 01/15/2018" class="form-control"/>
+                    </div>
+                </div>
+
+                <div class="w-100 btn btn-primary">Áp dụng</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+
+    @*<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />*@
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/litepicker/dist/css/litepicker.css" />
+    <script src="https://cdn.jsdelivr.net/npm/litepicker/dist/litepicker.js"></script>
+
+    <!--BingMap-->
+    <script type='text/javascript' 
+        src='https://www.bing.com/api/maps/mapcontrol?callback=GetMap&key=Asf_PRzBpUJVcb9lcAg48BLOuAuaBItg4ZzCqaNQaSIFReqieYA02KBcovVD08Jk' 
+        async defer></script>
+
+    <script type='text/javascript'>
+        function GetMap() {
+            var map = new Microsoft.Maps.Map('#myMap');
+
+            //Add your post map load code here.
+        }
+
+        const picker = new Litepicker({
+            element: document.getElementById('daterange'),
+            singleMode: false,
+            tooltipText: {
+                one: 'night',
+                other: 'nights'
+            },
+            tooltipNumber: (totalDays) => {
+                return totalDays - 1;
+            }
+        })
+    </script>
+}

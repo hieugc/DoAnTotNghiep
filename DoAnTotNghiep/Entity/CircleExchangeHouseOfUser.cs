@@ -7,11 +7,11 @@ namespace DoAnTotNghiep.Entity
     public class CircleExchangeHouseOfUser
     {
         [Key]
-        [Column("id_circle_exchange_house", Order = 1)]
+        [Column("id_circle_exchange_house", Order = 2)]
         public int IdCircleExchangeHouse { get; set; }
 
         [Key]
-        [Column("id_user", Order = 2)]
+        [Column("id_user", Order = 1)]
         public int IdUser { get; set; }
 
         [ForeignKey(nameof(IdCircleExchangeHouse))]
