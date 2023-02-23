@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- TODO: Update blank fragment layout -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/appCompatTextView32"
+            style="@style/AddHomeTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/add_home_title_1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/appCompatTextView33"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/add_home_small_txt_1"
+            app:layout_constraintEnd_toEndOf="@+id/appCompatTextView32"
+            app:layout_constraintStart_toStartOf="@+id/appCompatTextView32"
+            app:layout_constraintTop_toBottomOf="@+id/appCompatTextView32" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/appCompatTextView34"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="Loại nhà"
+            android:textColor="@color/black_60"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/appCompatTextView33" />
+
+        <RadioGroup
+            android:id="@+id/homeTypeRadioGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:checkedButton="@id/homeRB"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/appCompatTextView34">
+
+            <androidx.appcompat.widget.AppCompatRadioButton
+                android:id="@+id/homeRB"
+                style="@style/IconWrapper"
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="36dp"
+                android:layout_marginEnd="36dp"
+                android:drawableTop="@drawable/ic_houseline"
+                android:text="Căn nhà" />
+
+            <androidx.appcompat.widget.AppCompatRadioButton
+                android:id="@+id/apartmentRB"
+                style="@style/IconWrapper"
+                android:button="@android:color/transparent"
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="36dp"
+                android:layout_marginEnd="36dp"
+                android:drawableTop="@drawable/ic_building"
+                android:text="Căn hộ" />
+
+        </RadioGroup>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/appCompatTextView35"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="Loại cư trú"
+            android:layout_marginTop="16dp"
+            android:textColor="@color/black_60"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/homeTypeRadioGroup" />
+
+
+        <RadioGroup
+            android:id="@+id/RadioGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checkedButton="@id/mainRB"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/appCompatTextView35">
+
+            <androidx.appcompat.widget.AppCompatRadioButton
+                android:id="@+id/mainRB"
+                style="@style/IconWrapper"
+                android:layout_marginStart="36dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="36dp"
+                android:drawableTop="@drawable/ic_houseline"
+                android:text="Nhà chính"
+                 />
+
+            <androidx.appcompat.widget.AppCompatRadioButton
+                android:id="@+id/secondaryRB"
+                style="@style/IconWrapper"
+                android:layout_marginStart="36dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="36dp"
+                android:drawableTop="@drawable/ic_house_50"
+                android:text="Nhà phụ" />
+
+        </RadioGroup>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

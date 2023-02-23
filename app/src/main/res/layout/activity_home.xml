@@ -16,7 +16,7 @@
             android:background="@color/white"
             app:elevation="5dp">
 
-            <androidx.appcompat.widget.Toolbar
+            <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbarHome"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -28,8 +28,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
+                    style="@style/AppTheme.AppBarTitleTextStyle"
                     android:text=""/>
 
                 <LinearLayout
@@ -58,11 +57,10 @@
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="150dp"
-                    android:layout_height="match_parent"
+                    android:layout_height="40dp"
                     android:id="@+id/ivLogo"
                     android:layout_gravity="center"
-                    android:src="@mipmap/ic_launcher"
-                    app:tint="@color/secondary"/>
+                    android:src="@drawable/ic_logo"/>
 
                 <androidx.appcompat.widget.AppCompatImageView
                     style="@style/AppTheme.Icon"
@@ -78,7 +76,7 @@
                     android:layout_marginEnd="10dp"
                     android:src="@drawable/ic_menu"/>
 
-            </androidx.appcompat.widget.Toolbar>
+            </com.google.android.material.appbar.MaterialToolbar>
             
         </com.google.android.material.appbar.AppBarLayout>
 

@@ -13,7 +13,6 @@
             android:id="@+id/messageRecView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginBottom="16dp"
             tools:listitem="@layout/my_message_item"
             app:layout_constraintBottom_toTopOf="@id/msgInputLayout"
             app:layout_constraintTop_toTopOf="parent" />

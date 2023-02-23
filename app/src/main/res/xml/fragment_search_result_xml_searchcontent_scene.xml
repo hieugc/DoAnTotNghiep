@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MotionScene 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:motion="http://schemas.android.com/apk/res-auto">
+
+    <Transition
+        motion:constraintSetEnd="@+id/end"
+        motion:constraintSetStart="@id/start"
+        motion:duration="500">
+       <KeyFrameSet>
+           <KeyAttribute
+               motion:motionTarget="@+id/seeMapFAB"
+               motion:framePosition="1"
+               android:alpha="0" />
+           <KeyAttribute
+               motion:motionTarget="@+id/mapView"
+               motion:framePosition="1"
+               android:alpha="1" />
+           <KeyAttribute
+               motion:motionTarget="@+id/homeSearchItem"
+               motion:framePosition="50"
+               android:alpha="1" />
+       </KeyFrameSet>
+        <OnSwipe
+            motion:nestedScrollFlags="disableScroll"
+            motion:touchAnchorId="@+id/searchHomeLayout"
+            motion:dragDirection="dragDown" />
+        <OnClick motion:targetId="@+id/seeMapFAB" />
+    </Transition>
+
+    <ConstraintSet android:id="@+id/start">
+    </ConstraintSet>
+
+    <ConstraintSet android:id="@+id/end">
+        <Constraint
+            android:id="@+id/seeMapFAB"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="16dp"
+            motion:layout_constraintStart_toStartOf="parent"
+            android:alpha="0" />
+        <Constraint
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            motion:layout_constraintTop_toBottomOf="@id/pickDateLayout"
+            android:id="@+id/searchHomeLayout"
+            motion:layout_constraintVertical_bias="1.0" />
+        <Constraint
+            android:id="@+id/mapView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="8dp"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            motion:layout_constraintTop_toBottomOf="@id/pickDateLayout"
+            android:alpha="1" />
+        <Constraint
+            android:id="@+id/homeSearchItem"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="56dp"
+            android:layout_marginEnd="24dp"
+            android:alpha="1"
+            android:layout_marginStart="24dp"
+            motion:layout_constraintStart_toStartOf="parent" />
+    </ConstraintSet>
+</MotionScene>

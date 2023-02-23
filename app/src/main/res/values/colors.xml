@@ -6,6 +6,7 @@
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
+    <color name="black_33">#54000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="primary">#004F71</color>
     <color name="secondary">#1e1e1e</color>
@@ -25,5 +26,7 @@
     <color name="light_blue">#F0FBFF</color>
     <color name="white_60">#99FFFFFF</color>
     <color name="address_box">#803E3E3E</color>
+    <color name="link">#08059B</color>
+    <color name="green">#008000</color>
     <color name="blue_60">#99009EF6</color>
 </resources>

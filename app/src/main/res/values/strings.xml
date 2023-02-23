@@ -34,6 +34,7 @@
     <string name="confirm_pwd">Xác nhận mật khẩu</string>
     <string name="something_went_wrong">Something went wrong</string>
     <string name="lorem">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore</string>
+    <string name="lorem_long">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
     <string name="ok">OK</string>
     <string name="me">Tôi</string>
     <string name="notification">Thông báo</string>
@@ -86,6 +87,17 @@
     <string name="delete_filter">&lt;a href="">Xóa bộ lọc&lt;/a></string>
     <string name="apply">Áp dụng</string>
     <string name="see_maps">Xem bản đồ</string>
+    <string name="contact">Liên hệ</string>
+    <string name="report_short">Báo cáo</string>
+    <string name="change_date">Đổi ngày</string>
+    <string name="create_request">Tạo yêu cầu</string>
+    <string name="pick_your_home">Chọn nhà của bạn dùng để trao đổi</string>
+    <string name="pick_home">Chọn nhà bạn muốn trao đổi</string>
+    <string name="main_home">Nhà chính</string>
+    <string name="secondary_home">Nhà phụ</string>
+    <string name="status">Trạng thái</string>
+    <string name="add_home_title_1">Hello Phạm Minh Hiếu, nhà của bạn ra sao?</string>
+    <string name="add_home_small_txt_1">Hãy cho chúng tôi biết về nhà loại nhà và loại cư trú của bạn</string>
     <string name="update_profile">Cập nhật thông tin</string>
     <string name="change_password">Đổi mật khẩu</string>
     <string name="old_password">Mật khẩu cũ</string>
@@ -94,4 +106,13 @@
     <string name="user_profile">Hồ sơ cá nhân</string>
     <string name="sign_in_sign_up">Đăng nhập/Đăng ký</string>
     <string name="login_to_use">Hãy đăng nhập ngay để đột phá mọi trải nghiệm ngay nào!</string>
+    <string name="add_home_title_2">Kể thêm cho chúng tôi về căn nhà của bạn</string>
+    <string name="add_home_small_txt_2">Thông tin chi tiết về căn nhà</string>
+    <string name="add_home_title_3">Những tiện ích cũng như nội quy trong nhà của bạn</string>
+    <string name="add_home_small_txt_3">Hãy cung cấp các tiện ích và nội quy để người dùng khác có thể biết trước khi trao đổi với bạn</string>
+    <string name="add_home_title_4">Hình ảnh luôn thu hút người dùng và cho họ cái nhin tổng quan</string>
+    <string name="add_home_small_txt_4">Hãy cho người dùng khác chiêm ngưỡng vẻ đẹp của căn nhà bạn</string>
+    <string name="point_txt">Tổng điểm bạn cần phải trả</string>
+    <string name="delete">Xóa</string>
+    <string name="edit">Sửa</string>
 </resources>

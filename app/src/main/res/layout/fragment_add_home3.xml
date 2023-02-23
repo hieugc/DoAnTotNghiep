@@ -1,0 +1,472 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- TODO: Update blank fragment layout -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/appCompatTextView32"
+            style="@style/AddHomeTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/add_home_title_3"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/appCompatTextView33"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/add_home_small_txt_3"
+            app:layout_constraintEnd_toEndOf="@+id/appCompatTextView32"
+            app:layout_constraintStart_toStartOf="@+id/appCompatTextView32"
+            app:layout_constraintTop_toBottomOf="@+id/appCompatTextView32" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/appCompatTextView34"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="Số phòng ngủ"
+            android:textColor="@color/black_60"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/appCompatTextView33" />
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal"
+            app:layout_constraintStart_toStartOf="@id/appCompatTextView34"
+            app:layout_constraintTop_toBottomOf="@id/appCompatTextView34">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@drawable/outline_bg_ripple"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="8dp">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/minusBedRoom"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_minus_24" />
+
+            </LinearLayout>
+
+            <EditText
+                android:id="@+id/edtBedRoom"
+                style="@style/QuantityEdtTxt"
+                android:text="1"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@drawable/outline_bg_ripple"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="8dp">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/addBedRoom"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_plus_24" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/appCompatTextView35"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="Số giường"
+            android:textColor="@color/black_60"
+            app:layout_constraintStart_toEndOf="@id/guideline10"
+            app:layout_constraintTop_toBottomOf="@+id/appCompatTextView33" />
+
+        <LinearLayout
+            android:id="@+id/linearLayout4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal"
+            app:layout_constraintStart_toStartOf="@id/appCompatTextView35"
+            app:layout_constraintTop_toBottomOf="@id/appCompatTextView35">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@drawable/outline_bg_ripple"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="8dp">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/minusBed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_minus_24" />
+
+            </LinearLayout>
+
+            <EditText
+                android:id="@+id/edtBed"
+                style="@style/QuantityEdtTxt"
+                android:layout_width="60dp"
+                android:text="1"
+                android:layout_height="wrap_content" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@drawable/outline_bg_ripple"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="8dp">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/addBed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_plus_24" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/appCompatTextView36"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="Số phòng tắm"
+            android:textColor="@color/black_60"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+
+        <LinearLayout
+            android:id="@+id/linearLayout2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal"
+            app:layout_constraintStart_toStartOf="@id/appCompatTextView36"
+            app:layout_constraintTop_toBottomOf="@id/appCompatTextView36">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@drawable/outline_bg_ripple"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="8dp">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/minusBathRoom"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_minus_24" />
+
+            </LinearLayout>
+
+            <EditText
+                android:id="@+id/edtBathRoom"
+                style="@style/QuantityEdtTxt"
+                android:text="1"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@drawable/outline_bg_ripple"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="8dp">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/addBathRoom"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_plus_24" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/appCompatTextView37"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="Số người"
+            android:textColor="@color/black_60"
+            app:layout_constraintStart_toEndOf="@id/guideline10"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout4" />
+
+        <LinearLayout
+            android:id="@+id/linearLayout3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal"
+            app:layout_constraintStart_toStartOf="@id/appCompatTextView37"
+            app:layout_constraintTop_toBottomOf="@id/appCompatTextView37">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@drawable/outline_bg_ripple"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="8dp">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/minusPeople"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_minus_24" />
+
+            </LinearLayout>
+
+            <EditText
+                android:id="@+id/edtPeople"
+                style="@style/QuantityEdtTxt"
+                android:text="1"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@drawable/outline_bg_ripple"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="8dp">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/addPeople"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_plus_24" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/appCompatTextView38"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="Tiện ích"
+            android:textColor="@color/black_60"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroup"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/appCompatTextView38">
+
+            <com.google.android.material.chip.Chip
+                style="@style/AppTheme.MyChoiceChip"
+                app:chipIconEnabled="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tiện ích"
+                app:chipIcon="@drawable/ic_house"/>
+
+            <com.google.android.material.chip.Chip
+                style="@style/AppTheme.MyChoiceChip"
+                app:chipIconEnabled="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tiện ích"
+                app:chipIcon="@drawable/ic_house" />
+
+            <com.google.android.material.chip.Chip
+                style="@style/AppTheme.MyChoiceChip"
+                app:chipIconEnabled="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tiện ích"
+                app:chipIcon="@drawable/ic_house"/>
+
+            <com.google.android.material.chip.Chip
+                style="@style/AppTheme.MyChoiceChip"
+                app:chipIconEnabled="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tiện ích"
+                app:chipIcon="@drawable/ic_house"/>
+
+            <com.google.android.material.chip.Chip
+                style="@style/AppTheme.MyChoiceChip"
+                app:chipIconEnabled="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tiện ích"
+                app:chipIcon="@drawable/ic_house"/>
+
+            <com.google.android.material.chip.Chip
+                style="@style/AppTheme.MyChoiceChip"
+                app:chipIconEnabled="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tiện ích"
+                app:chipIcon="@drawable/ic_house"/>
+
+            <com.google.android.material.chip.Chip
+                style="@style/AppTheme.MyChoiceChip"
+                app:chipIconEnabled="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tiện ích"
+                app:chipIcon="@drawable/ic_house"/>
+
+            <com.google.android.material.chip.Chip
+                style="@style/AppTheme.MyChoiceChip"
+                app:chipIconEnabled="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tiện ích"
+                app:chipIcon="@drawable/ic_house" />
+
+            <com.google.android.material.chip.Chip
+                style="@style/AppTheme.MyChoiceChip"
+                app:chipIconEnabled="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tiện ích"
+                app:chipIcon="@drawable/ic_house" />
+
+        </com.google.android.material.chip.ChipGroup>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/appCompatTextView39"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="Nội quy"
+            android:textColor="@color/black_60"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/chipGroup" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/appCompatTextView39"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp">
+
+            <com.google.android.material.chip.Chip
+                style="@style/AppTheme.MyChoiceChip"
+                app:chipIconEnabled="true"
+                android:layout_width="wrap_content"
+                android:checked="true"
+                android:layout_height="wrap_content"
+                android:text="Tiện ích"
+                app:chipIcon="@drawable/ic_house"/>
+            <com.google.android.material.chip.Chip
+                style="@style/AppTheme.MyChoiceChip"
+                app:chipIconEnabled="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tiện ích"
+                app:chipIcon="@drawable/ic_house"/>
+            <com.google.android.material.chip.Chip
+                style="@style/AppTheme.MyChoiceChip"
+                app:chipIconEnabled="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tiện ích"
+                app:chipIcon="@drawable/ic_house"/>
+            <com.google.android.material.chip.Chip
+                style="@style/AppTheme.MyChoiceChip"
+                app:chipIconEnabled="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tiện ích"
+                app:chipIcon="@drawable/ic_house"/>
+            <com.google.android.material.chip.Chip
+                style="@style/AppTheme.MyChoiceChip"
+                app:chipIconEnabled="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tiện ích"
+                app:chipIcon="@drawable/ic_house"/>
+            <com.google.android.material.chip.Chip
+                style="@style/AppTheme.MyChoiceChip"
+                app:chipIconEnabled="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tiện ích"
+                app:chipIcon="@drawable/ic_house"/>
+            <com.google.android.material.chip.Chip
+                style="@style/AppTheme.MyChoiceChip"
+                app:chipIconEnabled="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tiện ích"
+                app:chipIcon="@drawable/ic_house"/>
+            <com.google.android.material.chip.Chip
+                style="@style/AppTheme.MyChoiceChip"
+                app:chipIconEnabled="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tiện ích"
+                app:chipIcon="@drawable/ic_house"/>
+            <com.google.android.material.chip.Chip
+                style="@style/AppTheme.MyChoiceChip"
+                app:chipIconEnabled="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tiện ích"
+                app:chipIcon="@drawable/ic_house"/>
+
+        </com.google.android.material.chip.ChipGroup>
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline10"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

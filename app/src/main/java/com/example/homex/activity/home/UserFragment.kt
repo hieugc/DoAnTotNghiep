@@ -24,8 +24,11 @@ class UserFragment : BaseFragment<FragmentUserBinding>() {
     }
 
     override fun setEvent() {
-        binding.btnMyProfile.setOnClickListener{
+        binding.btnMyProfile.setOnClickListener {
             findNavController().navigate(R.id.action_userFragment_to_myProfileFragment)
+        }
+        binding.btnYourHouse.setOnClickListener {
+            findNavController().navigate(R.id.action_userFragment_to_myHomeFragment)
         }
     }
 }

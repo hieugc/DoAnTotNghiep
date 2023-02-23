@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.homex.activity.home.HomeActivity
 import com.example.homex.adapter.MessageAdapter
@@ -34,28 +35,28 @@ class MessageBoxFragment : BaseFragment<FragmentMessageBoxBinding>() {
     override fun setView() {
         adapter = MessageAdapter(
             arrayListOf(
-                Message(id = "1", message = "alo alo", isMyMessage = false),
-                Message(id = "1", message = "bạn ơi, nhà của bạn có ở gần trung tâm mua sắm không nhỉ", isMyMessage = false),
-                Message(id = "1", message = "có bạn ơi", isMyMessage = true),
-                Message(id = "1", message = "cách căn hộ 3km sẽ có 1 trung tâm mua sắm bạn nhé !", isMyMessage = true),
-                Message(id = "1", message = "ok bạn, có gì mình sẽ xem qua", isMyMessage = false),
-                Message(id = "1", message = "tại mình cần mua một số thứ", isMyMessage = false),
-                Message(id = "1", message = "ok bạn hiền", isMyMessage = true),
-                Message(id = "1", message = "có gì bạn cứ nhắn mình nhé", isMyMessage = true),
-                Message(id = "1", message = "ok bạn, cảm ơn bạn rất nhiều", isMyMessage = false),
-                Message(id = "1", message = "ok bạn, không có chi", isMyMessage = true),
                 Message(id = "1", message = "alo bạn ơi", isMyMessage = false),
-            )
+                Message(id = "1", message = "ok bạn, không có chi", isMyMessage = true),
+                Message(id = "1", message = "ok bạn, cảm ơn bạn rất nhiều", isMyMessage = false),
+                Message(id = "1", message = "có gì bạn cứ nhắn mình nhé", isMyMessage = true),
+                Message(id = "1", message = "ok bạn hiền", isMyMessage = true),
+                Message(id = "1", message = "tại mình cần mua một số thứ", isMyMessage = false),
+                Message(id = "1", message = "ok bạn, có gì mình sẽ xem qua", isMyMessage = false),
+                Message(id = "1", message = "cách căn hộ 3km sẽ có 1 trung tâm mua sắm bạn nhé !", isMyMessage = true),
+                Message(id = "1", message = "có bạn ơi", isMyMessage = true),
+                Message(id = "1", message = "bạn ơi, nhà của bạn có ở gần trung tâm mua sắm không nhỉ", isMyMessage = false),
+                Message(id = "1", message = "alo alo", isMyMessage = false),
+                )
         )
         binding.messageRecView.adapter = adapter
-        val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, true)
         binding.messageRecView.layoutManager = layoutManager
 
     }
 
     override fun setEvent() {
         binding.addBtn.setOnClickListener {
-            Log.e("add", "hello")
+            findNavController().navigate(R.id.action_messageBoxFragment_to_createRequestBottomSheetFragment)
         }
         binding.sendBtn.setOnClickListener {
             Log.e("send", "hello")

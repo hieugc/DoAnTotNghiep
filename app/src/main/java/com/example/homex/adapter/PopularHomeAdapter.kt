@@ -7,7 +7,7 @@ import com.example.homex.R
 import com.example.homex.databinding.PopularHomeItemBinding
 import com.example.homex.extension.dpToPx
 
-class PopularHomeAdapter(val homeList: ArrayList<String>?): RecyclerView.Adapter<PopularHomeAdapter.PopularHomeViewHolder>() {
+class PopularHomeAdapter(val homeList: ArrayList<String>?, val onClick: ()->Unit): RecyclerView.Adapter<PopularHomeAdapter.PopularHomeViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PopularHomeViewHolder {
         return PopularHomeViewHolder(
             PopularHomeItemBinding.bind(LayoutInflater.from(parent.context).inflate(
@@ -29,6 +29,9 @@ class PopularHomeAdapter(val homeList: ArrayList<String>?): RecyclerView.Adapter
             val lastParams = holder.itemView.layoutParams as ViewGroup.MarginLayoutParams
             lastParams.leftMargin = 16f.dpToPx(holder.itemView.context)
             holder.itemView.requestLayout()
+        }
+        holder.binding.root.setOnClickListener {
+            onClick.invoke()
         }
     }
 

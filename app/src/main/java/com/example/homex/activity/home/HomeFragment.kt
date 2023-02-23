@@ -40,7 +40,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
             PopularHomeAdapter(
                 arrayListOf(
                     "Nhà của Hiếu", "Nhà của tui", "Nhà Nhà Nhà", "Hello mudafakar"
-                )
+                ),
+                onClick = {
+                    findNavController().navigate(R.id.action_global_homeDetailFragment)
+                }
             )
 
         binding.popularHomeRecView.adapter = homeAdapter
