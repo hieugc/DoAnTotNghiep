@@ -43,6 +43,12 @@
         <action
             android:id="@+id/action_userFragment_to_myProfileFragment"
             app:destination="@id/myProfileFragment" />
+        <action
+            android:id="@+id/action_userFragment_to_transHistoryFragment"
+            app:destination="@id/transHistoryFragment" />
+        <action
+            android:id="@+id/action_userFragment_to_pointHistoryFragment"
+            app:destination="@id/pointHistoryFragment" />
     </fragment>
     <fragment
         android:id="@+id/messageFragment"
@@ -196,5 +202,28 @@
             android:id="@+id/action_createRequestBottomSheetFragment_to_createRequestFragment"
             app:destination="@id/createRequestFragment" />
     </dialog>
+    <fragment
+        android:id="@+id/transHistoryFragment"
+        android:name="com.example.homex.activity.home.TransHistoryFragment"
+        android:label="TransHistoryFragment" >
+        <action
+            android:id="@+id/action_transHistoryFragment_to_rateBottomSheetFragment"
+            app:destination="@id/rateBottomSheetFragment" />
+        <action
+            android:id="@+id/action_transHistoryFragment_to_requestDetailFragment"
+            app:destination="@id/requestDetailFragment" />
+    </fragment>
+    <dialog
+        android:id="@+id/rateBottomSheetFragment"
+        android:name="com.example.homex.activity.home.RateBottomSheetFragment"
+        android:label="RateBottomSheetFragment" />
+    <fragment
+        android:id="@+id/requestDetailFragment"
+        android:name="com.example.homex.activity.home.RequestDetailFragment"
+        android:label="RequestDetailFragment" />
+    <fragment
+        android:id="@+id/pointHistoryFragment"
+        android:name="com.example.homex.activity.home.PointHistoryFragment"
+        android:label="PointHistoryFragment" />
 
 </navigation>

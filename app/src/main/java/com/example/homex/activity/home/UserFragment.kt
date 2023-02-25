@@ -30,5 +30,12 @@ class UserFragment : BaseFragment<FragmentUserBinding>() {
         binding.btnYourHouse.setOnClickListener {
             findNavController().navigate(R.id.action_userFragment_to_myHomeFragment)
         }
+
+        binding.btnHistory.setOnClickListener{
+            findNavController().navigate(R.id.action_userFragment_to_transHistoryFragment)
+        }
+        binding.btnPoint.setOnClickListener{
+            findNavController().navigate(R.id.action_userFragment_to_pointHistoryFragment)
+        }
     }
 }

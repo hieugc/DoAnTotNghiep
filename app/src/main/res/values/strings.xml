@@ -115,4 +115,14 @@
     <string name="point_txt">Tổng điểm bạn cần phải trả</string>
     <string name="delete">Xóa</string>
     <string name="edit">Sửa</string>
+    <string name="swapped">Đã trao đổi</string>
+    <string name="rated">Đã đánh giá</string>
+    <string name="rate">Đánh giá</string>
+    <string name="swap_history">Lịch sử trao đổi</string>
+    <string name="rate_home">Đánh giá căn hộ</string>
+    <string name="rate_user">Đánh giá nguời dùng</string>
+    <string name="home_comment_hint">Cảm nghĩ của bạn về căn hộ</string>
+    <string name="send_rating">Gửi đánh giá</string>
+    <string name="top_up_point">Nạp điểm</string>
+    <string name="your_rating">Đánh giá của bạn</string>
 </resources>
