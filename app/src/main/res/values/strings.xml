@@ -107,7 +107,7 @@
     <string name="sign_in_sign_up">Đăng nhập/Đăng ký</string>
     <string name="login_to_use">Hãy đăng nhập ngay để đột phá mọi trải nghiệm ngay nào!</string>
     <string name="add_home_title_2">Kể thêm cho chúng tôi về căn nhà của bạn</string>
-    <string name="add_home_small_txt_2">Thông tin chi tiết về căn nhà</string>
+    <string name="add_home_small_txt_2">Điền các thông tin chi tiết về căn nhà</string>
     <string name="add_home_title_3">Những tiện ích cũng như nội quy trong nhà của bạn</string>
     <string name="add_home_small_txt_3">Hãy cung cấp các tiện ích và nội quy để người dùng khác có thể biết trước khi trao đổi với bạn</string>
     <string name="add_home_title_4">Hình ảnh luôn thu hút người dùng và cho họ cái nhin tổng quan</string>
@@ -115,6 +115,7 @@
     <string name="point_txt">Tổng điểm bạn cần phải trả</string>
     <string name="delete">Xóa</string>
     <string name="edit">Sửa</string>
+    <string name="signup_signin">Đăng ký/Đăng nhập</string>
     <string name="swapped">Đã trao đổi</string>
     <string name="rated">Đã đánh giá</string>
     <string name="rate">Đánh giá</string>
@@ -125,4 +126,10 @@
     <string name="send_rating">Gửi đánh giá</string>
     <string name="top_up_point">Nạp điểm</string>
     <string name="your_rating">Đánh giá của bạn</string>
+    <string name="no_smoking">Không hút thuốc</string>
+    <string name="no_pet">Không thú cưng</string>
+    <string name="upload_image">Thêm hình ảnh</string>
+    <string name="select_from_gallery">Chọn từ thư viện</string>
+    <string name="temp_images_dir">temp_image_file</string>
+    <string name="temp_image">temp_image.jpg</string>
 </resources>

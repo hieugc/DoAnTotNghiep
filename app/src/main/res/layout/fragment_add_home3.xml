@@ -3,10 +3,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <!-- TODO: Update blank fragment layout -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true">
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:paddingBottom="70dp">
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/appCompatTextView32"
@@ -54,10 +59,10 @@
                 android:background="@drawable/outline_bg_ripple"
                 android:clickable="true"
                 android:focusable="true"
+                android:id="@+id/minusBedRoom"
                 android:padding="8dp">
 
                 <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/minusBedRoom"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -78,10 +83,10 @@
                 android:background="@drawable/outline_bg_ripple"
                 android:clickable="true"
                 android:focusable="true"
+                android:id="@+id/addBedRoom"
                 android:padding="8dp">
 
                 <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/addBedRoom"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -116,10 +121,10 @@
                 android:background="@drawable/outline_bg_ripple"
                 android:clickable="true"
                 android:focusable="true"
+                android:id="@+id/minusBed"
                 android:padding="8dp">
 
                 <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/minusBed"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -140,10 +145,10 @@
                 android:background="@drawable/outline_bg_ripple"
                 android:clickable="true"
                 android:focusable="true"
+                android:id="@+id/addBed"
                 android:padding="8dp">
 
                 <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/addBed"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -176,11 +181,11 @@
                 android:layout_height="match_parent"
                 android:background="@drawable/outline_bg_ripple"
                 android:clickable="true"
+                android:id="@+id/minusBathRoom"
                 android:focusable="true"
                 android:padding="8dp">
 
                 <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/minusBathRoom"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -201,10 +206,10 @@
                 android:background="@drawable/outline_bg_ripple"
                 android:clickable="true"
                 android:focusable="true"
+                android:id="@+id/addBathRoom"
                 android:padding="8dp">
 
                 <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/addBathRoom"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -239,10 +244,10 @@
                 android:background="@drawable/outline_bg_ripple"
                 android:clickable="true"
                 android:focusable="true"
+                android:id="@+id/minusPeople"
                 android:padding="8dp">
 
                 <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/minusPeople"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -262,11 +267,11 @@
                 android:layout_height="match_parent"
                 android:background="@drawable/outline_bg_ripple"
                 android:clickable="true"
+                android:id="@+id/addPeople"
                 android:focusable="true"
                 android:padding="8dp">
 
                 <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/addPeople"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -302,72 +307,81 @@
                 app:chipIconEnabled="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Tiện ích"
-                app:chipIcon="@drawable/ic_house"/>
+                android:text="@string/wifi"
+                android:id="@+id/wifiChip"
+                app:chipIcon="@drawable/ic_wifi"/>
 
             <com.google.android.material.chip.Chip
                 style="@style/AppTheme.MyChoiceChip"
                 app:chipIconEnabled="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Tiện ích"
-                app:chipIcon="@drawable/ic_house" />
+                android:text="@string/computer"
+                android:id="@+id/computerChip"
+                app:chipIcon="@drawable/ic_computer" />
 
             <com.google.android.material.chip.Chip
                 style="@style/AppTheme.MyChoiceChip"
                 app:chipIconEnabled="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Tiện ích"
-                app:chipIcon="@drawable/ic_house"/>
+                android:text="@string/smart_tv"
+                android:id="@+id/smartTVChip"
+                app:chipIcon="@drawable/ic_tv"/>
 
             <com.google.android.material.chip.Chip
                 style="@style/AppTheme.MyChoiceChip"
                 app:chipIconEnabled="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Tiện ích"
-                app:chipIcon="@drawable/ic_house"/>
+                android:text="@string/bath_tub"
+                android:id="@+id/bathTubChip"
+                app:chipIcon="@drawable/ic_bath"/>
 
             <com.google.android.material.chip.Chip
                 style="@style/AppTheme.MyChoiceChip"
                 app:chipIconEnabled="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Tiện ích"
-                app:chipIcon="@drawable/ic_house"/>
+                android:text="@string/parking_lot"
+                android:id="@+id/parkingLotChip"
+                app:chipIcon="@drawable/ic_parking_lot"/>
 
             <com.google.android.material.chip.Chip
                 style="@style/AppTheme.MyChoiceChip"
                 app:chipIconEnabled="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Tiện ích"
-                app:chipIcon="@drawable/ic_house"/>
+                android:text="@string/air_conditioner"
+                android:id="@+id/airConditionerChip"
+                app:chipIcon="@drawable/ic_air_conditioning"/>
 
             <com.google.android.material.chip.Chip
                 style="@style/AppTheme.MyChoiceChip"
                 app:chipIconEnabled="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Tiện ích"
-                app:chipIcon="@drawable/ic_house"/>
+                android:text="@string/washing_machine"
+                android:id="@+id/washingMachineChip"
+                app:chipIcon="@drawable/ic_wash_machine"/>
 
             <com.google.android.material.chip.Chip
                 style="@style/AppTheme.MyChoiceChip"
                 app:chipIconEnabled="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Tiện ích"
-                app:chipIcon="@drawable/ic_house" />
+                android:text="@string/fridge"
+                android:id="@+id/fridgeChip"
+                app:chipIcon="@drawable/ic_fridge" />
 
             <com.google.android.material.chip.Chip
                 style="@style/AppTheme.MyChoiceChip"
                 app:chipIconEnabled="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Tiện ích"
-                app:chipIcon="@drawable/ic_house" />
+                android:text="@string/pool"
+                android:id="@+id/poolChip"
+                app:chipIcon="@drawable/ic_pool" />
 
         </com.google.android.material.chip.ChipGroup>
 
@@ -396,45 +410,18 @@
                 style="@style/AppTheme.MyChoiceChip"
                 app:chipIconEnabled="true"
                 android:layout_width="wrap_content"
-                android:checked="true"
                 android:layout_height="wrap_content"
-                android:text="Tiện ích"
-                app:chipIcon="@drawable/ic_house"/>
+                android:text="@string/no_smoking"
+                android:id="@+id/noSmokingChip"
+                app:chipIcon="@drawable/ic_no_smoking"/>
             <com.google.android.material.chip.Chip
                 style="@style/AppTheme.MyChoiceChip"
                 app:chipIconEnabled="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Tiện ích"
-                app:chipIcon="@drawable/ic_house"/>
-            <com.google.android.material.chip.Chip
-                style="@style/AppTheme.MyChoiceChip"
-                app:chipIconEnabled="true"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Tiện ích"
-                app:chipIcon="@drawable/ic_house"/>
-            <com.google.android.material.chip.Chip
-                style="@style/AppTheme.MyChoiceChip"
-                app:chipIconEnabled="true"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Tiện ích"
-                app:chipIcon="@drawable/ic_house"/>
-            <com.google.android.material.chip.Chip
-                style="@style/AppTheme.MyChoiceChip"
-                app:chipIconEnabled="true"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Tiện ích"
-                app:chipIcon="@drawable/ic_house"/>
-            <com.google.android.material.chip.Chip
-                style="@style/AppTheme.MyChoiceChip"
-                app:chipIconEnabled="true"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Tiện ích"
-                app:chipIcon="@drawable/ic_house"/>
+                android:text="@string/no_pet"
+                android:id="@+id/noPetChip"
+                app:chipIcon="@drawable/ic_no_pet"/>
             <com.google.android.material.chip.Chip
                 style="@style/AppTheme.MyChoiceChip"
                 app:chipIconEnabled="true"
@@ -468,5 +455,6 @@
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
 
 </layout>

@@ -42,13 +42,25 @@
             app:popExitAnim="@anim/slide_in_right"/>
         <action
             android:id="@+id/action_userFragment_to_myProfileFragment"
-            app:destination="@id/myProfileFragment" />
+            app:destination="@id/myProfileFragment"
+            app:exitAnim="@anim/fade_out"
+            app:enterAnim="@anim/slide_in_left"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/slide_in_right"/>
         <action
             android:id="@+id/action_userFragment_to_transHistoryFragment"
-            app:destination="@id/transHistoryFragment" />
+            app:destination="@id/transHistoryFragment"
+            app:exitAnim="@anim/fade_out"
+            app:enterAnim="@anim/slide_in_left"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/slide_in_right"/>
         <action
             android:id="@+id/action_userFragment_to_pointHistoryFragment"
-            app:destination="@id/pointHistoryFragment" />
+            app:destination="@id/pointHistoryFragment"
+            app:exitAnim="@anim/fade_out"
+            app:enterAnim="@anim/slide_in_left"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/slide_in_right"/>
     </fragment>
     <fragment
         android:id="@+id/messageFragment"
@@ -99,11 +111,7 @@
         tools:layout="@layout/fragment_search_result">
         <action
             android:id="@+id/action_searchResultFragment_to_filterBottomSheetFragment"
-            app:destination="@id/filterBottomSheetFragment"
-            app:exitAnim="@anim/fade_out"
-            app:enterAnim="@anim/slide_in_left"
-            app:popEnterAnim="@anim/fade_in"
-            app:popExitAnim="@anim/slide_in_right"/>
+            app:destination="@id/filterBottomSheetFragment"/>
     </fragment>
     <dialog
         android:id="@+id/filterBottomSheetFragment"
@@ -126,7 +134,11 @@
         android:id="@+id/addHomeFragment"
         android:name="com.example.homex.activity.home.addhome.AddHomeFragment"
         android:label="AddHomeFragment"
-        tools:layout="@layout/fragment_add_home"/>
+        tools:layout="@layout/fragment_add_home">
+        <action
+            android:id="@+id/action_addHomeFragment_to_bottomSheetDialogSelectImage"
+            app:destination="@id/bottomSheetDialogSelectImage" />
+    </fragment>
     <fragment
         android:id="@+id/createRequestFragment"
         android:name="com.example.homex.CreateRequestFragment"
@@ -134,10 +146,18 @@
         tools:layout="@layout/fragment_create_request">
         <action
             android:id="@+id/action_createRequestFragment_to_pickHomeFragment"
-            app:destination="@id/pickHomeFragment" />
+            app:destination="@id/pickHomeFragment"
+            app:exitAnim="@anim/fade_out"
+            app:enterAnim="@anim/slide_in_left"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/slide_in_right"/>
         <action
             android:id="@+id/action_createRequestFragment_to_pickYourHomeFragment"
-            app:destination="@id/pickYourHomeFragment" />
+            app:destination="@id/pickYourHomeFragment"
+            app:exitAnim="@anim/fade_out"
+            app:enterAnim="@anim/slide_in_left"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/slide_in_right"/>
     </fragment>
     <fragment
         android:id="@+id/myHomeFragment"
@@ -146,7 +166,11 @@
         tools:layout="@layout/fragment_my_home">
         <action
             android:id="@+id/action_myHomeFragment_to_addHomeFragment"
-            app:destination="@id/addHomeFragment" />
+            app:destination="@id/addHomeFragment"
+            app:exitAnim="@anim/fade_out"
+            app:enterAnim="@anim/slide_in_left"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/slide_in_right"/>
     </fragment>
     <fragment
         android:id="@+id/myHomeDetailFragment"
@@ -178,10 +202,18 @@
         tools:layout="@layout/fragment_my_profile" >
         <action
             android:id="@+id/action_myProfileFragment_to_updateProfileFragment"
-            app:destination="@id/updateProfileFragment" />
+            app:destination="@id/updateProfileFragment"
+            app:exitAnim="@anim/fade_out"
+            app:enterAnim="@anim/slide_in_left"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/slide_in_right"/>
         <action
             android:id="@+id/action_myProfileFragment_to_changePasswordFragment"
-            app:destination="@id/changePasswordFragment" />
+            app:destination="@id/changePasswordFragment"
+            app:exitAnim="@anim/fade_out"
+            app:enterAnim="@anim/slide_in_left"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/slide_in_right"/>
     </fragment>
     <fragment
         android:id="@+id/updateProfileFragment"
@@ -200,30 +232,56 @@
         tools:layout="@layout/fragment_create_request_bottom_sheet">
         <action
             android:id="@+id/action_createRequestBottomSheetFragment_to_createRequestFragment"
-            app:destination="@id/createRequestFragment" />
+            app:destination="@id/createRequestFragment"
+            app:exitAnim="@anim/fade_out"
+            app:enterAnim="@anim/slide_in_left"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/slide_in_right"/>
     </dialog>
     <fragment
         android:id="@+id/transHistoryFragment"
         android:name="com.example.homex.activity.home.TransHistoryFragment"
-        android:label="TransHistoryFragment" >
+        android:label="TransHistoryFragment"
+        tools:layout="@layout/fragment_trans_history">
         <action
             android:id="@+id/action_transHistoryFragment_to_rateBottomSheetFragment"
             app:destination="@id/rateBottomSheetFragment" />
         <action
             android:id="@+id/action_transHistoryFragment_to_requestDetailFragment"
-            app:destination="@id/requestDetailFragment" />
+            app:destination="@id/requestDetailFragment"
+            app:exitAnim="@anim/fade_out"
+            app:enterAnim="@anim/slide_in_left"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/slide_in_right"/>
     </fragment>
     <dialog
         android:id="@+id/rateBottomSheetFragment"
         android:name="com.example.homex.activity.home.RateBottomSheetFragment"
-        android:label="RateBottomSheetFragment" />
+        android:label="RateBottomSheetFragment"
+        tools:layout="@layout/fragment_rate_bottom_sheet"/>
     <fragment
         android:id="@+id/requestDetailFragment"
         android:name="com.example.homex.activity.home.RequestDetailFragment"
-        android:label="RequestDetailFragment" />
+        android:label="RequestDetailFragment"
+        tools:layout="@layout/fragment_request_detail"/>
     <fragment
         android:id="@+id/pointHistoryFragment"
         android:name="com.example.homex.activity.home.PointHistoryFragment"
-        android:label="PointHistoryFragment" />
+        android:label="PointHistoryFragment"
+        tools:layout="@layout/fragment_point_history"/>
+    <dialog
+        android:id="@+id/bottomSheetDialogSelectImage"
+        android:name="com.example.homex.BottomSheetDialogSelectImage"
+        android:label="BottomSheetDialogSelectImage"
+        tools:layout="@layout/fragment_bottom_sheet_dialog_select_image">
+        <action
+            android:id="@+id/action_bottomSheetDialogSelectImage_to_galleryFragment"
+            app:destination="@id/galleryFragment" />
+    </dialog>
+    <fragment
+        android:id="@+id/galleryFragment"
+        android:name="com.example.homex.activity.home.addhome.GalleryFragment"
+        android:label="GalleryFragment"
+        tools:layout="@layout/fragment_gallery"/>
 
 </navigation>

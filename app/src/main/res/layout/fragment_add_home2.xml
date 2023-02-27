@@ -4,9 +4,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <!-- TODO: Update blank fragment layout -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true">
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:paddingBottom="70dp">
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/appCompatTextView32"
             style="@style/AddHomeTitle"
@@ -38,40 +44,57 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/appCompatTextView33" />
 
-        <EditText
-            style="@style/AppTheme.EdtTextStyle"
-            android:layout_width="0dp"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/homeNameInputLayout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="24dp"
-            android:layout_marginLeft="24dp"
-            android:id="@+id/edtHomeName"
-            android:layout_marginTop="8dp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/appCompatTextView34" />
+            app:boxBackgroundColor="@color/white"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            app:layout_constraintTop_toBottomOf="@+id/appCompatTextView34">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/homeNameInputEdtTxt"
+                android:textColor="@color/secondary"
+                android:textAlignment="center"
+                />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/appCompatTextView35"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:text="Diện tích (m2)"
+            android:text="Diện tích"
             android:textColor="@color/black_60"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/edtHomeName" />
+            app:layout_constraintTop_toBottomOf="@+id/homeNameInputLayout" />
 
-        <androidx.appcompat.widget.AppCompatEditText
-            style="@style/AppTheme.EdtTextStyle"
-            android:layout_width="0dp"
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/homeAreaInputLayout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="24dp"
-            android:layout_marginLeft="24dp"
-            android:id="@+id/edtHomeArea"
-            android:inputType="number"
-            android:layout_marginTop="8dp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/appCompatTextView35" />
+            app:boxBackgroundColor="@color/white"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            app:suffixText="m2"
+            app:layout_constraintTop_toBottomOf="@+id/appCompatTextView35">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/homeAreaEdtTxt"
+                android:textColor="@color/secondary"
+                android:inputType="number"
+                android:textAlignment="center"
+                />
+
+        </com.google.android.material.textfield.TextInputLayout>
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/appCompatTextView36"
@@ -82,19 +105,26 @@
             android:text="Địa chỉ nhà"
             android:textColor="@color/black_60"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/edtHomeArea" />
+            app:layout_constraintTop_toBottomOf="@+id/homeAreaInputLayout" />
 
-        <androidx.appcompat.widget.AppCompatEditText
-            style="@style/AppTheme.EdtTextStyle"
-            android:layout_width="0dp"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/homeAddressInputLayout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="24dp"
-            android:layout_marginLeft="24dp"
-            android:id="@+id/edtHomeAddress"
-            android:layout_marginTop="8dp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/appCompatTextView36" />
+            app:boxBackgroundColor="@color/white"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            app:layout_constraintTop_toBottomOf="@+id/appCompatTextView36">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/homeAddressEdtTxt"
+                android:textColor="@color/secondary"
+                android:textAlignment="center"
+                />
+
+        </com.google.android.material.textfield.TextInputLayout>
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/appCompatTextView37"
@@ -105,19 +135,26 @@
             android:text="Giới thiệu về nhà của bạn"
             android:textColor="@color/black_60"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/edtHomeAddress" />
+            app:layout_constraintTop_toBottomOf="@+id/homeAddressInputLayout" />
 
-        <androidx.appcompat.widget.AppCompatEditText
-            style="@style/AppTheme.EdtTextStyle"
-            android:layout_width="0dp"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/homeDescriptionInputLayout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="24dp"
-            android:layout_marginLeft="24dp"
-            android:id="@+id/edtHomeDescription"
-            android:layout_marginTop="8dp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/appCompatTextView37" />
+            app:boxBackgroundColor="@color/white"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            app:layout_constraintTop_toBottomOf="@+id/appCompatTextView37">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/homeDescriptionEdtTxt"
+                android:textColor="@color/secondary"
+                android:textAlignment="center"
+                />
+
+        </com.google.android.material.textfield.TextInputLayout>
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/appCompatTextView38"
@@ -128,23 +165,32 @@
             android:text="Giá mong muốn"
             android:textColor="@color/black_60"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/edtHomeDescription" />
+            app:layout_constraintTop_toBottomOf="@+id/homeDescriptionInputLayout" />
 
-        <androidx.appcompat.widget.AppCompatEditText
-            style="@style/AppTheme.EdtTextStyle"
-            android:layout_width="0dp"
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/homePriceInputLayout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="24dp"
-            android:layout_marginLeft="24dp"
-            android:id="@+id/edtHomePrice"
-            android:inputType="number"
-            android:layout_marginTop="8dp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/appCompatTextView38" />
+            app:boxBackgroundColor="@color/white"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            app:suffixText="Point/ngày"
+            app:layout_constraintTop_toBottomOf="@id/appCompatTextView38">
 
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:id="@+id/homePriceEdtTxt"
+                android:textColor="@color/secondary"
+                android:textAlignment="center"
+                />
+
+        </com.google.android.material.textfield.TextInputLayout>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
 
 </layout>

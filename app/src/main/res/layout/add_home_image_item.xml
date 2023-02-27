@@ -3,15 +3,12 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_marginStart="24dp"
-    android:layout_marginEnd="24dp"
     android:layout_marginBottom="16dp">
 
     <androidx.appcompat.widget.AppCompatImageView
         android:layout_width="match_parent"
         android:layout_height="250dp"
         android:src="@mipmap/location"
-        android:scaleType="fitXY"
         app:layout_constraintTop_toTopOf="parent"
         android:id="@+id/imgView"/>
 
@@ -19,6 +16,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="#B33E3E3E"
+        android:id="@+id/deleteImgBtn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:padding="8dp">

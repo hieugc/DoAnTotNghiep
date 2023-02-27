@@ -9,44 +9,45 @@
         android:layout_height="match_parent">
 
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/appCompatTextView29"
-            style="@style/Regular"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:text="@string/main_home"
-            android:textColor="@color/black_60"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+<!--        <androidx.appcompat.widget.AppCompatTextView-->
+<!--            android:id="@+id/appCompatTextView29"-->
+<!--            style="@style/Regular"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginStart="16dp"-->
+<!--            android:layout_marginTop="16dp"-->
+<!--            android:text="@string/main_home"-->
+<!--            android:textColor="@color/black_60"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent" />-->
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/mainHomeRecView"
             android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:layout_marginTop="16dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@+id/appCompatTextView29" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/appCompatTextView30"
-            style="@style/Regular"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:text="@string/secondary_home"
-            android:textColor="@color/black_60"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/mainHomeRecView"
-            />
+<!--        <androidx.appcompat.widget.AppCompatTextView-->
+<!--            android:id="@+id/appCompatTextView30"-->
+<!--            style="@style/Regular"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginStart="16dp"-->
+<!--            android:layout_marginTop="16dp"-->
+<!--            android:text="@string/secondary_home"-->
+<!--            android:textColor="@color/black_60"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@id/mainHomeRecView"-->
+<!--            />-->
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/secondaryHomeRecView"
-            android:layout_marginTop="16dp"
-            app:layout_constraintTop_toBottomOf="@+id/appCompatTextView30" />
+<!--        <androidx.recyclerview.widget.RecyclerView-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:id="@+id/secondaryHomeRecView"-->
+<!--            android:layout_marginTop="16dp"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/appCompatTextView30" />-->
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:layout_width="wrap_content"

@@ -4,6 +4,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <!-- TODO: Update blank fragment layout -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true">
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -70,49 +75,50 @@
 
         </RadioGroup>
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/appCompatTextView35"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:text="Loại cư trú"
-            android:layout_marginTop="16dp"
-            android:textColor="@color/black_60"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/homeTypeRadioGroup" />
+<!--        <androidx.appcompat.widget.AppCompatTextView-->
+<!--            android:id="@+id/appCompatTextView35"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginStart="16dp"-->
+<!--            android:text="Loại cư trú"-->
+<!--            android:layout_marginTop="16dp"-->
+<!--            android:textColor="@color/black_60"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/homeTypeRadioGroup" />-->
 
 
-        <RadioGroup
-            android:id="@+id/RadioGroup"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checkedButton="@id/mainRB"
-            android:orientation="horizontal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/appCompatTextView35">
+<!--        <RadioGroup-->
+<!--            android:id="@+id/RadioGroup"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:checkedButton="@id/mainRB"-->
+<!--            android:orientation="horizontal"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/appCompatTextView35">-->
 
-            <androidx.appcompat.widget.AppCompatRadioButton
-                android:id="@+id/mainRB"
-                style="@style/IconWrapper"
-                android:layout_marginStart="36dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="36dp"
-                android:drawableTop="@drawable/ic_houseline"
-                android:text="Nhà chính"
-                 />
+<!--            <androidx.appcompat.widget.AppCompatRadioButton-->
+<!--                android:id="@+id/mainRB"-->
+<!--                style="@style/IconWrapper"-->
+<!--                android:layout_marginStart="36dp"-->
+<!--                android:layout_marginTop="16dp"-->
+<!--                android:layout_marginEnd="36dp"-->
+<!--                android:drawableTop="@drawable/ic_houseline"-->
+<!--                android:text="Nhà chính"-->
+<!--                 />-->
 
-            <androidx.appcompat.widget.AppCompatRadioButton
-                android:id="@+id/secondaryRB"
-                style="@style/IconWrapper"
-                android:layout_marginStart="36dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="36dp"
-                android:drawableTop="@drawable/ic_house_50"
-                android:text="Nhà phụ" />
+<!--            <androidx.appcompat.widget.AppCompatRadioButton-->
+<!--                android:id="@+id/secondaryRB"-->
+<!--                style="@style/IconWrapper"-->
+<!--                android:layout_marginStart="36dp"-->
+<!--                android:layout_marginTop="16dp"-->
+<!--                android:layout_marginEnd="36dp"-->
+<!--                android:drawableTop="@drawable/ic_house_50"-->
+<!--                android:text="Nhà phụ" />-->
 
-        </RadioGroup>
+<!--        </RadioGroup>-->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
 
 </layout>

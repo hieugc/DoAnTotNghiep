@@ -8,14 +8,14 @@ import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.homex.activity.home.HomeActivity
-import com.example.homex.adapter.PopularHomeAdapter
+import com.example.homex.adapter.MyHomeAdapter
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentMyHomeBinding
 
 
 class MyHomeFragment : BaseFragment<FragmentMyHomeBinding>() {
     override val layoutId: Int = R.layout.fragment_my_home
-    private lateinit var adapter: PopularHomeAdapter
+    private lateinit var adapter: MyHomeAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -30,7 +30,7 @@ class MyHomeFragment : BaseFragment<FragmentMyHomeBinding>() {
     }
 
     override fun setView() {
-        adapter = PopularHomeAdapter(
+        adapter = MyHomeAdapter(
             arrayListOf(
                 "Nhà của Hiếu", "Nhà của tui", "Nhà Nhà Nhà", "Hello mudafakar"
             ),

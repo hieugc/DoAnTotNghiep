@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="10dp"
+    android:layout_marginBottom="16dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="16dp">
+
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/homeImg"
+            android:layout_width="match_parent"
+            android:layout_height="170dp"
+            android:scaleType="fitXY"
+            app:layout_constraintTop_toTopOf="parent"
+            android:src="@mipmap/location"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@id/homeImg"
+            android:background="@color/address_box"
+            android:orientation="horizontal"
+            android:padding="4dp">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_location"
+                app:tint="@color/white"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="4dp"/>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:ellipsize="end"
+                style="@style/SmallText"
+                android:layout_gravity="center_vertical"
+                android:text="Ngõ 157 xyz abc, Phường xxTiền Giang"
+                android:textColor="@color/white"/>
+
+
+        </LinearLayout>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nhà của Hiếu"
+            android:id="@+id/homeName"
+            android:layout_marginTop="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="24dp"
+            style="@style/HomeTitle"
+            app:layout_constraintTop_toBottomOf="@id/homeImg"/>
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/pplIcon"
+            app:layout_constraintTop_toBottomOf="@id/homeName"
+            android:src="@drawable/ic_ppl"
+            app:layout_constraintStart_toStartOf="@id/homeName"
+            android:layout_marginTop="8dp"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="4 người"
+            android:layout_marginStart="8dp"
+            android:id="@+id/homeNOP"
+            style="@style/HomeTitle"
+            app:layout_constraintStart_toEndOf="@id/pplIcon"
+            app:layout_constraintTop_toTopOf="@id/pplIcon"
+            app:layout_constraintBottom_toBottomOf="@id/pplIcon"/>
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/ratingIcon"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/homeNOP"
+            android:src="@drawable/ic_rating"
+            android:layout_marginEnd="24dp"
+            android:layout_marginTop="16dp"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/ratingTV"
+            style="@style/HomeRating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            android:text="4.8"
+            app:layout_constraintBottom_toBottomOf="@id/ratingIcon"
+            app:layout_constraintEnd_toStartOf="@+id/numberOfRatingTV"
+            app:layout_constraintTop_toTopOf="@+id/ratingIcon" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/numberOfRatingTV"
+            style="@style/HomeRating"
+            android:textColor="@color/gray6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="(10)"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintBottom_toBottomOf="@id/ratingIcon"
+            app:layout_constraintEnd_toStartOf="@+id/ratingIcon"
+            app:layout_constraintTop_toTopOf="@+id/ratingIcon" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/homePriceTV"
+            style="@style/HomePrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="200 point/ngày"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintStart_toStartOf="@id/homeName"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/appCompatTextView31"
+            style="@style/SmallText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:text="@string/status"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/homeImg" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/homeStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Đang hoạt động"
+            android:layout_marginTop="4dp"
+            android:textColor="@color/green"
+            app:layout_constraintEnd_toEndOf="@+id/appCompatTextView31"
+            app:layout_constraintTop_toBottomOf="@+id/appCompatTextView31" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>
