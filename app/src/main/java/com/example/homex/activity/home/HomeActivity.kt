@@ -35,6 +35,7 @@ class HomeActivity : BaseActivity() {
     private var showMenu = false
     private var showMsg = true
     private var showBoxChatLayout: Pair<Boolean, String> = Pair(false, "")
+    private var showSearchLayout: Boolean = false
 
     companion object{
         fun open(context: Context) = Intent(context, HomeActivity::class.java)
@@ -77,13 +78,14 @@ class HomeActivity : BaseActivity() {
         }
     }
 
-    fun setPropertiesScreen(showLogo: Boolean, showBottomNav: Boolean, showTitleApp: Pair<Boolean, String>, showMessage: Boolean, showMenu: Boolean, showBoxChatLayout: Pair<Boolean, String>){
+    fun setPropertiesScreen(showLogo: Boolean, showBottomNav: Boolean, showTitleApp: Pair<Boolean, String>, showMessage: Boolean, showMenu: Boolean, showBoxChatLayout: Pair<Boolean, String>, showSearchLayout: Boolean = false){
         this.showLogo = showLogo
         this.showBottomNav = showBottomNav
         this.showTitleApp = showTitleApp
         this.showMsg = showMessage
         this.showMenu = showMenu
         this.showBoxChatLayout = showBoxChatLayout
+        this.showSearchLayout = showSearchLayout
         checkShowUI()
     }
 
@@ -101,8 +103,9 @@ class HomeActivity : BaseActivity() {
         if (showTitleApp.first){
             binding.toolbarTitle.text = showTitleApp.second
             binding.toolbarTitle.visible()
-        }else
+        }else{
             binding.toolbarTitle.gone()
+        }
 
         if(showMsg)
             binding.btnMessage.visible()
@@ -120,6 +123,15 @@ class HomeActivity : BaseActivity() {
         }
         else
             binding.userChatLayout.gone()
+
+        if(showSearchLayout) {
+            binding.searchLayout.visible()
+            binding.btnFilter.visible()
+        }
+        else {
+            binding.searchLayout.gone()
+            binding.btnFilter.gone()
+        }
     }
 
     private fun setViewModel(){}
@@ -130,10 +142,18 @@ class HomeActivity : BaseActivity() {
         binding.btnMenu.setOnClickListener {
             showMenu(it, R.menu.box_chat_menu)
         }
+        binding.btnFilter.setOnClickListener {
+            findNavController(R.id.nav_main_fragment).navigate(R.id.action_searchResultFragment_to_filterBottomSheetFragment)
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {
         return navigateUp(navController, appBarConfiguration)
+    }
+
+    fun showSearchLayout(){
+        binding.searchLayout.visible()
+        binding.btnFilter.visible()
     }
 
     fun showReadAllNotificationDialog(){

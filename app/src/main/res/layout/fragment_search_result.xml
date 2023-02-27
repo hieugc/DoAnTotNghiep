@@ -19,6 +19,7 @@
             android:background="@drawable/search_bg"
             app:cardCornerRadius="24dp"
             app:cardElevation="10dp"
+            android:visibility="gone"
             app:layout_constraintEnd_toStartOf="@+id/iconFilter"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -40,6 +41,7 @@
             android:id="@+id/iconFilter"
             style="@style/AppTheme.Icon"
             android:layout_marginEnd="16dp"
+            android:visibility="gone"
             android:src="@drawable/ic_filters"
             app:layout_constraintBottom_toBottomOf="@id/cardView"
             app:layout_constraintEnd_toEndOf="parent"
@@ -51,6 +53,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
+            android:visibility="gone"
             android:elevation="3dp"
             android:layout_marginEnd="16dp"
             android:background="@drawable/pick_date_bg"
@@ -196,19 +199,20 @@
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp"
+            android:layout_marginStart="36dp"
+            android:layout_marginEnd="36dp"
             app:cardCornerRadius="8dp"
+            android:clickable="true"
+            android:focusable="true"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             android:id="@+id/homeSearchItem"
-            android:layout_marginBottom="60dp">
+            android:layout_marginBottom="76dp">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/homeImg"
@@ -216,19 +220,23 @@
                     app:layout_constraintTop_toTopOf="parent"
                     android:layout_height="150dp"
                     android:scaleType="fitXY"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     android:src="@mipmap/location"/>
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/homeName"
                     style="@style/HomeTitle"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginTop="8dp"
                     android:text="Nhà của Hiếu"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/homeImg"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginStart="16dp"/>
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="wrap_content"
@@ -245,7 +253,7 @@
                     android:text="4 người"
                     android:layout_marginStart="8dp"
                     android:id="@+id/homeNOP"
-                    style="@style/HomeTitle"
+                    style="@style/Regular"
                     app:layout_constraintStart_toEndOf="@id/pplIcon"
                     app:layout_constraintTop_toTopOf="@id/pplIcon"
                     app:layout_constraintBottom_toBottomOf="@id/pplIcon"/>
@@ -256,9 +264,12 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/ratingIcon"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/homePriceTV"
+                    app:layout_constraintVertical_bias="1.0"
+                    android:layout_marginTop="8dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     android:src="@drawable/ic_rating"
-                    android:layout_marginEnd="16dp"
+                    android:layout_marginEnd="8dp"
                     android:layout_marginBottom="8dp"/>
 
                 <androidx.appcompat.widget.AppCompatTextView
@@ -287,11 +298,13 @@
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/homePriceTV"
                     style="@style/HomePrice"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
                     android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:textColor="@color/black_60"
                     android:text="200 Points/ngày"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="@id/homeName"
                     app:layout_constraintTop_toBottomOf="@+id/pplIcon" />
 
@@ -300,13 +313,11 @@
 
         </androidx.cardview.widget.CardView>
 
-        <androidx.appcompat.widget.AppCompatImageView
+        <FrameLayout
             android:id="@+id/mapView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginTop="8dp"
-            android:scaleType="fitXY"
-            android:src="@mipmap/location"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/pickDateLayout" />
 
@@ -315,15 +326,17 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:elevation="2dp"
-            android:layout_marginTop="-16dp"
+            android:layout_marginTop="-20dp"
             android:background="@drawable/bottom_sheet_round_bg"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/pickDateLayout">
 
             <com.google.android.material.divider.MaterialDivider
                 android:id="@+id/materialDivider9"
-                android:layout_width="150dp"
-                android:layout_height="3dp"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                app:dividerThickness="3dp"
+                app:dividerColor="@color/black"
                 android:layout_marginTop="16dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -334,7 +347,7 @@
                 style="@style/HomeRating"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="16dp"
                 android:text="20 kết quả tìm được"
                 android:textColor="@color/gray6"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -345,7 +358,7 @@
                 android:id="@+id/searchHomeRecView"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="16dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/numberOfHomeFoundTV" />
 

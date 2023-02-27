@@ -164,7 +164,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="Nhà chính"
+                        android:text="Căn nhà"
                         app:layout_constraintEnd_toEndOf="@id/homeIcon"
                         app:layout_constraintStart_toStartOf="@id/homeIcon"
                         app:layout_constraintTop_toBottomOf="@id/homeIcon" />
@@ -234,7 +234,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="Nhà chính"
+                        android:text="2 phòng ngủ"
                         app:layout_constraintEnd_toEndOf="@id/roomIcon"
                         app:layout_constraintStart_toStartOf="@id/roomIcon"
                         app:layout_constraintTop_toBottomOf="@id/roomIcon" />
@@ -255,7 +255,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="300 m2"
+                        android:text="2 phòng tắm"
                         app:layout_constraintEnd_toEndOf="@id/bathIcon"
                         app:layout_constraintStart_toStartOf="@id/bathIcon"
                         app:layout_constraintTop_toBottomOf="@id/bathIcon" />
@@ -275,7 +275,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="2 giường"
+                        android:text="4 người"
                         app:layout_constraintEnd_toEndOf="@id/personIcon"
                         app:layout_constraintStart_toStartOf="@id/personIcon"
                         app:layout_constraintTop_toBottomOf="@id/personIcon" />

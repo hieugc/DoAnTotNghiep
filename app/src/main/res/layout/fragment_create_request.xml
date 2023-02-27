@@ -134,6 +134,19 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/methodLayout" />
 
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/yourPointTV"
+                    style="@style/Regular"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:text="Bạn hiện có 20000 Point"
+                    android:textColor="@color/primary"
+                    android:visibility="gone"
+                    app:layout_constraintStart_toStartOf="@id/pointLayout"
+                    app:layout_constraintTop_toTopOf="@id/pointLayout" />
+
                 <LinearLayout
                     android:id="@+id/pointLayout"
                     android:layout_width="match_parent"
@@ -144,6 +157,8 @@
                     android:gravity="center"
                     android:visibility="gone"
                     app:layout_constraintTop_toBottomOf="@+id/appCompatTextView26">
+
+
 
                     <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/appCompatImageView6"

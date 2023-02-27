@@ -35,7 +35,6 @@
             style="@style/ButtonProfile"
             android:drawableEnd="@drawable/ic_exchange"
             android:text="@string/create_request"
-            android:elevation="0dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/materialDividerTop" />
 

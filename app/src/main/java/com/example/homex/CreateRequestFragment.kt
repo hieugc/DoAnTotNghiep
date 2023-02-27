@@ -56,10 +56,12 @@ class CreateRequestFragment : BaseFragment<FragmentCreateRequestBinding>() {
             binding.appCompatTextView26.text = getString(R.string.point_txt)
             binding.pointLayout.visible()
             binding.addYourHomeBtn.gone()
+            binding.yourPointTV.visible()
         }
         else{
             binding.appCompatTextView26.text = getString(R.string.pick_your_home)
             binding.pointLayout.gone()
+            binding.yourPointTV.gone()
             binding.addYourHomeBtn.visible()
         }
     }

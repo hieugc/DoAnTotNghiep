@@ -1,11 +1,15 @@
 package com.example.homex.activity.home
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.navigation.fragment.findNavController
 import com.example.homex.R
+import com.example.homex.activity.auth.AuthActivity
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentUserBinding
+import com.example.homex.extension.gone
+import com.example.homex.extension.visible
 
 
 class UserFragment : BaseFragment<FragmentUserBinding>() {
@@ -23,6 +27,11 @@ class UserFragment : BaseFragment<FragmentUserBinding>() {
         )
     }
 
+    override fun setView() {
+        binding.userLayout.gone()
+        binding.notLoginLayout.visible()
+    }
+
     override fun setEvent() {
         binding.btnMyProfile.setOnClickListener {
             findNavController().navigate(R.id.action_userFragment_to_myProfileFragment)
@@ -36,6 +45,10 @@ class UserFragment : BaseFragment<FragmentUserBinding>() {
         }
         binding.btnPoint.setOnClickListener{
             findNavController().navigate(R.id.action_userFragment_to_pointHistoryFragment)
+        }
+        binding.goToAuthBtn.setOnClickListener {
+            startActivity(Intent(requireContext(), AuthActivity::class.java))
+            activity?.finish()
         }
     }
 }

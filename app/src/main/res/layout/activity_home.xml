@@ -16,68 +16,165 @@
             android:background="@color/white"
             app:elevation="5dp">
 
-            <com.google.android.material.appbar.MaterialToolbar
-                android:id="@+id/toolbarHome"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:contentInsetStartWithNavigation="0dp"
-                app:popupTheme="@style/ThemeOverlay.MyTheme">
+                android:layout_height="wrap_content">
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/toolbarTitle"
+                    style="@style/AppTheme.AppBarTitleTextStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    style="@style/AppTheme.AppBarTitleTextStyle"
-                    android:text=""/>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/userChatLayout"
-                    android:layout_gravity="start"
-                    android:orientation="horizontal">
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:src="@mipmap/avatar"
-                        android:layout_gravity="center_vertical"/>
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/boxChatName"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:layout_marginStart="16dp"
-                        android:layout_gravity="center_vertical"/>
-
-                </LinearLayout>
+                    android:text=""
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/ivLogo"
                     android:layout_width="150dp"
                     android:layout_height="40dp"
-                    android:id="@+id/ivLogo"
                     android:layout_gravity="center"
-                    android:src="@drawable/ic_logo"/>
+                    android:src="@drawable/ic_logo"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-                <androidx.appcompat.widget.AppCompatImageView
-                    style="@style/AppTheme.Icon"
-                    android:layout_gravity="end"
-                    android:id="@+id/btnMessage"
-                    android:layout_marginEnd="10dp"
-                    android:src="@drawable/ic_new_msg"/>
+                <com.google.android.material.appbar.MaterialToolbar
+                    android:id="@+id/toolbarHome"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:contentInsetStartWithNavigation="0dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:popupTheme="@style/ThemeOverlay.MyTheme">
 
-                <androidx.appcompat.widget.AppCompatImageView
-                    style="@style/AppTheme.Icon"
-                    android:layout_gravity="end"
-                    android:id="@+id/btnMenu"
-                    android:layout_marginEnd="10dp"
-                    android:src="@drawable/ic_menu"/>
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start">
 
-            </com.google.android.material.appbar.MaterialToolbar>
-            
+                        <LinearLayout
+                            android:id="@+id/userChatLayout"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="start"
+                            android:orientation="horizontal"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:layout_gravity="center_vertical"
+                                android:src="@mipmap/avatar" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/boxChatName"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical"
+                                android:layout_marginStart="16dp"
+                                android:textSize="18sp"
+                                android:textStyle="bold" />
+
+                        </LinearLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/searchLayout"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="start"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/location_bg"
+                        android:paddingStart="8dp"
+                        android:paddingTop="4dp"
+                        android:paddingEnd="8dp"
+                        android:paddingBottom="4dp"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/iconLayout"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/appCompatImageView7"
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:src="@drawable/ic_search"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/locationTV"
+                            style="@style/Regular"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Hồ Chí Minh"
+                            android:textStyle="bold"
+                            app:layout_constraintStart_toEndOf="@+id/appCompatImageView7"
+                            app:layout_constraintTop_toTopOf="@id/appCompatImageView7" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/dateTV"
+                            style="@style/SmallText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="03/10/2022-10/10/2022"
+                            app:layout_constraintStart_toStartOf="@id/locationTV"
+                            app:layout_constraintTop_toBottomOf="@id/locationTV" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/iconLayout"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="end"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:id="@+id/btnMessage"
+                                style="@style/AppTheme.Icon"
+                                android:layout_gravity="end"
+                                android:layout_marginEnd="10dp"
+                                android:src="@drawable/ic_new_msg"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:id="@+id/btnMenu"
+                                style="@style/AppTheme.Icon"
+                                android:layout_gravity="end"
+                                android:layout_marginEnd="10dp"
+                                android:src="@drawable/ic_menu"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:id="@+id/btnFilter"
+                                style="@style/AppTheme.Icon"
+                                android:layout_gravity="end"
+                                android:layout_marginEnd="10dp"
+                                android:src="@drawable/ic_filters"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintBottom_toBottomOf="parent" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </com.google.android.material.appbar.MaterialToolbar>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
         </com.google.android.material.appbar.AppBarLayout>
 
         <androidx.fragment.app.FragmentContainerView
@@ -85,11 +182,11 @@
             android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:background="@color/white"
+            app:defaultNavHost="true"
             app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
             app:layout_constraintTop_toBottomOf="@+id/appBarHome"
-            app:defaultNavHost="true"
-            android:background="@color/white"
-            app:navGraph="@navigation/nav_main"/>
+            app:navGraph="@navigation/nav_main" />
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottomNavigationView"

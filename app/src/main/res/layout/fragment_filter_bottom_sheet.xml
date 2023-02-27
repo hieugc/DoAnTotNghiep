@@ -77,6 +77,12 @@
             android:background="@drawable/filter_bg"
             app:layout_constraintTop_toBottomOf="@+id/appCompatTextView6">
 
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                android:id="@+id/closestLayout">
+
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/appCompatTextView7"
                 android:layout_width="wrap_content"
@@ -90,91 +96,113 @@
             <androidx.appcompat.widget.AppCompatRadioButton
                 android:id="@+id/closestRB"
                 android:layout_width="wrap_content"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
                 android:checked="true"
-                app:layout_constraintBottom_toTopOf="@+id/materialDivider6"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <com.google.android.material.divider.MaterialDivider
                 android:id="@+id/materialDivider6"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginTop="16dp"
                 app:dividerColor="@color/divider"
-                app:layout_constraintTop_toBottomOf="@id/appCompatTextView7" />
+                app:layout_constraintTop_toBottomOf="@id/closestLayout" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/ratingLayout"
+                app:layout_constraintTop_toBottomOf="@id/materialDivider6">
+
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/appCompatTextView8"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
                 android:layout_marginStart="16dp"
                 android:text="@string/highest_rating"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/materialDivider6" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
 
             <androidx.appcompat.widget.AppCompatRadioButton
                 android:id="@+id/ratingRB"
                 android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                app:layout_constraintBottom_toTopOf="@+id/materialDivider7"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/materialDivider6" />
+                app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
 
             <com.google.android.material.divider.MaterialDivider
                 android:id="@+id/materialDivider7"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginTop="16dp"
                 app:dividerColor="@color/divider"
-                app:layout_constraintTop_toBottomOf="@id/appCompatTextView8" />
+                app:layout_constraintTop_toBottomOf="@id/ratingLayout" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/lowToHighLayout"
+                app:layout_constraintTop_toBottomOf="@id/materialDivider7">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/appCompatTextView9"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
                 android:layout_marginStart="16dp"
                 android:text="@string/low_to_high"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/materialDivider7"/>
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
 
             <androidx.appcompat.widget.AppCompatRadioButton
                 android:id="@+id/lowToHighRB"
                 android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                app:layout_constraintBottom_toTopOf="@+id/materialDivider8"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/materialDivider7"/>
+                app:layout_constraintTop_toTopOf="parent"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
 
             <com.google.android.material.divider.MaterialDivider
                 android:id="@+id/materialDivider8"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginTop="16dp"
                 app:dividerColor="@color/divider"
-                app:layout_constraintTop_toBottomOf="@id/appCompatTextView9" />
+                app:layout_constraintTop_toBottomOf="@id/lowToHighLayout" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/materialDivider8"
+                android:id="@+id/highToLowLayout">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/appCompatTextView10"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp"
                 android:text="@string/high_to_low"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/materialDivider8" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.appcompat.widget.AppCompatRadioButton
                 android:id="@+id/highToLowRB"
                 android:layout_width="wrap_content"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/materialDivider8" />
+                app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -325,208 +353,272 @@
             app:layout_constraintVertical_bias="0"
             app:layout_constraintTop_toBottomOf="@id/appCompatTextView14"
             >
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/wifiLayout"
+                app:layout_constraintTop_toTopOf="parent">
+
+
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/appCompatTextView15"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
                 android:layout_marginStart="16dp"
                 android:text="@string/wifi"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.appcompat.widget.AppCompatCheckBox
                 android:id="@+id/wifiCB"
                 android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                app:layout_constraintBottom_toTopOf="@+id/materialDivider10"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
 
             <com.google.android.material.divider.MaterialDivider
                 android:id="@+id/materialDivider10"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginTop="16dp"
                 app:dividerColor="@color/divider"
-                app:layout_constraintTop_toBottomOf="@id/appCompatTextView15" />
+                app:layout_constraintTop_toBottomOf="@id/wifiLayout" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/computerLayout"
+                app:layout_constraintTop_toBottomOf="@id/materialDivider10">
+
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/appCompatTextView16"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
                 android:layout_marginStart="16dp"
                 android:text="@string/computer"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/materialDivider10" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
 
             <androidx.appcompat.widget.AppCompatCheckBox
                 android:id="@+id/computerCB"
                 android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                app:layout_constraintBottom_toTopOf="@+id/materialDivider11"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/materialDivider10" />
+                app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <com.google.android.material.divider.MaterialDivider
                 android:id="@+id/materialDivider11"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginTop="16dp"
                 app:dividerColor="@color/divider"
-                app:layout_constraintTop_toBottomOf="@id/appCompatTextView16" />
+                app:layout_constraintTop_toBottomOf="@id/computerLayout" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/smartTVLayout"
+                app:layout_constraintTop_toBottomOf="@id/materialDivider11">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/appCompatTextView17"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
                 android:layout_marginStart="16dp"
                 android:text="@string/smart_tv"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/materialDivider11" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
 
             <androidx.appcompat.widget.AppCompatCheckBox
                 android:id="@+id/smartTVCB"
                 android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                app:layout_constraintBottom_toTopOf="@+id/materialDivider12"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/materialDivider11" />
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
             <com.google.android.material.divider.MaterialDivider
                 android:id="@+id/materialDivider12"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginTop="16dp"
                 app:dividerColor="@color/divider"
-                app:layout_constraintTop_toBottomOf="@id/appCompatTextView17" />
+                app:layout_constraintTop_toBottomOf="@id/smartTVLayout" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/bathTubLayout"
+                app:layout_constraintTop_toBottomOf="@id/materialDivider12">
+
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/appCompatTextView18"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
                 android:layout_marginStart="16dp"
                 android:text="@string/bath_tub"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/materialDivider12" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
 
             <androidx.appcompat.widget.AppCompatCheckBox
                 android:id="@+id/bathTubCB"
                 android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                app:layout_constraintBottom_toTopOf="@+id/materialDivider13"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/materialDivider12" />
+                app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <com.google.android.material.divider.MaterialDivider
                 android:id="@+id/materialDivider13"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginTop="16dp"
                 app:dividerColor="@color/divider"
-                app:layout_constraintTop_toBottomOf="@id/appCompatTextView18" />
+                app:layout_constraintTop_toBottomOf="@id/bathTubLayout" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/parkingLotLayout"
+                app:layout_constraintTop_toBottomOf="@id/materialDivider13">
+
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/appCompatTextView19"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
                 android:layout_marginStart="16dp"
                 android:text="@string/parking_lot"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/materialDivider13" />
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.appcompat.widget.AppCompatCheckBox
                 android:id="@+id/parkingLotCB"
                 android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                app:layout_constraintBottom_toTopOf="@+id/materialDivider14"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/materialDivider13" />
-
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
             <com.google.android.material.divider.MaterialDivider
                 android:id="@+id/materialDivider14"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginTop="16dp"
                 app:dividerColor="@color/divider"
-                app:layout_constraintTop_toBottomOf="@id/appCompatTextView19" />
+                app:layout_constraintTop_toBottomOf="@id/parkingLotLayout" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/airConditionerLayout"
+                app:layout_constraintTop_toBottomOf="@id/materialDivider14">
+
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/appCompatTextView20"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
                 android:layout_marginStart="16dp"
                 android:text="@string/air_conditioner"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/materialDivider14" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
 
             <androidx.appcompat.widget.AppCompatCheckBox
                 android:id="@+id/airConditionerCB"
                 android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                app:layout_constraintBottom_toTopOf="@+id/materialDivider15"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/materialDivider14" />
-
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
             <com.google.android.material.divider.MaterialDivider
                 android:id="@+id/materialDivider15"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginTop="16dp"
                 app:dividerColor="@color/divider"
-                app:layout_constraintTop_toBottomOf="@id/appCompatTextView20" />
+                app:layout_constraintTop_toBottomOf="@id/airConditionerLayout" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/washingMachineLayout"
+                app:layout_constraintTop_toBottomOf="@id/materialDivider15">
+
+
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/appCompatTextView21"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
                 android:layout_marginStart="16dp"
                 android:text="@string/washing_machine"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/materialDivider15" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
 
             <androidx.appcompat.widget.AppCompatCheckBox
                 android:id="@+id/washingMachineCB"
                 android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                app:layout_constraintBottom_toTopOf="@+id/materialDivider16"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/materialDivider15" />
+                app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <com.google.android.material.divider.MaterialDivider
                 android:id="@+id/materialDivider16"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginTop="16dp"
                 app:dividerColor="@color/divider"
-                app:layout_constraintTop_toBottomOf="@id/appCompatTextView21" />
+                app:layout_constraintTop_toBottomOf="@id/washingMachineLayout" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/fridgeLayout"
+                app:layout_constraintTop_toBottomOf="@id/materialDivider16">
+
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/appCompatTextView22"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
                 android:layout_marginStart="16dp"
                 android:text="@string/fridge"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/materialDivider16" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
 
             <androidx.appcompat.widget.AppCompatCheckBox
                 android:id="@+id/fridgeCB"
                 android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                app:layout_constraintBottom_toTopOf="@+id/materialDivider17"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/materialDivider16" />
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
             <com.google.android.material.divider.MaterialDivider
                 android:id="@+id/materialDivider17"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginTop="16dp"
                 app:dividerColor="@color/divider"
-                app:layout_constraintTop_toBottomOf="@id/appCompatTextView22" />
+                app:layout_constraintTop_toBottomOf="@id/fridgeLayout" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/poolLayout"
+                app:layout_constraintTop_toBottomOf="@id/materialDivider17">
+
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/appCompatTextView23"
                 android:layout_width="wrap_content"
@@ -537,33 +629,38 @@
                 android:layout_marginBottom="16dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/materialDivider17" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.appcompat.widget.AppCompatCheckBox
                 android:id="@+id/poolCB"
                 android:layout_width="wrap_content"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/materialDivider17" />
-
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="1dp"/>
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:elevation="10dp"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@+id/utilsLayout"
-            android:background="@color/light_blue"
             android:padding="16dp">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/deleteFilterTxt"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
+                app:layout_constraintHorizontal_bias="0"
+                android:background="@drawable/ripple_white_bg"
+                android:padding="4dp"
                 android:layout_height="wrap_content"
                 android:text="@string/delete_filter"
                 app:layout_constraintTop_toTopOf="parent"
