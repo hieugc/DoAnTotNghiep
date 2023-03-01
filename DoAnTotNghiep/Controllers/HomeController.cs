@@ -7,12 +7,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DoAnTotNghiep.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
         private readonly ILogger<HomeController> _logger;
         private readonly DoAnTotNghiepContext _context;
 
-        public HomeController(ILogger<HomeController> logger, DoAnTotNghiepContext context)
+        public HomeController(ILogger<HomeController> logger, DoAnTotNghiepContext context): base(context)
         {
             _logger = logger;
             this._context = context;

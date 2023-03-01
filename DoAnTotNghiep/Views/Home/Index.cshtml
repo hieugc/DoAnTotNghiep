@@ -1,7 +1,12 @@
 ﻿@using DoAnTotNghiep.Entity
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Trang chủ";
 }
+
+
+@*
+    Usage
+*@
 
 <div class="group-banner">
     <div class="w-100">
@@ -86,13 +91,55 @@
         </div>
     </div>
     <!--Frame 3-->
-    @*<div class="frame_3">
+    <div class="frame_3">
         <div class="container-lg">
-            <div class="step-card">
-                <div class="step">
-                    <span>1</span>
+            <h2>Cách website hoạt động</h2>
+            <div id="carouselExampleIndicators" class="carousel slide carousel-dark" data-bs-ride="false">
+                <div class="carousel-indicators">
+                    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="3" aria-label="Slide 4"></button>
                 </div>
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <img src="~/Image/step_1.svg" class="d-block w-100" alt="Step 1">
+                        <div class="carousel-caption d-none d-md-block">
+                            <h5>Đăng ký miễn phí</h5>
+                            <p>Tham gia cộng đồng chúng tôi miễn phí.</p>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <img src="~/Image/step_2.svg" class="d-block w-100" alt="Step 2">
+                        <div class="carousel-caption d-none d-md-block">
+                            <h5>Tìm kiếm nhà mong muốn</h5>
+                            <p>Bạn có thể tìm thấy những căn nhà tuyệt vời tại nơi mình muốn đến.</p>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <img src="~/Image/step_3.svg" class="d-block w-100" alt="Step 3">
+                        <div class="carousel-caption d-none d-md-block">
+                            <h5>Liên hệ trao đổi</h5>
+                            <p>Bạn có thể trao đổi với chủ nhà qua hệ thống tin nhắn.</p>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <img src="~/Image/step_4.svg" class="d-block w-100" alt="Step 4">
+                        <div class="carousel-caption d-none d-md-block">
+                            <h5>Thanh toán</h5>
+                            <p>Bạn có thể dùng căn nhà mình để trao đổi hoặc điểm trên hệ thống.</p>
+                        </div>
+                    </div>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
             </div>
         </div>
-    </div>*@
+    </div>
 </div>

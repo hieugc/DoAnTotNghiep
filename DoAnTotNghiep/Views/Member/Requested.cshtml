@@ -1,0 +1,115 @@
+﻿@model DoAnTotNghiep.Entity.AdminReport
+
+@{
+    ViewData["Title"] = "Yêu cầu đã đăng";
+    Layout = "_LayoutMember";
+}
+
+
+@*
+    
+*@
+
+<div class="house">
+    <div class="house-head">
+        <h2>Danh sách yêu cầu đã khởi tạo</h2>
+    </div>
+    <div class="list-house">
+        @for (var item = 0; item < 1; item++)
+        {
+            <div class="card mb-3">
+                <div class="row g-0">
+                    <div class="col-md-12">
+                        <div class="user">
+                            <div class="avt"><img src="~/Image/logo.png" alt="avatar" /></div>
+                            <div class="name">Phạm Minh Hiếu</div>
+                        </div>
+                        <span class="status text-success">Xác nhận để hoàn tất</span>
+                    </div>
+                    <div class="col-md-7">
+                        <img src="~/Image/logo.png" class="img-fluid rounded-start" alt="hình ảnh nhà">
+                    </div>
+                    <div class="col-md-5">
+                        <div class="card-body">
+                            <div class="body-head">
+                                <h5 class="card-title">Nhà 1</h5>
+                                <div>
+                                    <div class="point"><span>Thông tin </span><i class="fa-solid fa-circle-info"></i></div>
+                                    <div class="rating"><span>4.3</span><i class="fa-solid fa-star"></i></div>
+                                </div>
+                            </div>
+                            <div class="request-info">
+                                <span class="label">Phương thức: </span>
+                                <span class="value">Trao đổi bằng nhà</span>
+                            </div>
+                            <div class="request-info">
+                                <span class="label">Địa điểm: </span>
+                                <span class="value">165 Trương Định, kp2, p5,......</span>
+                            </div>
+                            <div class="request-info request-time">
+                                <span class="label">Thời gian: </span>
+                                <span class="value">22/02/2023 - 03/03/2023</span>
+                            </div>
+                            <div class="request-info request-price">
+                                <span class="label">Điểm bạn phải trả: </span>
+                                <span class="value">1200 Point</span>
+                            </div>
+                            <p class="card-control">
+                                <button type="button" class="btn btn-primary">Xác nhận</button>
+                                <button type="button" class="btn btn-danger">Từ chối</button>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        @for (var item = 0; item < 2; item++)
+        {
+            <div class="card mb-3">
+                <div class="row g-0">
+                    <div class="col-md-12">
+                        <div class="user">
+                            <div class="avt"><img src="~/Image/logo.png" alt="avatar" /></div>
+                            <div class="name">Phạm Minh Hiếu</div>
+                        </div>
+                        <span class="status text-warning">Chờ xác nhận</span>
+                    </div>
+                    <div class="col-md-7">
+                        <img src="~/Image/logo.png" class="img-fluid rounded-start" alt="hình ảnh nhà">
+                    </div>
+                    <div class="col-md-5">
+                        <div class="card-body">
+                            <div class="body-head">
+                                <h5 class="card-title">Nhà 1</h5>
+                                <div>
+                                    <div class="point"><span>Thông tin </span><i class="fa-solid fa-circle-info"></i></div>
+                                    <div class="rating"><span>4.3</span><i class="fa-solid fa-star"></i></div>
+                                </div>
+                            </div>
+                            <div class="request-info">
+                                <span class="label">Phương thức: </span>
+                                <span class="value">Trao đổi bằng nhà</span>
+                            </div>
+                            <div class="request-info">
+                                <span class="label">Địa điểm: </span>
+                                <span class="value">165 Trương Định, kp2, p5,......</span>
+                            </div>
+                            <div class="request-info request-time">
+                                <span class="label">Thời gian: </span>
+                                <span class="value">22/02/2023 - 03/03/2023</span>
+                            </div>
+                            <div class="request-info request-price">
+                                <span class="label">Điểm bạn phải trả: </span>
+                                <span class="value">1200 Point</span>
+                                </div>
+                                <p class="card-control">
+                                <button type="button" class="btn btn-primary" data-bs-target="#messageRequestModal" data-bs-toggle="modal">Cập nhật</button>
+                                    <button type="button" class="btn btn-danger">Xóa</button>
+                                </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

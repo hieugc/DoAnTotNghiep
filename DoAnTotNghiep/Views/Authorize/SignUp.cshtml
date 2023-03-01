@@ -1,0 +1,83 @@
+﻿@model DoAnTotNghiep.ViewModels.RegisterViewModel
+@{
+    ViewData["Title"] = "Đăng ký";
+    Layout = "_LayoutLogin";
+}
+
+
+<!-- Register Card -->
+<div class="card">
+    <div class="card-body">
+        <!-- Logo -->
+        <div class="app-brand justify-content-center">
+            <a href="@Url.Action("Index", "Home")" class="app-brand-link gap-2">
+                <span class="app-brand-logo demo branch">
+                    <img src="~/Image/logo.png" alt="logo" />
+                </span>
+                <span class="app-brand-text demo text-body fw-bolder">VExchangeHome</span>
+            </a>
+        </div>
+        <!-- /Logo -->
+        <h4 class="mb-2">Chào mừng bạn đến với VExchangeHome 🚀</h4>
+        <p class="mb-4">Hãy tạo tài khoản mới để trải nghiệm những vùng đất mới.</p>
+
+        <form id="formAuthentication" class="mb-3" asp-action="SignUp" method="POST">
+            <div asp-validation-summary="ModelOnly" class="text-danger">
+                @if (!string.IsNullOrEmpty(ViewBag.Message))
+                {
+                    @ViewBag.Message
+                }
+            </div>
+            <div class="mb-3">
+                <label asp-for="FirstName" class="form-label">Họ và tên đệm</label>
+                <input type="text" class="form-control" asp-for="FirstName" placeholder="Nguyễn Văn" />
+                <span asp-validation-for="FirstName" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="LastName" class="form-label">Tên</label>
+                <input type="text" class="form-control" asp-for="LastName" placeholder="Nguyễn Văn" />
+                <span asp-validation-for="LastName" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="PhoneNumber" class="form-label">Số điện thoại</label>
+                <input type="text" class="form-control" asp-for="PhoneNumber" placeholder="000 0000 000" />
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label">Email</label>
+                <input type="text" class="form-control" asp-for="Email" placeholder="Enter your email" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="mb-3 form-password-toggle">
+                <label class="form-label" asp-for="Password">Mật khẩu</label>
+                <div class="input-group input-group-merge">
+                    <input type="password"
+                           asp-for="Password"
+                           class="form-control"
+                           placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
+                           aria-describedby="password" />
+                </div>
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="mb-3 form-password-toggle">
+                <label class="form-label" asp-for="ConfirmPassword">Xác nhận mật khẩu</label>
+                <div class="input-group input-group-merge">
+                    <input type="password"
+                           class="form-control"
+                           asp-for="ConfirmPassword"
+                           placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
+                           aria-describedby="password" />
+                </div>
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-primary d-grid w-100">Đăng ký</button>
+        </form>
+
+        <p class="text-center">
+            <span>Bạn đã có tài khoản?</span>
+            <a href="@Url.Action("SignIn", "Authorize")">
+                <span>Đăng nhập</span>
+            </a>
+        </p>
+    </div>
+</div>

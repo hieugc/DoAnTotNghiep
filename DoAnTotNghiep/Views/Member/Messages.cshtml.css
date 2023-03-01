@@ -1,0 +1,195 @@
+﻿.Messages {
+    display: flex;
+    border-radius: 12px;
+    padding: 12px;
+    gap: 12px;
+    max-width: 1200px;
+    box-shadow: 0 0.25rem 0.75rem rgba(161, 172, 184, 0.3);
+}
+.list-user{
+    min-width: 250px;
+    padding-right: 12px;
+}
+.list-user::-webkit-scrollbar{
+    width: 2px;
+}
+.list-user::-webkit-scrollbar-thumb{
+    background: #1285aa;
+}
+.list-user::-webkit-scrollbar-track{
+    background: rgba(161, 172, 184, 0.3);
+}
+.list-user > .user {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    padding: 12px;
+}
+.list-user > .user:hover{
+    background: rgba(161, 172, 184, 0.12);
+    cursor: pointer;
+    border-radius: 18px;
+}
+.list-user > .user.active{
+    background: rgba(var(--bs-primary-rgb), 0.7);
+    cursor: pointer;
+    color: white;
+    border-radius: 18px;
+}
+.list-user > .user > .name{
+    font-weight: 400;
+}
+.user-name,
+.list-user > .user.new-message > .name {
+    font-weight: 700;
+}
+
+.list-user > .user.new-message{
+    position: relative;
+}
+.list-user > .user.new-message::after{
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--bs-primary);
+    position: absolute;
+    top: 10px;
+    right: 12px;
+}
+
+.tab-message .user-chat .avt,
+.list-user > .user > .avt {
+    height: 40px;
+    width: 40px;
+    border: 1px solid rgba(161, 172, 184, 0.3);
+    border-radius: 50%;
+    background: white;
+}
+.tab-message .other.user-chat .chat-head {
+    flex-flow: row;
+}
+.tab-message .user-chat .chat-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-flow: row-reverse;
+}
+.tab-message .name {
+    font-weight: 700;
+}
+.list-user,
+.tab-message {
+    max-height: 100%;
+    overflow: auto;
+}
+.tab-message > .top-tab-message{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: white;
+    background: var(--bs-primary);
+    padding: 12px;
+    box-shadow: 0 0.125rem 0.2rem white;
+}
+
+.tab-message {
+    display: flex;
+    flex-flow: column;
+    border-radius: 12px;
+    background-color: #f5f5f9;
+}
+
+.tab-message .bot-tab-message {
+    display: flex;
+    padding: 6px 48px;
+    box-shadow: 0 0.25rem 0.375rem #808080;
+}
+.frame-control{
+    width: 100%;
+    padding: 0 12px;
+    display: flex;
+    gap: 6px;
+}
+
+.tooltip-control .dropdown-menu{
+    border-radius: 24px 12px 24px 0;
+    box-shadow: 0 0.125rem 0.375rem rgba(161, 172, 184, 0.3);
+}
+.tooltip-control .dropdown-menu > .dropdown-item{
+    cursor: pointer;
+}
+
+.tooltip-control .control-label {
+    background: var(--bs-primary);
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 6px;
+    color: white;
+    border: unset;
+    cursor: pointer;
+}
+
+.frame-control button{
+    align-self: start;
+}
+.frame-control textarea{
+    max-height: 100px;
+}
+.request > label{
+    margin-right: 12px;
+}
+.request > label span {
+    font-size: 8px;
+}
+.list-message {
+    max-height: 100%;
+    overflow: auto;
+    padding: 12px;
+    display: flex;
+    flex-flow: column-reverse;
+    align-items: stretch;
+}
+
+.list-message > .other.user-chat > .message-frame{
+    margin-left: 52px;
+}
+
+.list-message > .user-chat > .message-frame{
+    margin-right: 52px;
+}
+.list-message > .other.user-chat > .message-frame > .chat {
+    padding-left: unset;
+    justify-content: start;
+    max-width: 70%;
+}
+.list-message > .other.user-chat > .message-frame > .chat span{
+    background: var(--bs-primary);
+    color: white;
+}
+
+.list-message > .user-chat > .message-frame > .chat {
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    padding-left: 30%;
+}
+.list-message > .user-chat > .message-frame > .chat span{
+    margin-top: 6px;
+    border-radius: 12px;
+    background: var(--bs-gray-700);
+    padding: 6px 12px;
+    color: white;
+}
+.list-message > .user-chat > .message-frame > .chat.img{
+    border: unset;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+}

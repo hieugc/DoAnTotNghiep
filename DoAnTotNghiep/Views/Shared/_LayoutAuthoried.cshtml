@@ -1,0 +1,338 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/DoAnTotNghiep.styles.css" asp-append-version="true" />
+    <link rel="shortcut icon" href="~/Image/tiny-logo.png" type="image/x-icon" />
+    <!--Start Icon Kit-->
+    <script src="https://kit.fontawesome.com/19075407b9.js" crossorigin="anonymous"></script>
+    @*<link rel="stylesheet" href="https://kit.fontawesome.com/19075407b9.css" crossorigin="anonymous">*@
+    <!--End Icon Kit-->
+</head>
+<body>
+    <nav class="nav-app">
+        <div class="container-lg">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><img src="~/Image/logo.png" class="logo" alt="logo" /></a>
+                </div>
+                <div class="nav-left">
+                    <div class="lg-device">
+                        <div class="lg-device-control">
+                            <div class="turn-off">
+                                <div>
+                                    <i class="fa-sharp fa-solid fa-chevron-right"></i>
+                                </div>
+                            </div>
+                            <form name="search" class="d-flex">
+                                <input type="search" class="rounded-start rounded-0 form-control" placeholder="Bạn muốn đi đâu?" name="explore" id="explore-1" />
+                                <button class="btn btn-sm btn-dark rounded-0 rounded-end"><i class="fa-sharp fa-solid fa-magnifying-glass"></i></button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="authorize">
+                        <div>
+                            <a class="position-relative" href="#" role="button" id="dropdownMenuNotification" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fa-solid fa-bell"></i>
+                                <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle">
+                                    <span class="visually-hidden">New alerts</span>
+                                </span>
+                            </a>
+
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuNotification">
+                                <div class="title"><h5>Thông báo</h5></div>
+                                <div class="alert-frame">
+                                    <div class="dropdown-item">
+                                        <div class="avt"><img src="~/Image/logo.png" alt="avt" /></div>
+                                        <div class="content">
+                                            <strong>Phạm Minh Hiếu</strong>
+                                            đã gửi yêu cầu trao đổi
+                                            <span class="time">17/02/2023</span>
+                                        </div>
+                                        <div class="status"><i class="fa-solid fa-circle"></i></div>
+                                    </div>
+                                    <div class="dropdown-item">
+                                        <div class="avt"><img src="~/Image/logo.png" alt="avt" /></div>
+                                        <div class="content">
+                                            <span class="user-info">Phạm Minh Hiếu</span>
+                                            <span> đã gửi yêu cầu trao đổi</span>
+                                            <span class="time">17/02/2023</span>
+                                        </div>
+                                        <div class="status seen"><i class="fa-solid fa-circle"></i></div>
+                                    </div>
+                                    <div class="dropdown-item">
+                                        <div class="avt"><img src="~/Image/logo.png" alt="avt" /></div>
+                                        <div class="content">
+                                            <span class="user-info">Phạm Minh Hiếu</span>
+                                            <span> đã gửi yêu cầu trao đổi</span>
+                                            <span class="time">17/02/2023</span>
+                                        </div>
+                                        <div class="status"><i class="fa-solid fa-circle"></i></div>
+                                    </div>
+                                    <div class="dropdown-item">
+                                        <div class="avt"><img src="~/Image/logo.png" alt="avt" /></div>
+                                        <div class="content">
+                                            <span class="user-info">Phạm Minh Hiếu</span>
+                                            <span> đã gửi yêu cầu trao đổi</span>
+                                            <span class="time">17/02/2023</span>
+                                        </div>
+                                        <div class="status seen"><i class="fa-solid fa-circle"></i></div>
+                                    </div>
+                                    <div class="dropdown-item">
+                                        <div class="avt"><img src="~/Image/logo.png" alt="avt" /></div>
+                                        <div class="content">
+                                            <span class="user-info">Phạm Minh Hiếu</span>
+                                            <span> đã gửi yêu cầu trao đổi</span>
+                                            <span class="time">17/02/2023</span>
+                                        </div>
+                                        <div class="status"><i class="fa-solid fa-circle"></i></div>
+                                    </div>
+                                    <div class="dropdown-item">
+                                        <div class="avt"><img src="~/Image/logo.png" alt="avt" /></div>
+                                        <div class="content">
+                                            <span class="user-info">Phạm Minh Hiếu</span>
+                                            <span> đã gửi yêu cầu trao đổi</span>
+                                            <span class="time">17/02/2023</span>
+                                        </div>
+                                        <div class="status seen"><i class="fa-solid fa-circle"></i></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <a class="position-relative" href="#" role="button" id="dropdownMenuChat" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fa-solid fa-message"></i>
+                                <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle">
+                                    <span class="visually-hidden">New chats</span>
+                                </span>
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuNotification">
+                                <div class="title"><h5>Tin nhắn</h5></div>
+                                <div class="alert-frame">
+                                    <div class="dropdown-item">
+                                        <div class="avt"><img src="~/Image/logo.png" alt="avt" /></div>
+                                        <div class="content">
+                                            <strong>Phạm Minh Hiếu</strong>
+                                            đã gửi yêu cầu trao đổi
+                                            <span class="time">17/02/2023</span>
+                                        </div>
+                                        <div class="status"><i class="fa-solid fa-circle"></i></div>
+                                    </div>
+                                    <div class="dropdown-item">
+                                        <div class="avt"><img src="~/Image/logo.png" alt="avt" /></div>
+                                        <div class="content">
+                                            <span class="user-info">Phạm Minh Hiếu</span>
+                                            <span> đã gửi yêu cầu trao đổi</span>
+                                            <span class="time">17/02/2023</span>
+                                        </div>
+                                        <div class="status seen"><i class="fa-solid fa-circle"></i></div>
+                                    </div>
+                                    <div class="dropdown-item">
+                                        <div class="avt"><img src="~/Image/logo.png" alt="avt" /></div>
+                                        <div class="content">
+                                            <span class="user-info">Phạm Minh Hiếu</span>
+                                            <span> đã gửi yêu cầu trao đổi</span>
+                                            <span class="time">17/02/2023</span>
+                                        </div>
+                                        <div class="status"><i class="fa-solid fa-circle"></i></div>
+                                    </div>
+                                    <div class="dropdown-item">
+                                        <div class="avt"><img src="~/Image/logo.png" alt="avt" /></div>
+                                        <div class="content">
+                                            <span class="user-info">Phạm Minh Hiếu</span>
+                                            <span> đã gửi yêu cầu trao đổi</span>
+                                            <span class="time">17/02/2023</span>
+                                        </div>
+                                        <div class="status seen"><i class="fa-solid fa-circle"></i></div>
+                                    </div>
+                                    <div class="dropdown-item">
+                                        <div class="avt"><img src="~/Image/logo.png" alt="avt" /></div>
+                                        <div class="content">
+                                            <span class="user-info">Phạm Minh Hiếu</span>
+                                            <span> đã gửi yêu cầu trao đổi</span>
+                                            <span class="time">17/02/2023</span>
+                                        </div>
+                                        <div class="status"><i class="fa-solid fa-circle"></i></div>
+                                    </div>
+                                    <div class="dropdown-item">
+                                        <div class="avt"><img src="~/Image/logo.png" alt="avt" /></div>
+                                        <div class="content">
+                                            <span class="user-info">Phạm Minh Hiếu</span>
+                                            <span> đã gửi yêu cầu trao đổi</span>
+                                            <span class="time">17/02/2023</span>
+                                        </div>
+                                        <div class="status seen"><i class="fa-solid fa-circle"></i></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="avt">
+                            <a class="position-relative" href="#" role="button" id="dropdownMenuMember" data-bs-toggle="dropdown" aria-expanded="false">
+                                <img src="~/Image/logo.png" alt="avatar" />
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuMember">
+                                <a class="dropdown-item" href="#">Hồ sơ cá nhân</a>
+                                <a class="dropdown-item" href="#">Danh sách nhà</a>
+                                <a class="dropdown-item" href="#">Danh sách yêu cầu</a>
+                                <a class="dropdown-item" href="#">Lịch sử giao dịch</a>
+                                <a class="dropdown-item" href="#">Đồ thị giao dịch</a>
+                                <a class="dropdown-item" href="#">Tin nhắn</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item text-danger" href="#">Đăng xuất <i class="fa-solid fa-arrow-right-from-bracket"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="sm-device">
+                        <div class="menu-tab"><i class="fa-solid fa-bars"></i></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <main role="main">
+        @RenderBody()
+    </main>
+
+
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="branch"><img src="~/Image/logo.png" alt="logo" /></div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="refreshLoginForm()"></button>
+                </div>
+                <div class="modal-body sigshow">
+                    <h3>Chào mừng trở lại</h3>
+                    <p class="fw-light"><small>Đăng nhập vào tài khoản của bạn.</small></p>
+                    <form>
+                        <div class="mb-3">
+                            <input type="email" class="form-control" name="LoginEmail" id="LoginEmail" placeholder="name@example.com"/>
+                        </div>
+                        <div>
+                            <input type="password" class="form-control" name="LoginPwd" id="LoginPwd" placeholder="********"/>
+                        </div>
+                    </form>
+                    <p class="fw-semibold text-end text-decoration-underline"><small id="forgot" onclick="showForm(1, 0)">Quên mật khẩu?</small></p>
+                    <button type="button" class="btn btn-primary">Đăng nhập</button>
+                </div>
+                <div class="modal-body sighide">
+                    <h3>Quên mật khẩu</h3>
+                    <p class="fw-light"><small>Mã xác thực sẽ gửi qua email của bạn để cấp lại mật khẩu.</small></p>
+                    <form>
+                        <div class="mb-3">
+                            <input type="email" class="form-control" name="ForgotEmail" id="ForgotEmail" placeholder="name@example.com" />
+                        </div>
+                    </form>
+                    <button type="button" class="btn btn-primary" onclick="showForm(2, 1)">Gửi xác nhận</button>
+                    <button type="button" class="btn btn-outline-primary" onclick="showForm(0, 1)">Quay lại đăng nhập</button>
+                </div>
+                <div class="modal-body sighide">
+                    <h3>Nhập mã xác thực</h3>
+                    <p class="fw-light"><small>Email đã được gửi, hãy kiểm tra hộp thư của bạn và thư rác nếu không thấy email.</small></p>
+                    <form>
+                        <div class="mb-3">
+                            <input type="text" class="form-control" name="ForgotConfirm" id="ForgotConfirm" placeholder="Mã xác thực" />
+                        </div>
+                    </form>
+                    <p class="text-center"><small>Không nhận được?</small><small class="fw-bold text-decoration-underline" id="resend">Gửi lại email</small></p>
+                    <button type="button" class="btn btn-primary" onclick="showForm(3, 2)">Xác thực</button>
+                </div>
+                <div class="modal-body sighide">
+                    <h3>Tạo mật khẩu mới</h3>
+                    <form>
+                        <div class="mb-3">
+                            <input type="password" class="form-control" name="ForgotPwd" id="ForgotPwd" placeholder="Mật khẩu mới" />
+                        </div>
+                        <div class="mb-3">
+                            <input type="password" class="form-control" name="ForgotConfirmPwd" id="ForgotConfirmPwd" placeholder="Xác nhận mật khẩu" />
+                        </div>
+                    </form>
+                    <button type="button" class="btn btn-primary" onclick="showForm(0, 3)">Thay đổi mật khẩu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="signUpModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="signUpModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="branch"><img src="~/Image/logo.png" alt="logo" /></div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="freshFormSignUp()"></button>
+                </div>
+                <div class="modal-body sigshow">
+                    <h3>Thành viên mới</h3>
+                    <p class="fw-light"><small>Sử dụng email này để đăng ký vào hệ thống.</small></p>
+                    <form>
+                        <div class="mb-3">
+                            <input type="email" class="form-control" name="signUpEmail" id="signUpEmail" placeholder="name@example.com" />
+                        </div>
+                        <div class="mb-3">
+                            <input type="password" class="form-control" name="signUpPwd" id="signUpPwd" placeholder="Mật khẩu" />
+                        </div>
+                        <div class="mb-3">
+                            <input type="password" class="form-control" name="signUpConfirmPwd" id="signUpConfirmPwd" placeholder="Xác nhận mật khẩu" />
+                        </div>
+                    </form>                    
+                    <button type="button" class="btn btn-primary" onclick="showFormSignUp(1, 0)">Đăng ký</button>
+                </div>
+                <div class="modal-body sighide">
+                    <h3>Xác thực tài khoản</h3>
+                    <p class="fw-light"><small>Chúng tôi đã gửi mã xác thực cho bạn qua email. Hãy kiểm tra hộp thư của bạn.</small></p>
+                    <form>
+                        <div class="mb-3">
+                            <input type="text" class="form-control" name="authNumber" id="authNumber" placeholder="Mã xác thực" />
+                        </div>
+                    </form>
+                    <p class="text-center"><small>Không nhận được?</small><small class="fw-bold text-decoration-underline" id="resend">Gửi lại email</small></p>
+                    <button type="button" class="btn btn-primary" onclick="showFormSignUp(2, 1)">Xác thực</button>
+                </div>
+                <div class="modal-body sighide">
+                    <h3>Hoàn tất thông tin</h3>
+                    <p class="fw-light"><small>Điền các thông tin cá nhân của bạn.</small></p>
+                    <form>
+                        <div class="mb-3">
+                            <input type="text" class="form-control" name="firstName" id="firstName" placeholder="Họ và tên lót" />
+                        </div>
+                        <div class="mb-3">
+                            <input type="text" class="form-control" name="lastName" id="lastName" placeholder="Tên" />
+                        </div>
+                        <div class="mb-3">
+                            <select class="form-control" name="gender">
+                                <option value="1">Nam</option>
+                                <option value="2">Nữ</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <input type="datetime" class="form-control" name="birthDay" id="birthDate" placeholder="Ngày sinh (dd/mm/yyyy)" />
+                        </div>
+                        <div class="mb-3">
+                            <input type="tel" class="form-control" name="phoneNumber" id="phoneNumber" placeholder="Số điện thoại" />
+                        </div>
+                    </form>
+                    <button type="button" class="btn btn-primary" onclick="freshFormSignUp()">Hoàn tất</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2023 - DoAnTotNghiep - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/Nav/nav.js" type="text/javascript"></script>
+    <script src="~/js/Auth/signUp.js" type="text/javascript"></script>
+    <script src="~/js/Auth/login.js" type="text/javascript"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

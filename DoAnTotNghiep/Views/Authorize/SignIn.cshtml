@@ -1,0 +1,67 @@
+﻿@model DoAnTotNghiep.ViewModels.LoginViewModel
+@{
+    ViewData["Title"] = "Đăng nhập";
+    Layout = "_LayoutLogin";
+}
+
+<div class="card">
+    <div class="card-body">
+        <!-- Logo -->
+        <div class="app-brand justify-content-center">
+            <a href="@Url.Action("Index", "Home")" class="app-brand-link gap-2">
+                <span class="app-brand-logo demo branch">
+                    <img src="~/Image/logo.png" alt="logo" />
+                </span>
+                <span class="app-brand-text demo text-body fw-bolder">VExchangeHome</span>
+            </a>
+        </div>
+        <!-- /Logo -->
+        <h4 class="mb-2">Chào mừng bạn trở lại! 👋</h4>
+        <p class="mb-4">Hãy đăng nhập và tận hưởng dịch vụ của chúng tôi.</p>
+
+        <form id="formAuthentication" class="mb-3" asp-action="SignIn" method="POST">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label">Email</label>
+                <input type="text"
+                       class="form-control"
+                       asp-for="Email"
+                       placeholder="Điền email của bạn"
+                       autofocus />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="mb-3 form-password-toggle">
+                <div class="d-flex justify-content-between">
+                    <label class="form-label" asp-for="Password">Mật khẩu</label>
+                    <a href="@Url.Action("Forgot", "Authorize")">
+                        <small>Quên mật khẩu?</small>
+                    </a>
+                </div>
+                <div class="input-group input-group-merge">
+                    <input type="password"
+                           class="form-control"
+                           asp-for="Password"
+                           placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
+                           aria-describedby="password" />
+                    <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+                </div>
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <button class="btn btn-primary d-grid w-100" type="submit">Đăng nhập</button>
+                <a href="@Url.Action("Index", "Home")" class="btn btn-outline-primary d-grid w-100 mt-2 text-decoration-none">Trang chủ</a>
+            </div>
+        </form>
+
+        <p class="text-center">
+            <span>Bạn có tài khoản chưa?</span>
+            <a href="@Url.Action("SignUp", "Authorize")">
+                <span>Tạo tài khoản mới</span>
+            </a>
+        </p>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

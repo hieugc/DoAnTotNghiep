@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DoAnTotNghiep.Data;
 using DoAnTotNghiep.Entity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DoAnTotNghiep.Controllers
 {
@@ -75,6 +76,19 @@ namespace DoAnTotNghiep.Controllers
             ViewData["IdDistrict"] = new SelectList(_context.Districts, "Id", "Name", house.IdDistrict);
             ViewData["IdUser"] = new SelectList(_context.Users, "Id", "Email", house.IdUser);
             ViewData["IdWard"] = new SelectList(_context.Wards, "Id", "Name", house.IdWard);
+            return View(house);
+        }
+
+        [HttpPost]
+        [Route("api/House/Create")]
+        public async Task<IActionResult> _Create([FromBody] House house)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Add(house);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
             return View(house);
         }
 

@@ -2,62 +2,40 @@
 
 @{
     ViewData["Title"] = "Chi tiết nhà";
+    Layout = "_LayoutAuthoried";
 }
 
 <div class="Banner">
-    <div class="row">
-        <div class="column">
-            <img src="~/Image/Demo/1713577385683372.jpg" style="width:100%" onclick="openModal();currentSlide(1)" class="hover-shadow cursor">
+    <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="false">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="3" aria-label="Slide 4"></button>
         </div>
-        <div class="column">
-            <img src="~/Image/Demo/1713900527240594.jpg" style="width:100%" onclick="openModal();currentSlide(2)" class="hover-shadow cursor">
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img src="~/Image/Demo/1713577385683372.jpg" class="d-block w-100" alt="Step 1">
+            </div>
+            <div class="carousel-item">
+                <img src="~/Image/Demo/1713900527240594.jpg" class="d-block w-100" alt="Step 2">
+            </div>
+            <div class="carousel-item">
+                <img src="~/Image/Demo/1713577385683372.jpg" class="d-block w-100" alt="Step 3">
+            </div>
+            <div class="carousel-item">
+                <img src="~/Image/Demo/1714621217557489.jpg" class="d-block w-100" alt="Step 4">
+            </div>
         </div>
-        <div class="column">
-            <img src="~/Image/Demo/1714621217557489.jpg" style="width:100%" onclick="openModal();currentSlide(3)" class="hover-shadow cursor">
-        </div>
-        <div class="column">
-            <img src="~/Image/Demo/1713577385683372.jpg" style="width:100%" onclick="openModal();currentSlide(4)" class="hover-shadow cursor">
-        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
     </div>
-
-    @*<div id="myModal" class="modal">
-        <span class="close cursor" onclick="closeModal()">&times;</span>
-        <div class="modal-content">
-            <div class="mySlides">
-                <img src="~/Image/Demo/1713577385683372.jpg" style="width:100%">
-            </div>
-
-            <div class="mySlides">
-                <img src="~/Image/Demo/1713900527240594.jpg" style="width:100%">
-            </div>
-
-            <div class="mySlides">
-                <img src="~/Image/Demo/1714621217557489.jpg" style="width:100%">
-            </div>
-
-            <div class="mySlides">
-                <img src="~/Image/Demo/1713577385683372.jpg" style="width:100%">
-            </div>
-
-            <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
-            <a class="next" onclick="plusSlides(1)">&#10095;</a>
-
-            <div class="row">
-                <div class="col-3">
-                    <img class="demo cursor" src="~/Image/Demo/1713577385683372.jpg" style="width:100%" onclick="currentSlide(1)" alt="Nature and sunrise">
-                </div>
-                <div class="col-3">
-                    <img class="demo cursor" src="~/Image/Demo/1713900527240594.jpg" style="width:100%" onclick="currentSlide(2)" alt="Snow">
-                </div>
-                <div class="col-3">
-                    <img class="demo cursor" src="~/Image/Demo/1714621217557489.jpg" style="width:100%" onclick="currentSlide(3)" alt="Mountains and fjords">
-                </div>
-                <div class="col-3">
-                    <img class="demo cursor" src="~/Image/Demo/1713577385683372.jpg" style="width:100%" onclick="currentSlide(4)" alt="Northern Lights">
-                </div>
-            </div>
-        </div>
-    </div>*@
 </div>
 
 <div class="frame">
@@ -71,7 +49,7 @@
             <div class="tab-pane"><a href="#tab6">Đánh giá</a></div>
         </div>
         <div class="content">
-            <div id="tab1">
+            <section id="tab1">
                 <div class="general">
                     <div>Nhà của Hiếu</div>
                     <div>
@@ -86,9 +64,9 @@
                     <div><i class="fa-solid fa-bath"></i><span>1</span></div>
                     <div><i class="fa-solid fa-maximize"></i><span>100 &#13217;</span></div>
                 </div>
-            </div>
+            </section>
 
-            <div id="tab2">
+            <section id="tab2">
                 <h5>Giới thiệu</h5>
                 <p>
                     Lorem Ipsum is simply dummy text of the printing and typesetting industry.
@@ -99,9 +77,9 @@
                     Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including
                     versions of Lorem Ipsum.
                 </p>
-            </div>
+            </section>
 
-            <div id="tab3">
+            <section id="tab3">
                 <h5>Tiện nghi</h5>
                 <div>
                     <div class="item-show">
@@ -129,9 +107,9 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <div id="tab4">
+            <section id="tab4">
                 <h5>Quy tắc</h5>
                 <div>
                     <div class="item-show">
@@ -144,16 +122,16 @@
                         }
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <div id="tab5">
+            <section id="tab5">
                 <h5>Địa chỉ</h5>
                 <div class="frame-map">
                     <div id="myMap" class="BingMap" onload="GetMap();"></div>
                 </div>
-            </div>
+            </section>
 
-            <div id="tab6">
+            <section id="tab6">
                 <span class="heading">Người dung đánh giá</span>
                 <span class="fa fa-star checked"></span>
                 <span class="fa fa-star checked"></span>
@@ -235,7 +213,6 @@
                     </div>
                 </div>
 
-
                 <div class="frame-list-comment">
                     @for (var item = 0; item < 6; item++)
                     {
@@ -266,7 +243,7 @@
                         </div>
                     }
                 </div>
-            </div>
+            </section>
         </div>
     </div>
     <div class="right">
@@ -280,18 +257,19 @@
             </div>
             <div class="validate">
                 <div>
-                    <i class="fa-solid fa-star"></i><span>2 căn nhà</span>
+                    <i class="fa-solid fa-house"></i><span>2 căn nhà</span>
                 </div>
                 <div>
-                    <i class="fa-solid fa-star"></i><span>Đã xác thực</span>
+                    <i class="fa-solid fa-phone"></i><span class="text-success">Đã xác thực</span>
                 </div>
                 <div>
-                    <i class="fa-solid fa-star"></i><span>Đã xác thực</span>
+                    <i class="fa-solid fa-envelope"></i><span class="text-success">Đã xác thực</span>
                 </div>
             </div>
         </div>
         <div class="bot">
             <div><button class="btn btn-primary">Liên hệ</button></div>
+            <div><button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#messageRequestModal">Yêu cầu trao đổi</button></div>
             <div><button class="btn btn-danger" type="button" data-bs-toggle="modal" data-bs-target="#reportModal">Báo cáo</button></div>
         </div>
     </div>
@@ -332,6 +310,167 @@
         </div>
     </div>
 </div>
+
+
+    <div class="modal fade" id="messageRequestModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="messageRequestModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="my-modal-title">
+                        <h3 class="house-title">Tạo yêu cầu</h3>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="">Chọn nhà muốn trao đổi</label>
+                        <div class="house-request" onclick="showListHouseModal(1)">
+                            <div class="frame-empty">+</div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="">Phương thức trao đổi</label>
+                        <div class="contain-option">
+                            <div class="form-check">
+                                <label class="form-check-label" for="swap-option-1">
+                                    Trao đổi bằng điểm
+                                </label>
+                                <input class="form-check-input" type="radio" name="swap-option" id="swap-option-1" value="swap-option-1" checked>
+                            </div>
+                            <div class="form-check">
+                                <label class="form-check-label" for="swap-option-2">
+                                    Trao đổi bằng nhà
+                                </label>
+                                <input class="form-check-input" type="radio" name="swap-option" id="swap-option-2" value="swap-option-2">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="">Chọn nhà của bạn để trao đổi</label>
+                        <div class="house-request" onclick="showListHouseModal(1)">
+                            <div class="frame-empty">+</div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="">Chọn thời gian đến</label>
+                        <div class="">
+                            <input type="text" name="requestdaterange" id="requestdaterange" value="01/01/2018 - 01/15/2018" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="">Điểm bạn cần phải trả</label>
+                        <div class="contain-price">
+                            1400 Point/ngày
+                        </div>
+                    </div>
+
+                    <div class=""><button class="btn btn-primary" type="button">Tạo yêu cầu</button></div>
+                </div>
+            </div>
+            <div class="modal-content list-house modal-content-hide">
+                <div class="modal-header">
+                    <span class="back-step" onclick="HTMLInputElement(0)"> <i class="fa-solid fa-angle-left"></i> </span>
+                    <h3 class="house-title">Chọn nhà</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="list">
+                        <div class="house-card selected">
+                            <img src="~/Image/house-demo.png" alt="Mike" style="width:100%">
+                            <div class="house-img-container">
+                                <h2>Nhà của Hiếu</h2>
+                                <p class="attribute"><i class="fa-solid fa-map-location-dot"></i><span>268 Ly Thuong Kiet Street - Ward 14, District 10, HCMC, Ho Chi Minh City</span></p>
+                                <div class="list-attribute">
+                                    <p class="attribute"><span>4</span><i class="fa-solid fa-star"></i></p>
+                                    <p class="attribute"><i class="fa-solid fa-users"></i><span>4</span></p>
+                                    <p class="attribute"><i class="fa-solid fa-bed"></i><span>2</span></p>
+                                </div>
+                                <p>
+                                    <button class="item-button">
+                                        <span class="label-show">200point/night</span>
+                                        <span class="label-hide">Chọn</span>
+                                    </button>
+                                </p>
+                            </div>
+                        </div>
+                        @for (var item = 0; item < 5; item++)
+                        {
+                            <div class="house-card">
+                                <img src="~/Image/house-demo.png" alt="Mike" style="width:100%">
+                                <div class="house-img-container">
+                                    <h2>Nhà của Hiếu</h2>
+                                    <p class="attribute"><i class="fa-solid fa-map-location-dot"></i><span>268 Ly Thuong Kiet Street - Ward 14, District 10, HCMC, Ho Chi Minh City</span></p>
+                                    <div class="list-attribute">
+                                        <p class="attribute"><span>4</span><i class="fa-solid fa-star"></i></p>
+                                        <p class="attribute"><i class="fa-solid fa-users"></i><span>4</span></p>
+                                        <p class="attribute"><i class="fa-solid fa-bed"></i><span>2</span></p>
+                                    </div>
+                                    <p>
+                                        <button class="item-button">
+                                            <span class="label-show">200point/night</span>
+                                            <span class="label-hide">Chọn</span>
+                                        </button>
+                                    </p>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div class=""><button class="btn btn-primary" type="button">Xác nhận</button></div>
+                </div>
+            </div>
+            <div class="modal-content list-house modal-content-hide">
+                <div class="modal-header">
+                    <span class="back-step" onclick="hideListHouseModal(1)"> <i class="fa-solid fa-angle-left"></i> </span>
+                    <h3 class="house-title">Chọn nhà</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="list">
+                        <div class="house-card selected">
+                            <img src="~/Image/house-demo.png" alt="Mike" style="width:100%">
+                            <div class="house-img-container">
+                                <h2>Nhà của Hiếu</h2>
+                                <p class="attribute"><i class="fa-solid fa-map-location-dot"></i><span>268 Ly Thuong Kiet Street - Ward 14, District 10, HCMC, Ho Chi Minh City</span></p>
+                                <div class="list-attribute">
+                                    <p class="attribute"><span>4</span><i class="fa-solid fa-star"></i></p>
+                                    <p class="attribute"><i class="fa-solid fa-users"></i><span>4</span></p>
+                                    <p class="attribute"><i class="fa-solid fa-bed"></i><span>2</span></p>
+                                </div>
+                                <p>
+                                    <button class="item-button">
+                                        <span class="label-show">200point/night</span>
+                                        <span class="label-hide">Chọn</span>
+                                    </button>
+                                </p>
+                            </div>
+                        </div>
+                        @for (var item = 0; item < 5; item++)
+                        {
+                            <div class="house-card">
+                                <img src="~/Image/house-demo.png" alt="Mike" style="width:100%">
+                                <div class="house-img-container">
+                                    <h2>Nhà của Hiếu</h2>
+                                    <p class="attribute"><i class="fa-solid fa-map-location-dot"></i><span>268 Ly Thuong Kiet Street - Ward 14, District 10, HCMC, Ho Chi Minh City</span></p>
+                                    <div class="list-attribute">
+                                        <p class="attribute"><span>4</span><i class="fa-solid fa-star"></i></p>
+                                        <p class="attribute"><i class="fa-solid fa-users"></i><span>4</span></p>
+                                        <p class="attribute"><i class="fa-solid fa-bed"></i><span>2</span></p>
+                                    </div>
+                                    <p>
+                                        <button class="item-button">
+                                            <span class="label-show">200point/night</span>
+                                            <span class="label-hide">Chọn</span>
+                                        </button>
+                                    </p>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div class=""><button class="btn btn-primary" type="button">Xác nhận</button></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
 
 @section Scripts{
