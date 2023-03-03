@@ -1,6 +1,7 @@
 package com.example.homex
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -15,8 +16,12 @@ import com.example.homex.adapter.ImageSlideAdapter
 import com.example.homex.adapter.SimilarHomeAdapter
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentHomeDetailBinding
+import com.example.homex.extension.betweenDays
+import com.example.homex.extension.longToDate
 import com.example.homex.utils.CenterZoomLayoutManager
 import com.google.android.material.tabs.TabLayoutMediator
+import com.homex.core.model.CalendarDate
+import java.util.*
 
 
 class HomeDetailFragment : BaseFragment<FragmentHomeDetailBinding>() {
@@ -24,6 +29,7 @@ class HomeDetailFragment : BaseFragment<FragmentHomeDetailBinding>() {
 
     private lateinit var ratingAdapter: HomeRatingAdapter
     private lateinit var similarHomeAdapter: SimilarHomeAdapter
+    private var selection: Pair<CalendarDate?, CalendarDate?> = Pair(null, null)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -35,6 +41,16 @@ class HomeDetailFragment : BaseFragment<FragmentHomeDetailBinding>() {
             showLogo = false,
             showBoxChatLayout = Pair(false, "")
         )
+
+        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Pair<CalendarDate?, CalendarDate?>>("DATE")?.observe(viewLifecycleOwner){
+                dates->
+            val startDate = dates.first?.time?.time?.longToDate()
+            val endDate = dates.second?.time?.time?.longToDate()
+            binding.homeDateTV.text =  "$startDate - $endDate"
+            binding.dayCountTV.text = "${startDate.betweenDays(endDate)} ngày"
+            Log.e("betweenDate",  "${startDate.betweenDays(endDate)}")
+            selection = dates
+        }
     }
 
     override fun setView() {
@@ -69,6 +85,20 @@ class HomeDetailFragment : BaseFragment<FragmentHomeDetailBinding>() {
 
         setupViewPager()
         setupTabLayout()
+
+        val cal = Calendar.getInstance()
+        val first = CalendarDate(cal.time, cal.get(Calendar.DAY_OF_MONTH).toString())
+        Log.e("first", cal.get(Calendar.DAY_OF_MONTH).toString())
+        cal.add(Calendar.DATE, 7)
+        val second = CalendarDate(cal.time, cal.get(Calendar.DAY_OF_MONTH).toString())
+        Log.e("second", cal.get(Calendar.DAY_OF_MONTH).toString())
+        selection = Pair(
+            first, second
+        )
+        val from = first.time?.time?.longToDate()
+        val to = second.time?.time?.longToDate()
+        binding.homeDateTV.text = "$from - $to"
+        binding.dayCountTV.text = "7 ngày"
     }
 
     private fun setupTabLayout(){
@@ -97,6 +127,15 @@ class HomeDetailFragment : BaseFragment<FragmentHomeDetailBinding>() {
 
     override fun setEvent() {
         binding.contactBtn.setOnClickListener {
+            findNavController().navigate(R.id.action_homeDetailFragment_to_messageBoxFragment)
+        }
+        binding.changeDateBtn.setOnClickListener {
+            val action = HomeDetailFragmentDirections.actionHomeDetailFragmentToBottomSheetChangeDateFragment(selection.first, selection.second)
+            findNavController().navigate(action)
+        }
+        binding.createRequestBtn.setOnClickListener {
+            val action = HomeDetailFragmentDirections.actionHomeDetailFragmentToCreateRequestFragment(selection.first, selection.second)
+            findNavController().navigate(action)
         }
     }
 }

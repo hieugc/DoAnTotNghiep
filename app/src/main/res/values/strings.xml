@@ -132,4 +132,6 @@
     <string name="select_from_gallery">Chọn từ thư viện</string>
     <string name="temp_images_dir">temp_image_file</string>
     <string name="temp_image">temp_image.jpg</string>
+    <string name="pending">Chờ xác nhận</string>
+    <string name="detail">Chi tiết</string>
 </resources>

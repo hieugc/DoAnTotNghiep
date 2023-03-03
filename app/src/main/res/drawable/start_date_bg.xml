@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:gravity="right">
+        <shape android:shape="rectangle" android:useLevel="true">
+            <solid android:color="@color/primary_light"/>
+            <size android:width="20dp"
+                android:height="40dp"/>
+        </shape>
+    </item>
+    <item android:drawable="@drawable/selected_date_bg"/>
+</layer-list>

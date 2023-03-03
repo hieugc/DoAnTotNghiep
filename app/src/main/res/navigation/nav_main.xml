@@ -61,6 +61,9 @@
             app:enterAnim="@anim/slide_in_left"
             app:popEnterAnim="@anim/fade_in"
             app:popExitAnim="@anim/slide_in_right"/>
+        <action
+            android:id="@+id/action_userFragment_to_requestFragment"
+            app:destination="@id/requestFragment" />
     </fragment>
     <fragment
         android:id="@+id/messageFragment"
@@ -90,6 +93,9 @@
         <action
             android:id="@+id/action_messageBoxFragment_to_createRequestBottomSheetFragment"
             app:destination="@id/createRequestBottomSheetFragment" />
+        <action
+            android:id="@+id/action_messageBoxFragment_to_createRequestFragment"
+            app:destination="@id/createRequestFragment" />
     </fragment>
     <fragment
         android:id="@+id/searchFragment"
@@ -122,7 +128,39 @@
         android:id="@+id/homeDetailFragment"
         android:name="com.example.homex.HomeDetailFragment"
         android:label="fragment_home_detail"
-        tools:layout="@layout/fragment_home_detail" />
+        tools:layout="@layout/fragment_home_detail" >
+        <action
+            android:id="@+id/action_homeDetailFragment_to_messageBoxFragment"
+            app:destination="@id/messageBoxFragment" />
+        <action
+            android:id="@+id/action_homeDetailFragment_to_bottomSheetChangeDateFragment"
+            app:destination="@id/bottomSheetChangeDateFragment">
+            <argument
+                android:name="startDate"
+                app:argType="com.homex.core.model.CalendarDate"
+                app:nullable="true"
+                android:defaultValue="@null" />
+            <argument
+                android:name="endDate"
+                app:argType="com.homex.core.model.CalendarDate"
+                app:nullable="true"
+                android:defaultValue="@null" />
+        </action>
+        <action
+            android:id="@+id/action_homeDetailFragment_to_createRequestFragment"
+            app:destination="@id/createRequestFragment">
+            <argument
+                android:name="startDate"
+                app:argType="com.homex.core.model.CalendarDate"
+                app:nullable="true"
+                android:defaultValue="@null" />
+            <argument
+                android:name="endDate"
+                app:argType="com.homex.core.model.CalendarDate"
+                app:nullable="true"
+                android:defaultValue="@null" />
+        </action>
+    </fragment>
     <action
         android:id="@+id/action_global_homeDetailFragment"
         app:destination="@id/homeDetailFragment"
@@ -144,6 +182,16 @@
         android:name="com.example.homex.CreateRequestFragment"
         android:label="CreateRequestFragment"
         tools:layout="@layout/fragment_create_request">
+        <argument
+            android:name="startDate"
+            app:argType="com.homex.core.model.CalendarDate"
+            app:nullable="true"
+            android:defaultValue="@null" />
+        <argument
+            android:name="endDate"
+            app:argType="com.homex.core.model.CalendarDate"
+            app:nullable="true"
+            android:defaultValue="@null" />
         <action
             android:id="@+id/action_createRequestFragment_to_pickHomeFragment"
             app:destination="@id/pickHomeFragment"
@@ -158,6 +206,20 @@
             app:enterAnim="@anim/slide_in_left"
             app:popEnterAnim="@anim/fade_in"
             app:popExitAnim="@anim/slide_in_right"/>
+        <action
+            android:id="@+id/action_createRequestFragment_to_bottomSheetChangeDateFragment"
+            app:destination="@id/bottomSheetChangeDateFragment">
+            <argument
+                android:name="startDate"
+                app:argType="com.homex.core.model.CalendarDate"
+                app:nullable="true"
+                android:defaultValue="@null" />
+            <argument
+                android:name="endDate"
+                app:argType="com.homex.core.model.CalendarDate"
+                app:nullable="true"
+                android:defaultValue="@null" />
+        </action>
     </fragment>
     <fragment
         android:id="@+id/myHomeFragment"
@@ -283,5 +345,35 @@
         android:name="com.example.homex.activity.home.addhome.GalleryFragment"
         android:label="GalleryFragment"
         tools:layout="@layout/fragment_gallery"/>
+    <fragment
+        android:id="@+id/requestFragment"
+        android:name="com.example.homex.RequestFragment"
+        android:label="RequestFragment"
+        tools:layout="@layout/fragment_request">
+        <action
+            android:id="@+id/action_requestFragment_to_pendingRequestDetailFragment"
+            app:destination="@id/pendingRequestDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/pendingRequestDetailFragment"
+        android:name="com.example.homex.activity.home.PendingRequestDetailFragment"
+        android:label="PendingRequestDetailFragment"
+        tools:layout="@layout/fragment_pending_request_detail"/>
+    <dialog
+        android:id="@+id/bottomSheetChangeDateFragment"
+        android:name="com.example.homex.extension.BottomSheetChangeDateFragment"
+        android:label="BottomSheetChangeDateFragment"
+        tools:layout="@layout/fragment_bottom_sheet_change_date">
+        <argument
+            android:name="startDate"
+            app:argType="com.homex.core.model.CalendarDate"
+            app:nullable="true"
+            android:defaultValue="@null" />
+        <argument
+            android:name="endDate"
+            app:argType="com.homex.core.model.CalendarDate"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </dialog>
 
 </navigation>

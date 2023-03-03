@@ -2,17 +2,18 @@ package com.example.homex
 
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.homex.activity.home.HomeActivity
 import com.example.homex.adapter.MessageAdapter
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentMessageBoxBinding
+import com.example.homex.extension.gone
+import com.example.homex.extension.visible
 import com.homex.core.model.Message
+import java.time.LocalDate
 
 
 class MessageBoxFragment : BaseFragment<FragmentMessageBoxBinding>() {
@@ -51,12 +52,65 @@ class MessageBoxFragment : BaseFragment<FragmentMessageBoxBinding>() {
         binding.messageRecView.adapter = adapter
         val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, true)
         binding.messageRecView.layoutManager = layoutManager
+//
+//        val dayOfWeekList =
+//            listOf(
+//                "T2", "T3", "T4", "T5", "T6", "T7", "CN"
+//            )
+//
+//        val arrayAdapter = ArrayAdapter(requireContext(), R.layout.date_cell_item, dayOfWeekList)
+//
+//        binding.gridLayout.adapter = arrayAdapter
+//
+//        val calendar = Calendar.getInstance()
+//        Log.e("year", "${calendar.get(Calendar.YEAR)}")
+//        Log.e("month", "${calendar.get(Calendar.MONTH)}")
+//        Log.e("dayOfMonth", "${calendar.get(Calendar.DAY_OF_MONTH)}")
+//        Log.e("dayOfWeek", "${calendar.get(Calendar.DAY_OF_WEEK)}")
+//        Log.e("maxDay", "${calendar.getActualMaximum(Calendar.DATE)}")
+//        calendar.add(Calendar.MONTH, 1)
+//
+//        val arrayList = arrayListOf<String>()
+//        val daysInMonth = calendar.getActualMaximum(Calendar.DATE)
+//        calendar.set(Calendar.DAY_OF_MONTH, 1)
+//        val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK) - 2
+//        Log.e("dayOfWeek", "$dayOfWeek")
+//        Log.e("daysInMonth", "$daysInMonth")
+//
+//
+//        for(i in 1..42){
+//            if(i <= dayOfWeek || i > daysInMonth + dayOfWeek){
+//                arrayList.add("")
+//            }else{
+//                arrayList.add((i - dayOfWeek).toString())
+//            }
+//        }
+//
+//        monthAdapter = MyAdapter(
+//            arrayList
+//        )
+//        binding.messageRecView.adapter = monthAdapter
+//        val layoutManager = GridLayoutManager(requireContext(), 7)
+//        binding.messageRecView.layoutManager = layoutManager
 
     }
 
     override fun setEvent() {
         binding.addBtn.setOnClickListener {
-            findNavController().navigate(R.id.action_messageBoxFragment_to_createRequestBottomSheetFragment)
+            if(binding.actionLayout.visibility == View.GONE)
+            {
+                binding.actionLayout.visible()
+                binding.addBtn.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_close_circle))
+            }
+            else if(binding.actionLayout.visibility == View.VISIBLE)
+            {
+                binding.actionLayout.gone()
+                binding.addBtn.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_pluscircle))
+            }
+        }
+
+        binding.createRequestBtn.setOnClickListener {
+            findNavController().navigate(R.id.action_messageBoxFragment_to_createRequestFragment)
         }
         binding.sendBtn.setOnClickListener {
             Log.e("send", "hello")

@@ -30,6 +30,14 @@
         <item name="windowActionModeOverlay">true</item>
         <item name="actionModeStyle">@style/Widget.App.ActionMode</item>
         <item name="actionModeCloseDrawable">@drawable/ic_back_main</item>
+        <item name="materialCalendarTheme">@style/AppTheme.DatePicker</item>
+    </style>
+
+    <style name="AppTheme.DatePicker" parent="@style/ThemeOverlay.MaterialComponents.MaterialCalendar">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.App.SmallComponent</item>
+        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.App.MediumComponent</item>
     </style>
 
     <style name="Widget.App.ActionMode" parent="Widget.AppCompat.ActionMode">
@@ -62,7 +70,7 @@
         <item name="android:colorBackground">#000000</item>
         <item name="bottomSheetStyle">@style/ModalBottomSheetDialog</item>
     </style>
-1
+
     <style name="ModalBottomSheetDialog" parent="Widget.MaterialComponents.BottomSheet.Modal">
         <item name="android:colorBackground">#000000</item>
         <item name="background">@drawable/bottom_sheet_round_bg</item>
@@ -77,6 +85,10 @@
     <style name="ShapeAppearance.App.SmallComponent" parent="ShapeAppearance.MaterialComponents.SmallComponent">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">6dp</item>
+    </style>
+
+    <style name="ShapeAppearance.App.MediumComponent" parent="ShapeAppearance.MaterialComponents.MediumComponent">
+        <item name="cornerSize">16dp</item>
     </style>
 
     <style name="AppTheme.CheckBox" parent="Widget.Material3.CompoundButton.CheckBox">
