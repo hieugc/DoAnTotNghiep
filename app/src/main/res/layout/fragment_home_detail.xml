@@ -603,15 +603,13 @@
                 android:text="7 ngày"
                 android:textStyle="bold"
                 android:id="@+id/dayCountTV"
-                style="@style/HomeTitle"
                 android:layout_marginBottom="4dp"/>
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/homeDateTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="30/11/22 - 7/12/22"
-                style="@style/HomeTitle" />
+                android:text="30/11/22 - 7/12/22"/>
 
             </LinearLayout>
 

@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.homex.R
 import com.example.homex.databinding.ItemTransHistoryBinding
+import com.example.homex.extension.dpToPx
 import com.homex.core.model.TransHistory
 
 class TransHistoryAdapter(
@@ -29,6 +30,11 @@ class TransHistoryAdapter(
         }
         holder.binding.btnRate.setOnClickListener {
             listener.onBtnRateClick()
+        }
+        if(position == notificationList?.size!! - 1){
+            val lastParams = holder.itemView.layoutParams as ViewGroup.MarginLayoutParams
+            lastParams.bottomMargin = 16f.dpToPx(holder.itemView.context)
+            holder.itemView.requestLayout()
         }
     }
 

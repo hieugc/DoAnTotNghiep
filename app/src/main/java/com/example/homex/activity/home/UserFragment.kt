@@ -50,5 +50,8 @@ class UserFragment : BaseFragment<FragmentUserBinding>() {
             startActivity(Intent(requireContext(), AuthActivity::class.java))
             activity?.finish()
         }
+        binding.btnPendingRequests.setOnClickListener {
+            findNavController().navigate(R.id.action_userFragment_to_requestFragment)
+        }
     }
 }

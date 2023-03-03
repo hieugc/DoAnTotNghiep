@@ -31,8 +31,8 @@
             android:layout_weight="1"
             android:gravity="right"
             android:padding="4dp"
-            android:text="@string/swapped"
-            android:textColor="@color/green" />
+            android:text="@string/pending"
+            android:textColor="@color/orange" />
     </LinearLayout>
 
     <com.google.android.material.divider.MaterialDivider
@@ -142,8 +142,7 @@
         android:layout_marginTop="4dp"
         android:layout_marginStart="12dp"
         android:layout_marginEnd="12dp"
-        android:text="@string/rate" />
-
+        android:text="@string/detail" />
 
 
 </LinearLayout>
