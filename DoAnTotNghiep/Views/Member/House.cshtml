@@ -1,318 +1,113 @@
 ﻿@model DoAnTotNghiep.ViewModels.AuthHouseViewModel
-
+@using DoAnTotNghiep.Enum;
+@using Newtonsoft.Json;
 @{
     ViewData["Title"] = "Danh sách nhà";
     Layout = "_LayoutMember";
 }
 
-
-@*
-    + Còn tạo form khởi tạo
-    + modal danh sách trao đổi
-*@
-
 <div class="house">
     <div class="house-head">
         <h2>Danh sách nhà</h2>
-        <button class="btn  btn-primary" data-bs-target="#houseModalToggle" data-bs-toggle="modal">Thêm mới</button>
+        <button class="btn  btn-primary" id="houseModalToggleClick" data-bs-target="#houseModalToggle" data-bs-toggle="modal">Thêm mới</button>
     </div>
-    <div class="list-house">
-        <div class="card mb-3 was-validated">
-            <div class="row g-0">
-                <div class="col-md-8">
-                    <img src="~/Image/logo.png" class="img-fluid rounded-start" alt="hình ảnh nhà">
-                </div>
-                <div class="col-md-4">
-                    <div class="card-body">
-                        <div class="body-head">
-                            <h5 class="card-title">Nhà 1</h5>
-                            <div>
-                                <div class="rating"><span>4.3</span><i class="fa-solid fa-star"></i></div>
-                                <div class="point"><strong>200p/ngày</strong></div>
-                            </div>
-                        </div>
-                        <div class="body-detail">
-                            <div class="house-attr">
-                                <div><i class="fa-solid fa-house"></i><span>Căn hộ</span></div>
-                                <div><i class="fa-solid fa-bed"></i><span>2</span></div>
-                                <div><i class="fa-solid fa-users"></i><span>4</span></div>
-                                <div><i class="fa-solid fa-bath"></i><span>1</span></div>
-                                <div><i class="fa-solid fa-maximize"></i><span>100 &#13217;</span></div>
-                            </div>
-                            <div class="alert-swap">
-                                <label class="position-relative" data-bs-target="#requestHouseModalToggle" data-bs-toggle="modal" title="Người dùng yêu cầu">
-                                    <i class="fa-solid fa-bell"></i>
-                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                        5
-                                        <span class="visually-hidden">unread messages</span>
-                                    </span>
-                                </label>
-                                @*<label class="position-relative" data-bs-target="#requestHouseModalToggle" data-bs-toggle="modal" title="Yêu cầu đã gửi">
-                                    <i class="fa-solid fa-bullhorn"></i>
-                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                        2
-                                        <span class="visually-hidden">unread messages</span>
-                                    </span>
-                                </label>*@
-                            </div>
-                        </div>
-                        <p class="card-text">165 Trương Định, kp2, p5,......</p>
-                        <p class="card-control">
-                            <button type="button" class="btn  btn-primary">Chi tiết</button>
-                            <button type="button" class="btn  btn-warning">Chỉnh sửa</button>
-                            <button type="button" class="btn  btn-danger">Xóa</button>
-                        </p>
-                    </div>
-                </div>
-            </div>
+    <div class="list-house" id="list-house">
+        @foreach(var item in Model.Houses)
+        {
+            @(await Html.PartialAsync("~/Views/Houses/HouseItem.cshtml", item))
+            @*<div class="card mb-3 status-@item.Status">
+        <div class="row g-0">
+        <div class="col-md-8">
+        <img src="~/Image/logo.png" class="img-fluid rounded-start" alt="hình ảnh nhà">
         </div>
-
-        <div class="card mb-3 wait-validate">
-            <div class="row g-0">
-                <div class="col-md-8">
-                    <img src="~/Image/logo.png" class="img-fluid rounded-start" alt="hình ảnh nhà">
-                </div>
-                <div class="col-md-4">
-                    <div class="card-body">
-                        <div class="body-head">
-                            <h5 class="card-title">Nhà 1</h5>
-                            <div>
-                                <div class="rating"><span>4.3</span><i class="fa-solid fa-star"></i></div>
-                                <div class="point"><strong>200p/ngày</strong></div>
-                            </div>
-                        </div>
-                        <div class="body-detail">
-                            <div class="house-attr">
-                                <div><i class="fa-solid fa-house"></i><span>Căn hộ</span></div>
-                                <div><i class="fa-solid fa-bed"></i><span>2</span></div>
-                                <div><i class="fa-solid fa-users"></i><span>4</span></div>
-                                <div><i class="fa-solid fa-bath"></i><span>1</span></div>
-                                <div><i class="fa-solid fa-maximize"></i><span>100 &#13217;</span></div>
-                            </div>
-                            <div class="alert-swap">
-                                <label class=" position-relative">
-                                    <i class="fa-solid fa-bell"></i>
-                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                        5
-                                        <span class="visually-hidden">unread messages</span>
-                                    </span>
-                                </label>
-                            </div>
-                        </div>
-                        <p class="card-text">165 Trương Định, kp2, p5,......</p>
-                        <p class="card-control">
-                            <button type="button" class="btn  btn-primary">Chi tiết</button>
-                            <button type="button" class="btn  btn-warning">Chỉnh sửa</button>
-                            <button type="button" class="btn  btn-danger">Xóa</button>
-                        </p>
-                    </div>
-                </div>
-            </div>
+        <div class="col-md-4">
+        <div class="card-body">
+        <div class="body-head">
+        <h5 class="card-title">@item.Name</h5>
+        <div>
+        <div class="rating"><span>@item.Rating</span><i class="fa-solid fa-star"></i></div>
+        <div class="point"><strong>@item.Price p/ngày</strong></div>
         </div>
-
-        <div class="card mb-3 swaped">
-            <div class="row g-0">
-                <div class="col-md-8">
-                    <img src="~/Image/logo.png" class="img-fluid rounded-start" alt="hình ảnh nhà">
-                </div>
-                <div class="col-md-4">
-                    <div class="card-body">
-                        <div class="body-head">
-                            <h5 class="card-title">Nhà 1</h5>
-                            <div>
-                                <div class="rating"><span>4.3</span><i class="fa-solid fa-star"></i></div>
-                                <div class="point"><strong>200p/ngày</strong></div>
-                            </div>
-                        </div>
-                        <div class="body-detail">
-                            <div class="house-attr">
-                                <div><i class="fa-solid fa-house"></i><span>Căn hộ</span></div>
-                                <div><i class="fa-solid fa-bed"></i><span>2</span></div>
-                                <div><i class="fa-solid fa-users"></i><span>4</span></div>
-                                <div><i class="fa-solid fa-bath"></i><span>1</span></div>
-                                <div><i class="fa-solid fa-maximize"></i><span>100 &#13217;</span></div>
-                            </div>
-                            <div class="alert-swap">
-                                <label class=" position-relative">
-                                    <i class="fa-solid fa-bell"></i>
-                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                        5
-                                        <span class="visually-hidden">unread messages</span>
-                                    </span>
-                                </label>
-                            </div>
-                        </div>
-                        <p class="card-text">165 Trương Định, kp2, p5,......</p>
-                        <p class="card-control">
-                            <button type="button" class="btn btn-primary">Chi tiết</button>
-                            <button type="button" class="btn  btn-warning">Chỉnh sửa</button>
-                            <button type="button" class="btn  btn-danger">Xóa</button>
-                        </p>
-                    </div>
-                </div>
-            </div>
         </div>
+        <div class="body-detail">
+        <div class="house-attr">
+        <div><i class="fa-solid fa-house"></i><span>@(HouseEnum.HouseType(item.Option))</span></div>
+        <div><i class="fa-solid fa-users"></i><span>@item.People</span></div>
+        <div><i class="fa-solid fa-bed"></i><span>@item.BedRoom</span></div>
+        <div><i class="fa-solid fa-bath"></i><span>@item.BathRoom</span></div>
+        <div><i class="fa-solid fa-maximize"></i><span>@item.Square &#13217;</span></div>
+        </div>
+        <div class="alert-swap">
+        @if (item.Status == (int)Status.VALID)
+        {
+        <label class="position-relative" title="Người dùng yêu cầu" onclick="showRequest(@item.Id)">
+        <i class="fa-solid fa-bell"></i>
+        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+        @item.Request
+        <span class="visually-hidden">unread messages</span>
+        </span>
+        </label>
+        }
+        </div>
+        </div>
+        <p class="card-text">@item.Location</p>
+        <p class="card-control">
+        <a href="@Url.Action("Detail", "House", new{Id = item.Id})" class="btn btn-primary" title="Xem chi tiết">Chi tiết</a>
+        @if(item.Status != (int)Status.SWAPPED)
+        {
+        <button type="button" class="btn btn-warning" onclick="editHouse(@item.Id)">Chỉnh sửa</button>
+        <button type="button" class="btn btn-danger" confirm="Bạn chắc muốn xóa nhà này chứ?" onclick="deleteHouse(@item.Id)">Xóa</button>
+        }
+        </p>
+        </div>
+        </div>
+        </div>
+        </div>*@
+        }
     </div>
 </div>
+
+<script type="text/javascript">
+    var listHouse = @Html.Raw(Json.Serialize(Model.Houses));
+</script>
 
 
 @section createHouse{
     @(await Html.PartialAsync("../PartialView/_FormCreateHouse.cshtml", Model.OptionHouses))
-    @*<div class="modal fade" id="houseModalToggle" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="houseModalToggleLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-xl">
+
+    <button type="button" id="confirmClick" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#confirmPopup" hidden></button>
+
+    <div class="modal fade" id="confirmPopup" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="confirmPopupLabel" aria-hidden="true">
+        <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
-                    <div class="my-modal-title">
-                        <h3 class="house-title">Thêm nhà</h3>
-                        <div class="progress" role="progressbar" aria-label="Basic example" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-                            <div class="progress-bar"></div>
-                            <div class="time-line-step active">1</div>
-                            <div class="time-line-step">2</div>
-                            <div class="time-line-step">3</div>
-                            <div class="time-line-step">4</div>
-                        </div>
-                    </div>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="houseModalToggleClose" onclick="refreshHouseModal()"></button>
+                <div class="modal-body">
+                    <p class="text-danger" id="confirmContent"></p>
                 </div>
-                <div class="modal-body sigshow">
-                    <h3>Chào <strong>Phạm Minh Hiếu</strong>, nhà của bạn ra sao?</h3>
-                    <p class="text-dark">Hãy cho chúng tôi biết về nhà của bạn.</p>
-                    <div class="body">
-                        <div class="mb-3">
-                            <label for="houseName">Tên gợi nhớ cho căn nhà</label>
-                            <input type="text" name="houseName" id="houseName" class="form-control" />
-                        </div>
-                        <div class="mb-3">
-                            <label for="typeOfHouse">Loại nhà</label>
-                            <div class="option-frame">
-                                <div class="option"><i class="fa-solid fa-house"></i><span>Nhà</span></div>
-                                <div class="option"><i class="fa-solid fa-building"></i><span>Căn hộ</span></div>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="HouseDesc">Giới thiệu nhà của bạn</label>
-                            <textarea name="houseDesc" id="houseDesc" rows="3" class="form-control"></textarea>
-                        </div>
-                    </div>
-                    <div class="handle-step">
-                        <button type="button" class="btn btn-primary" onclick="nextStep(2)">Tiếp tục</button>
-                    </div>
-                </div>
-                <div class="modal-body sighide">
-                    <h3>Hãy kể thêm cho chúng tôi về căn nhà của bạn.</h3>
-                    <p class="text-dark">Thông tin chi tiết về căn nhà.</p>
-                    <div class="body row">
-                        <div class="mb-3 col-md-6">
-                            <label for="numUser">Số người có thể ở</label>
-                            <input type="number" name="numUser" id="numUser" class="form-control" />
-                        </div>
-                        <div class="mb-3 col-md-6">
-                            <label for="numSleep">Số phòng ngủ</label>
-                            <input type="number" name="numSleep" id="numSleep" class="form-control" />
-                        </div>
-                        <div class="mb-3 col-md-6">
-                            <label for="numBath">Số phòng tắm</label>
-                            <input type="number" name="numBath" id="numBath" class="form-control" />
-                        </div>
-                        <div class="mb-3 col-md-6">
-                            <label for="numSquare">Diện tích căn phòng</label>
-                            <input type="number" name="numSquare" id="numSquare" class="form-control" />
-                        </div>
-                        <div class="mb-3 col-12">
-                            <label for="location">Địa chỉ nhà</label>
-                            <input type="text" name="location" id="location" class="form-control" placeholder="Địa chỉ"/>
-                            <span class="btn btn-sm rounded btn-primary"><i class="fa-solid fa-map-location-dot"></i></span>
-                            @*<div class="col-4">
-                                
-                                <select name="city" id="city">
-                                    
-                                </select>
-                            </div>
-                            <div class="col-4">
-                                <label for="numSquare">Diện tích căn phòng</label>
-                                <input type="number" name="numSquare" id="numSquare" class="form-control" />
-                            </div>
-                            <div class="col-4">
-                                <label for="numSquare">Diện tích căn phòng</label>
-                                <input type="number" name="numSquare" id="numSquare" class="form-control" />
-                            </div>
-                        </div>
-                        <div class="mb-3 col-12">
-                            <label for="numPrice">Giá bạn mong muốn trao đổi</label>
-                            <input type="number" name="numPrice" id="numPrice" class="form-control" placeholder="200 Point/ngày"/>
-                            <span class="suggest"><small>Giá gợi ý từ hệ thống: <strong>200 Point/ngày</strong></small></span>
-                        </div>
-                    </div>
-                    <div class="handle-step">
-                        <button type="button" class="btn btn-outline-primary" onclick="prevStep(1)">Hoàn tác</button>
-                        <button type="button" class="btn btn-primary" onclick="nextStep(3)">Tiếp tục</button>
-                    </div>
-                </div>
-                <div class="modal-body sighide">
-                    <h3>Những tiện tích và nội quy trong nhà của bạn.</h3>
-                    <div class="body">
-                        <div class="utilities">
-                            <p class="text-dark">Tiện ích</p>
-                            <div class="list-option">
-                                @for(var item = 0; item < 10; item++)
-                                {
-                                    <div class="option option-selected"><i class="fa-solid fa-phone"></i><span>Tiện ích</span></div>
-                                }
-                                @for (var item = 0; item < 10; item++)
-                                {
-                                    <div class="option"><i class="fa-solid fa-phone"></i><span>Tiện ích</span></div>
-                                }
-                            </div>
-                        </div>
-                        <div class="rules">
-                            <p class="text-dark">Quy tắc</p>
-                            <div class="list-option">
-                                @for(var item = 0; item < 10; item++)
-                                {
-                                    <div class="option option-selected"><i class="fa-solid fa-phone"></i><span>Quy tắc</span></div>
-                                }
-                                @for (var item = 0; item < 10; item++)
-                                {
-                                    <div class="option"><i class="fa-solid fa-phone"></i><span>Quy tắc</span></div>
-                                }
-                            </div>
-                        </div>
-                    </div>
-                    <div class="handle-step">
-                        <button type="button" class="btn btn-outline-primary" onclick="prevStep(2)">Hoàn tác</button>
-                        <button type="button" class="btn btn-primary" onclick="nextStep(4)">Tiếp tục</button>
-                    </div>
-                </div>
-                <div class="modal-body sighide">
-                    <h3>Hình ảnh nhà của bạn</h3>
-                    <p>Hãy thêm hình ảnh đẹp về căn nhà để thu hút người khác trao đổi.</p>
-                    <div class="body">
-                        <div class="input-picture">
-                            <label for="input-picture"><i class="fa-solid fa-camera"></i><span><small>Nhấn để thêm hình ảnh bạn mong muốn</small></span></label>
-                            <input type="file" name="input-picture" id="input-picture" hidden />
-                        </div>
-                        <div class="picture-added">
-                            <div class="picture-frame">
-                                <img src="~/Image/logo.png" alt="Hình ảnh 1" />
-                            </div>
-                            @for(var item = 0; item < 3; item++)
-                            {
-                                <div class="picture-frame">
-                                </div>
-                            }
-                        </div>
-                    </div>
-                    <div class="handle-step">
-                        <button type="button" class="btn btn-outline-primary" onclick="prevStep(3)">Hoàn tác</button>
-                        <button type="button" class="btn btn-primary" onclick="finish()">Hoàn tất</button>
-                    </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" onclick="confirmDeleteHouse(false)">Hủy</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="confirmDeleteHouse(true)">Xác nhận</button>
                 </div>
             </div>
         </div>
-    </div>*@
+    </div>
+
+    <div class="notification" id="toastPlacement">
+        <div class="toast-header"><strong class="me-auto" id="notification-head"></strong></div>
+        <div class="toast-body" id="notification-body"></div>
+    </div>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            initSelect();
+            getDataCity();
+        })
+    </script>
+    <script src="~/js/House/delete.js" type="text/javascript"></script>
+    <script src="~/js/House/edit.js" type="text/javascript"></script>
 }
 
 @section houseListRequest{
+    <label display data-bs-target="#requestHouseModalToggle" id="requestHouseModalToggleClick" data-bs-toggle="modal"></label>
     <div class="modal fade" id="requestHouseModalToggle" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="requestHouseModalToggleLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-xl">
             <div class="modal-content">
@@ -375,74 +170,7 @@
                         }
                     </div>
                 </div>
-                <div class="modal-body sighide">
-                </div>
             </div>
         </div>
     </div>
-    @*<div class="modal fade" id="requestedHouseModalToggle" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="requestHouseModalToggleLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-xl">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <div class="my-modal-title">
-                        <h3 class="house-title">Danh sách đã gửi</h3>
-                    </div>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="requesthouseModalToggleClose" onclick="refreshHouseModal()"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="list">
-                        @for(var item = 0; item < 7; item++)
-                        {
-                            <div class="card mb-3">
-                                <div class="row g-0">
-                                    <div class="col-md-12">
-                                        <div class="user">
-                                            <div class="avt"><img src="~/Image/logo.png" alt="avatar" /></div>
-                                            <div class="name">Phạm Minh Hiếu</div>
-                                        </div>
-                                        <span class="status">Chờ xác nhận</span>
-                                    </div>
-                                    <div class="col-md-7">
-                                        <img src="~/Image/logo.png" class="img-fluid rounded-start" alt="hình ảnh nhà">
-                                    </div>
-                                    <div class="col-md-5">
-                                        <div class="card-body">
-                                            <div class="body-head">
-                                                <h5 class="card-title">Nhà 1</h5>
-                                                <div>
-                                                    <div class="point"><span>Thông tin</span><i class="fa-solid fa-circle-info"></i></div>
-                                                    <div class="rating"><span>4.3</span><i class="fa-solid fa-star"></i></div>
-                                                </div>
-                                            </div>
-                                            <div class="request-info">
-                                                <span class="label">Phương thức: </span>
-                                                <span class="value">Trao đổi bằng nhà</span>
-                                            </div>
-                                            <div class="request-info">
-                                                <span class="label">Địa điểm: </span>
-                                                <span class="value">165 Trương Định, kp2, p5,......</span>
-                                            </div>
-                                            <div class="request-info request-time">
-                                                <span class="label">Thời gian: </span>
-                                                <span class="value">22/02/2023 - 03/03/2023</span>
-                                            </div>
-                                            <div class="request-info request-price">
-                                                <span class="label">Điểm bạn phải trả: </span>
-                                                <span class="value">1200 Point</span>
-                                            </div>
-                                            <p class="card-control">
-                                                <button type="button" class="btn  btn-primary">Liên hệ</button>
-                                                <button type="button" class="btn  btn-success">Chấp nhận</button>
-                                                <button type="button" class="btn  btn-danger">Từ chối</button>
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        }
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>*@
 }

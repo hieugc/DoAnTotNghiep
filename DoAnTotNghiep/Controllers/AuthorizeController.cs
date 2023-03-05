@@ -14,16 +14,20 @@ using Microsoft.AspNetCore.Authorization;
 using System.Data;
 using System.Security.Claims;
 using DoAnTotNghiep.Enum;
+using NuGet.Protocol;
+using System.Configuration;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace DoAnTotNghiep.Controllers
 {
     public class AuthorizeController: BaseController
     {
         private readonly DoAnTotNghiepContext _context;
-
-        public AuthorizeController(DoAnTotNghiepContext context): base(context)
+        private readonly IConfiguration _configuration;
+        public AuthorizeController(DoAnTotNghiepContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         public IActionResult SignIn()
@@ -40,7 +44,7 @@ namespace DoAnTotNghiep.Controllers
             {
                 var user = this._context.Users.Where(x => x.Email == loginViewModel.Email);
 
-                if (user != null && user.Count() == 1)
+                if (user != null && user.AsEnumerable().Count() == 1)
                 {
                     var checkUser = user.First();
                     if (Crypto.IsPass(loginViewModel.Password, checkUser.Password, checkUser.Salt))
@@ -51,11 +55,11 @@ namespace DoAnTotNghiep.Controllers
                             new Claim(ClaimTypes.Email, checkUser.Email),
                         };
 
-                        var identity = new ClaimsIdentity(claims, Scheme.Authentication());
+                        var identity = new ClaimsIdentity(claims, Scheme.AuthenticationCookie());
                         var principal = new ClaimsPrincipal(identity);
 
                         await HttpContext.SignInAsync(
-                            scheme: Scheme.Authentication(),
+                            scheme: Scheme.AuthenticationCookie(),
                             principal: principal,
                             properties: new AuthenticationProperties()
                             {
@@ -77,6 +81,50 @@ namespace DoAnTotNghiep.Controllers
                 }
             }
             return View(loginViewModel);
+        }
+
+
+        [HttpPost("/api/SignIn")]
+        public IActionResult ApiSignIn([FromBody] LoginViewModel loginViewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = this._context.Users.Where(x => x.Email == loginViewModel.Email);
+                if (user != null && user.Count() == 1)
+                {
+                    var checkUser = user.First();
+                    if (Crypto.IsPass(loginViewModel.Password, checkUser.Password, checkUser.Salt))
+                    {
+                        var token = new JwtHelper(this._configuration).GenerateToken(new List<Claim>() {
+                            new Claim(ClaimTypes.Name, checkUser.Id.ToString()),
+                            new Claim(ClaimTypes.Role, Role.MemberString()),
+                            new Claim(ClaimTypes.Email, checkUser.Email),
+                        });
+
+                        return Ok(new
+                        {
+                            Token = new JwtSecurityTokenHandler().WriteToken(token),
+                            Expires = token.ValidTo,
+                            DisplayName = string.Join(" ", new
+                            {
+                                checkUser.FirstName,
+                                checkUser.LastName
+                            })
+                        });
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("PassWord", "Mật khẩu không đúng");
+                    }
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Không tìm thấy người dùng");
+                }
+            }
+            return Unauthorized(new { 
+                Message = this.ModelErrors()
+            });
         }
 
         [HttpGet]
@@ -121,7 +169,7 @@ namespace DoAnTotNghiep.Controllers
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(
-                    scheme: Scheme.Authentication());
+                    scheme: Scheme.AuthenticationCookie());
             return RedirectToAction(nameof(SignIn));
         }
 
@@ -130,6 +178,20 @@ namespace DoAnTotNghiep.Controllers
             if (this.GetIdUser() != 0)
                 return RedirectToAction("Index", "Home");
             return View();
+        }
+
+        protected int GetIdUser(string token)
+        {
+            try
+            {
+                JwtUserModel jwtUserModel = new JwtHelper(this._configuration).GetUserFromToken(token);
+                return jwtUserModel.Id;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return 0;
+            }
         }
     }
 }

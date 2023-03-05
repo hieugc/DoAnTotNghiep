@@ -13,6 +13,8 @@ namespace DoAnTotNghiep.Entity
         [Key]
         [Column("id_house", Order = 2)]
         public int IdHouse { get; set; }
+        [Column("status")]
+        public bool Status { get; set; } = false;
 
         [ForeignKey(nameof(IdRules))]
         public virtual Rules? Rules { get; set; }

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Composition;
 
 namespace DoAnTotNghiep.Entity
 {
@@ -16,6 +17,8 @@ namespace DoAnTotNghiep.Entity
         public string Name { get; set; } = string.Empty;
         [Column("status")]
         public int Status { get; set; } = 0;
+        [Column("type")]
+        public int Type { get; set; } = 0;
 
         [Required(ErrorMessage = "Hãy điền giá căn nhà")]
         [Column("price")]
@@ -57,6 +60,10 @@ namespace DoAnTotNghiep.Entity
         [ForeignKey(nameof(IdUser))]
         public virtual User? Users { get; set; }
 
+        [MaxLength(100, ErrorMessage = "Số nhà, tên đường tối đa 100 ký tự")]
+        [Column("street_address")]
+        public string StreetAddress { get; set; } = string.Empty;
+
         [Column("id_city")]
         public virtual int? IdCity { get; set; }
         [ForeignKey(nameof(IdCity))]
@@ -70,5 +77,12 @@ namespace DoAnTotNghiep.Entity
         public virtual int? IdWard { get; set; }
         [ForeignKey(nameof(IdWard))]
         public virtual Ward? Wards { get; set; }
+
+        public virtual ICollection<RulesInHouse>? RulesInHouses { get; set; }
+        public virtual ICollection<UtilitiesInHouse>? UtilitiesInHouses { get; set; }
+        public virtual ICollection<FileOfHouse>? FileOfHouses { get; set; }
+
+        [InverseProperty("Houses")]
+        public virtual ICollection<Request>? Requests { get; set; }
     }
 }

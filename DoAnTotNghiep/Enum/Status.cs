@@ -2,6 +2,12 @@
 {
     enum Status
     {
-        
+        VALID,
+        PENDING,
+        SWAPPED,
+        ENABLE,
+        DISABLE,
+        ACCEPT,
+        REJECT
     }
 }

@@ -14,6 +14,12 @@ namespace DoAnTotNghiep.Data
             : base(options)
         {
         }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlServer("Data Source=(localdb)\\local;Initial Catalog=DoAnTotNghiep;" +
+                "Persist Security Info=True;User ID=doantotnghiep;" +
+                "Password=12345678;MultipleActiveResultSets=True");
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

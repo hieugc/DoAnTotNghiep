@@ -31,15 +31,15 @@
     align-items: center;
 }
 
-.card.swaped .col-md-8:first-child,
-.card.wait-validate .col-md-8:first-child,
-.card.was-validated .col-md-8:first-child{
+.card.status-2 .col-md-8:first-child,
+.card.status-1 .col-md-8:first-child,
+.card.status-0 .col-md-8:first-child{
     border-left: 5px solid var(--bs-success);
     position: relative;
 }
-.card.swaped .col-md-8:first-child:before,
-.card.wait-validate .col-md-8:first-child:before,
-.card.was-validated .col-md-8:first-child:before{
+.card.status-2 .col-md-8:first-child:before,
+.card.status-1 .col-md-8:first-child:before,
+.card.status-0 .col-md-8:first-child:before{
     content: "Đang hoạt động";
     padding: 12px;
     color: white;
@@ -50,17 +50,17 @@
     background: var(--bs-success);
 }
 
-.card.wait-validate .col-md-8:first-child{
+.card.status-1 .col-md-8:first-child{
     border-left: 5px solid var(--bs-warning);
 }
-.card.wait-validate .col-md-8:first-child:before{
+.card.status-1 .col-md-8:first-child:before{
     content: "Chờ kiểm duyệt";
     background: var(--bs-warning);
 }
-.card.swaped .col-md-8:first-child{
+.card.status-2 .col-md-8:first-child{
     border-left: 5px solid var(--bs-gray-500);
 }
-.card.swaped .col-md-8:first-child:before{
+.card.status-2 .col-md-8:first-child:before{
     content: "Đang trao đổi";
     background: var(--bs-gray-500);
 }

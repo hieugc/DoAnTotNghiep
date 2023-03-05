@@ -12,7 +12,7 @@ namespace DoAnTotNghiep.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly DoAnTotNghiepContext _context;
 
-        public HomeController(ILogger<HomeController> logger, DoAnTotNghiepContext context): base(context)
+        public HomeController(ILogger<HomeController> logger, DoAnTotNghiepContext context)
         {
             _logger = logger;
             this._context = context;

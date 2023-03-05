@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using DoAnTotNghiep.Data;
 using DoAnTotNghiep.Entity;
 using DoAnTotNghiep.ViewModels;
+using Microsoft.AspNetCore.Authorization;
+using DoAnTotNghiep.Enum;
 
 namespace DoAnTotNghiep.Controllers
 {
@@ -21,6 +23,7 @@ namespace DoAnTotNghiep.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public JsonResult Get()
         {
             List<City> cityList = this._context.Cities.ToList();

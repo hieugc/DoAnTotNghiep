@@ -8,16 +8,15 @@ using Microsoft.EntityFrameworkCore;
 using DoAnTotNghiep.Data;
 using DoAnTotNghiep.Entity;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using DoAnTotNghiep.Modules;
 
 namespace DoAnTotNghiep.Controllers
 {
     public abstract class BaseController : Controller
     {
-        private readonly DoAnTotNghiepContext _context;
-
-        public BaseController(DoAnTotNghiepContext context)
+        public BaseController()
         {
-            _context = context;
         }
 
         public IActionResult NotFound() => PartialView("./Views/Base/NotFound.cshtml");
@@ -34,6 +33,19 @@ namespace DoAnTotNghiep.Controllers
                 Console.WriteLine(ex);
                 return 0;
             }
+        }
+
+        protected string ModelErrors()
+        {
+            List<string> errors = new List<string>();
+            foreach (ModelStateEntry modelState in ModelState.Values)
+            {
+                if (modelState != null)
+                {
+                    errors.AddRange(modelState.Errors.Select(s => s.ErrorMessage));
+                }
+            }
+            return string.Join(". \n", errors);
         }
     }
 }
