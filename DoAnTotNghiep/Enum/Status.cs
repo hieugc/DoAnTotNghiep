@@ -8,6 +8,8 @@
         ENABLE,
         DISABLE,
         ACCEPT,
-        REJECT
+        REJECT,
+        SEEN,
+        UNSEEN
     }
 }

@@ -11,6 +11,9 @@
         public static string AdminString() => "ADMIN";
 
         public static int NoneInt() => 0;
+        public static string NoneString() => "NONE";
+        public static string UnAuthorize() => "UNAUTHORIZE";
+
     }
 
     enum RoleType

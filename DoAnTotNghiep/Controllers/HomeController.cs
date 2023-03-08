@@ -4,6 +4,7 @@ using DoAnTotNghiep.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace DoAnTotNghiep.Controllers
 {
@@ -11,11 +12,13 @@ namespace DoAnTotNghiep.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly DoAnTotNghiepContext _context;
+        private readonly IConfiguration configurationBuilder;
 
-        public HomeController(ILogger<HomeController> logger, DoAnTotNghiepContext context)
+        public HomeController(ILogger<HomeController> logger, DoAnTotNghiepContext context, IConfiguration configurationBuilder)
         {
             _logger = logger;
             this._context = context;
+            this.configurationBuilder = configurationBuilder;
         }
 
         public IActionResult Index()

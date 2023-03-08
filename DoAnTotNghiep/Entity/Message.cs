@@ -11,7 +11,7 @@ namespace DoAnTotNghiep.Entity
         public int Id { get; set; }
 
         [Required(ErrorMessage = "Hãy điền nội dung câu hỏi")]
-        [MaxLength(200, ErrorMessage = "Nội dung câu hỏi tối đa 100 ký tự")]
+        [MaxLength(200, ErrorMessage = "Nội dung câu hỏi tối đa 200 ký tự")]
         [Column("content")]
         public string Content { get; set; } = string.Empty;
 
@@ -22,7 +22,8 @@ namespace DoAnTotNghiep.Entity
         public int Status { get; set; } = 0;
 
         [Column("id_user")]
-        public virtual int? IdUser { get; set; }
+        [Required]
+        public virtual int IdUser { get; set; }
 
         [ForeignKey(nameof(IdUser))]
         public virtual User? Users { get; set; }
@@ -35,8 +36,7 @@ namespace DoAnTotNghiep.Entity
         public virtual ChatRoom? ChatRooms { get; set; }
 
         [Column("id_reply")]
-        [Required]
-        public virtual int IdReply { get; set; }
+        public virtual int? IdReply { get; set; } = null;
 
         [ForeignKey(name: nameof(IdReply))]
         public virtual Message? Messages { get; set; }

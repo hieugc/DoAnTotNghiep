@@ -1,13 +1,10 @@
 ﻿@using DoAnTotNghiep.Entity
 @{
     ViewData["Title"] = "Trang chủ";
+    var key = "Asf_PRzBpUJVcb9lcAg48BLOuAuaBItg4ZzCqaNQaSIFReqieYA02KBcovVD08Jk";
 }
 
-
-@*
-    Usage
-*@
-
+<h>@ViewData["connect"]</h>
 <div class="group-banner">
     <div class="w-100">
         <img src="~/Image/banner.png" alt="Banner Website" class="banner" />
@@ -143,3 +140,9 @@
         </div>
     </div>
 </div>
+
+
+@section Scripts{
+    <script src='https://www.bing.com/api/maps/mapcontrol?callback=GetMap&key=@key' type='text/javascript' async defer></script>
+    <script src="~/js/Location/updateLocation.js" type="text/javascript"></script>
+}

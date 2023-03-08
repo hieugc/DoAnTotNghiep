@@ -13,4 +13,15 @@
         public static string JwtBearerAudience() => "JwtBearerAudience";
         public static string JwtBearerIssuerSigningKey() => "JwtBearerIssuerSigningKey";
     }
+
+    public class ConfigurationEmail
+    {
+        public static string Email() => "ModuleEmail";
+        public static string Password() => "ModulePassword";
+    }
+
+    public class SystemKey
+    {
+        public static string Base64() => "SystemBase64";
+    }
 }

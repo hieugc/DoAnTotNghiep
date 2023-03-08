@@ -15,6 +15,9 @@ namespace DoAnTotNghiep.Entity
         [Column("name")]
         public string Name { get; set; } = string.Empty;
 
+        [Column("bing_name")]
+        public string BingName { get; set; } = string.Empty;
+
         [Column("lat")]
         public double Lat { get; set; } = 0;//địa điểm trung tâm
 

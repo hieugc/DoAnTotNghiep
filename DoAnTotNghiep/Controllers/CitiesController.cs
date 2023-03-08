@@ -22,7 +22,7 @@ namespace DoAnTotNghiep.Controllers
         // GET: Cities
         public async Task<IActionResult> Index()
         {
-              return View(await _context.Cities.ToListAsync());
+            return View(await _context.Cities.ToListAsync());
         }
 
         // GET: Cities/Details/5

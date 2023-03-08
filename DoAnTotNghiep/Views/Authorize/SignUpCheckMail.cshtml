@@ -1,0 +1,46 @@
+﻿@model DoAnTotNghiep.ViewModels.RegisterCheckMailViewModel
+@{
+    ViewData["Title"] = "Đăng ký tài khoản";
+    Layout = "_LayoutLogin";
+}
+
+
+<!-- Register Card -->
+<div class="card">
+    <div class="card-body">
+        <!-- Logo -->
+        <div class="app-brand justify-content-center">
+            <a href="@Url.Action("Index", "Home")" class="app-brand-link gap-2">
+                <span class="app-brand-logo demo branch">
+                    <img src="~/Image/logo.png" alt="logo" />
+                </span>
+                <span class="app-brand-text demo text-body fw-bolder">VExchangeHome</span>
+            </a>
+        </div>
+        <!-- /Logo -->
+        <h4 class="mb-2">Chào mừng bạn đến với VExchangeHome 🚀</h4>
+        <p class="mb-4">Hãy tạo tài khoản mới để trải nghiệm những vùng đất mới.</p>
+
+        <form id="formAuthentication" class="mb-3" asp-action="SignUpCheckMail" method="POST">
+            <div asp-validation-summary="ModelOnly" class="text-danger">
+                @if (!string.IsNullOrEmpty(ViewBag.Message))
+                {
+                    @ViewBag.Message
+                }
+            </div>
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label">Email</label>
+                <input type="text" class="form-control" asp-for="Email" placeholder="Enter your email" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-primary d-grid w-100">Tiếp tục</button>
+        </form>
+
+        <p class="text-center">
+            <span>Bạn đã có tài khoản?</span>
+            <a href="@Url.Action("SignIn", "Authorize")">
+                <span>Đăng nhập</span>
+            </a>
+        </p>
+    </div>
+</div>

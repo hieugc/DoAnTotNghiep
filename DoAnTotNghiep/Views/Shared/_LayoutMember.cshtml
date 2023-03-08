@@ -1,4 +1,14 @@
-﻿<!DOCTYPE html>
+﻿@using DoAnTotNghiep.Enum;
+@using Newtonsoft.Json;
+@{
+    UserMessageViewModel? userInfo = null;
+        string? info = Context.Request.Cookies[Cookie.UserInfo()];
+        if (!string.IsNullOrEmpty(info))
+            userInfo = JsonConvert.DeserializeObject<UserMessageViewModel>(info);
+}
+
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -176,18 +186,26 @@
                     </div>
                     <div class="avt" style="display: none;">
                         <a class="position-relative" href="#" role="button" id="dropdownMenuMember" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="~/Image/logo.png" alt="avatar" />
+                                @if (userInfo != null && !string.IsNullOrEmpty(userInfo.ImageUrl))
+                                {
+                                    <img src="~/@userInfo.ImageUrl" alt="avatar" />
+                                }
+                                else
+                                {
+                                    <img src="~/Image/logo.png" alt="avatar" />
+                                }
                         </a>
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuMember">
-                            <a class="dropdown-item" href="#">Thông tin tài khoản</a>
-                            <a class="dropdown-item" href="#">Danh sách căn hộ</a>
-                            <a class="dropdown-item" href="#">Yêu cầu đã đăng</a>
-                            <a class="dropdown-item" href="#">Lịch sử giao dịch</a>
-                            <a class="dropdown-item" href="#">Tin nhắn</a>
-                            <a class="dropdown-item" href="#">Hộp thư góp ý</a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item text-danger" href="#">Đăng xuất <i class="fa-solid fa-arrow-right-from-bracket"></i></a>
-                        </div>
+
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuMember">
+                                <a class="dropdown-item" href="@Url.Action("Infomation", "Member")">Hồ sơ cá nhân</a>
+                                <a class="dropdown-item" href="@Url.Action("House", "Member")">Danh sách nhà</a>
+                                <a class="dropdown-item" href="@Url.Action("Requested", "Member")">Danh sách yêu cầu</a>
+                                <a class="dropdown-item" href="@Url.Action("WaitingRequest", "Member")">Gợi ý trao đổi</a>
+                                <a class="dropdown-item" href="@Url.Action("History", "Member")">Lịch sử giao dịch</a>
+                                <a class="dropdown-item" href="@Url.Action("Messages", "Member")">Tin nhắn</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item text-danger" href="@Url.Action("Logout", "Authorize")">Đăng xuất <i class="fa-solid fa-arrow-right-from-bracket"></i></a>
+                            </div>
                     </div>
                     </div>
                     <div class="sm-device">
@@ -244,7 +262,7 @@
                 </div>*@
             </div>
             <div>
-                <a href="#" class="btn btn-danger">Đăng xuất</a>
+                <a href="@Url.Action("Logout", "Authorize")" class="btn btn-danger">Đăng xuất</a>
             </div>
         </div>
         <div class="tab-right">
@@ -253,7 +271,7 @@
     </main>
 
     
-<div class="modal fade" id="changePWDModal" tabindex="-1" aria-labelledby="changePWDModalLabel" aria-hidden="true">
+    <div class="modal fade" id="changePWDModal" tabindex="-1" aria-labelledby="changePWDModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -277,9 +295,6 @@
         </div>
     </div>
 </div>
-
-
-
     <div class="modal fade" id="messageRequestModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="messageRequestModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -439,25 +454,20 @@
         </div>
     </div>
 
-
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2023 - DoAnTotNghiep - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
+    @(Html.Partial("~/Views/PartialView/_Footer.cshtml"))
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/Nav/nav.js" type="text/javascript"></script>
 
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
-    
-@RenderSection("houseListRequest", required: false)
-@RenderSection("createHouse", required: false)
-@RenderSection("membersInCircleSwap", required: false)
+    @RenderSection("houseListRequest", required: false)
+    @RenderSection("createHouse", required: false)
+    @RenderSection("membersInCircleSwap", required: false)
 
     <script type="text/javascript">
         $(document).ready(function () {
@@ -467,6 +477,14 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/litepicker/dist/css/litepicker.css" />
     <script src="https://cdn.jsdelivr.net/npm/litepicker/dist/litepicker.js"></script>
 
+    <script src="~/lib/microsoft/signalr/dist/browser/signalr.js" type="text/javascript"></script>
+    <script src="~/js/Chat/connect.js" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        connection.on("@(DoAnTotNghiep.Enum.TargetSignalR.Connect() + "-" + (userInfo == null ? string.Empty : userInfo.UserAccess))", function (message) {
+            console.log(message);
+        });
+    </script>
     <script type='text/javascript'>
         const picker = new Litepicker({
             element: document.getElementById('requestdaterange'),

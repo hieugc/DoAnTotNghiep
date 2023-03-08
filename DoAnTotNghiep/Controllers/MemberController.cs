@@ -14,7 +14,12 @@ using Microsoft.AspNetCore.Authorization;
 using System.Data;
 using System.Security.Claims;
 using DoAnTotNghiep.Enum;
-
+using Microsoft.Extensions.Hosting;
+using System.Text;
+using Newtonsoft.Json;
+using NuGet.Packaging;
+using Microsoft.AspNetCore.SignalR;
+using DoAnTotNghiep.Hubs;
 
 namespace DoAnTotNghiep.Controllers
 {
@@ -22,10 +27,14 @@ namespace DoAnTotNghiep.Controllers
     public class MemberController : BaseController
     {
         private readonly DoAnTotNghiepContext _context;
+        private readonly IConfiguration _configuration;
+        private IHubContext<ChatHub> _signalContext;
 
-        public MemberController(DoAnTotNghiepContext context)
+        public MemberController(DoAnTotNghiepContext context, IConfiguration configuration, IHubContext<ChatHub> signalContext)
         {
             _context = context;
+            _configuration = configuration;
+            _signalContext = signalContext;
         }
 
 
@@ -43,9 +52,8 @@ namespace DoAnTotNghiep.Controllers
             ViewData["active"] = 0;
             return View();
         }
-        public IActionResult House()
+        private List<DetailHouseViewModel> GetHouseInMemberPage()
         {
-            ViewData["active"] = 1;//xác định tab active
             int IdUser = this.GetIdUser();
             var listHouse = this._context.Houses.Include(m => m.RulesInHouses)
                                                 .Include(m => m.UtilitiesInHouses)
@@ -57,15 +65,24 @@ namespace DoAnTotNghiep.Controllers
                                                 .Where(m => m.IdUser == IdUser)
                                                 .Take<House>(6)
                                                 .ToList();
-            var listUtilities = this._context.Utilities.ToList();
-            var listRules = this._context.Rules.ToList();
 
             List<DetailHouseViewModel> detailHouseViewModels = new List<DetailHouseViewModel>();
-            foreach(var item in listHouse)
+            foreach (var item in listHouse)
             {
                 detailHouseViewModels.Add(DetailHouseViewModel.GetByHouse(item));
             }
 
+            
+            return detailHouseViewModels;
+        }
+
+        public IActionResult House()
+        {
+            ViewData["active"] = 1;//xác định tab active
+
+            var listUtilities = this._context.Utilities.ToList();
+            var listRules = this._context.Rules.ToList();
+            List<DetailHouseViewModel> detailHouseViewModels = this.GetHouseInMemberPage();
             AuthHouseViewModel model = new AuthHouseViewModel()
             {
                 Houses = detailHouseViewModels,
@@ -77,6 +94,17 @@ namespace DoAnTotNghiep.Controllers
             };
 
             return View(model);
+        }
+
+        [HttpGet("/api/House/OwnerShip")]
+        public JsonResult ApiHouse()
+        {
+            List<DetailHouseViewModel> model = this.GetHouseInMemberPage();
+            return Json(new
+                {
+                    Status = 200,
+                    Data = model
+                });
         }
         public IActionResult Requested()
         {
@@ -93,11 +121,164 @@ namespace DoAnTotNghiep.Controllers
             ViewData["active"] = 4;
             return View();
         }
-        public IActionResult Messages()
+        public async Task<IActionResult> Messages(string? connection)
         {
+            //chưa sort last send
+            int IdUser = this.GetIdUser();
+            int number = 10;
+            Dictionary<int, RoomChatViewModel> model = new Dictionary<int, RoomChatViewModel>();
+
+            byte[] salt = Crypto.Salt(this._configuration);
+
+            //seftaccess
+
+            using (var Context = this._context)
+            {
+                if (!string.IsNullOrEmpty(connection))
+                {
+                    string IdStr = Crypto.DecodeKey(connection, salt);
+                    int Id = 0;
+                    try
+                    {
+                        Id = int.Parse(IdStr);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex);
+                        return this.NotFound();
+                    }
+
+                    var user = this._context.Users.FirstOrDefault(m => m.Id == Id);
+                    if (user == null) return this.NotFound();
+                    var rooms = from r in this._context.ChatRooms
+                                join ur in this._context.UsersInChatRooms on r.Id equals ur.IdChatRoom
+                                join ur2 in this._context.UsersInChatRooms on r.Id equals ur2.IdChatRoom
+                                where ur.IdUser == Id && ur2.IdUser == IdUser
+                                select r;
+                    number = 1;
+
+                    if (rooms.Any())
+                    {
+                        List<ChatRoom?> chats = rooms.ToList();
+                        foreach (var room in chats)
+                        {
+                            if(room != null)
+                            {
+                                KeyValuePair<int, RoomChatViewModel> keyValuePair = this.CreateDictionary(room, Context, 10, salt, IdUser);
+                                model.Add(keyValuePair.Key, keyValuePair.Value);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        using (var transaction = await Context.Database.BeginTransactionAsync())
+                        {
+                            try
+                            {
+                                ChatRoom chatRoom = new ChatRoom();
+                                Context.Add(chatRoom);
+                                Context.SaveChanges();
+
+                                List<UsersInChatRoom> newList = new List<UsersInChatRoom>()
+                                {
+                                    new UsersInChatRoom()
+                                    {
+                                        IdChatRoom = chatRoom.Id,
+                                        IdUser = IdUser
+                                    },
+                                    new UsersInChatRoom()
+                                    {
+                                        IdChatRoom = chatRoom.Id,
+                                        IdUser = Id
+                                    }
+                                };
+
+                                Context.AddRange(newList);
+                                Context.SaveChanges();
+
+                                transaction.Commit();
+                                if(user.IdFile != null && user.IdFile.Value != 0)
+                                {
+                                    Context.Entry(user).Reference(m => m.Files).Load();
+                                }
+
+                                model.Add(chatRoom.Id, new RoomChatViewModel()
+                                {
+                                    IdRoom = chatRoom.Id,
+                                    UserMessages = new List<UserMessageViewModel>() {
+                                        new UserMessageViewModel(user, salt)
+                                    },
+                                    Messages = new List<MessageViewModel>()
+                                });
+
+                                //connect to users
+                                ChatHub chatHub = new ChatHub(this._signalContext);
+
+                                await chatHub.ConnectToGroup((TargetSignalR.Connect() + "-" + Crypto.EncodeKey(user.Id.ToString(), salt)), chatRoom.Id.ToString());
+
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine(ex);
+                                transaction.Rollback();
+                            }
+                        }  
+                    }
+                }
+                var chatRooms = Context.UsersInChatRooms
+                                             .Include(m => m.ChatRooms)
+                                             .Where(m => m.IdUser == IdUser)
+                                             .Take(10)
+                                             .Select(m => m.ChatRooms).ToList();
+
+                if (chatRooms != null && chatRooms.Count() > 0)
+                {
+                    foreach (var room in chatRooms)
+                    {
+                        if (room != null && !model.ContainsKey(room.Id))
+                        {
+                            KeyValuePair<int, RoomChatViewModel> keyValuePair = this.CreateDictionary(room, Context, number, salt, IdUser);
+                            model.Add(keyValuePair.Key, keyValuePair.Value);
+                            number = 1;
+                        }
+                    }
+                }
+            }
+
+            ViewData["SelfAccess"] = Crypto.EncodeKey(IdUser.ToString(), salt);
+
             ViewData["active"] = 5;
-            return View();
+            return View(model);
         }
+
+        private KeyValuePair<int, RoomChatViewModel> CreateDictionary(ChatRoom room, DoAnTotNghiepContext Context, int number, byte[] salt, int IdUser)
+        {
+            Context.Entry(room).Collection(m => m.Messages).Query().OrderByDescending(m => m.CreatedDate).Take(number).Load();
+            var userInChatRoom = Context.UsersInChatRooms
+                        .Include(m => m.Users)
+                        .Where(m => m.IdChatRoom == room.Id && m.IdUser != IdUser)
+                        .ToList();
+            List<UserMessageViewModel> users = new List<UserMessageViewModel>();
+            foreach (UsersInChatRoom item in userInChatRoom)
+            {
+                if (item != null)
+                {
+                    users.Add(new UserMessageViewModel(item, salt));
+                }
+            }
+            RoomChatViewModel roomChat = new RoomChatViewModel()
+            {
+                IdRoom = room.Id,
+                Messages = room.Messages == null ? new List<MessageViewModel>() : room.Messages.Select(m => new MessageViewModel(
+                                            m.IdReply == null ? 0 : m.IdReply.Value,
+                                            ((m.Status == (int)Status.SEEN) || m.IdUser == IdUser),
+                                            Crypto.EncodeKey(m.IdUser.ToString(), salt),
+                                            m.Content, m.Id, m.CreatedDate)).ToList(),
+                UserMessages = users
+            };
+            return new KeyValuePair<int, RoomChatViewModel>(roomChat.IdRoom, roomChat);
+        }
+        
         public IActionResult ReportMail()
         {
             ViewData["active"] = 0;

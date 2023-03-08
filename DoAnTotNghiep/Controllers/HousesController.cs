@@ -17,61 +17,69 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Net;
 using DoAnTotNghiep.Enum;
 using Microsoft.AspNetCore.Routing;
+using DoAnTotNghiep.Modules;
+using NuGet.Packaging;
+using System.Text;
 
 namespace DoAnTotNghiep.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "MEMBER")]
     public class HousesController : BaseController
     {
         private readonly DoAnTotNghiepContext _context;
         protected readonly IHostEnvironment environment;
-        public HousesController(DoAnTotNghiepContext context, IHostEnvironment environment)
+        private readonly IConfiguration _configuration;
+        public HousesController(DoAnTotNghiepContext context, IHostEnvironment environment, IConfiguration configuration)
         {
             _context = context;
             this.environment = environment;
+            _configuration = configuration;
         }
-
-        public async Task<IActionResult> Index()
+        private House? GetDetailsHouse(int Id, int status)
         {
-            var doAnTotNghiepContext = _context.Houses.Include(h => h.Citys).Include(h => h.Districts).Include(h => h.Users).Include(h => h.Wards);
-            return View(await doAnTotNghiepContext.ToListAsync());
+            var house = this._context.Houses.Include(m => m.RulesInHouses)
+                                                .Include(m => m.UtilitiesInHouses)
+                                                .Include(m => m.Citys)
+                                                .Include(m => m.Districts)
+                                                .Include(m => m.Wards)
+                                                .Include(m => m.Requests)
+                                                .Include(m => m.FileOfHouses)
+                                                .FirstOrDefault(m => m.Id == Id && m.Status == status);
+            return house;
         }
 
         [AllowAnonymous]
-        public IActionResult Details(int? id)
+        public IActionResult Details(int Id)
         {
             //kiểm tra người dùng có phải chủ nhân không
             // => có => show kể cả status gì
             // => không thì chỉ cho xem (int) Status.VALID
             // => ! (int) Status.VALID => NotFound()
+
+            //var model = this.GetDetailsHouse(Id, (int)Status.VALID);
+            //if(model == null) return NotFound();
+            //return View(model);
+            string? key = this._configuration.GetConnectionString(SystemKey.Base64());
+            key = (key == null ? string.Empty : key).PadRight(32, '*');
+            byte[] salt = Encoding.ASCII.GetBytes(key);
+            ViewData["Id"] = Crypto.EncodeKey("1", salt);
             return View();
         }
 
-        [HttpPost("House/Create")]
-        [ValidateAntiForgeryToken]//test lại
-        public async Task<JsonResult> Create([FromBody] CreateHouseViewModel data)
+        [AllowAnonymous]
+        [HttpGet("/api/House/Details")]
+        public IActionResult ApiDetails(int Id)
         {
-            DetailHouseViewModel returnCode = await this.CreateHouse(data);
-            switch (returnCode.Id)
+            var model = this.GetDetailsHouse(Id, (int)Status.VALID);
+            if (model == null) return Json(new
             {
-                case -1:
-                    return Json(new
-                    {
-                        Status = 400,
-                        Message = ModelErrors()
-                    });
-                case 0:
-                    return Json(new
-                    {
-                        Status = HttpStatusCode.InternalServerError,
-                        Message = "Ứng dụng tạm thời bảo trì"
-                    });
-            }
+                Status = 404,
+                Message = "Không tìm thấy nhà"
+            });
             return Json(new
             {
                 Status = 200,
-                Message = "Đã khởi tạo thành công!",
-                Data = returnCode
+                Data = model
             });
         }
 
@@ -181,13 +189,41 @@ namespace DoAnTotNghiep.Controllers
                         {
                             transaction.Rollback();
                             Console.WriteLine(ex);
-                            return new DetailHouseViewModel() { Id = 0};
+                            return new DetailHouseViewModel() { Id = 0 };
                         }
                     }
                 }
             }
-            return new DetailHouseViewModel() { Id = -1};
+            return new DetailHouseViewModel() { Id = -1 };
         }
+        [HttpPost("House/Create")]
+        [ValidateAntiForgeryToken]//test lại
+        public async Task<JsonResult> Create([FromBody] CreateHouseViewModel data)
+        {
+            DetailHouseViewModel returnCode = await this.CreateHouse(data);
+            switch (returnCode.Id)
+            {
+                case -1:
+                    return Json(new
+                    {
+                        Status = 400,
+                        Message = ModelErrors()
+                    });
+                case 0:
+                    return Json(new
+                    {
+                        Status = HttpStatusCode.InternalServerError,
+                        Message = "Ứng dụng tạm thời bảo trì"
+                    });
+            }
+            return Json(new
+            {
+                Status = 200,
+                Message = "Đã khởi tạo thành công!",
+                Data = returnCode
+            });
+        }
+
 
         [HttpPost("/api/House/Create")]//test lại
         public async Task<IActionResult> apiCreate([FromBody] CreateHouseViewModel data)
@@ -196,8 +232,9 @@ namespace DoAnTotNghiep.Controllers
             switch (returnCode.Id)
             {
                 case -1:
-                    return BadRequest(new
+                    return Json(new
                     {
+                        Status = 400,
                         Message = this.ModelErrors()
                     });
                 case 0:
@@ -207,20 +244,18 @@ namespace DoAnTotNghiep.Controllers
                         Message = "Ứng dụng tạm thời bảo trì"
                     });
             }
-            return Ok(new
+            return Json(new
             {
+                Status = 200,
                 Message = "Đã khởi tạo thành công",
                 Data = returnCode
             });
         }
 
-        [HttpPost("House/Update")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit([FromBody] EditHouseViewModel data)
+        private async Task<IActionResult> EditHouse(EditHouseViewModel data)
         {
             if (ModelState.IsValid)
             {
-
                 using (var Context = this._context)
                 {
                     using (var transaction = await Context.Database.BeginTransactionAsync())
@@ -237,6 +272,7 @@ namespace DoAnTotNghiep.Controllers
                             {
                                 return Json(new
                                 {
+                                    Status = 404,
                                     Message = "Không tìm thấy nhà"
                                 });
                             }
@@ -260,7 +296,7 @@ namespace DoAnTotNghiep.Controllers
                             Context.Houses.Update(model);
                             Context.SaveChanges();
 
-                            if(model.RulesInHouses == null)
+                            if (model.RulesInHouses == null)
                             {
                                 List<RulesInHouse> rules = new List<RulesInHouse>();
                                 foreach (var item in data.Rules)
@@ -278,7 +314,7 @@ namespace DoAnTotNghiep.Controllers
                             else
                             {
                                 List<RulesInHouse> ruleUpdate = model.RulesInHouses.Where(m => !data.Rules.Contains(m.IdRules)).ToList();
-                                foreach(var item in ruleUpdate)
+                                foreach (var item in ruleUpdate)
                                 {
                                     item.Status = false;
                                 }
@@ -367,14 +403,14 @@ namespace DoAnTotNghiep.Controllers
                                     }
                                     else
                                     {
-                                        if(item.Id != null)
+                                        if (item.Id != null)
                                         {
                                             idRemove.Add(item.Id.Value);
                                         }
                                     }
                                 }
                             }
-                            if(model.FileOfHouses != null)
+                            if (model.FileOfHouses != null)
                             {
                                 var deleteFileOfHouse = model.FileOfHouses
                                                             .Where(m => m.IdHouse == model.Id && !idRemove.Contains(m.IdFile))
@@ -402,8 +438,9 @@ namespace DoAnTotNghiep.Controllers
                             Context.SaveChanges();
 
                             transaction.Commit();
-                            return Ok(new
+                            return Json(new
                             {
+                                Status = 200,
                                 Message = "Đã cập nhật thành công",
                                 Data = data
                             });
@@ -421,15 +458,27 @@ namespace DoAnTotNghiep.Controllers
                     }
                 }
             }
-            return BadRequest(new
+            return Json(new
             {
+                Status = 400,
                 Message = this.ModelErrors()
             });
         }
 
-        [HttpDelete("/House/Delete")]
+        [HttpPut("House/Update")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed([FromBody]int id)
+        public async Task<IActionResult> Edit([FromBody] EditHouseViewModel data)
+        {
+            return await this.EditHouse(data);
+        }
+
+        [HttpPut("/apit/House/Update")]
+        public async Task<IActionResult> ApiEdit([FromBody] EditHouseViewModel data)
+        {
+            return await this.EditHouse(data);
+        }
+
+        private async Task<IActionResult> DeleteHouse(int id)
         {
             if (_context.Houses == null)
             {
@@ -439,33 +488,30 @@ namespace DoAnTotNghiep.Controllers
                     Message = "Hệ thống đang bảo trì"
                 });
             }
-            var house = this._context.Houses.Where(m => m.Id == id && m.Status != (int) Status.SWAPPED).ToList();
+            var house = this._context.Houses
+                                    .Include(m => m.RulesInHouses)
+                                    .Include(m => m.UtilitiesInHouses)
+                                    .Include(m => m.Requests)
+                                    .Include(m => m.FileOfHouses)
+                                    .Where(m => m.Id == id && m.Status != (int)Status.SWAPPED).ToList();
             if (house == null || house.Count() < 1)
             {
                 return Json(new
                 {
-                    Status = HttpStatusCode.NotModified,
+                    Status = 404,
                     Message = "Không tìm thấy nhà của bạn"
                 });
             }
             var removeHouse = house.First();
-            this._context.Entry(removeHouse).Collection(m => m.RulesInHouses)
-                                            .Load();
-            this._context.Entry(removeHouse).Collection(m => m.UtilitiesInHouses)
-                                            .Load();
-            this._context.Entry(removeHouse).Collection(m => m.Requests)
-                                            .Load();
-            this._context.Entry(removeHouse).Collection(m => m.FileOfHouses)
-                                            .Load();
 
             if (removeHouse.RulesInHouses != null) this._context.RulesInHouses.RemoveRange(removeHouse.RulesInHouses);
             if (removeHouse.UtilitiesInHouses != null) this._context.UtilitiesInHouse.RemoveRange(removeHouse.UtilitiesInHouses);
             if (removeHouse.FileOfHouses != null)
             {
                 List<Entity.File> files = new List<Entity.File>();
-                foreach(var item in removeHouse.FileOfHouses)
+                foreach (var item in removeHouse.FileOfHouses)
                 {
-                    if(item.Files != null && this.DeleteFile(item.Files)) files.Add(item.Files);
+                    if (item.Files != null && this.DeleteFile(item.Files)) files.Add(item.Files);
                 }
                 this._context.FilesOfHouses.RemoveRange(removeHouse.FileOfHouses);
                 this._context.Files.RemoveRange(files);
@@ -481,7 +527,21 @@ namespace DoAnTotNghiep.Controllers
             });
         }
 
+        [HttpDelete("/House/Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed([FromBody]int id)
+        {
+            return await this.DeleteHouse(id);
+        }
+
+        [HttpDelete("/api/House/Delete")]
+        public async Task<IActionResult> ApiDeleteConfirmed([FromBody] int id)
+        {
+            return await this.DeleteHouse(id);
+        }
+
         [HttpGet]
+        [AllowAnonymous]
         public JsonResult GetImagesOfHouse(int IdHouse)
         {
             var model = this._context.FilesOfHouses.Include(m => m.Files).Where(m => m.IdHouse == IdHouse)
@@ -499,12 +559,10 @@ namespace DoAnTotNghiep.Controllers
                 Data = model
             });
         }
-
         private bool HouseExists(int id)
         {
           return _context.Houses.Any(e => e.Id == id);
         }
-
         private Entity.File? SaveFile(ImageBase imageBase)
         {
             try
@@ -532,7 +590,6 @@ namespace DoAnTotNghiep.Controllers
                 return null;
             }
         }
-
         private bool DeleteFile(Entity.File file)
         {
             try

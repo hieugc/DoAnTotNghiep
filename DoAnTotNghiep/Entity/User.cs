@@ -26,31 +26,36 @@ namespace DoAnTotNghiep.Entity
         [Column("salt")]
         public string Salt { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Hãy điền họ")]
         [MaxLength(30, ErrorMessage = "Họ tối đa 30 ký tự")]
         [Column("last_name")]
-        public string LastName { get; set; } = string.Empty;
+        public string? LastName { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Hãy điền tên")]
-        [MaxLength(30, ErrorMessage = "Tên tối đa 30 ký tự")]
+        [MaxLength(50, ErrorMessage = "Tên tối đa 50 ký tự")]
         [Column("first_name")]
-        public string FirstName { get; set; } = string.Empty;
+        public string? FirstName { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Hãy điền số điện thoại")]
         [MaxLength(10, ErrorMessage = "Số điện thoại tối đa 10 số")]
         [MinLength(10, ErrorMessage = "Số điện thoại tối đa 10 số")]
         [Column("phone_number")]
-        public string PhoneNumber { get; set; } = string.Empty;
+        public string? PhoneNumber { get; set; } = string.Empty;
 
         [Column("bonus_point")]
         public int BonusPoint { get; set; } = 0;
         [Column("point")]
         public int Point { get; set; } = 0;
 
+        [Column("gender")]
+        public bool? Gender { get; set; } = false;
+        [Column("birth_day")]
+        public DateTime? BirthDay { get; set; } = DateTime.Now;
+
         [Column("id_file")]
         public virtual int? IdFile { get; set; }
 
         [ForeignKey(nameof(IdFile))]
         public virtual File? Files { get; set; }
+
+        public virtual ICollection<UsersInChatRoom>? ChatRoom { get; set; }
+        public virtual ICollection<Message>? Messages { get; set; }
     }
 }

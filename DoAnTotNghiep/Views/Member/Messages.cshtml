@@ -1,168 +1,222 @@
-﻿@model DoAnTotNghiep.Entity.AdminReport
+﻿@model Dictionary<int, RoomChatViewModel>
 
 @{
     ViewData["Title"] = "Tin nhắn";
     Layout = "_LayoutMember";
+    var count = 1;
+    var seftAccess = ViewData["SelfAccess"] as string;
 }
 
 
 @*
-    Chỉnh lại css
     Gồm có:
-        + Danh sách user bên trái
-        + Danh sách tin nhắn bên phải
-        + 10 người dùng
         + request 10 tin nhắn cho user gần nhất nhắn -> array
+        + thêm empty chats
         + croll lên request 10 tin nhắn
         + thêm tải hình ảnh
         + tooltip -> request + tải hình ảnh
         + modal tạo request
 *@
 
-
 <div class="Messages">
-    <div class="list-user">
-        <div class="user new-message">
-            <div class="avt"><img src="~/Image/logo.png" alt="avatar" /></div>
-            <div class="name">Phạm Minh Hiếu</div>
-        </div>
-        <div class="user new-message">
-            <div class="avt"><img src="~/Image/logo.png" alt="avatar" /></div>
-            <div class="name">Phạm Minh Hiếu</div>
-        </div>
-        <div class="user">
-            <div class="avt"><img src="~/Image/logo.png" alt="avatar" /></div>
-            <div class="name">Phạm Minh Hiếu</div>
-        </div>
-        <div class="user active">
-            <div class="avt"><img src="~/Image/logo.png" alt="avatar" /></div>
-            <div class="name">Phạm Minh Hiếu</div>
-        </div>
-        
-        <div class="user new-message">
-            <div class="avt"><img src="~/Image/logo.png" alt="avatar" /></div>
-            <div class="name">Phạm Minh Hiếu</div>
-        </div>
-        <div class="user new-message">
-            <div class="avt"><img src="~/Image/logo.png" alt="avatar" /></div>
-            <div class="name">Phạm Minh Hiếu</div>
-        </div>
-        <div class="user">
-            <div class="avt"><img src="~/Image/logo.png" alt="avatar" /></div>
-            <div class="name">Phạm Minh Hiếu</div>
-        </div>
-        <div class="user new-message">
-            <div class="avt"><img src="~/Image/logo.png" alt="avatar" /></div>
-            <div class="name">Phạm Minh Hiếu</div>
-        </div>
-        <div class="user new-message">
-            <div class="avt"><img src="~/Image/logo.png" alt="avatar" /></div>
-            <div class="name">Phạm Minh Hiếu</div>
-        </div>
-        <div class="user">
-            <div class="avt"><img src="~/Image/logo.png" alt="avatar" /></div>
-            <div class="name">Phạm Minh Hiếu</div>
-        </div>
-        <div class="user new-message">
-            <div class="avt"><img src="~/Image/logo.png" alt="avatar" /></div>
-            <div class="name">Phạm Minh Hiếu</div>
-        </div>
-        <div class="user new-message">
-            <div class="avt"><img src="~/Image/logo.png" alt="avatar" /></div>
-            <div class="name">Phạm Minh Hiếu</div>
-        </div>
-        <div class="user">
-            <div class="avt"><img src="~/Image/logo.png" alt="avatar" /></div>
-            <div class="name">Phạm Minh Hiếu</div>
-        </div>
-        <div class="user new-message">
-            <div class="avt"><img src="~/Image/logo.png" alt="avatar" /></div>
-            <div class="name">Phạm Minh Hiếu</div>
-        </div>
-        <div class="user new-message">
-            <div class="avt"><img src="~/Image/logo.png" alt="avatar" /></div>
-            <div class="name">Phạm Minh Hiếu</div>
-        </div>
-        <div class="user">
-            <div class="avt"><img src="~/Image/logo.png" alt="avatar" /></div>
-            <div class="name">Phạm Minh Hiếu</div>
-        </div>
-    </div>
-    <div class="tab-message">
-        <div class="top-tab-message">
-            <div class="user-name">Phạm Minh Hiếu</div>
-            <div class="request">
-                <label class=" position-relative">
-                    <i class="fa-solid fa-bullhorn"></i>
-                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                        !
-                        <span class="visually-hidden">unread messages</span>
-                    </span>
-                </label>
-            </div>
-        </div>
-
-        <div class="list-message">
-            @for(var item = 0; item < 2; item++)
+    <ul class="list-user">
+        @foreach(var item in Model)
+        {
+            if(count++ == 1)
             {
-                <div class="other user-chat">
-                    <div class="chat-head">
-                        <div class="avt"><img src="~/Image/logo.png" alt="avatar" /></div>
-                        <div class="name">Phạm Minh Hiếu</div>
+                <li class="user active" onclick="loadMessages(@item.Key, this)">
+                    <a href="#message-@item.Key">
+                        <span class="avt"><img src="~/@item.Value.UserMessages.First().ImageUrl" alt="avatar" /></span>
+                        <span class="name">@item.Value.UserMessages.First().UserName</span>
+                    </a>
+                </li>
+            }
+            else
+            {
+                if (item.Value.Messages.First().IsSeen)
+                {
+                    <li class="user" onclick="loadMessages(@item.Key, this)">
+                        <a href="#message-@item.Key">
+                            <span class="avt"><img src="~/@item.Value.UserMessages.First().ImageUrl" alt="avatar" /></span>
+                            <span class="name">@item.Value.UserMessages.First().UserName</span>
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <li class="user new-message" onclick="loadMessages(@item.Key, this)">
+                        <a href="#message-@item.Key">
+                            <span class="avt"><img src="~/@item.Value.UserMessages.First().ImageUrl" alt="avatar" /></span>
+                            <span class="name">@item.Value.UserMessages.First().UserName</span>
+                        </a>
+                    </li>
+                }
+            }
+        }
+        @{
+            count = 1;
+        }
+    </ul>
+    <div class="tab-message">
+        @foreach(var item in Model)
+        {
+            if(count++ == 1)
+            {
+                var prev = item.Value.UserMessages.First().UserAccess;
+                List<string> show = new List<string>();
+                <div class="tab-content" id="message-@item.Value">
+                    <div class="top-tab-message">
+                        <div class="user-name">@item.Value.UserMessages.First().UserName</div>
+                        <div class="request">
+                            <label class=" position-relative">
+                                <i class="fa-solid fa-bullhorn"></i>
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    !
+                                    <span class="visually-hidden">unread messages</span>
+                                </span>
+                            </label>
+                        </div>
                     </div>
-                    <div class="message-frame">
-                        <div class="chat"><span>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</span></div>
-                        <div class="chat"><span>Ayo bạn ơi!!!</span></div>
-                        <div class="chat"><span>Đổi nhà hong?</span></div>
-                    </div>
-                </div>
+                    <div class="list-message">
+                        @foreach(var message in item.Value.Messages)
+                        {
+                            if(prev == message.IdSend)
+                            {
+                                show.Add(message.Message);
+                            }
+                            else
+                            {
+                                //show message
+                                if (prev == seftAccess)
+                                {
+                                    <div class="user-chat">
+                                        <div class="chat-head">
+                                            @if (string.IsNullOrEmpty(item.Value.UserMessages.First().ImageUrl))
+                                            {
+                                                <div class="avt"><img src="~/Image/logo.png" alt="avatar" /></div>
+                                            }
+                                            else
+                                            {
+                                                <div class="avt"><img src="~/@item.Value.UserMessages.First().ImageUrl" alt="avatar" /></div>
+                                            }
+                                            <div class="user-name">@item.Value.UserMessages.First().UserName</div>
+                                        </div>
+                                        <div class="message-frame">
+                                            @foreach(var chat in show)
+                                            {
+                                                <div class="chat"><span>@chat</span></div>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="other user-chat">
+                                        <div class="chat-head">
+                                            @if (string.IsNullOrEmpty(item.Value.UserMessages.First().ImageUrl))
+                                            {
+                                                <div class="avt"><img src="~/Image/logo.png" alt="avatar" /></div>
+                                            }
+                                            else
+                                            {
+                                                <div class="avt"><img src="~/@item.Value.UserMessages.First().ImageUrl" alt="avatar" /></div>
+                                            }
+                                            <div class="user-name">@item.Value.UserMessages.First().UserName</div>
+                                        </div>
+                                        <div class="message-frame">
+                                            @foreach (var chat in show)
+                                            {
+                                                <div class="chat"><span>@chat</span></div>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                                show = new List<string>() { message.Message };
+                                prev = message.IdSend;
+                            }
+                        }
 
-                <div class="user-chat">
-                    <div class="chat-head">
-                        <div class="avt"><img src="~/Image/logo.png" alt="avatar" /></div>
-                        <div class="name">Phạm Minh Hiếu</div>
+                        @if (show.Any())
+                        {
+                            if (prev == seftAccess)
+                            {
+                                <div class="user-chat">
+                                    <div class="chat-head">
+                                        @if (string.IsNullOrEmpty(item.Value.UserMessages.First().ImageUrl))
+                                        {
+                                            <div class="avt"><img src="~/Image/logo.png" alt="avatar" /></div>
+                                        }
+                                        else
+                                        {
+                                            <div class="avt"><img src="~/@item.Value.UserMessages.First().ImageUrl" alt="avatar" /></div>
+                                        }
+                                        <div class="user-name">@item.Value.UserMessages.First().UserName</div>
+                                    </div>
+                                    <div class="message-frame">
+                                        @foreach (var chat in show)
+                                        {
+                                            <div class="chat"><span>@chat</span></div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="other user-chat">
+                                    <div class="chat-head">
+                                        @if (string.IsNullOrEmpty(item.Value.UserMessages.First().ImageUrl))
+                                        {
+                                            <div class="avt"><img src="~/Image/logo.png" alt="avatar" /></div>
+                                        }
+                                        else
+                                        {
+                                            <div class="avt"><img src="~/@item.Value.UserMessages.First().ImageUrl" alt="avatar" /></div>
+                                        }
+                                        <div class="user-name">@item.Value.UserMessages.First().UserName</div>
+                                    </div>
+                                    <div class="message-frame">
+                                        @foreach (var chat in show)
+                                        {
+                                            <div class="chat"><span>@chat</span></div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        }
                     </div>
-                    <div class="message-frame">
-                        <div class="chat"><span>Hong nha bạn ơi</span></div>
-                    </div>
-                </div>
+                    <div class="bot-tab-message">
+                        <div class="tooltip-control dropup">
+                            <button type="button" class="control-label" data-bs-toggle="dropdown"><i class="fa-solid fa-plus"></i></button>
+                            <div class="control-frame dropdown-menu">
+                                <div class="request dropdown-item" data-bs-toggle="modal" data-bs-target="#messageRequestModal">Tạo yêu cầu</div>
+                                <div class="dropdown-item"><label for="image-send">Thêm ảnh</label><input type="file" name="image-send" id="image-send" hidden /></div>
+                            </div>
+                        </div>
 
-                <div class="other user-chat">
-                    <div class="chat-head">
-                        <div class="avt"><img src="~/Image/logo.png" alt="avatar" /></div>
-                        <div class="name">Phạm Minh Hiếu</div>
-                    </div>
-                    <div class="message-frame">
-                        <div class="chat img"><img src="~/Image/logo.png" alt="Hình ảnh" /></div>
-                    </div>
-                </div>
-
-                <div class="user-chat">
-                    <div class="chat-head">
-                        <div class="avt"><img src="~/Image/logo.png" alt="avatar" /></div>
-                        <div class="name">Phạm Minh Hiếu</div>
-                    </div>
-                    <div class="message-frame">
-                        <div class="chat"><span>Chê!</span></div>
+                        <div class="frame-control">
+                        <textarea rows="1" maxlength="500" class="form-control" name="input-message-@item.Key" id="input-message-@item.Key" placeholder="Tin nhắn"></textarea>
+                            <button type="button" class="btn btn-primary" onclick="SendMessage('@item.Key')"><i class="fa-solid fa-paper-plane"></i></button>
+                        </div>
                     </div>
                 </div>
             }
-        </div>
-
-        <div class="bot-tab-message">
-            <div class="tooltip-control dropup">
-                <button type="button" class="control-label" data-bs-toggle="dropdown"><i class="fa-solid fa-plus"></i></button>
-                <div class="control-frame dropdown-menu">
-                    <div class="request dropdown-item" data-bs-toggle="modal" data-bs-target="#messageRequestModal">Tạo yêu cầu</div>
-                    <div class="dropdown-item"><label for="image-send">Thêm ảnh</label><input type="file" name="image-send" id="image-send" hidden /></div>
-                </div>
-            </div>
-
-            <div class="frame-control">
-                <textarea rows="1" maxlength="500" class="form-control" name="input-message" id="input-message" placeholder="Tin nhắn"></textarea>
-                <button type="button" class="btn btn-primary"><i class="fa-solid fa-paper-plane"></i></button>
-            </div>
-        </div>
+        }
     </div>
 </div>
 
+@section Scripts{
+    <link rel="stylesheet" href="~/css/Member/message.css">
+    @*<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>*@
+    <script type="text/javascript">
+        var chatRoom = @Html.Raw(Json.Serialize(Model));
+        var userAccess = '@Html.Raw(ViewData["SelfAccess"])';
+    </script>
+    @if(Model.Any()){
+        <script type="text/javascript">
+            chatRoom[@Model.Keys.First()]["isInit"] = true;
+        </script>
+    }
+    <script type="text/javascript" src="~/js/Chat/loadChat.js"></script>
+}

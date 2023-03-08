@@ -15,54 +15,6 @@
         @foreach(var item in Model.Houses)
         {
             @(await Html.PartialAsync("~/Views/Houses/HouseItem.cshtml", item))
-            @*<div class="card mb-3 status-@item.Status">
-        <div class="row g-0">
-        <div class="col-md-8">
-        <img src="~/Image/logo.png" class="img-fluid rounded-start" alt="hình ảnh nhà">
-        </div>
-        <div class="col-md-4">
-        <div class="card-body">
-        <div class="body-head">
-        <h5 class="card-title">@item.Name</h5>
-        <div>
-        <div class="rating"><span>@item.Rating</span><i class="fa-solid fa-star"></i></div>
-        <div class="point"><strong>@item.Price p/ngày</strong></div>
-        </div>
-        </div>
-        <div class="body-detail">
-        <div class="house-attr">
-        <div><i class="fa-solid fa-house"></i><span>@(HouseEnum.HouseType(item.Option))</span></div>
-        <div><i class="fa-solid fa-users"></i><span>@item.People</span></div>
-        <div><i class="fa-solid fa-bed"></i><span>@item.BedRoom</span></div>
-        <div><i class="fa-solid fa-bath"></i><span>@item.BathRoom</span></div>
-        <div><i class="fa-solid fa-maximize"></i><span>@item.Square &#13217;</span></div>
-        </div>
-        <div class="alert-swap">
-        @if (item.Status == (int)Status.VALID)
-        {
-        <label class="position-relative" title="Người dùng yêu cầu" onclick="showRequest(@item.Id)">
-        <i class="fa-solid fa-bell"></i>
-        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-        @item.Request
-        <span class="visually-hidden">unread messages</span>
-        </span>
-        </label>
-        }
-        </div>
-        </div>
-        <p class="card-text">@item.Location</p>
-        <p class="card-control">
-        <a href="@Url.Action("Detail", "House", new{Id = item.Id})" class="btn btn-primary" title="Xem chi tiết">Chi tiết</a>
-        @if(item.Status != (int)Status.SWAPPED)
-        {
-        <button type="button" class="btn btn-warning" onclick="editHouse(@item.Id)">Chỉnh sửa</button>
-        <button type="button" class="btn btn-danger" confirm="Bạn chắc muốn xóa nhà này chứ?" onclick="deleteHouse(@item.Id)">Xóa</button>
-        }
-        </p>
-        </div>
-        </div>
-        </div>
-        </div>*@
         }
     </div>
 </div>

@@ -1,0 +1,46 @@
+﻿@model DoAnTotNghiep.ViewModels.RegisterOTPViewModel
+@{
+    ViewData["Title"] = "Đăng ký tài khoản";
+    Layout = "_LayoutLogin";
+}
+
+
+<!-- Register Card -->
+<div class="card">
+    <div class="card-body">
+        <!-- Logo -->
+        <div class="app-brand justify-content-center">
+            <a href="@Url.Action("Index", "Home")" class="app-brand-link gap-2">
+                <span class="app-brand-logo demo branch">
+                    <img src="~/Image/logo.png" alt="logo" />
+                </span>
+                <span class="app-brand-text demo text-body fw-bolder">VExchangeHome</span>
+            </a>
+        </div>
+        <!-- /Logo -->
+        <h4 class="mb-2">Xác thực tài khoản</h4>
+
+        <form id="formAuthentication" class="mb-3" asp-action="SignUpOTP" method="POST">
+            <div asp-validation-summary="ModelOnly" class="text-danger">
+                @if (!string.IsNullOrEmpty(ViewBag.Message))
+                {
+                    @ViewBag.Message
+                }
+            </div>
+            <div class="mb-3">
+                <label asp-for="OTP" class="form-label">Mã OTP</label>
+                <input class="form-control" asp-for="OTP" placeholder="000 - 000" />
+                <span asp-validation-for="OTP" class="text-danger"></span>
+            </div>
+            <p class="text-center"><small>Không nhận được?</small><small class="fw-bold text-decoration-underline" id="resend">Gửi lại email</small></p>
+            <button type="submit" class="btn btn-primary d-grid w-100">Tiếp tục</button>
+        </form>
+
+        <p class="text-center">
+            <span>Bạn đã có tài khoản?</span>
+            <a href="@Url.Action("SignIn", "Authorize")">
+                <span>Đăng nhập</span>
+            </a>
+        </p>
+    </div>
+</div>

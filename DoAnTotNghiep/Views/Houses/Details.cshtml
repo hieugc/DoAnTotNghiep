@@ -2,7 +2,7 @@
 
 @{
     ViewData["Title"] = "Chi tiết nhà";
-    Layout = "_LayoutAuthoried";
+    Layout = "_Layout";
 }
 
 <div class="Banner">
@@ -268,7 +268,7 @@
             </div>
         </div>
         <div class="bot">
-            <div><button class="btn btn-primary">Liên hệ</button></div>
+            <div><a href="@Url.Action("Messages", "Member", new {connection = ViewData["Id"]})" class="btn btn-primary">Liên hệ</a></div>
             <div><button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#messageRequestModal">Yêu cầu trao đổi</button></div>
             <div><button class="btn btn-danger" type="button" data-bs-toggle="modal" data-bs-target="#reportModal">Báo cáo</button></div>
         </div>

@@ -5,20 +5,20 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using DoAnTotNghiep.Entity;
 using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
+using System.Configuration;
 
 namespace DoAnTotNghiep.Data
 {
     public class DoAnTotNghiepContext: DbContext
     {
-        public DoAnTotNghiepContext(DbContextOptions<DoAnTotNghiepContext> options)
-            : base(options)
+        private readonly IConfiguration _configuration;
+        public DoAnTotNghiepContext(IConfiguration configuration)
         {
+            this._configuration = configuration;
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Data Source=(localdb)\\local;Initial Catalog=DoAnTotNghiep;" +
-                "Persist Security Info=True;User ID=doantotnghiep;" +
-                "Password=12345678;MultipleActiveResultSets=True");
+            optionsBuilder.UseSqlServer(_configuration.GetConnectionString("DataContext"));
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

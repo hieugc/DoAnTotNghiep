@@ -359,7 +359,7 @@ img.logo {
 .user .avt img,
 #requestHouseModalToggle .user .avt img,
 .tab-message .user-chat .avt img,
-.list-user > .user > .avt img,
+.list-user .user a > .avt img,
 .infomation-details-frame .avt img,
 .tab-left > .infomation > .avt > img,
 .frame > .right > .top > .user-info > .avt img,
@@ -405,8 +405,6 @@ i.fa-solid.fa-bell{
     height: auto;
     object-fit: cover;
 }
-
-
 
 
 .select2 {

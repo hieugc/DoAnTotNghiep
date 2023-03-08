@@ -9,24 +9,12 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Net.Http.Headers;
 using Microsoft.Extensions.Configuration;
+using DoAnTotNghiep.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
-
-
-//string? StringConnectSQL = builder.Configuration.GetConnectionString("DataContext");
-//if(StringConnectSQL == null)
-//{
-//    Console.WriteLine("null");
-//    StringConnectSQL = "Data Source=(localdb)\\local;Initial Catalog=DoAnTotNghiep;Persist Security Info=True;User ID=doantotnghiep;Password=12345678;MultipleActiveResultSets=True";
-//}
-
-// Add services to the container.
 builder.Services.AddDbContext<DoAnTotNghiepContext>(options => 
-    options.UseSqlServer(
-        builder.Configuration.GetConnectionString("DataContext") 
-        ?? throw new InvalidOperationException("Connection string 'DoAnTotNghiep' not found.")
-    )
-);
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DataContext")));
+builder.Services.AddSignalR();
 
 
 builder.Services.AddControllersWithViews();
@@ -51,7 +39,7 @@ builder.Services.AddAuthentication(Scheme.Authentication())
         options.LoginPath = new PathString("/Authorize/SignIn");
         options.LogoutPath = new PathString("/Authorize/Logout/");
         options.AccessDeniedPath = new PathString("/Authorize/SignIn");
-        options.ReturnUrlParameter = "/Home/Index";
+        options.ReturnUrlParameter = new PathString("/Home/Index");
         options.SlidingExpiration = true;
         options.Cookie = new CookieBuilder
         {
@@ -84,21 +72,26 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/NotFound");
+    app.UseExceptionHandler("/Home/UnderMaintenance");
 }
 
 app.Use(async (context, next) =>
 {
-    await next();
-    if (!context.Request.Path.ToString().Contains("api"))
+    if (!context.Request.Path.ToString().ToLower().Contains("api"))
     {
-        if (context.Response.StatusCode >= 400)
+        if (context.Response.StatusCode >= 500)
+        {
+            context.Request.Path = "/Home/UnderMaintenance";
+        }
+        else if (context.Response.StatusCode >= 400)
         {
             context.Request.Path = "/Home/NotFound";
             await next();
         }
     }
+    await next();
 });
+
 
 app.UseStaticFiles();
 
@@ -107,8 +100,11 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.MapHub<ChatHub>("/ChatHub");
 
 app.Run();

@@ -97,7 +97,7 @@ function finish() {
                 data: JSON.stringify(data),
                 dataType: "json",
                 contentType: "application/json",
-                type: "POST",
+                type: "PUT",
                 success: function (result) {
                     //nếu đúng
                     console.log(result);
