@@ -17,6 +17,7 @@ using DoAnTotNghiep.Modules;
 using System.Text;
 using Newtonsoft.Json;
 using NuGet.Packaging;
+using System.Net.WebSockets;
 
 namespace DoAnTotNghiep.Controllers
 {
@@ -42,7 +43,7 @@ namespace DoAnTotNghiep.Controllers
                 ChatHub chatHub = new ChatHub(this._signalContext);
                 try
                 {
-                    if (data.IdRoom != null)
+                    if (data.IdRoom != null && data.IdRoom != 0)
                     {
                         int IdUser = this.GetIdUser();
                         //kiểm tra có tồn tại trong DB không? => không => return status == 404
@@ -81,7 +82,7 @@ namespace DoAnTotNghiep.Controllers
                                     {
                                         if (item.Users != null)
                                         {
-                                            users.Add(new UserMessageViewModel(item.Users, salt));
+                                            users.Add(new UserMessageViewModel(item.Users, salt, this.GetWebsitePath()));
                                         }
                                     }
                                 }
@@ -92,9 +93,7 @@ namespace DoAnTotNghiep.Controllers
                                     Messages = new List<MessageViewModel>()
                                 });
                             }
-
                             //trả dữ liệu về lưu vào client
-
                             //lưu vào cookie
                             string? cookieRooms = this.GetCookie(Enum.Cookie.ChatRoom());
                             List<string> chatRooms = new List<string>() { data.IdRoom.Value.ToString() };
@@ -106,7 +105,6 @@ namespace DoAnTotNghiep.Controllers
 
                             //kết nối với group
                             await chatHub.AddToGroup(data.ConnectionId, data.IdRoom.Value.ToString());
-
                             return Json(new
                             {
                                 Status = 200,
@@ -199,6 +197,14 @@ namespace DoAnTotNghiep.Controllers
                     this._context.Add(message);
                     await this._context.SaveChangesAsync();
 
+                    var rooms = this._context.ChatRooms.Where(m => m.Id == data.IdRoom);
+                    foreach(var item in rooms)
+                    {
+                        item.UpdatedDate = DateTime.Now;
+                    }
+                    this._context.ChatRooms.UpdateRange(rooms);
+                    this._context.SaveChanges();
+
                     ChatHub chatHub = new ChatHub(this._signalContext);
                     await chatHub.SendMessage(data.IdRoom.ToString(),
                                 TargetSignalR.Receive(),
@@ -238,6 +244,7 @@ namespace DoAnTotNghiep.Controllers
             {
                 int IdUser = this.GetIdUser();
                 byte[] salt = Crypto.Salt(this._configuration);
+
                 string? lMessageStored = this.GetCookie(Enum.Cookie.DataChat());
                 Dictionary<int, RoomChatViewModel> model = new Dictionary<int, RoomChatViewModel>();
                 if (!string.IsNullOrEmpty(lMessageStored))
@@ -269,7 +276,6 @@ namespace DoAnTotNghiep.Controllers
                 Message = this.ModelErrors()
             });
         }
-
         private RoomChatViewModel GetRoomChatViewModel(DataGetMessageViewModel data, byte[] salt, int IdUser)
         {
             var messagesInRoom = this._context.Messages
@@ -306,6 +312,71 @@ namespace DoAnTotNghiep.Controllers
                 Messages = messagesInRoom
             };
         }
+        [HttpPost("/UpdateCookie")]
+        public JsonResult UpdateCookieChat([FromBody] RoomChatViewModel data)
+        {
+            if (ModelState.IsValid)
+            {
+                string? modelStr = this.GetCookie(Enum.Cookie.DataChat());
+                if (modelStr != null)
+                {
+                    Dictionary<int, RoomChatViewModel>? model = JsonConvert.DeserializeObject<Dictionary<int, RoomChatViewModel>>(modelStr);
+                    if(model != null)
+                    {
+                        model.Remove(data.IdRoom);
+                        model.Add(data.IdRoom, data);
+                        this.SetCookie(Enum.Cookie.DataChat(), JsonConvert.SerializeObject(model), 24);
+                    }
+                    else
+                    {
+                        model = new Dictionary<int, RoomChatViewModel>();
+                        model.Add(data.IdRoom, data);
+                        this.SetCookie(Enum.Cookie.DataChat(), JsonConvert.SerializeObject(model), 24);
+                    }
+                }
+                else
+                {
+                    Dictionary<int, RoomChatViewModel> model = new Dictionary<int, RoomChatViewModel>();
+                    model.Add(data.IdRoom, data);
+                    this.SetCookie(Enum.Cookie.DataChat(), JsonConvert.SerializeObject(model), 24);
+                }
+                return Json(new
+                {
+                    Status = 200,
+                    Message = "Cập nhật thành công"
+                });
+            }
 
+            return Json(new
+            {
+                Status = 400,
+                Message = ModelErrors()
+            });
+        }
+
+        [HttpPost("/Message/Seen")]
+        public JsonResult UpdateSeenChat([FromBody] List<int> data)
+        {
+            if (ModelState.IsValid)
+            {
+                var messages = this._context.Messages.Where(m => data.Contains(m.Id));
+                foreach ( var message in messages)
+                {
+                    message.Status = (int)Status.SEEN;
+                }
+                this._context.UpdateRange(messages);
+                this._context.SaveChanges();
+                return Json(new
+                {
+                    Status = 200,
+                    Message = "Cập nhật thành công"
+                });
+            }
+            return Json(new
+            {
+                Status = 400,
+                Message = ModelErrors()
+            });
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿@{
+﻿@model DoAnTotNghiep.ViewModels.RegisterCheckMailViewModel
+@{
     ViewData["Title"] = "Quên mật khẩu";
     Layout = "_LayoutLogin";
 }
@@ -19,20 +20,22 @@
         <!-- /Logo -->
         <h4 class="mb-2">Quên mật khẩu? 🔒</h4>
         <p class="mb-4">Điền email của bạn đã đăng ký, chúng tôi sẽ cấp lại mật khẩu cho bạn.</p>
-        <form id="formAuthentication" class="mb-3" action="index.html" method="POST">
-            <div class="mb-3">
-                <label for="email" class="form-label">Email</label>
-                <input type="text"
-                       class="form-control"
-                       id="email"
-                       name="email"
-                       placeholder="Điền email đã đăng ký"
-                       autofocus />
+        <form id="formAuthentication" class="mb-3" asp-action="Forgot" method="POST">
+            <div asp-validation-summary="ModelOnly" class="text-danger">
+                @if (!string.IsNullOrEmpty(ViewBag.Message))
+                {
+                    @ViewBag.Message
+                }
             </div>
-            <button class="btn btn-primary d-grid w-100">Gửi xác nhận</button>
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label">Email</label>
+                <input type="text" class="form-control" asp-for="Email" placeholder="Enter your email" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-primary d-grid w-100">Gửi xác nhận</button>
         </form>
         <div class="text-center">
-            <a href="@Url.Action("SignIn", "Auth")" class="d-flex align-items-center justify-content-center">
+            <a href="@Url.Action("SignIn", "Authorize")" class="d-flex align-items-center justify-content-center">
                 <i class="bx bx-chevron-left scaleX-n1-rtl bx-sm"></i>
                 Quay lại đăng nhập
             </a>

@@ -55,7 +55,7 @@ namespace DoAnTotNghiep.Entity
         public double Lng { get; set; } = 0;
 
         [Column("id_user")]
-        public virtual int? IdUser { get; set; }
+        public virtual int IdUser { get; set; }
 
         [ForeignKey(nameof(IdUser))]
         public virtual User? Users { get; set; }
@@ -81,6 +81,7 @@ namespace DoAnTotNghiep.Entity
         public virtual ICollection<RulesInHouse>? RulesInHouses { get; set; }
         public virtual ICollection<UtilitiesInHouse>? UtilitiesInHouses { get; set; }
         public virtual ICollection<FileOfHouse>? FileOfHouses { get; set; }
+        public virtual ICollection<File>? Files { get; set; }
 
         [InverseProperty("Houses")]
         public virtual ICollection<Request>? Requests { get; set; }

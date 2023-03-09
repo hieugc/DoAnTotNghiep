@@ -35,7 +35,7 @@ namespace DoAnTotNghiep.Controllers
             this.environment = environment;
             _configuration = configuration;
         }
-        private House? GetDetailsHouse(int Id, int status)
+        private DetailHouseViewModel? GetDetailsHouse(int Id, int status)
         {
             var house = this._context.Houses.Include(m => m.RulesInHouses)
                                                 .Include(m => m.UtilitiesInHouses)
@@ -44,8 +44,58 @@ namespace DoAnTotNghiep.Controllers
                                                 .Include(m => m.Wards)
                                                 .Include(m => m.Requests)
                                                 .Include(m => m.FileOfHouses)
+                                                .Include(m => m.Files)
                                                 .FirstOrDefault(m => m.Id == Id && m.Status == status);
-            return house;
+            if(house == null) return null;
+            byte[] salt = Crypto.Salt(this._configuration);
+            DetailHouseViewModel model = DetailHouseViewModel.GetByHouse(house, salt);
+            if(house.Files != null)
+            {
+                string host = this.GetWebsitePath();
+                var images = house.Files.Select(m => new ImageBase
+                {
+                    Id = m.Id,
+                    Data = string.Empty,
+                    Folder = host + "/" + m.PathFolder + "/" + m.FileName,
+                    Name = m.FileName
+                });
+                model.Images.AddRange(images);
+            }
+            return model;
+        }
+
+        //getpopularhouse
+        [HttpGet("/api/GetPopularCity")]
+        [AllowAnonymous]
+        public JsonResult GetPopularCity(int number = 10)
+        {
+            string host = this.GetWebsitePath();
+            List<PopularCityViewModel> cityList = this._context.Cities
+                                               .OrderBy(m => m.Count)
+                                               .Take(number)
+                                               .Select(m => new PopularCityViewModel()
+                                               {
+                                                   Name = m.Name,
+                                                   Id = m.Id,
+                                                   ImageUrl = host + "/Image/logo.png",
+                                                   IsDeleted = false,
+                                                   Location = new PointViewModel()
+                                                   {
+                                                       Lat = m.Lat,
+                                                       Lng = m.Lng
+                                                   }
+
+                                               })
+                                               .ToList();
+
+            return Json(
+                new
+                {
+                    StatusCode = 200,
+                    Message = "Get Successfully",
+                    Data = cityList
+                }
+            );
         }
 
         [AllowAnonymous]
@@ -66,6 +116,33 @@ namespace DoAnTotNghiep.Controllers
             return View();
         }
 
+        [HttpGet("/api/GetPoplarHouse")]
+        public JsonResult GetPopularHouse(int number = 10)
+        {
+            var listHouse = this._context.Houses.Take(number).ToList();
+            byte[] salt = Crypto.Salt(this._configuration);
+            string host = this.GetWebsitePath();
+            List<DetailHouseViewModel> res = new List<DetailHouseViewModel>();
+            foreach (var item in listHouse)
+            {
+                DetailHouseViewModel model = DetailHouseViewModel.GetByHouse(item, salt);
+                if (item.Files != null)
+                {
+                    var images = item.Files.Select(m => new ImageBase
+                    {
+                        Id = m.Id,
+                        Data = string.Empty,
+                        Folder = host + "/" + m.PathFolder + "/" + m.FileName,
+                        Name = m.FileName
+                    });
+                    model.Images.AddRange(images);
+                }
+                res.Add(model);
+            }
+            return Json(res);
+        }
+
+
         [AllowAnonymous]
         [HttpGet("/api/House/Details")]
         public IActionResult ApiDetails(int Id)
@@ -83,7 +160,7 @@ namespace DoAnTotNghiep.Controllers
             });
         }
 
-        private async Task<DetailHouseViewModel> CreateHouse(CreateHouseViewModel data)
+        private async Task<DetailHouseViewModel> CreateHouse(CreateHouse data)
         {
             if (ModelState.IsValid)
             {
@@ -149,18 +226,15 @@ namespace DoAnTotNghiep.Controllers
 
                             //thêm hình
                             List<Entity.File> files = new List<Entity.File>();
-                            foreach (var item in data.Images)
-                            {
-                                if (item != null)
-                                {
-                                    Entity.File? file = this.SaveFile(item);
-                                    if (file != null)
-                                    {
-                                        files.Add(file);
-                                    }
-                                }
-                            }
 
+                            if(data.Files == null)
+                            {
+                                files.AddRange(this.CreateListFile(data.Images));
+                            }
+                            else
+                            {
+                                files.AddRange(this.CreateListFile(data.Files));
+                            }
                             Context.Files.AddRange(files);
                             Context.SaveChanges();
 
@@ -179,7 +253,10 @@ namespace DoAnTotNghiep.Controllers
                             Context.SaveChanges();
 
                             transaction.Commit();
-                            DetailHouseViewModel detailHouseViewModel = DetailHouseViewModel.GetByHouse(house);
+
+                            byte[] salt = Crypto.Salt(this._configuration);
+
+                            DetailHouseViewModel detailHouseViewModel = DetailHouseViewModel.GetByHouse(house, salt);
                             detailHouseViewModel.Rules = data.Rules;
                             detailHouseViewModel.Utilities = data.Utilities;
                             detailHouseViewModel.Images = data.Images;
@@ -196,11 +273,48 @@ namespace DoAnTotNghiep.Controllers
             }
             return new DetailHouseViewModel() { Id = -1 };
         }
+        private List<Entity.File> CreateListFile(IFormFileCollection? data)
+        {
+            List<Entity.File> files = new List<Entity.File>();
+            if(data != null)
+            {
+                foreach (var item in data)
+                {
+                    if (item != null)
+                    {
+                        Entity.File? file = this.SaveFile(item);
+                        if (file != null)
+                        {
+                            files.Add(file);
+                        }
+                    }
+                }
+            }
+            return files;
+        }
+        private List<Entity.File> CreateListFile(List<ImageBase?> data)
+        {
+            List<Entity.File> files = new List<Entity.File>();
+            foreach (var item in data)
+            {
+                if (item != null)
+                {
+                    Entity.File? file = this.SaveFile(item);
+                    if (file != null)
+                    {
+                        files.Add(file);
+                    }
+                }
+            }
+            return files;
+        }
+
+
         [HttpPost("House/Create")]
         [ValidateAntiForgeryToken]//test lại
         public async Task<JsonResult> Create([FromBody] CreateHouseViewModel data)
         {
-            DetailHouseViewModel returnCode = await this.CreateHouse(data);
+            DetailHouseViewModel returnCode = await this.CreateHouse(new CreateHouse(null, data));
             switch (returnCode.Id)
             {
                 case -1:
@@ -223,12 +337,10 @@ namespace DoAnTotNghiep.Controllers
                 Data = returnCode
             });
         }
-
-
         [HttpPost("/api/House/Create")]//test lại
-        public async Task<IActionResult> apiCreate([FromBody] CreateHouseViewModel data)
+        public async Task<IActionResult> ApiCreate([FromBody] MobileCreateHouseViewModel data)
         {
-            DetailHouseViewModel returnCode = await this.CreateHouse(data);
+            DetailHouseViewModel returnCode = await this.CreateHouse(new CreateHouse(data, null));
             switch (returnCode.Id)
             {
                 case -1:
@@ -251,7 +363,6 @@ namespace DoAnTotNghiep.Controllers
                 Data = returnCode
             });
         }
-
         private async Task<IActionResult> EditHouse(EditHouseViewModel data)
         {
             if (ModelState.IsValid)
@@ -582,6 +693,35 @@ namespace DoAnTotNghiep.Controllers
                 string ImagePath = Guid.NewGuid().ToString() + "." + ext;
                 string filePath = Path.Combine(uploadsFolder, ImagePath);
                 System.IO.File.WriteAllBytes(filePath, bytes);
+                return new Entity.File() { FileName = ImagePath, PathFolder = folder };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return null;
+            }
+        }
+
+        private Entity.File? SaveFile(IFormFile file)
+        {
+            try
+            {
+                string ext = file.FileName.Split(".").Last();
+
+                string folder = Path.Combine("Uploads", DateTime.Now.ToString("yyyy"), DateTime.Now.ToString("MM"));
+
+                string uploadsFolder = Path.Combine(this.environment.ContentRootPath, "wwwroot", folder);
+                Console.WriteLine(uploadsFolder);
+                if (!Directory.Exists(uploadsFolder))
+                {
+                    Directory.CreateDirectory(uploadsFolder);
+                }
+                string ImagePath = Guid.NewGuid().ToString() + "." + ext;
+                string filePath = Path.Combine(uploadsFolder, ImagePath);
+                using (FileStream fs = new FileStream(filePath, FileMode.Create))
+                {
+                    file.CopyTo(fs);
+                }
                 return new Entity.File() { FileName = ImagePath, PathFolder = folder };
             }
             catch (Exception ex)

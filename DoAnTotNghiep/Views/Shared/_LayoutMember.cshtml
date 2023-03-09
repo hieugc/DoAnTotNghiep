@@ -188,7 +188,7 @@
                         <a class="position-relative" href="#" role="button" id="dropdownMenuMember" data-bs-toggle="dropdown" aria-expanded="false">
                                 @if (userInfo != null && !string.IsNullOrEmpty(userInfo.ImageUrl))
                                 {
-                                    <img src="~/@userInfo.ImageUrl" alt="avatar" />
+                                    <img src="@userInfo.ImageUrl" alt="avatar" />
                                 }
                                 else
                                 {
@@ -483,6 +483,7 @@
     <script type="text/javascript">
         connection.on("@(DoAnTotNghiep.Enum.TargetSignalR.Connect() + "-" + (userInfo == null ? string.Empty : userInfo.UserAccess))", function (message) {
             console.log(message);
+            connectServer({ idRoom: message, connectionId: connection.connectionId }, 0, 10);
         });
     </script>
     <script type='text/javascript'>
@@ -498,6 +499,13 @@
             }
         })
     </script>
+
+    <div class="notification" id="toastPlacement">
+        <div class="toast-header"><strong class="me-auto" id="notification-head"></strong></div>
+        <div class="toast-body" id="notification-body"></div>
+    </div>
+
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

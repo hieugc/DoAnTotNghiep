@@ -13,7 +13,7 @@
         public static int NoneInt() => 0;
         public static string NoneString() => "NONE";
         public static string UnAuthorize() => "UNAUTHORIZE";
-
+        public static string UpdateInfo() => "UPDATEINFO";
     }
 
     enum RoleType

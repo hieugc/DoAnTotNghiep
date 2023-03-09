@@ -25,7 +25,7 @@ function getDataCity() {
             type: "GET",
             dataType: "json",
             success: function (data) {
-                var str = "{";
+                let str = "{";
                 for (e in data.city) {
                     let omodel = JSON.stringify(data.city[e]);
                     let model = "\"" + data.city[e]["id"] + "\":" + omodel.slice(0, omodel.length - 1) + ", \"district\": null}";
@@ -35,6 +35,17 @@ function getDataCity() {
                 str = str.slice(0, str.length - 1);
                 str += "}";
                 dataLocation = JSON.parse(str);
+
+                let bingStr = "{";
+                for (e in data.city) {
+                    let omodel = JSON.stringify(data.city[e]);
+                    let model = "\"" + data.city[e]["bingName"] + "\":" + omodel.slice(0, omodel.length - 1) + ", \"district\": null}";
+                    bingStr += model + ", ";
+                }
+                bingStr = bingStr.trim();
+                bingStr = bingStr.slice(0, bingStr.length - 1);
+                bingStr += "}";
+                dataBingLocation = JSON.parse(bingStr);
 
                 let model = JSON.stringify(data.city).replaceAll("name", "text");
 
@@ -77,6 +88,17 @@ function getDataDistrict() {
                         str = str.slice(0, str.length - 1);
                         str += "}";
                         dataLocation[id].district = JSON.parse(str);
+
+                        let bingStr = "{";
+                        for (e in data.district) {
+                            let omodel = JSON.stringify(data.district[e]);
+                            let model = "\"" + data.district[e]["id"] + "\":" + omodel.slice(0, omodel.length - 1) + ", \"ward\": null}";
+                            bingStr += model + ", ";
+                        }
+                        bingStr = bingStr.trim();
+                        bingStr = bingStr.slice(0, bingStr.length - 1);
+                        bingStr += "}";
+                        dataBingLocation[id].district = JSON.parse(bingStr);
 
                         let model = JSON.stringify(data.district).replaceAll("name", "text");
                         changeDataForSelect2("#district-select", [{ "id": -1, "text": "Quận / Huyện" }].concat(JSON.parse(model)));
@@ -123,7 +145,7 @@ function getDataWard() {
                     type: "GET",
                     dataType: "json",
                     success: function (data) {
-                        var str = "{";
+                        let str = "{";
                         for (e in data.ward) {
                             let model = "\"" + data.ward[e]["id"] + "\":" + JSON.stringify(data.ward[e]);
                             str += model + ", ";
@@ -132,6 +154,16 @@ function getDataWard() {
                         str = str.slice(0, str.length - 1);
                         str += "}";
                         dataLocation[id_city].district[id].ward = JSON.parse(str);
+
+                        let bingStr = "{";
+                        for (e in data.ward) {
+                            let model = "\"" + data.ward[e]["id"] + "\":" + JSON.stringify(data.ward[e]);
+                            bingStr += model + ", ";
+                        }
+                        bingStr = bingStr.trim();
+                        bingStr = bingStr.slice(0, bingStr.length - 1);
+                        bingStr += "}";
+                        dataBingLocation[id_city].district[id].ward = JSON.parse(bingStr);
 
                         let model = JSON.stringify(data.ward).replaceAll("name", "text");
 
@@ -231,20 +263,10 @@ function GetMap() {
                     if (data.statusCode == 200) {
                         var result = data.resourceSets[0].resources[0];
                         address = result.address.formattedAddress;
-                        //if (dataLocation != null) {
-                        //    if ($("#city-select").val()) {
-                        //        let id_city = -1;
-                        //        for (e in dataLocation) {
-                        //            if (dataLocation[e].name.localeCompare(result.address.adminDistrict, undefined, { sensitivity: 'base' }) == 0) {
-                        //                for (f in dataLocation[e].district) {
-                        //                    if (dataLocation[e].district[f].name.localeCompare(result.address.adminDistrict2, undefined, { sensitivity: 'base' }) == 0)
-                        //                }
-                        //                id_city = e;
-
-                        //            }
-                        //        }
-                        //    }
-                        //}
+                        if (dataBingLocation != null) {
+                            if ($("#city-select").val() == -1) {
+                            }
+                        }
                         reloadMap(address);
                     }
                     else {
@@ -326,3 +348,4 @@ var map;
 var loc = null;
 var address = null;
 var dataLocation = null; //data chính
+var dataBingLocation = null; //data chính

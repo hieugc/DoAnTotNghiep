@@ -4,13 +4,12 @@
     ViewData["Title"] = "Tin nhắn";
     Layout = "_LayoutMember";
     var count = 1;
-    var seftAccess = ViewData["SelfAccess"] as string;
+    var seftAccess = ViewData["userAccess"] as UserMessageViewModel;
 }
 
 
 @*
     Gồm có:
-        + request 10 tin nhắn cho user gần nhất nhắn -> array
         + thêm empty chats
         + croll lên request 10 tin nhắn
         + thêm tải hình ảnh
@@ -24,9 +23,9 @@
         {
             if(count++ == 1)
             {
-                <li class="user active" onclick="loadMessages(@item.Key, this)">
+                <li class="user user-@item.Key active" onclick="loadMessages(@item.Key, this)">
                     <a href="#message-@item.Key">
-                        <span class="avt"><img src="~/@item.Value.UserMessages.First().ImageUrl" alt="avatar" /></span>
+                        <span class="avt"><img src="@item.Value.UserMessages.First().ImageUrl" alt="avatar" /></span>
                         <span class="name">@item.Value.UserMessages.First().UserName</span>
                     </a>
                 </li>
@@ -35,18 +34,18 @@
             {
                 if (item.Value.Messages.First().IsSeen)
                 {
-                    <li class="user" onclick="loadMessages(@item.Key, this)">
+                    <li class="user user-@item.Key" onclick="loadMessages(@item.Key, this)">
                         <a href="#message-@item.Key">
-                            <span class="avt"><img src="~/@item.Value.UserMessages.First().ImageUrl" alt="avatar" /></span>
+                            <span class="avt"><img src="@item.Value.UserMessages.First().ImageUrl" alt="avatar" /></span>
                             <span class="name">@item.Value.UserMessages.First().UserName</span>
                         </a>
                     </li>
                 }
                 else
                 {
-                    <li class="user new-message" onclick="loadMessages(@item.Key, this)">
+                    <li class="user user-@item.Key new-message" onclick="loadMessages(@item.Key, this)">
                         <a href="#message-@item.Key">
-                            <span class="avt"><img src="~/@item.Value.UserMessages.First().ImageUrl" alt="avatar" /></span>
+                            <span class="avt"><img src="@item.Value.UserMessages.First().ImageUrl" alt="avatar" /></span>
                             <span class="name">@item.Value.UserMessages.First().UserName</span>
                         </a>
                     </li>
@@ -64,7 +63,7 @@
             {
                 var prev = item.Value.UserMessages.First().UserAccess;
                 List<string> show = new List<string>();
-                <div class="tab-content" id="message-@item.Value">
+                <div class="tab-content" id="message-@item.Key">
                     <div class="top-tab-message">
                         <div class="user-name">@item.Value.UserMessages.First().UserName</div>
                         <div class="request">
@@ -87,7 +86,7 @@
                             else
                             {
                                 //show message
-                                if (prev == seftAccess)
+                                if (prev == seftAccess.UserAccess && show.Count() > 0)
                                 {
                                     <div class="user-chat">
                                         <div class="chat-head">
@@ -97,7 +96,7 @@
                                             }
                                             else
                                             {
-                                                <div class="avt"><img src="~/@item.Value.UserMessages.First().ImageUrl" alt="avatar" /></div>
+                                                <div class="avt"><img src="@seftAccess.ImageUrl" alt="avatar" /></div>
                                             }
                                             <div class="user-name">@item.Value.UserMessages.First().UserName</div>
                                         </div>
@@ -109,7 +108,7 @@
                                         </div>
                                     </div>
                                 }
-                                else
+                                else if (show.Count() > 0)
                                 {
                                     <div class="other user-chat">
                                         <div class="chat-head">
@@ -119,7 +118,7 @@
                                             }
                                             else
                                             {
-                                                <div class="avt"><img src="~/@item.Value.UserMessages.First().ImageUrl" alt="avatar" /></div>
+                                                <div class="avt"><img src="@item.Value.UserMessages.First().ImageUrl" alt="avatar" /></div>
                                             }
                                             <div class="user-name">@item.Value.UserMessages.First().UserName</div>
                                         </div>
@@ -135,10 +134,9 @@
                                 prev = message.IdSend;
                             }
                         }
-
                         @if (show.Any())
                         {
-                            if (prev == seftAccess)
+                            if (prev == seftAccess.UserAccess)
                             {
                                 <div class="user-chat">
                                     <div class="chat-head">
@@ -148,7 +146,7 @@
                                         }
                                         else
                                         {
-                                            <div class="avt"><img src="~/@item.Value.UserMessages.First().ImageUrl" alt="avatar" /></div>
+                                            <div class="avt"><img src="@seftAccess.ImageUrl" alt="avatar" /></div>
                                         }
                                         <div class="user-name">@item.Value.UserMessages.First().UserName</div>
                                     </div>
@@ -170,7 +168,7 @@
                                         }
                                         else
                                         {
-                                            <div class="avt"><img src="~/@item.Value.UserMessages.First().ImageUrl" alt="avatar" /></div>
+                                            <div class="avt"><img src="@item.Value.UserMessages.First().ImageUrl" alt="avatar" /></div>
                                         }
                                         <div class="user-name">@item.Value.UserMessages.First().UserName</div>
                                     </div>
@@ -211,11 +209,14 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>*@
     <script type="text/javascript">
         var chatRoom = @Html.Raw(Json.Serialize(Model));
-        var userAccess = '@Html.Raw(ViewData["SelfAccess"])';
+        var userAccess = @Html.Raw(Json.Serialize(seftAccess));
     </script>
     @if(Model.Any()){
         <script type="text/javascript">
             chatRoom[@Model.Keys.First()]["isInit"] = true;
+            for (e in chatRoom) {
+                chatRoomData[chatRoom[e]] = chatRoom[e];
+            }
         </script>
     }
     <script type="text/javascript" src="~/js/Chat/loadChat.js"></script>

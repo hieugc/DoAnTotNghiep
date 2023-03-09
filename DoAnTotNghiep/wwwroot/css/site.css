@@ -497,10 +497,12 @@ i.fa-solid.fa-bell{
     cursor: pointer;
 }
 
-.notication {
-    position: absolute;
+.notification {
+    position: fixed;
     background: white;
     right: 32px;
+    top: 150px;
+    z-index: 99999;
     border-radius: 8px;
     box-shadow: 0 0.125rem 0.25rem rgba(var(--bs-primary-rgb), 0.1);
     min-width: 350px;

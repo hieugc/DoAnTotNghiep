@@ -25,10 +25,11 @@ builder.Services.AddAuthentication(Scheme.Authentication())
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
-            ValidIssuer = builder.Configuration.GetConnectionString(ConfigurationJWT.JwtBearerIssuer()),
             ValidateAudience = true,
-            ValidAudience = builder.Configuration.GetConnectionString(ConfigurationJWT.JwtBearerAudience()),
+            ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration.GetConnectionString(ConfigurationJWT.JwtBearerIssuer()),
+            ValidAudience = builder.Configuration.GetConnectionString(ConfigurationJWT.JwtBearerAudience()),
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetConnectionString(ConfigurationJWT.JwtBearerIssuerSigningKey()) 
                                 ?? throw new InvalidOperationException("JwtBearerIssuerSigningKey NOT FOUND")))
         };

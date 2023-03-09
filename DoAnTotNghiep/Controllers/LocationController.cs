@@ -13,7 +13,7 @@ using DoAnTotNghiep.Enum;
 
 namespace DoAnTotNghiep.Controllers
 {
-    public class LocationController : Controller
+    public class LocationController : BaseController
     {
         private readonly DoAnTotNghiepContext _context;
 
@@ -40,9 +40,9 @@ namespace DoAnTotNghiep.Controllers
         }
 
         [HttpGet("/api/GetPopularCity")]
-        public JsonResult GetPopularCity(int number = 6)
+        public JsonResult GetPopularCity(int number = 10)
         {
-            string host = this.HttpContext.Request.Host.Value;
+            string host = this.GetWebsitePath();
             List<PopularCityViewModel> cityList = this._context.Cities
                                                .OrderBy(m => m.Count)
                                                .Take(number)
@@ -79,7 +79,7 @@ namespace DoAnTotNghiep.Controllers
             {
                 Id = m.Id,
                 Name = m.Name,
-                IsUpdated = (m.Lat == 0 && string.IsNullOrEmpty(m.BingName))
+                BingName = m.BingName
             }).ToList();
 
             return Json(
@@ -98,7 +98,7 @@ namespace DoAnTotNghiep.Controllers
             {
                 Name = m.Name,
                 Id = m.Id,
-                IsUpdated = (m.Lat == 0 && string.IsNullOrEmpty(m.BingName))
+                BingName = m.BingName
             }).ToList();
 
             return Json(
@@ -116,7 +116,7 @@ namespace DoAnTotNghiep.Controllers
             {
                 Name = m.Name,
                 Id = m.Id,
-                IsUpdated = !(m.Lat == 0 && string.IsNullOrEmpty(m.BingName))
+                BingName = m.BingName
             }).ToList();
 
             return Json(

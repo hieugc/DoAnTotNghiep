@@ -64,6 +64,37 @@ namespace DoAnTotNghiep.ViewModels
         [Compare(nameof(Password), ErrorMessage = "Mật khẩu không trùng khớp")]
         public string ConfirmPassword { get; set; } = string.Empty;
     }
+
+
+
+    public class UpdatePasswordViewModel
+    {
+        [Required(ErrorMessage = "Hãy điền mật khẩu")]
+        [MaxLength(32, ErrorMessage = "Mật khẩu tối đa 32 ký tự")]
+        [MinLength(8, ErrorMessage = "Mật khẩu ít nhất 8 ký tự")]
+        public string Password { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Hãy xác nhận mật khẩu")]
+        [MaxLength(32, ErrorMessage = "Mật khẩu tối đa 32 ký tự")]
+        [MinLength(8, ErrorMessage = "Mật khẩu ít nhất 8 ký tự")]
+        [Compare(nameof(Password), ErrorMessage = "Mật khẩu không trùng khớp")]
+        public string ConfirmPassword { get; set; } = string.Empty;
+    }
+
+    public class MobileRegisterPasswordViewModel
+    {
+        [Required(ErrorMessage = "Hãy điền email")]
+        [MaxLength(320, ErrorMessage = "Email tối đa 320 ký tự")]
+        [EmailAddress]
+        public string Email { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Hãy điền mật khẩu")]
+        [MaxLength(32, ErrorMessage = "Mật khẩu tối đa 32 ký tự")]
+        [MinLength(8, ErrorMessage = "Mật khẩu ít nhất 8 ký tự")]
+        public string Password { get; set; } = string.Empty;
+    }
+    
+
     public class RegisterOTPViewModel
     {
         [Required(ErrorMessage = "Hãy nhập OTP hệ thống đã gửi")]
@@ -86,7 +117,6 @@ namespace DoAnTotNghiep.ViewModels
         [MaxLength(10, ErrorMessage = "Số điện thoại 10 số")]
         [MinLength(10, ErrorMessage = "Số điện thoại 10 số")]
         public string PhoneNumber { get; set; } = string.Empty;
-
         public bool Gender { get; set; } = false;
         public DateTime BirthDay { get; set; } = DateTime.Now;
     }

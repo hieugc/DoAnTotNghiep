@@ -110,6 +110,8 @@ namespace DoAnTotNghiep.Controllers
             Request.Cookies.TryGetValue(key, out var cookie);
             return cookie;
         }
+
+        protected string GetWebsitePath() => this.HttpContext.Request.Scheme + "://" + this.HttpContext.Request.Host;
         protected string ModelErrors()
         {
             List<string> errors = new List<string>();

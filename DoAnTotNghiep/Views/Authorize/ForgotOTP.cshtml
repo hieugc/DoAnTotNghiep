@@ -1,6 +1,6 @@
 ﻿@model DoAnTotNghiep.ViewModels.RegisterOTPViewModel
 @{
-    ViewData["Title"] = "Đăng ký tài khoản";
+    ViewData["Title"] = "Quên mật khẩu";
     Layout = "_LayoutLogin";
 }
 
@@ -20,7 +20,7 @@
         <!-- /Logo -->
         <h4 class="mb-2">Xác thực tài khoản</h4>
 
-        <form id="formAuthentication" class="mb-3" asp-action="SignUpOTP" method="POST">
+        <form id="formAuthentication" class="mb-3" asp-action="ForgotOTP" method="POST">
             <div asp-validation-summary="ModelOnly" class="text-danger">
                 @if (!string.IsNullOrEmpty(ViewBag.Message))
                 {
@@ -32,15 +32,8 @@
                 <input class="form-control" asp-for="OTP" placeholder="000 - 000" />
                 <span asp-validation-for="OTP" class="text-danger"></span>
             </div>
-            <p class="text-center"><small>Không nhận được?</small><a href="@Url.Action("ResendSignUpOTP")" class="fw-bold text-decoration-underline" id="resend"><small>Gửi lại email</small></a></p>
+            <p class="text-center"><small>Không nhận được? </small><a href="@Url.Action("ForgotResendOTP")" class="fw-bold" id="resend"><small>Gửi lại email</small></a></p>
             <button type="submit" class="btn btn-primary d-grid w-100">Tiếp tục</button>
         </form>
-
-        <p class="text-center">
-            <span>Bạn đã có tài khoản?</span>
-            <a href="@Url.Action("SignIn", "Authorize")">
-                <span>Đăng nhập</span>
-            </a>
-        </p>
     </div>
 </div>

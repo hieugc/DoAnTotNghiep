@@ -191,6 +191,10 @@
     flex-flow: column;
     align-items: stretch;
 }
+.list-message {
+    display: flex;
+    flex-flow: column-reverse;
+}
 
 .list-message > .other.user-chat > .message-frame {
     margin-left: 52px;
@@ -198,6 +202,8 @@
 
 .list-message > .user-chat > .message-frame {
     margin-right: 52px;
+    display: flex;
+    flex-flow: column-reverse;
 }
 
 .list-message > .other.user-chat > .message-frame > .chat {

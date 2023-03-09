@@ -9,23 +9,6 @@ function deleteHouse(id) {
         showNotification("Thông báo", "Hệ thống đang xử lý", 0);
     }
 }
-function showNotification(head, body, status) {
-    if (status == 1) {
-        $("#notification-head").addClass("text-success");
-        $("#notification-head").removeClass("text-danger");
-    }
-    else {
-        $("#notification-head").removeClass("text-success");
-        $("#notification-head").addClass("text-danger");
-    }
-    $("#notification-head").html(head);
-    $("#notification-body").html(body);
-    $("#toastPlacement").show();
-
-    setTimeout(function () {
-        $("#toastPlacement").hide();
-    }, 1500);
-}
 function confirmDeleteHouse(bool) {
     if (bool == true) {
         let Id = IdHouseDelete;

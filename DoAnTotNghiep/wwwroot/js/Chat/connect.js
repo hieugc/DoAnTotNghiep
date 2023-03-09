@@ -1,5 +1,4 @@
 ﻿"use strict";
-
 var connection = new signalR.HubConnectionBuilder().withUrl(window.location.origin + "/ChatHub").build();
 var chatRoomData = {}
 var listRoom = null;
@@ -36,7 +35,53 @@ connection.start().then(function () {
 });
 
 connection.on("ReceiveMessages", function (message) {
-    console.log(message);
+    if (window.location.href.indexOf("Member/Messages") != -1) {
+        //nếu đang trong message =>
+        console.log(message);
+        let tag = ".user-" + message.idRoom;
+        console.log($(tag));
+        if ($(tag)[0].classList.value.indexOf("active") != -1) {
+            let idAccess = message.message.idSend;
+            let isContinue = true;
+            if (chatRoomData[message.idRoom].messages.length > 0) {
+                isContinue = (chatRoomData[message.idRoom].messages[0].idSend == idAccess);
+                console.log(isContinue);
+            }
+            //show chat
+            addMessage(message.message, message.idRoom, (userAccess.userAccess == idAccess), isContinue);
+        }
+        chatRoomData[message.idRoom].messages.unshift(message.message);
+        $(tag).addClass("new-message");
+        console.log(message);
+    }
+    else {
+        //không trong message show notification =>
+        let userName = chatRoomData[message.idRoom].userMessages[0].userName;
+        showNotification(userName, message.message.message, 1);
+        chatRoomData[message.idRoom].messages.unshift(message.message);
+        console.log(message);
+    }
+    //ghi lại cookie =>
+    /* Cập nhật cho notification => show 1 chat */
+    let data = {
+        idRoom: message.idRoom,
+        userMessages: chatRoomData[message.idRoom].userMessages,
+        messages: [chatRoomData[message.idRoom].messages[0]]
+    };
+    $.ajax({
+        url: window.location.origin + '/UpdateCookie',
+        data: JSON.stringify(data),
+        contentType: "application/json",
+        type: "POST",
+        success: function (result) {
+            console.log(result);
+        },
+        error: function (xhr, status, error) {
+            console.log(xhr);
+            console.log(status);
+            console.log(error);
+        }
+    });
 });
 
 function connectServer(data, start, length) {
@@ -59,7 +104,7 @@ function connectServer(data, start, length) {
                             }
                         }
                         if (data.idRoom != "" && parseInt(data.idRoom) != NaN) {
-                            getMessage(data);
+                            getMessage(data, null);
                         }
                     }
                 }
@@ -72,7 +117,7 @@ function connectServer(data, start, length) {
         }
     });
 }
-function getMessage(data) {
+function getMessage(data, func) {
     $.ajax({
         url: window.location.origin + '/MessagesInChatRoom',
         data: JSON.stringify(data),
@@ -80,6 +125,9 @@ function getMessage(data) {
         type: "POST",
         success: function (result) {
             getChatRoomData();
+            if (func != null && func != undefined) {
+                func;
+            }
         },
         error: function (xhr, status, error) {
             console.log(xhr);

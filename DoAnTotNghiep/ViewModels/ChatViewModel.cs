@@ -19,6 +19,7 @@ namespace DoAnTotNghiep.ViewModels
             this.IdSend = IdSend;
             this.Message = Message;
             this.CreatedDate = CreatedDate;
+            this.Id = Id;
         }
 
         public string Message { get; set; } = string.Empty;
@@ -33,33 +34,24 @@ namespace DoAnTotNghiep.ViewModels
     {
         public MessageSendViewModel(int IdReply, bool IsSeen, string IdSend, string Message, int Id, DateTime CreatedDate, int IdRoom)
         {
-            this.IdReply = IdReply;
-            this.IsSeen = IsSeen;
-            this.IdSend = IdSend;
-            this.Message = Message;
-            this.CreatedDate = CreatedDate;
+            this.Message = new MessageViewModel(IdReply, IsSeen, IdSend, Message, Id, CreatedDate);
             this.IdRoom = IdRoom;
         }
 
-        public string Message { get; set; } = string.Empty;
-        public bool IsSeen { get; set; } = false;
-        public int IdReply { get; set; } = 0;
-        public string IdSend { get; set; } = string.Empty;
-        public int Id { get; set; } = 0;
-        public DateTime CreatedDate { get; set; } = DateTime.Now;
+        public MessageViewModel Message { get; set; } = new MessageViewModel();
         public int IdRoom { get; set; } = 0;
     }
 
     public class UserMessageViewModel
     {
         public UserMessageViewModel() { }
-        public UserMessageViewModel(User user, byte[] salt)
+        public UserMessageViewModel(User user, byte[] salt, string host)
         {
             this.UserAccess = Crypto.EncodeKey(user.Id.ToString(), salt);
             this.UserName = user.FirstName + " " + user.LastName;
             this.ImageUrl = (user.IdFile == null ? null :
                                             user.Files == null ? null :
-                                            (user.Files.PathFolder + user.Files.FileName));
+                                            (host + "/" + user.Files.PathFolder + "/" + user.Files.FileName));
         }
 
         public UserMessageViewModel(UsersInChatRoom user, byte[] salt)

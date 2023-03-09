@@ -1,18 +1,43 @@
-﻿var htmlMessageStored = {}
-
+﻿function scrollLoad() {
+}
 function loadMessages(idRoom, othis) {
     $(".user.active").removeClass("active");
-    if (chatRoomData[idRoom].isInit == undefined || chatRoomData[idRoom].isInit == false || chatRoomData[idRoom].isInit == null) {
+    if (chatRoomData[idRoom]["isInit"] != true) {
         //thêm message
         $(".tab-message").append(appendMessage("message-" + idRoom, chatRoomData[idRoom]));
         chatRoomData[idRoom]["isInit"] = true;
+        //chạy full messages => seen == true
+        let data = [];
+        for (let e in chatRoomData[idRoom].messages) {
+            if (chatRoomData[idRoom].messages[e].isSeen == false) {
+                chatRoomData[idRoom].messages[e].isSeen = true;
+                data[data.length] = chatRoomData[idRoom].messages[e].id;
+            }
+            else {
+                break;
+            }
+        }
+        $.ajax({
+            url: window.location.origin + "/Message/Seen",
+            data: JSON.stringify(data),
+            contentType: "application/json",
+            type: "POST",
+            success: function (result) {
+                console.log(result);
+            },
+            error: function (xhr, status, error) {
+                console.log(xhr);
+                console.log(status);
+                console.log(error);
+            }
+        });
     }
     $(othis).removeClass("new-message").addClass("active");
 }
 function activeChat(object) {
     return `<li class="user active">
                 <a href="#message-${object.idRoom}">
-                    <span class="avt"><img src="${(window.location.origin + "/" + object.userMessages[0].urlImage)}" alt="avatar" /></span>
+                    <span class="avt"><img src="${(object.userMessages[0].urlImage)}" alt="avatar" /></span>
                     <span class="name">${object.userMessages[0].userName}</span>
                 </a>
             </li>`;
@@ -20,7 +45,7 @@ function activeChat(object) {
 function seenUser(object) {
     return `<li class="user">
                 <a href="#message-${object.idRoom}">
-                    <span class="avt"><img src="${(window.location.origin + "/" + object.userMessages[0].urlImage)}" alt="avatar" /></span>
+                    <span class="avt"><img src="${(object.userMessages[0].urlImage)}" alt="avatar" /></span>
                     <span class="name">${object.userMessages[0].userName}</span>
                 </a>
             </li>`;
@@ -28,7 +53,7 @@ function seenUser(object) {
 function unSeenUser(object) {
     return `<li class="user new-message">
                 <a href="#message-${object.idRoom}">
-                    <span class="avt"><img src="${(window.location.origin + "/" + object.userMessages[0].urlImage)}" alt="avatar" /></span>
+                    <span class="avt"><img src="${(object.userMessages[0].urlImage)}" alt="avatar" /></span>
                     <span class="name">${object.userMessages[0].userName}</span>
                 </a>
             </li>`;
@@ -59,22 +84,22 @@ function appendMessage(idTag, object) {
                 show[show.length] = object.messages[e].message;
             }
             else {
-                if (prev == userAccess) {
-                    res += selfMessage(window.location.origin + "/logo.png", "Hiếu", show);
+                if (prev == userAccess.userAccess) {
+                    res += selfMessage(userAccess.imageUrl, userAccess.userName, show);
                 }
                 else {
-                    res += otherMessage(window.location.origin + "/logo.png", object.userMessages[0].userName, show);
+                    res += otherMessage(object.userMessages[0].imageUrl, object.userMessages[0].userName, show);
                 }
                 prev = object.messages[e].userAccess;
                 show = [object.messages[e].message];
             }
         }
         if (show.length > 0) {
-            if (prev == userAccess) {
-                res += selfMessage(window.location.origin + "/logo.png", "Hiếu", show);
+            if (prev == userAccess.userAccess) {
+                res += selfMessage(userAccess.imageUrl, userAccess.userName, show);
             }
             else {
-                res += selfMessage(window.location.origin + "/logo.png", object.userMessages[0].userName, show);
+                res += selfMessage(object.userMessages[0].imageUrl, object.userMessages[0].userName, show);
             }
         }
     }
@@ -130,7 +155,7 @@ function message(chat) {
     return `<div class="chat"><span>${chat}</span></div>`;
 }
 function addMessageToFrame(chat, tag) {
-    $(tag + " .message-frame").prepend(message(chat));
+    $(tag + " .message-frame").first().prepend(message(chat));
 }
 function addMessage(messageModel, idRoom, isSelf, isContinue) {
     //isSelf == true => bản thân gửi 
@@ -139,10 +164,10 @@ function addMessage(messageModel, idRoom, isSelf, isContinue) {
     }
     else {
         if (isSelf == true) {
-            $(".list-message").prepend(seftMessage((window.location.origin + "/logo.png"), "Hiếu", [messageModel.message]));
+            $(".list-message").prepend(seftMessage(userAccess.imageUrl, userAccess.userName, [messageModel.message]));
         }
         else {
-            $(".list-message").prepend(otherMessage((window.location.origin + "/logo.png"), chatRoomData[idRoom].userMessages[0].userName, [messageModel.message]));
+            $(".list-message").prepend(otherMessage(chatRoomData[idRoom].userMessages[0].imageUrl, chatRoomData[idRoom].userMessages[0].userName, [messageModel.message]));
         }
     }
 }
@@ -154,22 +179,14 @@ function SendMessage(idRoom) {
     }
 
     $.ajax({
-        url: window.location.origin + "/Chat/Send",
+        url: window.location.origin + "/Send",
         data: JSON.stringify(data),
         contentType: "application/json",
         type: "POST",
         success: function (result) {
             console.log(result);
             if (result.status == 200) {
-                let idAccess = result.data.userAccess;
-                let isContinue = true;
-                let isSelf = idAccess == userAccess;
-                if (chatRoomData[idRoom].messages.length > 0) {
-                    isContinue = (chatRoomData[idRoom].messages[0].userAccess == idAccess);
-                }
-                chatRoomData[idRoom].messages = chatRoomData[idRoom].messages.unshift(result.data);
-                //show chat
-                addMessage(result.data, idRoom, isSelf, isContinue);
+                $("#input-message-" + idRoom).val('');
             }
         },
         error: function (xhr, status, error) {

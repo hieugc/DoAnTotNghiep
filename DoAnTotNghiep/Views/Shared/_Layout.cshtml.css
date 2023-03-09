@@ -178,3 +178,17 @@ button.accept-policy {
 .dropdown-menu > .alert-frame .status.seen{
     display: none;
 }
+
+.notification {
+    position: fixed;
+    background: white;
+    right: 32px;
+    top: 150px;
+    z-index: 99999;
+    border-radius: 8px;
+    box-shadow: 0 0.125rem 0.25rem rgba(var(--bs-primary-rgb), 0.1);
+    min-width: 350px;
+    display: none;
+    transition: all 0.23s ease 0.1s;
+    transform: translate(23px, -25px);
+}

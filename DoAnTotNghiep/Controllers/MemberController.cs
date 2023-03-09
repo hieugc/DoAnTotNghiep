@@ -20,6 +20,8 @@ using Newtonsoft.Json;
 using NuGet.Packaging;
 using Microsoft.AspNetCore.SignalR;
 using DoAnTotNghiep.Hubs;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.AspNetCore.Routing;
 
 namespace DoAnTotNghiep.Controllers
 {
@@ -30,7 +32,9 @@ namespace DoAnTotNghiep.Controllers
         private readonly IConfiguration _configuration;
         private IHubContext<ChatHub> _signalContext;
 
-        public MemberController(DoAnTotNghiepContext context, IConfiguration configuration, IHubContext<ChatHub> signalContext)
+        public MemberController(DoAnTotNghiepContext context, 
+            IConfiguration configuration, 
+            IHubContext<ChatHub> signalContext)
         {
             _context = context;
             _configuration = configuration;
@@ -66,10 +70,25 @@ namespace DoAnTotNghiep.Controllers
                                                 .Take<House>(6)
                                                 .ToList();
 
+            byte[] salt = Crypto.Salt(this._configuration);
+            string host = this.GetWebsitePath();
+
             List<DetailHouseViewModel> detailHouseViewModels = new List<DetailHouseViewModel>();
+            DoAnTotNghiepContext Context = this._context;
             foreach (var item in listHouse)
             {
-                detailHouseViewModels.Add(DetailHouseViewModel.GetByHouse(item));
+                DetailHouseViewModel model = DetailHouseViewModel.GetByHouse(item, salt);
+                if(item.FileOfHouses != null)
+                {
+                    var images = item.Files
+                            .Select(m => new ImageBase() { 
+                                            Data = string.Empty,
+                                            Folder = host + "/" + m.PathFolder + "/" + m.FileName, 
+                                            Name = m.FileName, 
+                                            Id = m.Id }).ToList();
+                    model.Images.AddRange(images);
+                }
+                detailHouseViewModels.Add(model);
             }
 
             
@@ -125,13 +144,19 @@ namespace DoAnTotNghiep.Controllers
         {
             //chưa sort last send
             int IdUser = this.GetIdUser();
-            int number = 10;
             Dictionary<int, RoomChatViewModel> model = new Dictionary<int, RoomChatViewModel>();
-
             byte[] salt = Crypto.Salt(this._configuration);
 
+            string? storaged = this.GetCookie(Enum.Cookie.DataChat());
+            if (!string.IsNullOrEmpty(storaged))
+            {
+                Dictionary<int, RoomChatViewModel>? getDataStored = JsonConvert.DeserializeObject<Dictionary<int, RoomChatViewModel>>(storaged);
+                if(getDataStored != null)
+                {
+                    model.AddRange(getDataStored);
+                }
+            }
             //seftaccess
-
             using (var Context = this._context)
             {
                 if (!string.IsNullOrEmpty(connection))
@@ -155,7 +180,6 @@ namespace DoAnTotNghiep.Controllers
                                 join ur2 in this._context.UsersInChatRooms on r.Id equals ur2.IdChatRoom
                                 where ur.IdUser == Id && ur2.IdUser == IdUser
                                 select r;
-                    number = 1;
 
                     if (rooms.Any())
                     {
@@ -175,7 +199,7 @@ namespace DoAnTotNghiep.Controllers
                         {
                             try
                             {
-                                ChatRoom chatRoom = new ChatRoom();
+                                ChatRoom chatRoom = new ChatRoom() { UpdatedDate = DateTime.Now };
                                 Context.Add(chatRoom);
                                 Context.SaveChanges();
 
@@ -206,11 +230,11 @@ namespace DoAnTotNghiep.Controllers
                                 {
                                     IdRoom = chatRoom.Id,
                                     UserMessages = new List<UserMessageViewModel>() {
-                                        new UserMessageViewModel(user, salt)
+                                        new UserMessageViewModel(user, salt, this.GetWebsitePath())
                                     },
                                     Messages = new List<MessageViewModel>()
                                 });
-
+                                this.SetCookie(Enum.Cookie.DataChat(), JsonConvert.SerializeObject(model), 24);
                                 //connect to users
                                 ChatHub chatHub = new ChatHub(this._signalContext);
 
@@ -225,28 +249,41 @@ namespace DoAnTotNghiep.Controllers
                         }  
                     }
                 }
-                var chatRooms = Context.UsersInChatRooms
-                                             .Include(m => m.ChatRooms)
+                if(model.Keys.Count() < 10)
+                {
+                    var chatRooms = Context.UsersInChatRooms
+                                             .Include(m => m.ChatRooms).OrderByDescending(m => m.ChatRooms.UpdatedDate)
                                              .Where(m => m.IdUser == IdUser)
                                              .Take(10)
                                              .Select(m => m.ChatRooms).ToList();
 
-                if (chatRooms != null && chatRooms.Count() > 0)
-                {
-                    foreach (var room in chatRooms)
+                    if (chatRooms != null && chatRooms.Count() > 0)
                     {
-                        if (room != null && !model.ContainsKey(room.Id))
+                        foreach (var room in chatRooms)
                         {
-                            KeyValuePair<int, RoomChatViewModel> keyValuePair = this.CreateDictionary(room, Context, number, salt, IdUser);
-                            model.Add(keyValuePair.Key, keyValuePair.Value);
-                            number = 1;
+                            if (room != null)
+                            {
+                                KeyValuePair<int, RoomChatViewModel> keyValuePair = this.CreateDictionary(room, Context, 10, salt, IdUser);
+                                if (model.ContainsKey(room.Id))
+                                {
+                                    model.Remove(keyValuePair.Key);
+                                }
+                                model.Add(keyValuePair.Key, keyValuePair.Value);
+                            }
                         }
                     }
                 }
             }
 
-            ViewData["SelfAccess"] = Crypto.EncodeKey(IdUser.ToString(), salt);
-
+            var mainUser = this._context.Users.Where(m => m.Id == IdUser).FirstOrDefault();
+            if(mainUser == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                ViewData["userAccess"] = new UserMessageViewModel(mainUser, salt, this.GetWebsitePath());
+            }
             ViewData["active"] = 5;
             return View(model);
         }

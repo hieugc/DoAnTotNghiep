@@ -23,6 +23,7 @@ namespace DoAnTotNghiep.Controllers
 
         public IActionResult Index()
         {
+            Console.WriteLine(HttpContext.Request.Scheme + "://" + HttpContext.Request.Host + "/");
             return View();
         }
 
