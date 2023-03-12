@@ -37,6 +37,15 @@
             app:enterAnim="@anim/slide_in_left"
             app:popEnterAnim="@anim/fade_in"
             app:popExitAnim="@anim/slide_in_right"/>
+        <action
+            android:id="@+id/action_loginFragment_to_getStartedFragment"
+            app:destination="@id/getStartedFragment"
+            app:popUpTo="@id/nav_auth"
+            app:popUpToInclusive="true"
+            app:exitAnim="@anim/fade_out"
+            app:enterAnim="@anim/slide_in_left"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/slide_in_right"/>
     </fragment>
     <fragment
         android:id="@+id/signInFragment"
@@ -46,6 +55,15 @@
         <action
             android:id="@+id/action_signInFragment_to_signInVerificationFragment"
             app:destination="@id/signInVerificationFragment"
+            app:exitAnim="@anim/fade_out"
+            app:enterAnim="@anim/slide_in_left"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/slide_in_right"/>
+        <action
+            android:id="@+id/action_signInFragment_to_getStartedFragment"
+            app:destination="@id/getStartedFragment"
+            app:popUpTo="@id/nav_auth"
+            app:popUpToInclusive="true"
             app:exitAnim="@anim/fade_out"
             app:enterAnim="@anim/slide_in_left"
             app:popEnterAnim="@anim/fade_in"
@@ -73,7 +91,17 @@
         android:id="@+id/newPasswordFragment"
         android:name="com.example.homex.activity.auth.NewPasswordFragment"
         android:label="fragment_new_password"
-        tools:layout="@layout/fragment_new_password" />
+        tools:layout="@layout/fragment_new_password" >
+        <action
+            android:id="@+id/action_newPasswordFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true"
+            app:exitAnim="@anim/fade_out"
+            app:enterAnim="@anim/slide_in_left"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/slide_in_right"/>
+    </fragment>
     <fragment
         android:id="@+id/forgotPasswordFragment"
         android:name="com.example.homex.activity.auth.ForgotPasswordFragment"

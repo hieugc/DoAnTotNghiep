@@ -36,8 +36,11 @@ class AuthActivity : BaseActivity() {
         findNavController(R.id.nav_auth_fragment).navigate(R.id.action_signInFragment_to_signInVerificationFragment, bundleOf(EMAIL to email))
     }
 
-    fun redirectToUpdateInformation(email: String){
+    fun redirectToUpdateInformation(email: String?){
         findNavController(R.id.nav_auth_fragment).navigate(R.id.action_signInVerificationFragment_to_updateInformationFragment, bundleOf(EMAIL to email))
+    }
+    fun redirectToLoginAfterUpdatePassword(email: String?){
+        findNavController(R.id.nav_auth_fragment).navigate(R.id.action_newPasswordFragment_to_loginFragment, bundleOf(EMAIL to email))
     }
 
     fun redirectToForgotPassword(email: String){

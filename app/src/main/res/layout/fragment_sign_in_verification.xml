@@ -96,6 +96,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/resend_verification"
                 android:textStyle="bold"
+                android:id="@+id/resendOTP"
                 android:layout_marginStart="4dp"
                 android:textSize="14sp"/>
         </LinearLayout>

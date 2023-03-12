@@ -1,9 +1,6 @@
 package com.example.homex.activity.auth
 
-import android.os.Build
-import android.text.InputType
 import android.text.method.LinkMovementMethod
-import android.view.View
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.text.HtmlCompat
 import androidx.core.widget.addTextChangedListener
@@ -13,14 +10,19 @@ import com.example.homex.app.EMAIL
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentSignInBinding
 import com.example.homex.extension.*
+import com.example.homex.viewmodel.AuthViewModel
+import com.homex.core.CoreApplication
+import com.homex.core.param.auth.LoginParam
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class SignInFragment : BaseFragment<FragmentSignInBinding>() {
     override val layoutId: Int = R.layout.fragment_sign_in
+    private val viewModel: AuthViewModel by viewModel()
 
     override fun setEvent() {
         binding.btnBack.setOnClickListener {
-            findNavController().navigateUp()
+            findNavController().navigate(R.id.action_signInFragment_to_getStartedFragment)
         }
         binding.passwordInputEdtTxt.addTextChangedListener {
             checkPassword()
@@ -31,7 +33,7 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>() {
         }
         binding.btnContinue.setOnClickListener {
             if (checkPassword()){
-                (activity as AuthActivity).redirectToVerification(email = binding.emailInputEdtTxt.text.toString())
+                viewModel.signup(LoginParam(email = binding.emailInputEdtTxt.text.toString(), password = binding.passwordInputEdtTxt.text.toString()))
             }
         }
     }
@@ -82,15 +84,25 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>() {
         return false
     }
 
+    override fun setViewModel() {
+        viewModel.signupLiveData.observe(viewLifecycleOwner){
+            if (it?.token != null){
+                CoreApplication.instance.saveToken(token = it.token)
+                (activity as AuthActivity).redirectToVerification(email = binding.emailInputEdtTxt.text.toString())
+            }
+        }
+    }
+
     override fun setView() {
         binding.emailInputEdtTxt.setText(arguments?.getString(EMAIL))
-        binding.emailInputEdtTxt.inputType = InputType.TYPE_NULL
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            binding.emailInputLayout.focusable = View.NOT_FOCUSABLE
-            binding.emailInputEdtTxt.focusable = View.NOT_FOCUSABLE
-        }
         binding.btnContinue.disable()
         binding.policyText.movementMethod = LinkMovementMethod.getInstance()
+        binding.emailInputEdtTxt.isEnabled = false
         binding.policyText.text = HtmlCompat.fromHtml(resources.getString(R.string.sign_in_txt), HtmlCompat.FROM_HTML_MODE_LEGACY)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.passwordInputEdtTxt.text?.clear()
     }
 }

@@ -1,10 +1,11 @@
 package com.example.homex.activity.home
 
+import android.R.id.input
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.*
+import android.view.View
+import android.view.WindowManager
 import androidx.annotation.MenuRes
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
@@ -16,13 +17,14 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI.navigateUp
 import androidx.navigation.ui.NavigationUI.setupActionBarWithNavController
 import androidx.navigation.ui.NavigationUI.setupWithNavController
-import androidx.navigation.ui.setupActionBarWithNavController
 import com.example.homex.NotificationDialogFragment
 import com.example.homex.R
 import com.example.homex.base.BaseActivity
 import com.example.homex.databinding.ActivityHomeBinding
 import com.example.homex.extension.gone
 import com.example.homex.extension.visible
+import com.microsoft.signalr.HubConnectionBuilder
+
 
 class HomeActivity : BaseActivity() {
     private lateinit var binding: ActivityHomeBinding

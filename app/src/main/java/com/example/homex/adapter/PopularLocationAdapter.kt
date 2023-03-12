@@ -3,12 +3,16 @@ package com.example.homex.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.request.RequestOptions
 import com.example.homex.R
 import com.example.homex.databinding.PopularLocationItemBinding
 import com.example.homex.extension.dpToPx
+import com.homex.core.model.Location
 
 
-class PopularLocationAdapter(var list: ArrayList<String>? = arrayListOf()): RecyclerView.Adapter<PopularLocationAdapter.PopularLocationViewHolder>() {
+class PopularLocationAdapter(var list: ArrayList<Location>? = arrayListOf()): RecyclerView.Adapter<PopularLocationAdapter.PopularLocationViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PopularLocationViewHolder {
         return PopularLocationViewHolder(
@@ -19,7 +23,12 @@ class PopularLocationAdapter(var list: ArrayList<String>? = arrayListOf()): Recy
     }
 
     override fun onBindViewHolder(holder: PopularLocationViewHolder, position: Int) {
-        holder.binding.locationTxt.text = list?.get(position) ?: ""
+        val item = list?.get(position)
+        holder.binding.locationTxt.text = item?.name ?: ""
+        Glide.with(holder.itemView.context)
+            .load(item?.imageUrl)
+            .apply(RequestOptions.bitmapTransform(RoundedCorners(5f.dpToPx(holder.itemView.context))))
+            .into(holder.binding.locationImg)
         if(position == list?.size!! - 1 )
         {
             val lastParams = holder.itemView.layoutParams as ViewGroup.MarginLayoutParams

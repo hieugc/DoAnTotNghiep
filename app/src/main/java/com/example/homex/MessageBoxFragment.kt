@@ -34,20 +34,38 @@ class MessageBoxFragment : BaseFragment<FragmentMessageBoxBinding>() {
     }
 
     override fun setView() {
-        adapter = MessageAdapter(
-            arrayListOf(
-                Message(id = "1", message = "alo bạn ơi", isMyMessage = false),
-                Message(id = "1", message = "ok bạn, không có chi", isMyMessage = true),
-                Message(id = "1", message = "ok bạn, cảm ơn bạn rất nhiều", isMyMessage = false),
-                Message(id = "1", message = "có gì bạn cứ nhắn mình nhé", isMyMessage = true),
-                Message(id = "1", message = "ok bạn hiền", isMyMessage = true),
-                Message(id = "1", message = "tại mình cần mua một số thứ", isMyMessage = false),
-                Message(id = "1", message = "ok bạn, có gì mình sẽ xem qua", isMyMessage = false),
-                Message(id = "1", message = "cách căn hộ 3km sẽ có 1 trung tâm mua sắm bạn nhé !", isMyMessage = true),
-                Message(id = "1", message = "có bạn ơi", isMyMessage = true),
-                Message(id = "1", message = "bạn ơi, nhà của bạn có ở gần trung tâm mua sắm không nhỉ", isMyMessage = false),
-                Message(id = "1", message = "alo alo", isMyMessage = false),
+        val arrayList = arrayListOf(
+            Message(id = "1", message = "alo bạn ơi", isMyMessage = false, date = "03/03/2023", userID = "1"),
+            Message(id = "1", message = "ok bạn, không có chi", isMyMessage = true, date = "01/03/2023", userID = "2"),
+            Message(id = "1", message = "ok bạn, cảm ơn bạn rất nhiều", isMyMessage = false, date = "01/03/2023", userID = "1"),
+            Message(id = "1", message = "có gì bạn cứ nhắn mình nhé", isMyMessage = true, date = "01/03/2023", userID = "2"),
+            Message(id = "1", message = "ok bạn hiền", isMyMessage = true, date = "01/03/2023", userID = "2"),
+            Message(id = "1", message = "tại mình cần mua một số thứ", isMyMessage = false, date = "01/03/2023", userID = "1"),
+            Message(id = "1", message = "ok bạn, có gì mình sẽ xem qua", isMyMessage = false, date = "01/03/2023", userID = "1"),
+            Message(id = "1", message = "cách căn hộ 3km sẽ có 1 trung tâm mua sắm bạn nhé !", isMyMessage = true, date = "01/03/2023", userID = "2"),
+            Message(id = "1", message = "có bạn ơi", isMyMessage = true, date = "01/03/2023", userID = "2"),
+            Message(id = "1", message = "bạn ơi, nhà của bạn có ở gần trung tâm mua sắm không nhỉ", isMyMessage = false, date = "01/03/2023", userID = "1"),
+            Message(id = "1", message = "alo alo", isMyMessage = false, date = "01/03/2023", userID = "1"),
+        )
+        val list = arrayListOf<Message>()
+        var date = arrayList[0].date
+        for(msg in arrayList){
+            if(date != msg.date){
+                list.add(
+                    Message(
+                        id = null,
+                        message = null,
+                        isMyMessage = false,
+                        date = date,
+                        isDateItem = true
+                    )
                 )
+                date = msg.date
+            }
+            list.add(msg)
+        }
+        adapter = MessageAdapter(
+            list
         )
         binding.messageRecView.adapter = adapter
         val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, true)

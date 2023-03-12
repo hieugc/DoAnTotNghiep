@@ -29,3 +29,19 @@ fun CharSequence.checkUpperLower() : Boolean{
     }
     return false
 }
+
+fun String.checkPassword(): Boolean {
+    var ch: Char
+    var capitalFlag = false
+    var lowerCaseFlag = false
+    for (element in this) {
+        ch = element
+        if (Character.isUpperCase(ch)) {
+            capitalFlag = true
+        } else if (Character.isLowerCase(ch)) {
+            lowerCaseFlag = true
+        }
+        if (capitalFlag && lowerCaseFlag) return true
+    }
+    return false
+}
