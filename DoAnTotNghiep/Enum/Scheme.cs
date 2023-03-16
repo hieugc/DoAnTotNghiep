@@ -23,5 +23,6 @@
     public class SystemKey
     {
         public static string Base64() => "SystemBase64";
+        public static string WebsiteKey() => "WebsiteKey";
     }
 }

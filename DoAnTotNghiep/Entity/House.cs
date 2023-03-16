@@ -60,7 +60,7 @@ namespace DoAnTotNghiep.Entity
         [ForeignKey(nameof(IdUser))]
         public virtual User? Users { get; set; }
 
-        [MaxLength(100, ErrorMessage = "Số nhà, tên đường tối đa 100 ký tự")]
+        [MaxLength(200, ErrorMessage = "Số nhà, tên đường tối đa 200 ký tự")]
         [Column("street_address")]
         public string StreetAddress { get; set; } = string.Empty;
 
@@ -81,8 +81,6 @@ namespace DoAnTotNghiep.Entity
         public virtual ICollection<RulesInHouse>? RulesInHouses { get; set; }
         public virtual ICollection<UtilitiesInHouse>? UtilitiesInHouses { get; set; }
         public virtual ICollection<FileOfHouse>? FileOfHouses { get; set; }
-        public virtual ICollection<File>? Files { get; set; }
-
         [InverseProperty("Houses")]
         public virtual ICollection<Request>? Requests { get; set; }
     }

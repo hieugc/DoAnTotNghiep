@@ -1,8 +1,9 @@
-﻿@model DoAnTotNghiep.Entity.House
-
+﻿@model DoAnTotNghiep.ViewModels.PackageDetailHouse
+@using DoAnTotNghiep.Enum;
 @{
     ViewData["Title"] = "Chi tiết nhà";
     Layout = "_Layout";
+    string key = (ViewData["key"] as string) ?? string.Empty;
 }
 
 <div class="Banner">
@@ -51,60 +52,40 @@
         <div class="content">
             <section id="tab1">
                 <div class="general">
-                    <div>Nhà của Hiếu</div>
+                    <div>@Model.Name</div>
                     <div>
-                        <div class="rating"><span>4.3</span><i class="fa-solid fa-star"></i></div>
-                        <div class="point"><strong>200p/ngày</strong></div>
+                        <div class="rating"><span>@Model.Rating</span><i class="fa-solid fa-star"></i></div>
+                        <div class="point"><strong>@Model.Price (p/ngày)</strong></div>
                     </div>
                 </div>
                 <div class="">
-                    <div><i class="fa-solid fa-house"></i><span>Căn hộ</span></div>
-                    <div><i class="fa-solid fa-bed"></i><span>2</span></div>
-                    <div><i class="fa-solid fa-users"></i><span>4</span></div>
-                    <div><i class="fa-solid fa-bath"></i><span>1</span></div>
-                    <div><i class="fa-solid fa-maximize"></i><span>100 &#13217;</span></div>
+                    <div><i class="fa-solid fa-house"></i><span>@HouseEnum.HouseType(Model.Option)</span></div>
+                    <div><i class="fa-solid fa-users"></i><span>@Model.People</span></div>
+                    <div><i class="fa-solid fa-bed"></i><span>@Model.BedRoom</span></div>
+                    <div><i class="fa-solid fa-bath"></i><span>@Model.BathRoom</span></div>
+                    <div><i class="fa-solid fa-maximize"></i><span>@Model.Square &#13217;</span></div>
                 </div>
             </section>
 
             <section id="tab2">
                 <h5>Giới thiệu</h5>
                 <p>
-                    Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                    Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
-                    when an unknown printer took a galley of type and scrambled it to make a type specimen book.
-                    It has survived not only five centuries, but also the leap into electronic typesetting, remaining
-                    essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing
-                    Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including
-                    versions of Lorem Ipsum.
+                    @Model.Description
                 </p>
             </section>
 
             <section id="tab3">
                 <h5>Tiện nghi</h5>
                 <div>
-                    <div class="item-show">
-                        @for (var item = 0; item < 8; item++)
-                        {
-                            <div class="item-frame item-checked">
-                                <i class="fa-solid fa-wifi"></i>
-                                <span>Wifi</span>
-                            </div>
-                        }
-                    </div>
-                    <div class="item-hide">
-                        <a href="#utilities-hide" data-bs-toggle="collapse" onclick="changeName(this)" class="show-more">Xem thêm</a>
 
-                        <div id="utilities-hide" class="collapse">
-                            <div>
-                                @for (var item = 0; item < 20; item++)
-                                {
-                                    <div class="item-frame">
-                                        <i class="fa-solid fa-wifi"></i>
-                                        <span>Wifi</span>
-                                    </div>
-                                }
-                            </div>
+                    <div class="item-show">
+                    @foreach(var item in Model.AllUtilities)
+                    {
+                        <div class="item-frame @(Model.Utilities.Contains(item.Id)  ? "item-checked": string.Empty) ">
+                                @Html.Raw(item.Icon)
+                            <span>@item.Content</span>
                         </div>
+                    }
                     </div>
                 </div>
             </section>
@@ -113,11 +94,11 @@
                 <h5>Quy tắc</h5>
                 <div>
                     <div class="item-show">
-                        @for (var item = 0; item < 8; item++)
+                        @foreach (var item in Model.AllRules)
                         {
-                            <div class="item-frame">
-                                <i class="fa-solid fa-wifi"></i>
-                                <span>Wifi</span>
+                            <div class="item-frame @(Model.Rules.Contains(item.Id)  ? "item-checked": string.Empty)">
+                                @Html.Raw(item.Icon)
+                                <span>@item.Content</span>
                             </div>
                         }
                     </div>
@@ -127,7 +108,7 @@
             <section id="tab5">
                 <h5>Địa chỉ</h5>
                 <div class="frame-map">
-                    <div id="myMap" class="BingMap" onload="GetMap();"></div>
+                    <div id="myMap" class="BingMap" onload="GetMap(@Model.Lat, @Model.Lng)"></div>
                 </div>
             </section>
 
@@ -140,7 +121,6 @@
                 <span class="fa fa-star"></span>
                 <p>Dựa trên 251 đánh giá từ người dùng.</p>
                 <hr style="border:3px solid #f1f1f1">
-
                 <div class="rate-overview">
                     <div class="line-star">
                         <div class="side">
@@ -249,11 +229,26 @@
     <div class="right">
         <div class="top">
             <div class="user-info">
-                <div class="avt"><img src="~/Image/logo.png" alt="avt-user" /></div>
-                <div class="info">
-                    <h5><span class="name">Phạm Minh Hiếu</span></h5>
-                    <div class="rating"><span>4.3</span><i class="fa-solid fa-star"></i></div>
-                </div>
+                @if(Model.User != null){
+                    if (!string.IsNullOrEmpty(Model.User.UrlImage))
+                    {
+                        <div class="avt"><img src="@Model.User.UrlImage" alt="avt-user" /></div>
+                    }
+                    else{
+                        <div class="avt"><span><i class="fa-solid fa-circle-info"></i></span></div>
+                    }
+                    <div class="info">
+                        <h5><span class="name">@(Model.User.FirstName + " " + Model.User.LastName)</span></h5>
+                        <div class="rating"><span>4.3</span><i class="fa-solid fa-star"></i></div>
+                    </div>
+                }
+                else{
+                    <div class="avt"><span><i class="fa-solid fa-circle-info"></i></span></div>
+                    <div class="info">
+                        <h5><span class="name">NotFound</span></h5>
+                        <div class="rating"><span>4.3</span><i class="fa-solid fa-star"></i></div>
+                    </div>
+                }
             </div>
             <div class="validate">
                 <div>
@@ -268,7 +263,7 @@
             </div>
         </div>
         <div class="bot">
-            <div><a href="@Url.Action("Messages", "Member", new {connection = ViewData["Id"]})" class="btn btn-primary">Liên hệ</a></div>
+            <div><a href="@Url.Action("Messages", "Member", new {connection = Model.User?.UserAccess})" class="btn btn-primary" style="display: block;">Liên hệ</a></div>
             <div><button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#messageRequestModal">Yêu cầu trao đổi</button></div>
             <div><button class="btn btn-danger" type="button" data-bs-toggle="modal" data-bs-target="#reportModal">Báo cáo</button></div>
         </div>
@@ -323,9 +318,22 @@
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label class="">Chọn nhà muốn trao đổi</label>
-                        <div class="house-request" onclick="showListHouseModal(1)">
-                            <div class="frame-empty">+</div>
+                        <div class="house-card selected">
+                            <img src="~/Image/house-demo.png" alt="Mike" style="width:100%">
+                            <div class="house-img-container">
+                                <h2>@Model.Name</h2>
+                                <p class="attribute"><i class="fa-solid fa-map-location-dot"></i><span>@Model.Location</span></p>
+                                <div class="list-attribute">
+                                    <p class="attribute"><span>@Model.Rating</span><i class="fa-solid fa-star"></i></p>
+                                    <p class="attribute"><i class="fa-solid fa-users"></i><span>@Model.People</span></p>
+                                    <p class="attribute"><i class="fa-solid fa-bed"></i><span>@Model.BedRoom</span></p>
+                                </div>
+                                <p>
+                                    <button class="item-button">
+                                    <span class="label-show">@Model.Price (point/ngày)</span>
+                                    </button>
+                                </p>
+                            </div>
                         </div>
                     </div>
                     <div class="mb-3">
@@ -357,7 +365,6 @@
                             <input type="text" name="requestdaterange" id="requestdaterange" value="01/01/2018 - 01/15/2018" class="form-control" />
                         </div>
                     </div>
-
                     <div class="mb-3">
                         <label class="">Điểm bạn cần phải trả</label>
                         <div class="contain-price">
@@ -474,17 +481,27 @@
 
 
 @section Scripts{
-    <script src="~/js/House/detail.js" type="text/javascript"></script>
     <!--BingMap-->
     <script type='text/javascript'
-        src='https://www.bing.com/api/maps/mapcontrol?callback=GetMap&key=Asf_PRzBpUJVcb9lcAg48BLOuAuaBItg4ZzCqaNQaSIFReqieYA02KBcovVD08Jk'
+        src='https://www.bing.com/api/maps/mapcontrol?callback=GetMap&key=@key'
         async defer></script>
-
-    <script type='text/javascript'>
+        <script type="text/javascript">
+            var lat = @Model.Lat;
+        var lng = @Model.Lng;
+        var map = null;
         function GetMap() {
-            var map = new Microsoft.Maps.Map('#myMap');
-
-            //Add your post map load code here.
+            let loc = new Microsoft.Maps.Location(lat, lng);
+            map = new Microsoft.Maps.Map('#myMap', {
+                zoom: 15,
+                center: loc
+            });
+            let pin = new Microsoft.Maps.Pushpin(loc, {
+                title: '@Html.Raw(Model.Name)',
+                subTitle: '@Html.Raw(Model.Location)'
+            });
+            console.log(map);
+            map.entities.push(pin);
         }
-    </script>
+            </script>
+    <script src="~/js/House/detail.js" type="text/javascript" async defer></script>
 }

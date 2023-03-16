@@ -1,4 +1,5 @@
-﻿.house {
+﻿
+.house {
     display: flex;
     flex-flow: column;
     padding: 24px;
@@ -29,23 +30,23 @@
     margin-right: 12px;
 }
 
-    .card .col-md-8:first-child {
+    .card .row {
         padding: 6px;
         display: flex;
         justify-content: center;
         align-items: center;
     }
 
-    .card.status-2 .col-md-8:first-child,
-    .card.status-1 .col-md-8:first-child,
-    .card.status-0 .col-md-8:first-child {
+    .card.status-2 .row,
+    .card.status-1 .row,
+    .card.status-0 .row {
         border-left: 5px solid var(--bs-success);
         position: relative;
     }
 
-        .card.status-2 .col-md-8:first-child:before,
-        .card.status-1 .col-md-8:first-child:before,
-        .card.status-0 .col-md-8:first-child:before {
+        .card.status-2 .row:before,
+        .card.status-1 .row:before,
+        .card.status-0 .row:before {
             content: "Đang hoạt động";
             padding: 12px;
             color: white;
@@ -56,20 +57,20 @@
             background: var(--bs-success);
         }
 
-    .card.status-1 .col-md-8:first-child {
+    .card.status-1 .row {
         border-left: 5px solid var(--bs-warning);
     }
 
-        .card.status-1 .col-md-8:first-child:before {
+        .card.status-1 .row:before {
             content: "Chờ kiểm duyệt";
             background: var(--bs-warning);
         }
 
-    .card.status-2 .col-md-8:first-child {
+    .card.status-2 .row {
         border-left: 5px solid var(--bs-gray-500);
     }
 
-        .card.status-2 .col-md-8:first-child:before {
+        .card.status-2 .row:before {
             content: "Đang trao đổi";
             background: var(--bs-gray-500);
         }

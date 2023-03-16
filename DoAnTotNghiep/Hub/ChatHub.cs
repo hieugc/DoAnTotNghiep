@@ -12,7 +12,7 @@ namespace DoAnTotNghiep.Hubs
             _context= context;
         }
         
-        public async Task SendMessage(string group, string target, MessageSendViewModel message)
+        public async Task SendMessage(string group, string target, RoomChatViewModel message)
         {
             await this._context.Clients.Group(group).SendAsync(target, message);
         }

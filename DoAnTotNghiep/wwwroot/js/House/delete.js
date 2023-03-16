@@ -18,12 +18,16 @@ function confirmDeleteHouse(bool) {
             data: JSON.stringify(Id),
             dataType: "json",
             contentType: "application/json",
-            type: "DELETE",
+            type: "POST",
             success: function (result) {
                 deleteHouse = null;
                 console.log(result);
                 if (result.status == 200) {
                     showNotification("Thao tác thành công", result.message, 1);
+                    listHouse = listHouse.filter(function (model) {
+                        return model.id != Id;
+                    })
+                    reloadPage();
                 }
                 else if (result.status >= 500) {
                     showNotification("Thao tác thất bại", result.message, 0);

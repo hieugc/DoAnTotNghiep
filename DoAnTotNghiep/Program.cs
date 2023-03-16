@@ -22,6 +22,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddAuthentication(Scheme.Authentication())
     .AddJwtBearer(Scheme.AuthenticationJWT(), options =>
     {
+        options.RefreshInterval.Add(TimeSpan.FromMinutes(15));
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
@@ -59,7 +60,8 @@ builder.Services.AddAuthentication(Scheme.Authentication())
         {
             // filter by auth type
             string? authorization = context.Request.Headers[HeaderNames.Authorization];
-            if (!string.IsNullOrEmpty(authorization) && authorization.StartsWith("Bearer"))
+            string? url = context.Request.Path.Value;
+            if (!string.IsNullOrEmpty(authorization) && authorization.StartsWith("Bearer") || !string.IsNullOrEmpty(url) && url.Contains("api"))
                 return Scheme.AuthenticationJWT();
 
             // otherwise always check for cookie auth

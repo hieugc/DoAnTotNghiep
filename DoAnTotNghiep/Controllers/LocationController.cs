@@ -39,13 +39,35 @@ namespace DoAnTotNghiep.Controllers
             );
         }
 
+        [HttpGet]
+        public JsonResult GetCityId(string BingName)
+        {
+            var city = this._context.Cities.Where(m => m.BingName.Contains(BingName)).FirstOrDefault();
+            if (city == null)
+            {
+                return Json(new
+                {
+                    Status = 400,
+                    Message = "Không tìm thấy " + BingName
+                });
+            }
+            return Json(new
+            {
+                Status = 200,
+                Message = "Dữ liệu đã gửi: " + BingName,
+                IdCity = city.Id
+            });
+        }
+
         [HttpGet("/api/GetPopularCity")]
         public JsonResult GetPopularCity(int number = 10)
         {
             string host = this.GetWebsitePath();
             List<PopularCityViewModel> cityList = this._context.Cities
-                                               .OrderBy(m => m.Count)
+                                                .Include(m => m.houses)
+                                               .OrderByDescending(m => m.Count)
                                                .Take(number)
+                                               .Where(m => m.houses != null && m.houses.Any())
                                                .Select(m => new PopularCityViewModel()
                                                {
                                                    Name = m.Name,
@@ -60,11 +82,10 @@ namespace DoAnTotNghiep.Controllers
 
                                                })
                                                .ToList();
-
             return Json(
                 new 
                 {
-                    StatusCode = 200,
+                    Status = 200,
                     Message = "Get Successfully",
                     Data = cityList
                 }

@@ -22,6 +22,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using static System.Net.WebRequestMethods;
+using System.Composition;
 
 namespace DoAnTotNghiep.Controllers
 {
@@ -72,14 +73,6 @@ namespace DoAnTotNghiep.Controllers
                         string userInfo = JsonConvert.SerializeObject(new UserMessageViewModel(checkUser, RSA, this.GetWebsitePath()));
 
                         SetCookie(Enum.Cookie.UserInfo(), userInfo, 24);
-
-                        this._context.Entry(checkUser).Collection(m => m.ChatRoom).Query().Load();
-
-                        if(checkUser.ChatRoom != null)
-                        {
-                            var ids = checkUser.ChatRoom.Select(m => m.IdChatRoom);
-                            SetCookie(Enum.Cookie.ChatRoom(), string.Join(",", ids), 24);
-                        }
                         return RedirectToAction("Index", "Home");
                     }
                     else
@@ -132,9 +125,12 @@ namespace DoAnTotNghiep.Controllers
                         {
                             Status = 200,
                             Message = "Đăng nhập thành công",
-                            Token = new JwtSecurityTokenHandler().WriteToken(token),
-                            Data = new UserInfo(checkUser, Crypto.Salt(this._configuration), this.GetWebsitePath()),
-                            Expires = token.ValidTo
+                            Data = new ApiLoginData()
+                            {
+                                token = new JwtSecurityTokenHandler().WriteToken(token),
+                                expire = token.ValidTo,
+                                userInfo = new UserInfo(checkUser, Crypto.Salt(this._configuration), this.GetWebsitePath())
+                            }
                         });
                     }
                     else
@@ -147,7 +143,7 @@ namespace DoAnTotNghiep.Controllers
                     ModelState.AddModelError("", "Không tìm thấy người dùng");
                 }
             }
-            return Json(new { 
+            return BadRequest(new { 
                 Status = 400,
                 Message = this.ModelErrors()
             });
@@ -186,8 +182,8 @@ namespace DoAnTotNghiep.Controllers
             return View(registerViewModel);
         }
 
-        [HttpPost("/api/SignUpCheckMail")]
-        public JsonResult ApiCheckMail([FromBody] RegisterCheckMailViewModel registerViewModel)
+        [HttpPost("/api/SignUp/CheckMail")]
+        public IActionResult ApiCheckMail([FromBody] RegisterCheckMailViewModel registerViewModel)
         {
             if (ModelState.IsValid)
             {
@@ -197,21 +193,20 @@ namespace DoAnTotNghiep.Controllers
                     {
                         Status = 200,
                         Message = "Email có thể sử dụng",
-                        Data = true
+                        Data = new ApiBoolean(false)
                     });
                 }
                 return Json(new
                 {
                     Status = 200,
                     Message = "Email tồn tại trong hệ thống",
-                    Data = false
+                    Data = new ApiBoolean(true)
                 });
             }
-            return Json(new
+            return BadRequest(new
             {
                 Status = 400,
-                Message = ModelErrors(),
-                Data = false
+                Message = ModelErrors()
             });
         }
 
@@ -271,20 +266,22 @@ namespace DoAnTotNghiep.Controllers
             return View(registerPasswordViewModel);
         }
 
-        [HttpPost("/api/SignPassword")]
-        public JsonResult ApiPassword([FromBody] MobileRegisterPasswordViewModel data)
+        [HttpPost("/api/SignUp/Password")]
+        public IActionResult ApiPassword([FromBody] MobileRegisterPasswordViewModel data)
         {
             if (ModelState.IsValid)
             {
-                if (!this.IsMailExist(data.Email))
+                if (!this.IsMailExist(data.Email)) //t gửi xong => không lưu vô DB => phí token tồn tại 5ph
                 {
                     string OTP = new Random().Next(100000, 999999).ToString();
-                    //tạo OTP
+                    //nếu như trả OTP về mobile thôi thì server không lưu OTP và password + email
+                    // từ token mới parse ngược lại OTp + email + password đã nhập trc đó
+                    // tại vì trước đó không có lưu email và password vào DB (do có thể bị spam)
 
-                    if (this.SendOTP(OTP, data.Email))
+                    if (this.SendOTP(OTP, data.Email)) // đã gưi tới email => không bảo mật
                     {
                         var claims = new List<Claim>() {
-                            new Claim(ClaimTypes.Name, OTP),
+                            new Claim(ClaimTypes.Name, OTP), //OTP => token
                             new Claim(ClaimTypes.Role, Role.NoneString()),
                             new Claim(ClaimTypes.Email, data.Email),
                             new Claim(ClaimTypes.Expired, DateTime.UtcNow.AddMinutes(3).ToString()),
@@ -296,8 +293,11 @@ namespace DoAnTotNghiep.Controllers
                         {
                             Status = 200,
                             Message = "Đã gửi OTP xác nhận",
-                            Token = new JwtSecurityTokenHandler().WriteToken(token),
-                            Expires = token.ValidTo
+                            Data = new TokenModel()
+                            {
+                                token = new JwtSecurityTokenHandler().WriteToken(token),
+                                expire = token.ValidTo
+                            }
                         });
                     }
                     else
@@ -307,10 +307,10 @@ namespace DoAnTotNghiep.Controllers
                 }
                 else
                 {
-                    ModelState.AddModelError("Email", "Mật khẩu đã tồn tại");
+                    ModelState.AddModelError("Email", "Email đã tồn tại");
                 }
             }
-            return Json(new
+            return BadRequest(new
             {
                 Status = 400,
                 Message = this.ModelErrors()
@@ -359,7 +359,7 @@ namespace DoAnTotNghiep.Controllers
 
         [HttpGet("/api/SignUp/ResendOTP")]
         [Authorize(Roles = "NONE")]
-        public JsonResult ApiResendSignUpOTP()
+        public IActionResult ApiResendSignUpOTP()
         {
             string OTP = new Random().Next(100000, 999999).ToString();
             string email = this.GetEmail();
@@ -385,7 +385,7 @@ namespace DoAnTotNghiep.Controllers
                     Expires = token.ValidTo
                 });
             }
-            return Json(new
+            return BadRequest(new
             {
                 Status = 500,
                 Message = "Không thể gửi OTP"
@@ -470,9 +470,9 @@ namespace DoAnTotNghiep.Controllers
             });
         }
 
-        [HttpPost("/api/ConfirmOTP")]
+        [HttpPost("/api/SignUp/OTP")]
         [Authorize(Roles = "NONE")]
-        public async Task<JsonResult> ConfirmOTP([FromBody] RegisterOTPViewModel model)
+        public async Task<IActionResult> ConfirmOTP([FromBody] RegisterOTPViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -506,7 +506,7 @@ namespace DoAnTotNghiep.Controllers
 
                         var claims = new List<Claim>() {
                             new Claim(ClaimTypes.Name, userModel.Id.ToString()),
-                            new Claim(ClaimTypes.Role, Role.MemberString()),
+                            new Claim(ClaimTypes.Role, Role.UpdateInfo()),
                             new Claim(ClaimTypes.Email, userModel.Email),
                         };
                         var token = new JwtHelper(this._configuration).GenerateToken(claims);
@@ -515,8 +515,11 @@ namespace DoAnTotNghiep.Controllers
                         {
                             Status = 200,
                             Message = "Khởi tạo thành công",
-                            Token = new JwtSecurityTokenHandler().WriteToken(token),
-                            Expires = token.ValidTo
+                            Data = new TokenModel()
+                            {
+                                token = new JwtSecurityTokenHandler().WriteToken(token),
+                                expire = token.ValidTo
+                            }
                         });
                     }
                     else
@@ -529,7 +532,7 @@ namespace DoAnTotNghiep.Controllers
                     ModelState.AddModelError("OTP", "OTP không đúng");
                 }
             }
-            return Json(new
+            return BadRequest(new
             {
                 Status = 400,
                 Message = this.ModelErrors()
@@ -563,15 +566,7 @@ namespace DoAnTotNghiep.Controllers
                     await _context.SaveChangesAsync();
 
                     await this.SignOutCookie();
-
-                    var claims = new List<Claim>() {
-                            new Claim(ClaimTypes.Name, user.Id.ToString()),
-                            new Claim(ClaimTypes.Role, Role.MemberString()),
-                            new Claim(ClaimTypes.Email, user.Email),
-                        };
-                    await this.SignClaim(claims, scheme: Scheme.AuthenticationCookie(), DateTime.UtcNow.AddHours(24));
-
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction(nameof(SignIn));
                 }
                 else
                 {
@@ -583,9 +578,9 @@ namespace DoAnTotNghiep.Controllers
             return View(model);
         }
 
-        [HttpPost("/api/UpdateInfomation")]
-        [Authorize(Roles = "MEMBER")]
-        public async Task<JsonResult> UpdateInfomation([FromBody] RegisterInfoViewModel model)
+        [HttpPost("/api/SignUp/UpdateInfo")]
+        [Authorize(Roles = "UPDATEINFO")]
+        public async Task<IActionResult> UpdateInfomation([FromBody] RegisterInfoViewModel model)
         { 
             if (ModelState.IsValid)
             {
@@ -600,24 +595,37 @@ namespace DoAnTotNghiep.Controllers
                     user.Gender = model.Gender;
                     this._context.Update(user);
                     await _context.SaveChangesAsync();
+
+                    var claims = new List<Claim>() {
+                            new Claim(ClaimTypes.Name, user.Id.ToString()),
+                            new Claim(ClaimTypes.Role, Role.MemberString()),
+                            new Claim(ClaimTypes.Email, user.Email),
+                        };
+                    var token = new JwtHelper(this._configuration).GenerateToken(claims);
+
+
                     return Json(new
                     {
                         Status = 200,
                         Message = "Cập nhật thông tin thành công",
-                        Data = new UserInfo(user, Crypto.Salt(this._configuration), this.GetWebsitePath()),
-
+                        Data = new ApiLoginData()
+                        {
+                            token = new JwtSecurityTokenHandler().WriteToken(token),
+                            expire = token.ValidTo,
+                            userInfo = new UserInfo(user, Crypto.Salt(this._configuration), this.GetWebsitePath())
+                        }
                     });
                 }
                 else
                 {
-                    return Json(new
+                    return BadRequest(new
                     {
                         Status = 500,
                         Message = "Hệ thống cần cập nhật"
                     });
                 }
             }
-            return Json(new
+            return BadRequest(new
             {
                 Status = 400,
                 Message = this.ModelErrors()
@@ -772,8 +780,8 @@ namespace DoAnTotNghiep.Controllers
             return View(data);
         }
 
-        [HttpPost("/api/ForgotCheckMail")]
-        public JsonResult ApiForgotCheckMail([FromBody] RegisterCheckMailViewModel data)
+        [HttpPost("/api/Forgot/CheckMail")]
+        public IActionResult ApiForgotCheckMail([FromBody] RegisterCheckMailViewModel data)
         {
             if (ModelState.IsValid)
             {
@@ -796,25 +804,31 @@ namespace DoAnTotNghiep.Controllers
                         {
                             Status = 200,
                             Message = "Đã gửi OTP xác nhận",
-                            Token = new JwtSecurityTokenHandler().WriteToken(token),
-                            Expires = token.ValidTo
+                            Data = new TokenModel()
+                            {
+                                token = new JwtSecurityTokenHandler().WriteToken(token),
+                                expire = token.ValidTo
+                            }
                         });
                     }
                     else
                     {
-                        ModelState.AddModelError("", "Lỗi hệ thống!!! Vui lòng nhấn gửi lại OTP!!");
+                        return BadRequest(new
+                        {
+                            Status = 500,
+                            Message = "Lỗi hệ thống!!! Vui lòng nhấn gửi lại OTP!!"
+                        });
                     }
                 }
                 else
                 {
-                    ModelState.AddModelError("Email", "Email không tồn tại");
+                    ModelState.AddModelError("", "Email không tồn tại!!!");
                 }
             }
-            return Json(new
+            return BadRequest(new
             {
                 Status = 400,
-                Message = ModelErrors(),
-                Data = false
+                Message = ModelErrors()
             });
         }
         [HttpGet]
@@ -827,7 +841,7 @@ namespace DoAnTotNghiep.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "NONE")]
-        public IActionResult ForgotOTP(RegisterOTPViewModel data)
+        public async Task<IActionResult> ForgotOTP(RegisterOTPViewModel data)
         {
             if (ModelState.IsValid)
             {
@@ -837,6 +851,19 @@ namespace DoAnTotNghiep.Controllers
                     DateTime expire = DateTime.Parse(this.GetExpired());
                     if (DateTime.Compare(expire, DateTime.UtcNow) > 0)
                     {
+                        string email = this.GetEmail();
+                        await this.Logout();
+                        if (email == Role.UnAuthorize()) return RedirectToAction(nameof(Forgot));
+
+                        var user = this._context.Users.Where(m => m.Email == email).FirstOrDefault();
+                        if (user == null) return NotFound();
+                        var claims = new List<Claim>() {
+                            new Claim(ClaimTypes.Name, user.Id.ToString()),
+                            new Claim(ClaimTypes.Role, Role.MemberString()),
+                            new Claim(ClaimTypes.Email, user.Email)
+                        };
+                        await this.SignClaim(claims, Scheme.AuthenticationCookie(), DateTime.UtcNow.AddMinutes(5));
+
                         return RedirectToAction(nameof(RefreshPassword));
                     }
                     else
@@ -852,45 +879,82 @@ namespace DoAnTotNghiep.Controllers
             return View(data);
         }
 
-        [HttpPost("/api/ForgotConfirmOTP")]
+        [HttpPost("/api/Forgot/OTP")]
         [Authorize(Roles = "NONE")]
-        public JsonResult ApiForgotConfirmOTP([FromBody] RegisterOTPViewModel data)
+        public IActionResult ApiForgotConfirmOTP([FromBody] RegisterOTPViewModel data)
         {
             if (ModelState.IsValid)
             {
-                int IdUser = this.GetIdUser();
+                int IdUser = this.GetIdUser();//OTP
+                string email = this.GetEmail();
+                if(email == Role.UnAuthorize())
+                {
+                    return Json(new
+                    {
+                        Status = 400,
+                        Message = "Token quá hạn"
+                    });
+                }
                 if (data.OTP.Equals(IdUser.ToString()))
                 {
                     DateTime expire = DateTime.Parse(this.GetExpired());
                     if (DateTime.Compare(expire, DateTime.UtcNow) > 0)
                     {
+                        var user = this._context.Users.Where(m => m.Email == email).FirstOrDefault();
+                        if(user == null)
+                        {
+                            return Json(new
+                            {
+                                Status = 400,
+                                Message = "Không tìm thấy người dùng"
+                            });
+                        }
+                        var claims = new List<Claim>() {
+                                new Claim(ClaimTypes.Name, user.Id.ToString()),
+                                new Claim(ClaimTypes.Role, Role.MemberString()),
+                                new Claim(ClaimTypes.Email, user.Email)
+                            };
+                        var token = new JwtHelper(this._configuration).GenerateToken(claims);
+
                         return Json(new
                         {
                             Status = 200,
-                            Message = "Mã OTP chính xác"
+                            Message = "Mã OTP chính xác",
+                            Data = new TokenModel()
+                            {
+                                token = new JwtSecurityTokenHandler().WriteToken(token),
+                                expire = token.ValidTo
+                            }
                         });
                     }
                     else
                     {
-                        ModelState.AddModelError("OTP", "OTP quá hạn");
+                        return BadRequest(new
+                        {
+                            Status = 400,
+                            Message = "OTP quá hạn"
+                        });
                     }
                 }
                 else
                 {
-                    ModelState.AddModelError("OTP", "OTP không đúng");
+                    return BadRequest(new
+                    {
+                        Status = 400,
+                        Message = "OTP không đúng"
+                    });
                 }
             }
-            return Json(new
+            return BadRequest(new
             {
                 Status = 400,
-                Message = ModelErrors(),
-                Data = false
+                Message = ModelErrors()
             });
         }
 
         [HttpGet("/api/Forgot/ResendOTP")]
         [Authorize(Roles = "NONE")]
-        public JsonResult ApiForgotResendOTP()
+        public IActionResult ApiForgotResendOTP()
         {
             string OTP = new Random().Next(100000, 999999).ToString();
             string email = this.GetEmail();
@@ -909,15 +973,17 @@ namespace DoAnTotNghiep.Controllers
                 {
                     Status = 200,
                     Message = "Đã gửi OTP xác nhận",
-                    Token = new JwtSecurityTokenHandler().WriteToken(token),
-                    Expires = token.ValidTo
+                    Data = new TokenModel()
+                    {
+                        token = new JwtSecurityTokenHandler().WriteToken(token),
+                        expire = token.ValidTo
+                    }
                 });
             }
-            return Json(new
+            return BadRequest(new
             {
-                Status = 200,
-                Message = "Không thể gửi OTP",
-                Data = false
+                Status = 400,
+                Message = "Không thể gửi OTP"
             });
         }
 
@@ -944,7 +1010,7 @@ namespace DoAnTotNghiep.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "NONE")]
+        [Authorize(Roles = "MEMBER")]
         public IActionResult RefreshPassword()
         {
             return View(new UpdatePasswordViewModel());
@@ -952,7 +1018,7 @@ namespace DoAnTotNghiep.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "NONE")]
+        [Authorize(Roles = "MEMBER")]
         public async Task<IActionResult> RefreshPassword(UpdatePasswordViewModel data)
         {
             if (ModelState.IsValid)
@@ -978,9 +1044,9 @@ namespace DoAnTotNghiep.Controllers
             return View(data);
         }
 
-        [HttpPost("/api/Forgot/RefreshPassword")]
-        [Authorize(Roles = "NONE")]
-        public JsonResult ApiRefreshPassword([FromBody] UpdatePasswordViewModel data)
+        [HttpPost("/api/Forgot/Password")]
+        [Authorize(Roles = "MEMBER")]
+        public IActionResult ApiRefreshPassword([FromBody] UpdatePasswordViewModel data)
         {
             if (ModelState.IsValid)
             {
@@ -988,7 +1054,11 @@ namespace DoAnTotNghiep.Controllers
                 var user = this._context.Users.Where(m => m.Email == email).FirstOrDefault();
                 if (user == null)
                 {
-                    ModelState.AddModelError("", "Người dùng không tồn tại");
+                    return BadRequest(new
+                    {
+                        Status = 400,
+                        Message = "Người dùng không tồn tại"
+                    });
                 }
                 else
                 {
@@ -997,27 +1067,17 @@ namespace DoAnTotNghiep.Controllers
                     user.Salt = Crypto.SaltStr(salt);
                     this._context.Users.Update(user);
                     this._context.SaveChanges();
-                    var claims = new List<Claim>() {
-                            new Claim(ClaimTypes.Name, user.Id.ToString()),
-                            new Claim(ClaimTypes.Role, Role.MemberString()),
-                            new Claim(ClaimTypes.Email, user.Email)
-                        };
-                    var token = new JwtHelper(this._configuration).GenerateToken(claims);
                     return Json(new
                     {
                         Status = 200,
-                        Message = "Cập nhật mật khẩu thành công",
-                        Data = new UserInfo(user, Crypto.Salt(this._configuration), this.GetWebsitePath()),
-                        Token = new JwtSecurityTokenHandler().WriteToken(token),
-                        Expires = token.ValidTo
+                        Message = "Cập nhật mật khẩu thành công"
                     });
                 }
             }
-            return Json(new
+            return BadRequest(new
             {
                 Status = 400,
-                Message = ModelErrors(),
-                Data = false
+                Message = ModelErrors()
             });
         }
         protected int GetIdUser(string token)
@@ -1038,8 +1098,6 @@ namespace DoAnTotNghiep.Controllers
             await HttpContext.SignOutAsync(
                     scheme: Scheme.AuthenticationCookie());
             RemoveCookie(Enum.Cookie.RoleAccess());
-            RemoveCookie(Enum.Cookie.ChatRoom());
-            RemoveCookie(Enum.Cookie.DataChat());
             RemoveCookie(Enum.Cookie.UserInfo());
         }
 

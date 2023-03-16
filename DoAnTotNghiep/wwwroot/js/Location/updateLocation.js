@@ -2,6 +2,9 @@
 var left = null;
 var right = null;
 
+
+//lấy danh sách parse ngược lại => 
+
 function getDataCity(_left, _right) {
     left = _left;
     right = _right

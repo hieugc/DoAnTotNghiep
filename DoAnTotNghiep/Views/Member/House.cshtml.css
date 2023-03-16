@@ -3,6 +3,7 @@
     flex-flow: column;
     padding: 24px;
     max-width: 1200px;
+    width: 1200px;
     border-radius: 12px;
     box-shadow: 0 0.25rem 0.75rem 0 rgba(161, 172, 184, 0.12);
 }

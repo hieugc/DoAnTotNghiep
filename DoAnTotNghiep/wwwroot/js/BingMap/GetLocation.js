@@ -1,20 +1,4 @@
-﻿//function getDataLocation() {
-//    $.ajax({
-//        url: "/Location/Get",
-//        type: "GET",
-//        dataType: "json",
-//        success: function (data) {
-//            console.log(data);
-//            if (data.status == 200) {
-//                dataLocation = data.data;
-//            }
-//        },
-//        error: function (e) {
-//            console.log(e);
-//        }
-//    });
-//} //chưa dùng
-function getDataCity() {
+﻿function getDataCity() {
     if (dataLocation == null) {
         changeDataForSelect2("#district-select", [{ "id": -1, "text": "Quận / Huyện" }]);
         $("#district-select").prop("disabled", true);
@@ -92,13 +76,13 @@ function getDataDistrict() {
                         let bingStr = "{";
                         for (e in data.district) {
                             let omodel = JSON.stringify(data.district[e]);
-                            let model = "\"" + data.district[e]["id"] + "\":" + omodel.slice(0, omodel.length - 1) + ", \"ward\": null}";
+                            let model = "\"" + data.district[e]["bingName"] + "\":" + omodel.slice(0, omodel.length - 1) + ", \"ward\": null}";
                             bingStr += model + ", ";
                         }
                         bingStr = bingStr.trim();
                         bingStr = bingStr.slice(0, bingStr.length - 1);
                         bingStr += "}";
-                        dataBingLocation[id].district = JSON.parse(bingStr);
+                        dataBingLocation[dataLocation[id].bingName].district = JSON.parse(bingStr);
 
                         let model = JSON.stringify(data.district).replaceAll("name", "text");
                         changeDataForSelect2("#district-select", [{ "id": -1, "text": "Quận / Huyện" }].concat(JSON.parse(model)));
@@ -163,7 +147,7 @@ function getDataWard() {
                         bingStr = bingStr.trim();
                         bingStr = bingStr.slice(0, bingStr.length - 1);
                         bingStr += "}";
-                        dataBingLocation[id_city].district[id].ward = JSON.parse(bingStr);
+                        dataBingLocation[dataLocation[id_city].bingName].district[dataLocation[id_city].district[id].bingName].ward = JSON.parse(bingStr);
 
                         let model = JSON.stringify(data.ward).replaceAll("name", "text");
 
@@ -216,6 +200,9 @@ function showAddress(address) {
 }
 function hideMainForm() {
     $("#houseModalToggle").hide();
+    if ($("#mapAddress").text().replace("Địa chỉ nhà: ", "").length > 0 && loc != null) {
+        getLocation($("#mapAddress").text().replace("Địa chỉ nhà: ", ""));
+    }
 }
 function showMainForm() {
     $("#location").val($("#mapAddress").text().replace("Địa chỉ nhà: ", ""));
@@ -223,13 +210,13 @@ function showMainForm() {
         data.location = $("#location").val();
         if ($("#city-select").val() != -1) {
             data.idCity = $("#city-select").val();
-        }
-        if ($("#district-select").val() != -1) {
-            data.idDistrict = $("#district-select").val();
-        }
-        if ($("#ward-select").val() != -1) {
-            data.idWard = $("#ward-select").val();
-        }
+            if ($("#district-select").val() != -1) {
+                data.idDistrict = $("#district-select").val();
+                if ($("#ward-select").val() != -1) {
+                    data.idWard = $("#ward-select").val();
+                }
+            }
+        }        
         if (loc != null) {
             data.lat = loc.latitude;
             data.lng = loc.longitude;
@@ -241,44 +228,50 @@ function GetMap() {
     map = new Microsoft.Maps.Map('#myMap', {
         zoom: 15
     });
+    //Microsoft.Maps.Events.addHandler(map, 'click', function (e) {
+    //    if (e.target === map) {
+    //        loc = e.location;
+    //        data.lat = loc.latitude;
+    //        data.lng = loc.longitude;
 
-    Microsoft.Maps.Events.addHandler(map, 'click', function (e) {
-        if (e.target === map) {
-            loc = e.location;
-            data.lat = loc.latitude;
-            data.lng = loc.longitude;
+    //        var url = 'https://dev.virtualearth.net/REST/v1/Locations/'
+    //            + loc.latitude
+    //            + ','
+    //            + loc.longitude
+    //            + '?key=' + key;
 
-            var url = 'https://dev.virtualearth.net/REST/v1/Locations/'
-                + loc.latitude
-                + ','
-                + loc.longitude
-                + '?key=' + key;
+    //        $.ajax({
+    //            url: url,
+    //            dataType: "jsonp",
+    //            jsonp: "jsonp",
+    //            success: function (data) {
+    //                console.log(data);
+    //                if (data.statusCode == 200) {
+    //                    var result = data.resourceSets[0].resources[0];
+    //                    address = result.address.formattedAddress;
 
-            $.ajax({
-                url: url,
-                dataType: "jsonp",
-                jsonp: "jsonp",
-                success: function (data) {
-                    console.log(data);
-                    if (data.statusCode == 200) {
-                        var result = data.resourceSets[0].resources[0];
-                        address = result.address.formattedAddress;
-                        if (dataBingLocation != null) {
-                            if ($("#city-select").val() == -1) {
-                            }
-                        }
-                        reloadMap(address);
-                    }
-                    else {
-                        alert("Bạn hãy thử lại");
-                    }
-                },
-                error: function (e) {
-                    console.log(e);
-                }
-            });
-        }
-    });
+    //                    //câp nhật address => id
+    //                    //nếu không có idCity thì sao?
+    //                    //nếu không có idDistrict thì sao?
+    //                    //nếu không có idWard thì sao?
+    //                    //if (dataBingLocation != null) {
+    //                    //    if ($("#city-select").val() == -1) {
+    //                    //        $("#city-select").val(dataBingLocation[result.])
+    //                    //    }
+    //                    //}
+    //                    getIdCity(result.address.adminDistrict);
+    //                    reloadMap(address);
+    //                }
+    //                else {
+    //                    alert("Bạn hãy thử lại");
+    //                }
+    //            },
+    //            error: function (e) {
+    //                console.log(e);
+    //            }
+    //        });
+    //    }
+    //});
 }
 function reloadMap(address) {
     if (pin != null) {
@@ -305,11 +298,16 @@ function reloadMap(address) {
     infobox.setMap(map);
     showAddress(address);
 }
-function getLocation() {
-    address = $("#map-location").val()
-        + ", " + dataLocation[$("#city-select").val()].district[$("#district-select").val()].ward[$("#ward-select").val()].name
-        + ", " + dataLocation[$("#city-select").val()].district[$("#district-select").val()].name
-        + ", " + dataLocation[$("#city-select").val()].name;
+function getLocation(temp_address) {
+    if (temp_address != null) {
+        address = temp_address
+    }
+    else {
+        address = $("#map-location").val()
+            + ", " + dataLocation[$("#city-select").val()].district[$("#district-select").val()].ward[$("#ward-select").val()].name
+            + ", " + dataLocation[$("#city-select").val()].district[$("#district-select").val()].name
+            + ", " + dataLocation[$("#city-select").val()].name;
+    }
 
     var url_temp = 'http://dev.virtualearth.net/REST/v1/Locations?query=' + address + '&key=' + key;
     
@@ -338,8 +336,24 @@ function autoGetLocation() {
         && $("#city-select").val() != -1
         && $("#district-select").val() != -1
         && $("#ward-select").val() != -1) {
-        getDataLocation();
+        //getDataLocation();
     }
+}
+function getIdCity(cityBingName) {
+    $.ajax({
+        url: window.location.origin + "/Location/GetCityId?BingName=" + cityBingName,
+        contentType: "application/json",
+        type: "GET",
+        success: function (result) {
+            console.log(result);
+            if (result.status == 200) {
+                data.idCity = result.idCity;
+            }
+        },
+        error: function (e) {
+            console.log(e);
+        }
+    });
 }
 
 var pin = null;

@@ -120,6 +120,7 @@
     background: var(--bs-primary);
     padding: 12px;
     box-shadow: 0 0.125rem 0.2rem white;
+    margin-bottom: 12px;
 }
 
 .tab-message {
@@ -194,6 +195,9 @@
 .list-message {
     display: flex;
     flex-flow: column-reverse;
+    max-height: calc(100% - 100px);
+    padding: 12px;
+    overflow: auto;
 }
 
 .list-message > .other.user-chat > .message-frame {

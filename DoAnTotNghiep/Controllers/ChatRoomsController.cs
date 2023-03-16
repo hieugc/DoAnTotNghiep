@@ -1,4 +1,4 @@
-﻿using System;
+﻿    using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -18,6 +18,7 @@ using System.Text;
 using Newtonsoft.Json;
 using NuGet.Packaging;
 using System.Net.WebSockets;
+using System.Net;
 
 namespace DoAnTotNghiep.Controllers
 {
@@ -35,146 +36,386 @@ namespace DoAnTotNghiep.Controllers
             _configuration = configuration;
         }
 
-        [HttpPost("/Connect")]
-        public async Task<IActionResult> ConnectChat([FromBody] RoomConnectViewModel data)
+
+        //Kết nối tất cả phòng
+        [HttpPost("/ConnectAllChat")]
+        public async Task<IActionResult> ConnectChat([FromBody] string ConnectionId)
+        {
+            return await this.ConnectAll(ConnectionId, true);
+        }
+        [HttpPost("/api/ConnectAllRoom")]
+        public async Task<IActionResult> ApiConnectChat([FromBody] string ConnectionId)
+        {
+            return await this.ConnectAll(ConnectionId, false);
+        }
+        private async Task<IActionResult> ConnectAll(string ConnectionId, bool isWeb)
         {
             if (ModelState.IsValid)
             {
                 ChatHub chatHub = new ChatHub(this._signalContext);
                 try
                 {
-                    if (data.IdRoom != null && data.IdRoom != 0)
+                    int IdUser = this.GetIdUser();
+                    using(var Context = this._context)
                     {
-                        int IdUser = this.GetIdUser();
-                        //kiểm tra có tồn tại trong DB không? => không => return status == 404
-                        var rooms = this._context.UsersInChatRooms.Where(m => m.IdUser == IdUser && m.IdChatRoom == data.IdRoom).FirstOrDefault();
-                        if (rooms == null)
+                        var rooms = Context.UsersInChatRooms.Include(m => m.ChatRooms).Where(m => m.IdUser == IdUser && m.ChatRooms != null).ToList();
+                        byte[] salt = Crypto.Salt(this._configuration);
+                        Dictionary<int, RoomChatViewModel> webModel = new Dictionary<int, RoomChatViewModel>();
+                        List<RoomChatViewModel> mobileModel = new List<RoomChatViewModel>();
+                        if (isWeb)
                         {
-                            return Json(new
+                            foreach (var item in rooms)
                             {
-                                Status = 404,
-                                Message = "Kết nối không thành công! Phòng chat không tồn tại"
-                            });
+                                if (item.ChatRooms != null)
+                                {
+                                    RoomChatViewModel model = this.CreateChatRoom(item.ChatRooms, Context, 1, salt, IdUser);
+                                    webModel.Add(model.IdRoom, model);
+                                }
+                            }
                         }
                         else
                         {
-                            this._context.Entry(rooms).Reference(m => m.ChatRooms).Load();
-                            Dictionary<int, RoomChatViewModel> model = new Dictionary<int, RoomChatViewModel>();
-                            if (rooms.ChatRooms == null)
+                            foreach (var item in rooms)
                             {
-                                model.Add(data.IdRoom.Value, new RoomChatViewModel()
+                                if (item.ChatRooms != null)
                                 {
-                                    IdRoom = data.IdRoom.Value,
-                                    UserMessages = new List<UserMessageViewModel>(),
-                                    Messages = new List<MessageViewModel>()
-                                });
-                            }
-                            else
-                            {
-                                this._context.Entry(rooms.ChatRooms).Collection(m => m.UsersInChatRooms)
-                                        .Query().Where(m => m.IdUser != IdUser).Include(m => m.Users).Load();
-
-                                List<UserMessageViewModel> users = new List<UserMessageViewModel>();
-                                byte[] salt = Crypto.Salt(this._configuration);
-                                if (rooms.ChatRooms.UsersInChatRooms != null)
-                                {
-                                    foreach (var item in rooms.ChatRooms.UsersInChatRooms)
-                                    {
-                                        if (item.Users != null)
-                                        {
-                                            users.Add(new UserMessageViewModel(item.Users, salt, this.GetWebsitePath()));
-                                        }
-                                    }
+                                    mobileModel.Add(this.CreateChatRoom(item.ChatRooms, Context, 1, salt, IdUser));
                                 }
-                                model.Add(data.IdRoom.Value, new RoomChatViewModel()
-                                {
-                                    IdRoom = data.IdRoom.Value,
-                                    UserMessages = users,
-                                    Messages = new List<MessageViewModel>()
-                                });
                             }
-                            //trả dữ liệu về lưu vào client
-                            //lưu vào cookie
-                            string? cookieRooms = this.GetCookie(Enum.Cookie.ChatRoom());
-                            List<string> chatRooms = new List<string>() { data.IdRoom.Value.ToString() };
-                            if (!string.IsNullOrEmpty(cookieRooms))
-                            {
-                                chatRooms.AddRange(cookieRooms.Split(",").ToList());
-                            }
-                            this.SetCookie(Enum.Cookie.ChatRoom(), string.Join(",", chatRooms), 24);
+                        }
 
-                            //kết nối với group
-                            await chatHub.AddToGroup(data.ConnectionId, data.IdRoom.Value.ToString());
+                        foreach (var room in rooms)
+                        {
+                            await chatHub.AddToGroup(ConnectionId, room.IdChatRoom.ToString());
+                        }
+
+                        if (isWeb)
+                        {
                             return Json(new
                             {
                                 Status = 200,
                                 Message = "Kết nối thành công",
-                                Data = model
+                                Data = webModel
+                            });
+                        }
+                        else
+                        {
+                            return Json(new
+                            {
+                                Status = 200,
+                                Message = "Kết nối thành công",
+                                Data = mobileModel
                             });
                         }
                     }
-                    else
-                    {
-                        string? rooms = this.GetCookie(Enum.Cookie.ChatRoom());
-                        List<string> chatRooms = new List<string>();
-                        if (!string.IsNullOrEmpty(rooms))
-                        {
-                            chatRooms = rooms.Split(",").ToList();
-                        }
-
-                        foreach (var room in chatRooms)
-                        {
-                            await chatHub.AddToGroup(data.ConnectionId, room);
-                        }
-                    }
-
-                    return Json(new
-                    {
-                        Status = 200,
-                        Message = "Kết nối thành công",
-                        Data = data.ConnectionId
-                    });
+                    
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex);
                 }
 
-                return Json(new
+                return BadRequest(new
                 {
                     Status = 500,
-                    Message = "Lỗi kết nối"
+                    Message = ModelErrors()
                 });
             }
-            return Json(new
+            return BadRequest(new
             {
                 Status = 400,
                 Message = ModelErrors()
             });
         }
 
-        [HttpGet("/ChatRoom")]
-        public JsonResult GetChatRoom(int? start = 0, int? length = 10)
+        //kết nối từng phòng
+        [HttpPost("/Message/ConnectToRoom")]
+        public async Task<IActionResult> ConnectChat([FromBody] ConnectRoom data)
         {
-            int IdUser = this.GetIdUser();
-            var allRooms = this._context.UsersInChatRooms
-                                        .Where(m => m.IdUser == IdUser)
-                                        .Skip((start == null? 0: start.Value))
-                                        .Take((length == null? 10: length.Value))
-                                        .Select(m => m.IdChatRoom).ToList();
+            return await this.ConnectToRoom(data, true);
+        }
+        [HttpPost("/api/Message/ConnectToRoom")]
+        public async Task<IActionResult> ApiConnectChat([FromBody] ConnectRoom data)
+        {
+            return await this.ConnectToRoom(data, false);
+        }
+        private async Task<IActionResult> ConnectToRoom(ConnectRoom data, bool isWeb)
+        {
+            if (ModelState.IsValid)
+            {
+                ChatHub chatHub = new ChatHub(this._signalContext);
+                try
+                {
+                    int IdUser = this.GetIdUser();
 
-            string lIdRoom = string.Join(",", allRooms);
-            this.SetCookie(Enum.Cookie.ChatRoom(), lIdRoom, 24);
-                
+                    var rooms = this._context.UsersInChatRooms
+                                            .Include(m => m.ChatRooms)
+                                            .Where(m => m.IdUser == IdUser && m.ChatRooms != null && m.IdChatRoom == data.IdRoom).ToList();
+                    byte[] salt = Crypto.Salt(this._configuration);
+
+                    Dictionary<int, RoomChatViewModel> webModel = new Dictionary<int, RoomChatViewModel>();
+                    List<RoomChatViewModel> mobileModel = new List<RoomChatViewModel>();
+                    DoAnTotNghiepContext Context = this._context;
+
+                    if (isWeb)
+                    {
+                        foreach (var item in rooms)
+                        {
+                            if (item.ChatRooms != null)
+                            {
+                                RoomChatViewModel model = this.CreateChatRoom(item.ChatRooms, Context, 1, salt, IdUser);
+                                webModel.Add(model.IdRoom, model);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        foreach (var item in rooms)
+                        {
+                            if (item.ChatRooms != null)
+                            {
+                                mobileModel.Add(this.CreateChatRoom(item.ChatRooms, Context, 1, salt, IdUser));
+                            }
+                        }
+                    }
+
+                    foreach (var room in rooms)
+                    {
+                        await chatHub.AddToGroup(data.ConnectionId, room.IdChatRoom.ToString());
+                    }
+                    if (isWeb)
+                    {
+                        return Json(new
+                        {
+                            Status = 200,
+                            Message = "Kết nối thành công",
+                            Data = webModel
+                        });
+                    }
+                    else
+                    {
+                        return Json(new
+                        {
+                            Status = 200,
+                            Message = "Kết nối thành công",
+                            Data = mobileModel
+                        });
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
+
+                return BadRequest(new
+                {
+                    Status = 500,
+                    Message = ModelErrors()
+                });
+            }
+            return BadRequest(new
+            {
+                Status = 400,
+                Message = ModelErrors()
+            });
+        }
+
+        //Kết nối với người dùng
+        [HttpPost("/api/Message/ContactToUser")]
+        public async Task<IActionResult> ApiContactUser([FromBody] ConnectUser data)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    byte[] salt = Crypto.Salt(this._configuration);
+                    string IdUserStr = Crypto.DecodeKey(data.UserAccess, salt);
+                    int Id = 0;
+                    if (!int.TryParse(IdUserStr, out Id))
+                    {
+                        return BadRequest(new
+                        {
+                            Status = 400,
+                            Message = "Token không hợp lệ"
+                        });
+                    }
+                    int IdUser = this.GetIdUser();
+                    List<RoomChatViewModel> model = new List<RoomChatViewModel>();
+                    //tạo 1 cái room mới
+                    using (DoAnTotNghiepContext Context = _context)
+                    {
+                        if (Id != IdUser)
+                        {
+                            var user = Context.Users.FirstOrDefault(m => m.Id == Id);
+                            if (user == null)
+                            {
+                                return BadRequest(new
+                                {
+                                    Status = 400,
+                                    Message = "Không tìm thấy người dùng"
+                                });
+                            }
+
+                            var rooms = from r in this._context.ChatRooms
+                                        join ur in this._context.UsersInChatRooms on r.Id equals ur.IdChatRoom
+                                        join ur2 in this._context.UsersInChatRooms on r.Id equals ur2.IdChatRoom
+                                        where ur.IdUser == Id && ur2.IdUser == IdUser
+                                        select r;
+
+                            if (rooms.Any())
+                            {
+                                List<ChatRoom?> chats = rooms.ToList();
+                                foreach (var room in chats)
+                                {
+                                    if (room != null)
+                                    {
+                                        model.Add(this.CreateChatRoom(room, Context, 20, salt, IdUser));
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                using (var transaction = await Context.Database.BeginTransactionAsync())
+                                {
+                                    try
+                                    {
+                                        ChatRoom chatRoom = new ChatRoom() { UpdatedDate = DateTime.Now };
+                                        Context.Add(chatRoom);
+                                        Context.SaveChanges();
+
+                                        List<UsersInChatRoom> newList = new List<UsersInChatRoom>()
+                                        {
+                                            new UsersInChatRoom()
+                                            {
+                                                IdChatRoom = chatRoom.Id,
+                                                IdUser = IdUser
+                                            },
+                                            new UsersInChatRoom()
+                                            {
+                                                IdChatRoom = chatRoom.Id,
+                                                IdUser = Id
+                                            }
+                                        };
+
+                                        Context.AddRange(newList);
+                                        Context.SaveChanges();
+
+                                        transaction.Commit();
+                                        if (user.IdFile != null && user.IdFile.Value != 0)
+                                        {
+                                            Context.Entry(user).Reference(m => m.Files).Load();
+                                        }
+
+                                        model.Add(new RoomChatViewModel()
+                                        {
+                                            IdRoom = chatRoom.Id,
+                                            UserMessages = new List<UserMessageViewModel>() {
+                                                new UserMessageViewModel(user, salt, this.GetWebsitePath())
+                                            },
+                                            Messages = new List<MessageViewModel>()
+                                        });
+                                        ChatHub chatHub = new ChatHub(this._signalContext);
+
+                                        await chatHub.ConnectToGroup((TargetSignalR.Connect() + "-" + Crypto.EncodeKey(user.Id.ToString(), salt)), chatRoom.Id.ToString());
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Console.WriteLine(ex);
+                                        transaction.Rollback();
+                                        return BadRequest(new
+                                        {
+                                            Status = 400,
+                                            Message = "Khởi tạo không được"
+                                        });
+                                    }
+                                }
+                            }
+
+                            return Json(new
+                            {
+                                Status = 200,
+                                Message = "Kết nối người dùng thành công",
+                                Data = model
+                            });
+                        }
+                        else
+                        {
+                            return BadRequest(new
+                            {
+                                Status = 400,
+                                Message = "Truyền UserAccess bản thân"
+                            });
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
+
+                return BadRequest(new
+                {
+                    Status = 500,
+                    Message = ModelErrors()
+                });
+            }
+            return BadRequest(new
+            {
+                Status = 400,
+                Message = ModelErrors()
+            });
+        }
+
+
+        //Lấy danh sách phòng
+        [HttpGet("/ChatRoom")]
+        public JsonResult GetChatRoom(Pagination pagination)
+        {
+            var allRooms = this.ChatRoom(pagination);
             return Json(new
             {
                 Status = 200,
                 Data = allRooms
             });
         }
+        [HttpGet("/api/ChatRoom")]
+        public JsonResult ApiGetChatRoom(Pagination pagination)
+        {
+            return Json(new
+            {
+                Status = 200,
+                Data = new
+                {
+                    rooms = this.ChatRoom(pagination),
+                    metaData = pagination
+                }
+            });
+        }
+        private List<int> ChatRoom(Pagination pagination)
+        {
+            int IdUser = this.GetIdUser();
+            var allRooms = this._context.UsersInChatRooms
+                                        .Where(m => m.IdUser == IdUser)
+                                        .Skip((pagination.Page))
+                                        .Take((pagination.Limit))
+                                        .Select(m => m.IdChatRoom);
+            return allRooms == null ? new List<int>() : allRooms.ToList();
+        }
 
+
+
+        //Gửi tin nhắn
         [HttpPost("/Send")]
-        public async Task<JsonResult> SendMessage([FromBody] CreateMessageViewModel data)
+        public async Task<IActionResult> SendMessage([FromBody] CreateMessageViewModel data)
+        {
+            return await this.Send(data);
+        }
+        [HttpPost("/api/Message/Send")]
+        public async Task<IActionResult> ApiSendMessage([FromBody] CreateMessageViewModel data)
+        {
+            return await this.Send(data);
+        }
+        private async Task<IActionResult> Send(CreateMessageViewModel data)
         {
             if (ModelState.IsValid)
             {
@@ -198,45 +439,108 @@ namespace DoAnTotNghiep.Controllers
                     await this._context.SaveChangesAsync();
 
                     var rooms = this._context.ChatRooms.Where(m => m.Id == data.IdRoom);
-                    foreach(var item in rooms)
+                    foreach (var item in rooms)
                     {
                         item.UpdatedDate = DateTime.Now;
                     }
                     this._context.ChatRooms.UpdateRange(rooms);
                     this._context.SaveChanges();
 
+                    var user = this._context.Users.Include(m => m.Files).Where(m => m.Id == IdUser).ToList();
+                    List<UserMessageViewModel> users = new List<UserMessageViewModel>();
+                    string host = this.GetWebsitePath();
+                    foreach (User item in user)
+                    {
+                        if (item != null)
+                        {
+                            users.Add(new UserMessageViewModel(item, salt, host));
+                        }
+                    }
+
+                    RoomChatViewModel model = new RoomChatViewModel()
+                    {
+                        IdRoom = data.IdRoom,
+                        UserMessages = users,
+                        Messages = new List<MessageViewModel>() { new MessageViewModel(data.IdReply, false, IdSend,
+                                            data.Message, message.Id, message.CreatedDate) }
+                    };
+
+
                     ChatHub chatHub = new ChatHub(this._signalContext);
-                    await chatHub.SendMessage(data.IdRoom.ToString(),
-                                TargetSignalR.Receive(),
-                                new MessageSendViewModel(data.IdReply,
-                                                    false, IdSend, data.Message,
-                                                    message.Id, message.CreatedDate, data.IdRoom));
-                    return Json(new
+                    await chatHub.SendMessage(data.IdRoom.ToString(), TargetSignalR.Receive(), model);
+                    return Ok(new
                     {
                         Status = 200,
                         Message = "Gửi thành công",
-                        Data = new MessageSendViewModel(
-                                            data.IdReply, false, IdSend,
-                                            data.Message, message.Id, message.CreatedDate, data.IdRoom)
+                        Data = model
                     });
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex.ToString());
-                    return Json(new
+                    return BadRequest(new
                     {
                         Status = 500,
                         Message = "Gửi thất bại"
                     });
                 }
             }
-            return Json(new
+            return BadRequest(new
             {
                 Status = 400,
                 Message = ModelErrors()
             });
         }
 
+
+        //Cập nhật tin nhắn
+        [HttpPut("/Message/Seen")]
+        public IActionResult UpdateSeenChat([FromBody] int idRoom)
+        {
+            return this.UpdateSeen(idRoom);
+        }
+        [HttpPut("/api/Message/Seen")]
+        public IActionResult ApiUpdateSeenChat([FromBody] int idRoom)
+        {
+            return this.UpdateSeen(idRoom);
+        }
+        private IActionResult UpdateSeen(int idRoom)
+        {
+            if (ModelState.IsValid)
+            {
+                this.UpdateMessageIsSeen(idRoom);
+                return Ok(new
+                {
+                    Status = 200,
+                    Message = "Cập nhật thành công"
+                });
+            }
+            return BadRequest(new
+            {
+                Status = 400,
+                Message = ModelErrors()
+            });
+        }
+        private bool UpdateMessageIsSeen(int idRoom)
+        {
+            int IdUser = this.GetIdUser();
+            var otherMessage = this._context.Messages
+                                          .Where(m => m.IdChatRoom == idRoom
+                                                        && m.IdUser != IdUser
+                                                        && m.Status == (int)Status.UNSEEN);
+
+            foreach (var item in otherMessage)
+            {
+                item.Status = (int)Status.SEEN;
+            }
+
+            this._context.UpdateRange(otherMessage);
+            this._context.SaveChanges();
+            return true;
+        }
+
+
+        //Lấy tin nhắn --chưa có mobile
         [HttpPost("/MessagesInChatRoom")]
         public JsonResult GetMessagesInChatRoom([FromBody] DataGetMessageViewModel data)
         {
@@ -244,26 +548,8 @@ namespace DoAnTotNghiep.Controllers
             {
                 int IdUser = this.GetIdUser();
                 byte[] salt = Crypto.Salt(this._configuration);
-
-                string? lMessageStored = this.GetCookie(Enum.Cookie.DataChat());
                 Dictionary<int, RoomChatViewModel> model = new Dictionary<int, RoomChatViewModel>();
-                if (!string.IsNullOrEmpty(lMessageStored))
-                {
-                    Dictionary<int, RoomChatViewModel>? rooms = JsonConvert.DeserializeObject<Dictionary<int, RoomChatViewModel>>(lMessageStored);
-                    if (rooms != null && !rooms.ContainsKey(data.IdRoom) || rooms == null)
-                    {
-                        model.Add(data.IdRoom, this.GetRoomChatViewModel(data, salt, IdUser));
-                        string dataChat = JsonConvert.SerializeObject(model);
-                        this.SetCookie(Enum.Cookie.DataChat(), dataChat, 24);
-                    }
-                }
-                else
-                {
-                    model.Add(data.IdRoom, this.GetRoomChatViewModel(data, salt, IdUser));
-                    string dataChat = JsonConvert.SerializeObject(model);
-                    this.SetCookie(Enum.Cookie.DataChat(), dataChat, 24);
-                }
-
+                model.Add(data.IdRoom, this.GetRoomChatViewModel(data, salt, IdUser));
                 return Json(new
                 {
                     Status = 200,
@@ -285,7 +571,7 @@ namespace DoAnTotNghiep.Controllers
                                                     m => new MessageViewModel(
                                                                 m.IdReply == null ? 0 : m.IdReply.Value,
                                                                 ((m.Status == (int)Status.SEEN) || m.IdUser == IdUser),
-                                                                Crypto.EncodeKey(m.Id.ToString(), salt),
+                                                                Crypto.EncodeKey(m.IdUser.ToString(), salt),
                                                                 m.Content, m.Id, m.CreatedDate)
                                             )
                                             .Skip(data.RangeRoom.Start)
@@ -297,11 +583,12 @@ namespace DoAnTotNghiep.Controllers
                                                 .Where(m => m.IdChatRoom == data.IdRoom && m.IdUser != IdUser)
                                                 .ToList();
             List<UserMessageViewModel> users = new List<UserMessageViewModel>();
+            string host = this.GetWebsitePath();
             foreach (UsersInChatRoom item in userInChatRoom)
             {
                 if (item != null)
                 {
-                    users.Add(new UserMessageViewModel(item, salt));
+                    users.Add(new UserMessageViewModel(item, salt, host));
                 }
             }
 
@@ -312,71 +599,86 @@ namespace DoAnTotNghiep.Controllers
                 Messages = messagesInRoom
             };
         }
-        [HttpPost("/UpdateCookie")]
-        public JsonResult UpdateCookieChat([FromBody] RoomChatViewModel data)
+
+
+        //clear all Chat
+        [HttpPost("/ChatRoom/ClearAll")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ClearAllDataChatRoom([FromBody] string WebsiteKey)
         {
-            if (ModelState.IsValid)
+            string? Key = this._configuration.GetConnectionString(Enum.SystemKey.WebsiteKey());
+            if (!string.IsNullOrEmpty(WebsiteKey) && !string.IsNullOrEmpty(Key))
             {
-                string? modelStr = this.GetCookie(Enum.Cookie.DataChat());
-                if (modelStr != null)
+                if (!WebsiteKey.Equals(Key))
                 {
-                    Dictionary<int, RoomChatViewModel>? model = JsonConvert.DeserializeObject<Dictionary<int, RoomChatViewModel>>(modelStr);
-                    if(model != null)
+                    return BadRequest(new
                     {
-                        model.Remove(data.IdRoom);
-                        model.Add(data.IdRoom, data);
-                        this.SetCookie(Enum.Cookie.DataChat(), JsonConvert.SerializeObject(model), 24);
-                    }
-                    else
-                    {
-                        model = new Dictionary<int, RoomChatViewModel>();
-                        model.Add(data.IdRoom, data);
-                        this.SetCookie(Enum.Cookie.DataChat(), JsonConvert.SerializeObject(model), 24);
-                    }
+                        Message = "Key không đúng"
+                    });
                 }
-                else
-                {
-                    Dictionary<int, RoomChatViewModel> model = new Dictionary<int, RoomChatViewModel>();
-                    model.Add(data.IdRoom, data);
-                    this.SetCookie(Enum.Cookie.DataChat(), JsonConvert.SerializeObject(model), 24);
-                }
+
+                //xóa all message
+                //xóa all userInRoom
+                //xóa all rooms
+
+                var messages = this._context.Messages.ToList();
+                var users = this._context.UsersInChatRooms.ToList();
+                var rooms = this._context.ChatRooms.ToList();
+
+                this._context.Messages.RemoveRange(messages);
+                await this._context.SaveChangesAsync();
+
+                this._context.UsersInChatRooms.RemoveRange(users);
+                await this._context.SaveChangesAsync();
+
+                this._context.ChatRooms.RemoveRange(rooms);
+                await this._context.SaveChangesAsync();
+
                 return Json(new
                 {
-                    Status = 200,
-                    Message = "Cập nhật thành công"
+                    Message = "Đã xóa xong"
                 });
             }
-
-            return Json(new
+            return BadRequest(new
             {
-                Status = 400,
-                Message = ModelErrors()
+                Message = "Không có key"
             });
         }
 
-        [HttpPost("/Message/Seen")]
-        public JsonResult UpdateSeenChat([FromBody] List<int> data)
+        private KeyValuePair<int, RoomChatViewModel> CreateDictionary(ChatRoom room, DoAnTotNghiepContext Context, int number, byte[] salt, int IdUser)
         {
-            if (ModelState.IsValid)
+            RoomChatViewModel model = this.CreateChatRoom(room, Context, number, salt, IdUser);
+            return new KeyValuePair<int, RoomChatViewModel>(model.IdRoom, model);
+        }
+        private RoomChatViewModel CreateChatRoom(ChatRoom room, DoAnTotNghiepContext Context, int number, byte[] salt, int IdUser)
+        {
+            Context.Entry(room).Collection(m => m.Messages).Query()
+                                .OrderByDescending(m => m.CreatedDate)
+                                .Take(number).Load();
+            var userInChatRoom = Context.UsersInChatRooms
+                        .Include(m => m.Users)
+                        .Where(m => m.IdChatRoom == room.Id && m.IdUser != IdUser)
+                        .ToList();
+            List<UserMessageViewModel> users = new List<UserMessageViewModel>();
+            string host = this.GetWebsitePath();
+            foreach (UsersInChatRoom item in userInChatRoom)
             {
-                var messages = this._context.Messages.Where(m => data.Contains(m.Id));
-                foreach ( var message in messages)
+                if (item != null)
                 {
-                    message.Status = (int)Status.SEEN;
+                    users.Add(new UserMessageViewModel(item, salt, host));
                 }
-                this._context.UpdateRange(messages);
-                this._context.SaveChanges();
-                return Json(new
-                {
-                    Status = 200,
-                    Message = "Cập nhật thành công"
-                });
             }
-            return Json(new
+            return new RoomChatViewModel()
             {
-                Status = 400,
-                Message = ModelErrors()
-            });
+                IdRoom = room.Id,
+                Messages = (number == 0 || room.Messages == null) ? new List<MessageViewModel>() :
+                                room.Messages.OrderByDescending(m => m.Id).Take(number).Select(m => new MessageViewModel(
+                                m.IdReply == null ? 0 : m.IdReply.Value,
+                                ((m.Status == (int)Status.SEEN) || m.IdUser == IdUser),
+                                Crypto.EncodeKey(m.IdUser.ToString(), salt),
+                                m.Content, m.Id, m.CreatedDate)).ToList(),
+                UserMessages = users
+            };
         }
     }
 }

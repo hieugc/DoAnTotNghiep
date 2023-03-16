@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DoAnTotNghiep.Entity
@@ -26,5 +27,7 @@ namespace DoAnTotNghiep.Entity
 
         [Column("count")]
         public int Count { get; set; } = 0;
+
+        public Collection<House>? houses { get; set; }
     }
 }

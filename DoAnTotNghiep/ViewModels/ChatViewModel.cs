@@ -39,6 +39,7 @@ namespace DoAnTotNghiep.ViewModels
         }
 
         public MessageViewModel Message { get; set; } = new MessageViewModel();
+        public UserMessageViewModel UserMessage { get; set; } = new UserMessageViewModel();
         public int IdRoom { get; set; } = 0;
     }
 
@@ -50,17 +51,17 @@ namespace DoAnTotNghiep.ViewModels
             this.UserAccess = Crypto.EncodeKey(user.Id.ToString(), salt);
             this.UserName = user.FirstName + " " + user.LastName;
             this.ImageUrl = (user.IdFile == null ? null :
-                                            user.Files == null ? null :
-                                            (host + "/" + user.Files.PathFolder + "/" + user.Files.FileName));
+                                    user.Files == null ? null :
+                                    (host + "/" + user.Files.PathFolder + "/" + user.Files.FileName));
         }
 
-        public UserMessageViewModel(UsersInChatRoom user, byte[] salt)
+        public UserMessageViewModel(UsersInChatRoom user, byte[] salt, string host)
         {
             this.UserAccess = Crypto.EncodeKey(user.IdUser.ToString(), salt);
             this.UserName = user.Users?.FirstName + " " + user.Users?.LastName;
             this.ImageUrl = (user.Users?.IdFile == null ? null :
                                     user.Users?.Files == null ? null :
-                                    (user.Users?.Files.PathFolder + user.Users?.Files.FileName));
+                                    (host + "/" + user.Users?.Files.PathFolder + "/" + user.Users?.Files.FileName));
         }
 
         public string UserName { get; set; } = string.Empty;
@@ -92,6 +93,27 @@ namespace DoAnTotNghiep.ViewModels
     public class RoomConnectViewModel
     {
         public int? IdRoom { get; set; } = 0;
+        public string ConnectionId { get; set; } = string.Empty;
+    }
+    public class ConnectRoom
+    {
+        public ConnectRoom(string connectionId, int idRoom)
+        {
+            ConnectionId = connectionId;
+            IdRoom = idRoom;
+        }
+
+        public string ConnectionId { get; set; } = string.Empty;
+        public int IdRoom { get; set; } = 0;
+    }
+    public class ConnectUser
+    {
+        public ConnectUser(string connectionId, string userAccess)
+        {
+            ConnectionId = connectionId;
+            UserAccess = userAccess;
+        }
+        public string UserAccess { get; set; } = string.Empty;
         public string ConnectionId { get; set; } = string.Empty;
     }
 }

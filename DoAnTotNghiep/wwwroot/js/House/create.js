@@ -22,7 +22,7 @@ function initData(id) {
         rules: [],
         images: [null, null, null, null]
     };
-    if (id != undefined) data.Id = id;
+    if (id != undefined) data.id = id;
 }
 function passStep(step) {
     if (step == 2) {
@@ -31,7 +31,8 @@ function passStep(step) {
     }
     if (step == 3) {
         if (data.name != null && data.option != null && data.description != null && data.people != null && data.bedRoom != null
-            && data.bathRoom != null && data.square != null && data.location != null && data.price != null) return true;
+            && data.bathRoom != null && data.square != null && data.location != null && data.price != null
+            && $("#mapAddress").text().replace("Địa chỉ nhà: ", "").length > 0) return true;
         return false;
     }
     return true;
@@ -102,16 +103,15 @@ function finish() {
                     //nếu đúng
                     console.log(result);
                     if (result.status == 200) {
+                        for (e in listHouse) {
+                            if (listHouse[e].id == result.data.id) {
+                                listHouse[e] = result.data;
+                                break;
+                            }
+                        }
+                        reloadPage();
                         houseModal.getElementsByClassName("progress-bar")[0].style.width = "100%";
                         setTimeout(function () {
-                            for (e in listHouse) {
-                                if (listHouse[e].id == result.data.id) {
-                                    listHouse[e] = result.data;
-                                    $("#list-house").append(houseItem(result.data));
-                                    break;
-                                }
-                            }
-
                             $("#houseModalToggleClose").click();//click => refresh form
                         }, 500);
                     }
@@ -139,11 +139,11 @@ function finish() {
                     //nếu đúng
                     console.log(result);
                     if (result.status == 200) {
+                        //thêm item
+                        listHouse.push(result.data);
+                        reloadPage();
                         houseModal.getElementsByClassName("progress-bar")[0].style.width = "100%";
                         setTimeout(function () {
-                            //thêm item
-                            listHouse.push(result.data);
-                            $("#list-house").append(houseItem(result.data));
                             $("#houseModalToggleClose").click();//click => refresh form
                         }, 500);
                     }
@@ -184,7 +184,20 @@ function refreshHouseModal() {
     houseModal.getElementsByClassName("handle-step")[3].children[1].classList.add("btn-no-drop");
     document.getElementById("form-create").reset();
 
+    if (map != null) {
+        map.entities.pop();
+        if (infobox != null) {
+            infobox.setMap(null);
+        }
+    }
+    $("#mapAddress").html("<strong>Địa chỉ nhà: </strong>");
+    $(".option").removeClass("option-selected");
     initData();
+    for (let index in data.images) {
+        if (data.images[index] == null) {
+            removePiture(index);
+        }
+    }
 }
 function pickOption(element) {
     if (element.classList.value.indexOf("option-selected") != -1) {
@@ -225,27 +238,13 @@ function getNameHouse(element) {
     }
 }
 function getOptionHouse(element, number) {
-    if (data.option == null) {
-        if (element.classList.value.indexOf("option-selected") == -1) {
-            element.classList.add("option-selected");
-            data.option = number;
-            if (passStep(2)) {
-                houseModal.getElementsByClassName("handle-step")[0].children[0].classList.remove("btn-no-drop");
-            }
-        }
+    data.option = number;
+    if (element.classList.value.indexOf("option-selected") == -1) {
+        element.classList.add("option-selected");
+        element.parentNode.getElementsByClassName("option")[2 - number].classList.remove("option-selected");
     }
-    else {
-        if (data.option != number) {
-            if (element.classList.value.indexOf("option-selected") == -1) {
-                element.classList.add("option-selected");
-                data.option = number;
-                console.log(element.parentNode.getElementsByClassName("option"));
-                element.parentNode.getElementsByClassName("option")[number - 1].classList.remove("option-selected");
-                if (passStep(2)) {
-                    houseModal.getElementsByClassName("handle-step")[0].children[0].classList.remove("btn-no-drop");
-                }
-            }
-        }
+    if (passStep(2)) {
+        houseModal.getElementsByClassName("handle-step")[0].children[0].classList.remove("btn-no-drop");
     }
 }
 function getDescHouse(element) {
@@ -374,8 +373,7 @@ function getImgData() {
             picture_frame.innerHTML = importImage(this.result, indexPicture);
             data.images[indexPicture] = {
                 data: this.result,
-                name: $("#input-picture")[0].files[0].name,
-                folder: ""
+                name: $("#input-picture")[0].files[0].name
             }
             indexPicture = null;
         });
@@ -439,9 +437,9 @@ function houseItem(data) {
                             </div>
                             <p class="card-text">${data.location}</p>
                             <p class="card-control">
-                                <a href="${(window.location.origin + "/House/Details?Id=" + data.Id)}" class="btn btn-primary" title="Xem chi tiết">Chi tiết</a>
-                                <button type="button" class="btn btn-warning" onclick="editHouse(${data.Id})">Chỉnh sửa</button>
-                                <button type="button" class="btn btn-danger" onclick="deleteHouse(${data.Id})">Xóa</button>
+                                <a href="${(window.location.origin + "/House/Details?Id=" + data.id)}" class="btn btn-primary" title="Xem chi tiết">Chi tiết</a>
+                                <button type="button" class="btn btn-warning" onclick="editHouse(${data.id})">Chỉnh sửa</button>
+                                <button type="button" class="btn btn-danger" onclick="deleteHouse(${data.id})">Xóa</button>
                             </p>
                         </div>
                     </div>
@@ -450,31 +448,9 @@ function houseItem(data) {
     `;
 }
 
-
-/*
- {
-        Name: string,
-        Option: int,
-        Description: string,
-        People: int,
-        BedRoom: int,
-        BathRoom: int,
-        Square: int,
-        Location: string,
-        Lat: float,
-        Lng: float,
-        IdCity: int,
-        IdDistrict: int,
-        IdWard: int,
-        Price: null,
-        Utilities: [int, int, int..],
-        Rules: [int, int, int, ..],
-        Images: [
-			{
-			name: string,
-			data: string,
-			folder: string
-			}
-		]
-    };
-*/
+function reloadPage() {
+    $("#list-house").html(null);
+    for (let e in listHouse) {
+        $("#list-house").append(houseItem(listHouse[e]));
+    }
+}

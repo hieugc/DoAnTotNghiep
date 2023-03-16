@@ -1,11 +1,26 @@
 ﻿@model DoAnTotNghiep.ViewModels.DetailHouseViewModel
 @using DoAnTotNghiep.Enum;
+@{
+    int count = 1;
+}
 
 
 <div class="card mb-3 status-@Model.Status">
     <div class="row g-0">
         <div class="col-md-8">
-            <img src="~/Image/logo.png" class="img-fluid rounded-start" alt="hình ảnh nhà">
+            @if(Model.Images.Any())
+            {
+                foreach(var item in Model.Images)
+                {
+                    if(item != null && count ++ == 1){
+                        <img src="@item.Data" class="img-fluid rounded-start" alt="hình ảnh nhà">
+                    }
+                }
+            }
+            else
+            {
+                <img src="~/Image/logo.png" class="img-fluid rounded-start" alt="hình ảnh nhà">
+            }
         </div>
         <div class="col-md-4">
             <div class="card-body">
@@ -39,7 +54,7 @@
                 </div>
                 <p class="card-text">@Model.Location</p>
                 <p class="card-control">
-                    <a href="@Url.Action("Detail", "House", new{Id = Model.Id})" class="btn btn-primary" title="Xem chi tiết">Chi tiết</a>
+                    <a href="@Url.Action("HouseOverView", "Houses", new{Id = Model.Id})" class="btn btn-primary" title="Xem chi tiết">Chi tiết</a>
                     @if (Model.Status != (int)Status.SWAPPED)
                     {
                         <button type="button" class="btn btn-warning" onclick="editHouse(@Model.Id)">Chỉnh sửa</button>

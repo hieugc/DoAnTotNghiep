@@ -24,6 +24,9 @@
     <link rel="stylesheet" href="~/DoAnTotNghiep.styles.css" asp-append-version="true" />
     <link rel="shortcut icon" href="~/Image/tiny-logo.png" type="image/x-icon" />
 
+    <link rel="stylesheet" href="~/assets/vendor/fonts/boxicons.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+
     <!--Start Icon Kit-->
     <script src="https://kit.fontawesome.com/19075407b9.js" crossorigin="anonymous"></script>
     @*<link rel="stylesheet" href="https://kit.fontawesome.com/19075407b9.css" crossorigin="anonymous">*@
@@ -76,11 +79,11 @@
                             </div>
                         </div>
                         <div class="authorize">
-                            <div>
+                            <div id="tag_notification">
                                 <a class="position-relative" href="#" role="button" id="dropdownMenuNotification" data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="fa-solid fa-bell"></i>
                                     <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle">
-                                        <span class="visually-hidden">New alerts</span>
+                                        <span class="visually-hidden">new</span>
                                     </span>
                                 </a>
 
@@ -144,71 +147,15 @@
                                     </div>
                                 </div>
                             </div>
-                            <div>
+                            <div id="tag_chats">
                                 <a class="position-relative" href="#" role="button" id="dropdownMenuChat" data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="fa-solid fa-message"></i>
                                     <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle">
-                                        <span class="visually-hidden">New chats</span>
                                     </span>
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuNotification">
                                     <div class="title"><h5>Tin nhắn</h5></div>
-                                    <div class="alert-frame">
-                                        <div class="dropdown-item">
-                                            <div class="avt"><img src="~/Image/logo.png" alt="avt" /></div>
-                                            <div class="content">
-                                                <strong>Phạm Minh Hiếu</strong>
-                                                đã gửi yêu cầu trao đổi
-                                                <span class="time">17/02/2023</span>
-                                            </div>
-                                            <div class="status"><i class="fa-solid fa-circle"></i></div>
-                                        </div>
-                                        <div class="dropdown-item">
-                                            <div class="avt"><img src="~/Image/logo.png" alt="avt" /></div>
-                                            <div class="content">
-                                                <span class="user-info">Phạm Minh Hiếu</span>
-                                                <span> đã gửi yêu cầu trao đổi</span>
-                                                <span class="time">17/02/2023</span>
-                                            </div>
-                                            <div class="status seen"><i class="fa-solid fa-circle"></i></div>
-                                        </div>
-                                        <div class="dropdown-item">
-                                            <div class="avt"><img src="~/Image/logo.png" alt="avt" /></div>
-                                            <div class="content">
-                                                <span class="user-info">Phạm Minh Hiếu</span>
-                                                <span> đã gửi yêu cầu trao đổi</span>
-                                                <span class="time">17/02/2023</span>
-                                            </div>
-                                            <div class="status"><i class="fa-solid fa-circle"></i></div>
-                                        </div>
-                                        <div class="dropdown-item">
-                                            <div class="avt"><img src="~/Image/logo.png" alt="avt" /></div>
-                                            <div class="content">
-                                                <span class="user-info">Phạm Minh Hiếu</span>
-                                                <span> đã gửi yêu cầu trao đổi</span>
-                                                <span class="time">17/02/2023</span>
-                                            </div>
-                                            <div class="status seen"><i class="fa-solid fa-circle"></i></div>
-                                        </div>
-                                        <div class="dropdown-item">
-                                            <div class="avt"><img src="~/Image/logo.png" alt="avt" /></div>
-                                            <div class="content">
-                                                <span class="user-info">Phạm Minh Hiếu</span>
-                                                <span> đã gửi yêu cầu trao đổi</span>
-                                                <span class="time">17/02/2023</span>
-                                            </div>
-                                            <div class="status"><i class="fa-solid fa-circle"></i></div>
-                                        </div>
-                                        <div class="dropdown-item">
-                                            <div class="avt"><img src="~/Image/logo.png" alt="avt" /></div>
-                                            <div class="content">
-                                                <span class="user-info">Phạm Minh Hiếu</span>
-                                                <span> đã gửi yêu cầu trao đổi</span>
-                                                <span class="time">17/02/2023</span>
-                                            </div>
-                                            <div class="status seen"><i class="fa-solid fa-circle"></i></div>
-                                        </div>
-                                    </div>
+                                    <div class="alert-frame"></div>
                                 </div>
                             </div>
                             <div class="avt">
@@ -219,7 +166,7 @@
                                     }
                                     else
                                     {
-                                        <img src="~/Image/logo.png" alt="avatar" />
+                                        <span><i class="fa-solid fa-circle-info"></i></span>
                                     }
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuMember">
@@ -254,25 +201,10 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/Nav/nav.js" type="text/javascript"></script>
 
-    @if(role != Role.UnAuthorize())
+    @if (role != Role.UnAuthorize())
     {
-        <script src="~/lib/microsoft/signalr/dist/browser/signalr.js" type="text/javascript"></script>
-        <script src="~/js/Chat/connect.js" type="text/javascript"></script>
-
-        <script type="text/javascript">
-            connection.on("@(DoAnTotNghiep.Enum.TargetSignalR.Connect() + "-" + (userInfo == null ? string.Empty : userInfo.UserAccess))", function (message) {
-                console.log(message);
-                connectServer({ idRoom: message, connectionId: connection.connectionId }, 0, 10);
-            });
-        </script>
+        @(Html.Partial("~/Views/PartialView/_Authorized.cshtml", userInfo))
     }
-
-    <div class="notification" id="toastPlacement">
-        <div class="toast-header"><strong class="me-auto" id="notification-head"></strong></div>
-        <div class="toast-body" id="notification-body"></div>
-    </div>
-
-
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

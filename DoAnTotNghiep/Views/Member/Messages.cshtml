@@ -18,23 +18,18 @@
 *@
 
 <div class="Messages">
-    <ul class="list-user">
-        @foreach(var item in Model)
-        {
-            if(count++ == 1)
+    @if(Model.Count() == 0)
+    {
+        <img src="~/Image/emptyPage.jpg" alt="EmptyPage" style="width: 100%; height: 100%; object-fit: cover"/>
+    }
+    else
+    {
+        <ul class="list-user">
+            @foreach (var item in Model)
             {
-                <li class="user user-@item.Key active" onclick="loadMessages(@item.Key, this)">
-                    <a href="#message-@item.Key">
-                        <span class="avt"><img src="@item.Value.UserMessages.First().ImageUrl" alt="avatar" /></span>
-                        <span class="name">@item.Value.UserMessages.First().UserName</span>
-                    </a>
-                </li>
-            }
-            else
-            {
-                if (item.Value.Messages.First().IsSeen)
+                if (count++ == 1)
                 {
-                    <li class="user user-@item.Key" onclick="loadMessages(@item.Key, this)">
+                    <li class="user user-@item.Key active" onclick="loadMessages(@item.Key, this)">
                         <a href="#message-@item.Key">
                             <span class="avt"><img src="@item.Value.UserMessages.First().ImageUrl" alt="avatar" /></span>
                             <span class="name">@item.Value.UserMessages.First().UserName</span>
@@ -43,50 +38,111 @@
                 }
                 else
                 {
-                    <li class="user user-@item.Key new-message" onclick="loadMessages(@item.Key, this)">
-                        <a href="#message-@item.Key">
-                            <span class="avt"><img src="@item.Value.UserMessages.First().ImageUrl" alt="avatar" /></span>
-                            <span class="name">@item.Value.UserMessages.First().UserName</span>
-                        </a>
-                    </li>
+                    if (!item.Value.Messages.Any() || item.Value.Messages.First().IsSeen)
+                    {
+                        <li class="user user-@item.Key" onclick="loadMessages(@item.Key, this)">
+                            <a href="#message-@item.Key">
+                                <span class="avt"><img src="@item.Value.UserMessages.First().ImageUrl" alt="avatar" /></span>
+                                <span class="name">@item.Value.UserMessages.First().UserName</span>
+                            </a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="user user-@item.Key new-message" onclick="loadMessages(@item.Key, this)">
+                            <a href="#message-@item.Key">
+                                <span class="avt"><img src="@item.Value.UserMessages.First().ImageUrl" alt="avatar" /></span>
+                                <span class="name">@item.Value.UserMessages.First().UserName</span>
+                            </a>
+                        </li>
+                    }
                 }
             }
-        }
-        @{
-            count = 1;
-        }
-    </ul>
-    <div class="tab-message">
-        @foreach(var item in Model)
-        {
-            if(count++ == 1)
+            @{
+                count = 1;
+            }
+        </ul>
+        <div class="tab-message">
+            @foreach (var item in Model)
             {
-                var prev = item.Value.UserMessages.First().UserAccess;
-                List<string> show = new List<string>();
-                <div class="tab-content" id="message-@item.Key">
-                    <div class="top-tab-message">
-                        <div class="user-name">@item.Value.UserMessages.First().UserName</div>
-                        <div class="request">
-                            <label class=" position-relative">
-                                <i class="fa-solid fa-bullhorn"></i>
-                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                    !
-                                    <span class="visually-hidden">unread messages</span>
-                                </span>
-                            </label>
+                if (count++ == 1)
+                {
+                    var prev = item.Value.UserMessages.First().UserAccess;
+                    List<string> show = new List<string>();
+                    <div class="tab-content" id="message-@item.Key">
+                        <div class="top-tab-message">
+                            <div class="user-name">@item.Value.UserMessages.First().UserName</div>
+                            <div class="request">
+                                <label class=" position-relative">
+                                    <i class="fa-solid fa-bullhorn"></i>
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                        !
+                                        <span class="visually-hidden">unread messages</span>
+                                    </span>
+                                </label>
+                            </div>
                         </div>
-                    </div>
-                    <div class="list-message">
-                        @foreach(var message in item.Value.Messages)
-                        {
-                            if(prev == message.IdSend)
+                        <div class="list-message" onscroll="scrollLoad(this, @item.Key)">
+                            @foreach (var message in item.Value.Messages)
                             {
-                                show.Add(message.Message);
+                                if (prev == message.IdSend)
+                                {
+                                    show.Add(message.Message);
+                                }
+                                else
+                                {
+                                    //show message
+                                    if (prev == seftAccess.UserAccess && show.Count() > 0)
+                                    {
+                                        <div class="user-chat">
+                                            <div class="chat-head">
+                                                @if (string.IsNullOrEmpty(item.Value.UserMessages.First().ImageUrl))
+                                                {
+                                                    <div class="avt"><img src="~/Image/logo.png" alt="avatar" /></div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="avt"><img src="@seftAccess.ImageUrl" alt="avatar" /></div>
+                                                }
+                                                <div class="user-name">@seftAccess.UserName</div>
+                                            </div>
+                                            <div class="message-frame">
+                                                @foreach (var chat in show)
+                                                {
+                                                    <div class="chat"><span>@chat</span></div>
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+                                    else if (show.Count() > 0)
+                                    {
+                                        <div class="other user-chat">
+                                            <div class="chat-head">
+                                                @if (string.IsNullOrEmpty(item.Value.UserMessages.First().ImageUrl))
+                                                {
+                                                    <div class="avt"><img src="~/Image/logo.png" alt="avatar" /></div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="avt"><img src="@item.Value.UserMessages.First().ImageUrl" alt="avatar" /></div>
+                                                }
+                                                <div class="user-name">@item.Value.UserMessages.First().UserName</div>
+                                            </div>
+                                            <div class="message-frame">
+                                                @foreach (var chat in show)
+                                                {
+                                                    <div class="chat"><span>@chat</span></div>
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+                                    show = new List<string>() { message.Message };
+                                    prev = message.IdSend;
+                                }
                             }
-                            else
+                            @if (show.Any())
                             {
-                                //show message
-                                if (prev == seftAccess.UserAccess && show.Count() > 0)
+                                if (prev == seftAccess.UserAccess)
                                 {
                                     <div class="user-chat">
                                         <div class="chat-head">
@@ -98,17 +154,17 @@
                                             {
                                                 <div class="avt"><img src="@seftAccess.ImageUrl" alt="avatar" /></div>
                                             }
-                                            <div class="user-name">@item.Value.UserMessages.First().UserName</div>
+                                            <div class="user-name">@seftAccess.UserName</div>
                                         </div>
                                         <div class="message-frame">
-                                            @foreach(var chat in show)
+                                            @foreach (var chat in show)
                                             {
                                                 <div class="chat"><span>@chat</span></div>
                                             }
                                         </div>
                                     </div>
                                 }
-                                else if (show.Count() > 0)
+                                else
                                 {
                                     <div class="other user-chat">
                                         <div class="chat-head">
@@ -130,93 +186,37 @@
                                         </div>
                                     </div>
                                 }
-                                show = new List<string>() { message.Message };
-                                prev = message.IdSend;
                             }
-                        }
-                        @if (show.Any())
-                        {
-                            if (prev == seftAccess.UserAccess)
-                            {
-                                <div class="user-chat">
-                                    <div class="chat-head">
-                                        @if (string.IsNullOrEmpty(item.Value.UserMessages.First().ImageUrl))
-                                        {
-                                            <div class="avt"><img src="~/Image/logo.png" alt="avatar" /></div>
-                                        }
-                                        else
-                                        {
-                                            <div class="avt"><img src="@seftAccess.ImageUrl" alt="avatar" /></div>
-                                        }
-                                        <div class="user-name">@item.Value.UserMessages.First().UserName</div>
-                                    </div>
-                                    <div class="message-frame">
-                                        @foreach (var chat in show)
-                                        {
-                                            <div class="chat"><span>@chat</span></div>
-                                        }
-                                    </div>
+                        </div>
+                        <div class="bot-tab-message">
+                            <div class="tooltip-control dropup">
+                                <button type="button" class="control-label" data-bs-toggle="dropdown"><i class="fa-solid fa-plus"></i></button>
+                                <div class="control-frame dropdown-menu">
+                                    <div class="request dropdown-item" data-bs-toggle="modal" data-bs-target="#messageRequestModal">Tạo yêu cầu</div>
+                                    <div class="dropdown-item"><label for="image-send">Thêm ảnh</label><input type="file" name="image-send" id="image-send" hidden /></div>
                                 </div>
-                            }
-                            else
-                            {
-                                <div class="other user-chat">
-                                    <div class="chat-head">
-                                        @if (string.IsNullOrEmpty(item.Value.UserMessages.First().ImageUrl))
-                                        {
-                                            <div class="avt"><img src="~/Image/logo.png" alt="avatar" /></div>
-                                        }
-                                        else
-                                        {
-                                            <div class="avt"><img src="@item.Value.UserMessages.First().ImageUrl" alt="avatar" /></div>
-                                        }
-                                        <div class="user-name">@item.Value.UserMessages.First().UserName</div>
-                                    </div>
-                                    <div class="message-frame">
-                                        @foreach (var chat in show)
-                                        {
-                                            <div class="chat"><span>@chat</span></div>
-                                        }
-                                    </div>
-                                </div>
-                            }
-                        }
-                    </div>
-                    <div class="bot-tab-message">
-                        <div class="tooltip-control dropup">
-                            <button type="button" class="control-label" data-bs-toggle="dropdown"><i class="fa-solid fa-plus"></i></button>
-                            <div class="control-frame dropdown-menu">
-                                <div class="request dropdown-item" data-bs-toggle="modal" data-bs-target="#messageRequestModal">Tạo yêu cầu</div>
-                                <div class="dropdown-item"><label for="image-send">Thêm ảnh</label><input type="file" name="image-send" id="image-send" hidden /></div>
+                            </div>
+
+                            <div class="frame-control">
+                                <textarea rows="1" maxlength="500" class="form-control" name="input-message-@item.Key" id="input-message-@item.Key" placeholder="Tin nhắn" oninput="changeHeight(this)"></textarea>
+                                <button type="button" class="btn btn-primary" onclick="SendMessage('@item.Key')"><i class="fa-solid fa-paper-plane"></i></button>
                             </div>
                         </div>
-
-                        <div class="frame-control">
-                        <textarea rows="1" maxlength="500" class="form-control" name="input-message-@item.Key" id="input-message-@item.Key" placeholder="Tin nhắn"></textarea>
-                            <button type="button" class="btn btn-primary" onclick="SendMessage('@item.Key')"><i class="fa-solid fa-paper-plane"></i></button>
-                        </div>
                     </div>
-                </div>
+                }
             }
-        }
-    </div>
+        </div>
+    }
 </div>
 
 @section Scripts{
     <link rel="stylesheet" href="~/css/Member/message.css">
-    @*<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>*@
     <script type="text/javascript">
         var chatRoom = @Html.Raw(Json.Serialize(Model));
-        var userAccess = @Html.Raw(Json.Serialize(seftAccess));
     </script>
     @if(Model.Any()){
         <script type="text/javascript">
             chatRoom[@Model.Keys.First()]["isInit"] = true;
-            for (e in chatRoom) {
-                chatRoomData[chatRoom[e]] = chatRoom[e];
-            }
         </script>
     }
     <script type="text/javascript" src="~/js/Chat/loadChat.js"></script>

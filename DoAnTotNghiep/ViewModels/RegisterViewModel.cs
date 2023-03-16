@@ -65,6 +65,11 @@ namespace DoAnTotNghiep.ViewModels
         public string ConfirmPassword { get; set; } = string.Empty;
     }
 
+    public class TokenModel
+    {
+        public string token { get; set; } = string.Empty;
+        public DateTime expire { get; set; } = DateTime.Now;
+    }
 
 
     public class UpdatePasswordViewModel

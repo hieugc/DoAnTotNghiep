@@ -47,7 +47,7 @@ namespace DoAnTotNghiep.Modules
 
             var credentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256);
 
-            var expirationDate = DateTime.UtcNow.AddMinutes(15);
+            var expirationDate = DateTime.UtcNow.AddMonths(1);
 
             return new JwtSecurityToken(
                 issuer: issuer,

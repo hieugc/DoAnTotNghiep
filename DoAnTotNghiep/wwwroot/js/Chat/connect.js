@@ -3,78 +3,58 @@ var connection = new signalR.HubConnectionBuilder().withUrl(window.location.orig
 var chatRoomData = {}
 var listRoom = null;
 
-
 connection.start().then(function () {
-    if ($.cookie("ChatRoom") != undefined && $.cookie("ChatRoom").length > 0) {
-        listRoom = $.cookie("ChatRoom").split(",");
-        let data = { connectionId: connection.connectionId };
-        connectServer(data, 0, 1);
-    }
-    else {
-        $.ajax({
-            url: window.location.origin + '/ChatRoom',
-            contentType: "application/json",
-            type: "GET",
-            success: function (result) {
-                console.log(result);
-                if (result.status == 200) {
-                    listRoom = result.data;
-                    let data = { connectionId: connection.connectionId };
-                    connectServer(data, 0, 1);
-                }
-            },
-            error: function (xhr, status, error) {
-                console.log(xhr);
-                console.log(status);
-                console.log(error);
-            }
-        });
-    }
+    let connectionid = connection.connection.connectionId;
+    //>>>kết nối tất cả phòng => lấy danh sách người dùng kèm 1 tin nhắn mới nhất
+    connectServer(connectionid);
+
 }).catch(function (err) {
     return console.error(err.toString());
 });
-
 connection.on("ReceiveMessages", function (message) {
+
+    updateNoti(message);
     if (window.location.href.indexOf("Member/Messages") != -1) {
-        //nếu đang trong message =>
-        console.log(message);
         let tag = ".user-" + message.idRoom;
-        console.log($(tag));
-        if ($(tag)[0].classList.value.indexOf("active") != -1) {
-            let idAccess = message.message.idSend;
-            let isContinue = true;
-            if (chatRoomData[message.idRoom].messages.length > 0) {
-                isContinue = (chatRoomData[message.idRoom].messages[0].idSend == idAccess);
+        console.log($(tag)[0].classList.value.indexOf("active"));
+        //>>>nếu trong khung chat
+        if ($(tag).length != 0) {
+            let idAccess = message.messages[0].idSend;
+            let isContinue = false;
+            if (chatRoom[message.idRoom].messages.length > 0) {
+                isContinue = (chatRoom[message.idRoom].messages[0].idSend == idAccess);
                 console.log(isContinue);
             }
-            //show chat
-            addMessage(message.message, message.idRoom, (userAccess.userAccess == idAccess), isContinue);
+            addMessage(message.messages[0], message.idRoom, (userAccess.userAccess == idAccess), isContinue);
+
+            prependNewMessage(tag);
         }
-        chatRoomData[message.idRoom].messages.unshift(message.message);
-        $(tag).addClass("new-message");
-        console.log(message);
+        listRoom = message;
+        if (message.idRoom in chatRoom) {
+            chatRoom[idRoom].messages = [].concat(message.messages, chatRoom[idRoom].messages);
+        }
+        else {
+            chatRoom[message.idRoom] = message;
+        }
     }
     else {
-        //không trong message show notification =>
         let userName = chatRoomData[message.idRoom].userMessages[0].userName;
         showNotification(userName, message.message.message, 1);
-        chatRoomData[message.idRoom].messages.unshift(message.message);
-        console.log(message);
     }
-    //ghi lại cookie =>
-    /* Cập nhật cho notification => show 1 chat */
-    let data = {
-        idRoom: message.idRoom,
-        userMessages: chatRoomData[message.idRoom].userMessages,
-        messages: [chatRoomData[message.idRoom].messages[0]]
-    };
+});
+function connectServer(connectionId) {
     $.ajax({
-        url: window.location.origin + '/UpdateCookie',
-        data: JSON.stringify(data),
+        url: window.location.origin + '/ConnectAllChat',
+        data: JSON.stringify(connectionId),
         contentType: "application/json",
         type: "POST",
         success: function (result) {
             console.log(result);
+            if (result.status == 200) {
+                chatRoomData = result.data;
+                //>>> update thông báo tin nhắn
+                intiChatNotification();
+            }
         },
         error: function (xhr, status, error) {
             console.log(xhr);
@@ -82,31 +62,27 @@ connection.on("ReceiveMessages", function (message) {
             console.log(error);
         }
     });
-});
+}
+function connectServerWithRoom(connectionId, idRoom) {
+    let data = {
+        connectionId: connectionId,
+        idRoom: idRoom
+    };
 
-function connectServer(data, start, length) {
     $.ajax({
-        url: window.location.origin + '/Connect',
+        url: window.location.origin + '/Message/ConnectToRoom',
         data: JSON.stringify(data),
         contentType: "application/json",
         type: "POST",
         success: function (result) {
             console.log(result);
             if (result.status == 200) {
-                getChatRoomData();
-                for (let e in listRoom) {
-                    if (chatRoomData[listRoom[e]] == undefined) {
-                        let data = {
-                            idRoom: listRoom[e],
-                            rangeRoom: {
-                                start: start,
-                                length: length
-                            }
-                        }
-                        if (data.idRoom != "" && parseInt(data.idRoom) != NaN) {
-                            getMessage(data, null);
-                        }
-                    }
+                //cập nhật chatRoomData
+                if (idRoom in chatRoomData) {
+                    chatRoomData[idRoom].messages = result.data.messages;
+                }
+                else {
+                    chatRoomData[idRoom] = result.data;
                 }
             }
         },
@@ -117,35 +93,86 @@ function connectServer(data, start, length) {
         }
     });
 }
-function getMessage(data, func) {
-    $.ajax({
-        url: window.location.origin + '/MessagesInChatRoom',
-        data: JSON.stringify(data),
-        contentType: "application/json",
-        type: "POST",
-        success: function (result) {
-            getChatRoomData();
-            if (func != null && func != undefined) {
-                func;
-            }
-        },
-        error: function (xhr, status, error) {
-            console.log(xhr);
-            console.log(status);
-            console.log(error);
-        }
-    });
-}
-function getChatRoomData() {
-    let string = $.cookie("DataChat");
-    if (string != null && string != undefined && string.indexOf("{") != -1) {
-        chatRoomData = JSON.parse(string.replaceAll("ImageUrl", "imageUrl")
-            .replaceAll("IdRoom", "idRoom")
-            .replaceAll("User", "user")
-            .replaceAll("Message", "message")
-            .replaceAll("usermessage", "userMessage")
-            .replaceAll("IsSeen", "isSeen")
-            .replaceAll("Id", "id")
-            .replaceAll("CreatedDate", "createdDate"));
+function notiUserName(user, idSend) {
+    if (user.userAccess == idSend) {
+        return user.userName.trim().split(" ").pop();
     }
+    return "Bạn";
+}
+function htmlChatNotification(user, chat, idRoom) {
+    let str = `<div class="dropdown-item message-${idRoom}">`;
+    if (user.imageUrl != null) {
+        str += `<div class="avt"><img src="${user.imageUrl}" alt="avt" /></div>`;
+    }
+    else {
+        str += `<span class="avt"><span><i class="fa-solid fa-circle-info"></i></span></span>`;
+    }
+    str += `<div class="content"><strong>${user.userName}</strong><small> đã gửi tin nhắn</small>
+            <div style="margin: 6px 0;" class="message-${idRoom}"><small><strong>${notiUserName(user, chat.idSend)}</strong></small>: ${chat.message}</div >
+            <small class="time">${chat.createdDate}</small></div>`;
+    if (!chat.isSeen) {
+        str += `<div class="status"><i class="fa-solid fa-circle"></i></div>`;
+    }
+    str += `</div>`;
+    return str;
+}
+function showNewSignal(tag_element) {
+    $(tag_element + " span").css("opacity", 1);
+}
+function hideNewSignal(tag_element) {
+    $(tag_element + " span").css("opacity", 0);
+}
+function intiChatNotification() {
+    let isNew = false;
+    //nếu tất cả là true => 
+    for (let e in chatRoomData) {
+        if (chatRoomData[e].messages.length > 0) {
+            if (chatRoomData[e].messages.isSeen == false) {
+                isNew = true;
+                break;
+            }
+        }
+    }
+
+    //thêm chat
+    for (let e in chatRoomData) {
+        if (chatRoomData[e].messages.length > 0) {
+            $("#tag_chats .alert-frame").append(htmlChatNotification(chatRoomData[e].userMessages[0], chatRoomData[e].messages[0], chatRoomData[e].idRoom));
+        }
+    }
+    if (isNew == true) {
+        showNewSignal("#tag_chats #dropdownMenuChat");
+    }
+    else {
+        hideNewSignal("#tag_chats #dropdownMenuChat");
+    }
+}
+function prependNewNotification(tag) {
+    let temp = $(tag);
+    $(tag).remove();
+    $("#tag_chats .alert-frame").prepend(temp);
+    showNewSignal("#tag_chats #dropdownMenuChat");
+}
+function updateNoti(data) {
+    //cập nhật lại chatRoomData
+    if (data.idRoom in chatRoomData) {
+        chatRoomData[data.idRoom].messages = data.messages;
+    }
+    else {
+        chatRoomData[data.idRoom] = data;
+    }
+    console.log("Hy");
+    console.log(data);
+    let tag_message = ".message-" + data.idRoom;
+
+    $(".dropdown-item" + tag_message + " " + tag_message)
+        .html(`<div style="margin: 6px 0;" class="message message-${data.idRoom}"><small><strong>${notiUserName(data.userMessages[0], data.messages[0].idSend)}</strong></small>: ${data.messages[0].message}</div >`);
+    prependNewNotification(".dropdown-item" + tag_message);
+}
+
+
+function getChatRoom() {
+    //gọi ajax load phòng
+    //cập nhật vào chatRoomData
+    //cập nhật vào chatRoom nếu có
 }

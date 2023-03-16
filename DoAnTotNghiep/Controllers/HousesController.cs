@@ -35,131 +35,9 @@ namespace DoAnTotNghiep.Controllers
             this.environment = environment;
             _configuration = configuration;
         }
-        private DetailHouseViewModel? GetDetailsHouse(int Id, int status)
-        {
-            var house = this._context.Houses.Include(m => m.RulesInHouses)
-                                                .Include(m => m.UtilitiesInHouses)
-                                                .Include(m => m.Citys)
-                                                .Include(m => m.Districts)
-                                                .Include(m => m.Wards)
-                                                .Include(m => m.Requests)
-                                                .Include(m => m.FileOfHouses)
-                                                .Include(m => m.Files)
-                                                .FirstOrDefault(m => m.Id == Id && m.Status == status);
-            if(house == null) return null;
-            byte[] salt = Crypto.Salt(this._configuration);
-            DetailHouseViewModel model = DetailHouseViewModel.GetByHouse(house, salt);
-            if(house.Files != null)
-            {
-                string host = this.GetWebsitePath();
-                var images = house.Files.Select(m => new ImageBase
-                {
-                    Id = m.Id,
-                    Data = string.Empty,
-                    Folder = host + "/" + m.PathFolder + "/" + m.FileName,
-                    Name = m.FileName
-                });
-                model.Images.AddRange(images);
-            }
-            return model;
-        }
-
-        //getpopularhouse
-        [HttpGet("/api/GetPopularCity")]
-        [AllowAnonymous]
-        public JsonResult GetPopularCity(int number = 10)
-        {
-            string host = this.GetWebsitePath();
-            List<PopularCityViewModel> cityList = this._context.Cities
-                                               .OrderBy(m => m.Count)
-                                               .Take(number)
-                                               .Select(m => new PopularCityViewModel()
-                                               {
-                                                   Name = m.Name,
-                                                   Id = m.Id,
-                                                   ImageUrl = host + "/Image/logo.png",
-                                                   IsDeleted = false,
-                                                   Location = new PointViewModel()
-                                                   {
-                                                       Lat = m.Lat,
-                                                       Lng = m.Lng
-                                                   }
-
-                                               })
-                                               .ToList();
-
-            return Json(
-                new
-                {
-                    StatusCode = 200,
-                    Message = "Get Successfully",
-                    Data = cityList
-                }
-            );
-        }
-
-        [AllowAnonymous]
-        public IActionResult Details(int Id)
-        {
-            //kiểm tra người dùng có phải chủ nhân không
-            // => có => show kể cả status gì
-            // => không thì chỉ cho xem (int) Status.VALID
-            // => ! (int) Status.VALID => NotFound()
-
-            //var model = this.GetDetailsHouse(Id, (int)Status.VALID);
-            //if(model == null) return NotFound();
-            //return View(model);
-            string? key = this._configuration.GetConnectionString(SystemKey.Base64());
-            key = (key == null ? string.Empty : key).PadRight(32, '*');
-            byte[] salt = Encoding.ASCII.GetBytes(key);
-            ViewData["Id"] = Crypto.EncodeKey("1", salt);
-            return View();
-        }
-
-        [HttpGet("/api/GetPoplarHouse")]
-        public JsonResult GetPopularHouse(int number = 10)
-        {
-            var listHouse = this._context.Houses.Take(number).ToList();
-            byte[] salt = Crypto.Salt(this._configuration);
-            string host = this.GetWebsitePath();
-            List<DetailHouseViewModel> res = new List<DetailHouseViewModel>();
-            foreach (var item in listHouse)
-            {
-                DetailHouseViewModel model = DetailHouseViewModel.GetByHouse(item, salt);
-                if (item.Files != null)
-                {
-                    var images = item.Files.Select(m => new ImageBase
-                    {
-                        Id = m.Id,
-                        Data = string.Empty,
-                        Folder = host + "/" + m.PathFolder + "/" + m.FileName,
-                        Name = m.FileName
-                    });
-                    model.Images.AddRange(images);
-                }
-                res.Add(model);
-            }
-            return Json(res);
-        }
 
 
-        [AllowAnonymous]
-        [HttpGet("/api/House/Details")]
-        public IActionResult ApiDetails(int Id)
-        {
-            var model = this.GetDetailsHouse(Id, (int)Status.VALID);
-            if (model == null) return Json(new
-            {
-                Status = 404,
-                Message = "Không tìm thấy nhà"
-            });
-            return Json(new
-            {
-                Status = 200,
-                Data = model
-            });
-        }
-
+        //create
         private async Task<DetailHouseViewModel> CreateHouse(CreateHouse data)
         {
             if (ModelState.IsValid)
@@ -182,12 +60,13 @@ namespace DoAnTotNghiep.Controllers
                                 Lat = data.Lat,
                                 Lng = data.Lng,
                                 Price = data.Price,
-                                IdCity = 1,
-                                IdDistrict = 1,
-                                IdWard = 1,
+                                IdCity = (data.IdCity == 0? 1: data.IdCity),
+                                IdDistrict = data.IdDistrict,
+                                IdWard = data.IdWard,
                                 Rating = 0,
                                 IdUser = this.GetIdUser(),
-                                Status = (int)DoAnTotNghiep.Enum.Status.PENDING
+                                Status = (int)DoAnTotNghiep.Enum.Status.PENDING,
+                                StreetAddress = data.Location
                             };
 
                             Context.Houses.Add(house);
@@ -209,7 +88,6 @@ namespace DoAnTotNghiep.Controllers
                             Context.SaveChanges();
 
                             //thêm utilities
-
                             List<UtilitiesInHouse> utilities = new List<UtilitiesInHouse>();
                             foreach (var item in data.Utilities)
                             {
@@ -227,7 +105,7 @@ namespace DoAnTotNghiep.Controllers
                             //thêm hình
                             List<Entity.File> files = new List<Entity.File>();
 
-                            if(data.Files == null)
+                            if (data.Files == null)
                             {
                                 files.AddRange(this.CreateListFile(data.Images));
                             }
@@ -256,16 +134,19 @@ namespace DoAnTotNghiep.Controllers
 
                             byte[] salt = Crypto.Salt(this._configuration);
 
-                            DetailHouseViewModel detailHouseViewModel = DetailHouseViewModel.GetByHouse(house, salt);
+                            DetailHouseViewModel detailHouseViewModel = new DetailHouseViewModel(house, salt);
                             detailHouseViewModel.Rules = data.Rules;
                             detailHouseViewModel.Utilities = data.Utilities;
-                            detailHouseViewModel.Images = data.Images;
+                            string host = this.GetWebsitePath();
+                            List<ImageBase> images = new List<ImageBase>();
+                            foreach (var item in files) images.Add(new ImageBase(item, host));
+
+                            detailHouseViewModel.Images.AddRange(images);
                             return detailHouseViewModel;
                         }
                         catch (Exception ex)
                         {
                             transaction.Rollback();
-                            Console.WriteLine(ex);
                             return new DetailHouseViewModel() { Id = 0 };
                         }
                     }
@@ -276,7 +157,7 @@ namespace DoAnTotNghiep.Controllers
         private List<Entity.File> CreateListFile(IFormFileCollection? data)
         {
             List<Entity.File> files = new List<Entity.File>();
-            if(data != null)
+            if (data != null)
             {
                 foreach (var item in data)
                 {
@@ -308,8 +189,6 @@ namespace DoAnTotNghiep.Controllers
             }
             return files;
         }
-
-
         [HttpPost("House/Create")]
         [ValidateAntiForgeryToken]//test lại
         public async Task<JsonResult> Create([FromBody] CreateHouseViewModel data)
@@ -338,21 +217,21 @@ namespace DoAnTotNghiep.Controllers
             });
         }
         [HttpPost("/api/House/Create")]//test lại
-        public async Task<IActionResult> ApiCreate([FromBody] MobileCreateHouseViewModel data)
+        public async Task<IActionResult> ApiCreate(MobileCreateHouseViewModel data)
         {
             DetailHouseViewModel returnCode = await this.CreateHouse(new CreateHouse(data, null));
             switch (returnCode.Id)
             {
                 case -1:
-                    return Json(new
+                    return BadRequest(new
                     {
                         Status = 400,
                         Message = this.ModelErrors()
                     });
                 case 0:
-                    return Json(new
+                    return BadRequest(new
                     {
-                        Status = HttpStatusCode.InternalServerError,
+                        Status = 500,
                         Message = "Ứng dụng tạm thời bảo trì"
                     });
             }
@@ -360,10 +239,13 @@ namespace DoAnTotNghiep.Controllers
             {
                 Status = 200,
                 Message = "Đã khởi tạo thành công",
-                Data = returnCode
+                Data = new { }
             });
         }
-        private async Task<IActionResult> EditHouse(EditHouseViewModel data)
+
+
+        //update
+        private async Task<IActionResult> EditHouse(EditHouse data)
         {
             if (ModelState.IsValid)
             {
@@ -381,7 +263,7 @@ namespace DoAnTotNghiep.Controllers
                                                         .ToList();
                             if (listHouse == null || listHouse.Count < 1)
                             {
-                                return Json(new
+                                return BadRequest(new
                                 {
                                     Status = 404,
                                     Message = "Không tìm thấy nhà"
@@ -424,12 +306,20 @@ namespace DoAnTotNghiep.Controllers
                             }
                             else
                             {
-                                List<RulesInHouse> ruleUpdate = model.RulesInHouses.Where(m => !data.Rules.Contains(m.IdRules)).ToList();
-                                foreach (var item in ruleUpdate)
+                                List<RulesInHouse> ruleUpdateFalse = model.RulesInHouses.Where(m => !data.Rules.Contains(m.IdRules)).ToList();
+                                foreach (var item in ruleUpdateFalse)
                                 {
                                     item.Status = false;
                                 }
-                                Context.RulesInHouses.UpdateRange(ruleUpdate);
+                                Context.RulesInHouses.UpdateRange(ruleUpdateFalse);
+
+                                List<RulesInHouse> ruleUpdateTrue = model.RulesInHouses.Where(m => data.Rules.Contains(m.IdRules)).ToList();
+                                foreach (var item in ruleUpdateTrue)
+                                {
+                                    item.Status = true;
+                                }
+                                Context.RulesInHouses.UpdateRange(ruleUpdateTrue);
+
 
                                 List<int> id = model.RulesInHouses.Where(m => data.Rules.Contains(m.IdRules)).Select(m => m.IdRules).ToList();
 
@@ -470,17 +360,24 @@ namespace DoAnTotNghiep.Controllers
                             }
                             else
                             {
-                                List<UtilitiesInHouse> utilitiesUpdate = model.UtilitiesInHouses.Where(m => !data.Utilities.Contains(m.IdUtilities)).ToList();
-                                foreach (var item in utilitiesUpdate)
+                                List<UtilitiesInHouse> utilitiesUpdateFalse = model.UtilitiesInHouses.Where(m => !data.Utilities.Contains(m.IdUtilities)).ToList();
+                                foreach (var item in utilitiesUpdateFalse)
                                 {
                                     item.Status = false;
                                 }
-                                Context.UtilitiesInHouse.UpdateRange(utilitiesUpdate);
+                                Context.UtilitiesInHouse.UpdateRange(utilitiesUpdateFalse);
+
+                                List<UtilitiesInHouse> utilitiesUpdateTrue = model.UtilitiesInHouses.Where(m => data.Utilities.Contains(m.IdUtilities)).ToList();
+                                foreach (var item in utilitiesUpdateTrue)
+                                {
+                                    item.Status = true;
+                                }
+                                Context.UtilitiesInHouse.UpdateRange(utilitiesUpdateTrue);
 
                                 List<int> id = model.UtilitiesInHouses.Where(m => data.Utilities.Contains(m.IdUtilities)).Select(m => m.IdUtilities).ToList();
 
                                 List<UtilitiesInHouse> utilities = new List<UtilitiesInHouse>();
-                                foreach (var item in id)
+                                foreach (var item in data.Utilities)
                                 {
                                     if (!id.Contains(item))
                                     {
@@ -499,12 +396,44 @@ namespace DoAnTotNghiep.Controllers
 
                             //thêm hình
                             List<Entity.File> files = new List<Entity.File>();
-                            List<int> idRemove = new List<int>();
-                            foreach (var item in data.Images)
+                            if (data.Files == null)
                             {
-                                if (item != null)
+                                List<int> idRemove = new List<int>();
+                                foreach (var item in data.Images)
                                 {
-                                    if (!string.IsNullOrEmpty(item.Data))
+                                    if (item != null)
+                                    {
+                                        if (!string.IsNullOrEmpty(item.Data) && (item.Id == null || item.Id == 0))
+                                        {
+                                            Entity.File? file = this.SaveFile(item);
+                                            if (file != null)
+                                            {
+                                                files.Add(file);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (item.Id != null && item.Id != 0)
+                                            {
+                                                idRemove.Add(item.Id.Value);
+                                            }
+                                        }
+                                    }
+                                }
+                                if (model.FileOfHouses != null)
+                                {
+                                    var deleteFileOfHouse = model.FileOfHouses
+                                                                .Where(m => m.IdHouse == model.Id && !idRemove.Contains(m.IdFile))
+                                                                .Select(m => m.IdFile);
+                                    List<Entity.File> deleteFiles = Context.Files.Where(m => deleteFileOfHouse.Contains(m.Id)).ToList();
+                                    Context.Files.RemoveRange(deleteFiles);
+                                }
+                            }
+                            else
+                            {
+                                foreach (var item in data.Files)
+                                {
+                                    if (item != null)
                                     {
                                         Entity.File? file = this.SaveFile(item);
                                         if (file != null)
@@ -512,22 +441,15 @@ namespace DoAnTotNghiep.Controllers
                                             files.Add(file);
                                         }
                                     }
-                                    else
-                                    {
-                                        if (item.Id != null)
-                                        {
-                                            idRemove.Add(item.Id.Value);
-                                        }
-                                    }
                                 }
-                            }
-                            if (model.FileOfHouses != null)
-                            {
-                                var deleteFileOfHouse = model.FileOfHouses
-                                                            .Where(m => m.IdHouse == model.Id && !idRemove.Contains(m.IdFile))
-                                                            .Select(m => m.IdFile);
-                                List<Entity.File> deleteFiles = Context.Files.Where(m => deleteFileOfHouse.Contains(m.Id)).ToList();
-                                Context.Files.RemoveRange(deleteFiles);
+                                if (model.FileOfHouses != null)
+                                {
+                                    var deleteFileOfHouse = model.FileOfHouses
+                                                                .Where(m => m.IdHouse == model.Id && !data.IdRemove.Contains(m.IdFile))
+                                                                .Select(m => m.IdFile);
+                                    List<Entity.File> deleteFiles = Context.Files.Where(m => deleteFileOfHouse.Contains(m.Id)).ToList();
+                                    Context.Files.RemoveRange(deleteFiles);
+                                }
                             }
 
                             Context.Files.AddRange(files);
@@ -549,18 +471,39 @@ namespace DoAnTotNghiep.Controllers
                             Context.SaveChanges();
 
                             transaction.Commit();
+                            byte[] salt = Crypto.Salt(this._configuration);
+
+                            DetailHouseViewModel detailHouseViewModel = new DetailHouseViewModel(model, salt);
+                            detailHouseViewModel.Rules = data.Rules;
+                            detailHouseViewModel.Utilities = data.Utilities;
+                            string host = this.GetWebsitePath();
+                            List<ImageBase> images = new List<ImageBase>();
+                            Context.Entry(model).Collection(m => m.FileOfHouses).Query().Load();
+                            if (model.FileOfHouses != null)
+                            {
+                                foreach (var item in model.FileOfHouses)
+                                {
+                                    Context.Entry(item).Reference(m => m.Files).Query().Load();
+                                    if (item.Files != null)
+                                    {
+                                        images.Add(new ImageBase(item.Files, host));
+                                    }
+                                }
+                            }
+
+                            detailHouseViewModel.Images.AddRange(images);
                             return Json(new
                             {
                                 Status = 200,
                                 Message = "Đã cập nhật thành công",
-                                Data = data
+                                Data = detailHouseViewModel
                             });
                         }
                         catch (Exception ex)
                         {
                             transaction.Rollback();
                             Console.WriteLine(ex);
-                            return Json(new
+                            return BadRequest(new
                             {
                                 Status = HttpStatusCode.InternalServerError,
                                 Message = "Ứng dụng tạm thời bảo trì"
@@ -569,60 +512,65 @@ namespace DoAnTotNghiep.Controllers
                     }
                 }
             }
-            return Json(new
+            return BadRequest(new
             {
                 Status = 400,
                 Message = this.ModelErrors()
             });
         }
-
-        [HttpPut("House/Update")]
+        [HttpPut("/House/Update")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit([FromBody] EditHouseViewModel data)
         {
-            return await this.EditHouse(data);
+            return await this.EditHouse(new EditHouse(null, data));
         }
-
-        [HttpPut("/apit/House/Update")]
-        public async Task<IActionResult> ApiEdit([FromBody] EditHouseViewModel data)
+        [HttpPut("/api/House/Update")]
+        public async Task<IActionResult> ApiEdit(MobileEditHouseViewModel data)
         {
-            return await this.EditHouse(data);
+            return await this.EditHouse(new EditHouse(data, null));
         }
 
+
+        //remove
         private async Task<IActionResult> DeleteHouse(int id)
         {
             if (_context.Houses == null)
             {
-                return Json(new
+                return BadRequest(new
                 {
                     Status = HttpStatusCode.ServiceUnavailable,
                     Message = "Hệ thống đang bảo trì"
                 });
             }
+            int IdUser = this.GetIdUser();
             var house = this._context.Houses
                                     .Include(m => m.RulesInHouses)
                                     .Include(m => m.UtilitiesInHouses)
                                     .Include(m => m.Requests)
                                     .Include(m => m.FileOfHouses)
-                                    .Where(m => m.Id == id && m.Status != (int)Status.SWAPPED).ToList();
+                                    .Where(m => m.Id == id && m.IdUser == IdUser && m.Status != (int)Status.SWAPPED).ToList();
             if (house == null || house.Count() < 1)
             {
-                return Json(new
+                return BadRequest(new
                 {
                     Status = 404,
                     Message = "Không tìm thấy nhà của bạn"
                 });
             }
             var removeHouse = house.First();
-
             if (removeHouse.RulesInHouses != null) this._context.RulesInHouses.RemoveRange(removeHouse.RulesInHouses);
             if (removeHouse.UtilitiesInHouses != null) this._context.UtilitiesInHouse.RemoveRange(removeHouse.UtilitiesInHouses);
             if (removeHouse.FileOfHouses != null)
             {
                 List<Entity.File> files = new List<Entity.File>();
-                foreach (var item in removeHouse.FileOfHouses)
+                foreach (var iitem in removeHouse.FileOfHouses)
                 {
-                    if (item.Files != null && this.DeleteFile(item.Files)) files.Add(item.Files);
+                    this._context.Entry(iitem).Reference(m => m.Files).Load();
+                    if (iitem.Files != null)
+                    {
+                        this.DeleteFile(iitem.Files);
+                        files.Add(iitem.Files);
+                    }
                 }
                 this._context.FilesOfHouses.RemoveRange(removeHouse.FileOfHouses);
                 this._context.Files.RemoveRange(files);
@@ -630,50 +578,266 @@ namespace DoAnTotNghiep.Controllers
             if (removeHouse.Requests != null) this._context.Requests.RemoveRange(removeHouse.Requests);
 
             this._context.Houses.Remove(removeHouse);
-            await _context.SaveChangesAsync();
+            await this._context.SaveChangesAsync();
             return Json(new
             {
                 Status = 200,
                 Message = "Đã xóa nhà thành công"
             });
         }
-
-        [HttpDelete("/House/Delete")]
+        [HttpPost("/House/Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed([FromBody]int id)
+        public async Task<IActionResult> DeleteConfirmed([FromBody] int id)
         {
             return await this.DeleteHouse(id);
         }
-
-        [HttpDelete("/api/House/Delete")]
-        public async Task<IActionResult> ApiDeleteConfirmed([FromBody] int id)
+        [HttpPost("/api/House/Delete")]
+        public async Task<IActionResult> ApiDeleteConfirmed(int id)
         {
             return await this.DeleteHouse(id);
         }
-
-        [HttpGet]
-        [AllowAnonymous]
-        public JsonResult GetImagesOfHouse(int IdHouse)
+        [HttpGet("/api/House/DeleteAll")]
+        public IActionResult ApiDeleteConfirmed()
         {
-            var model = this._context.FilesOfHouses.Include(m => m.Files).Where(m => m.IdHouse == IdHouse)
-                .Select(m =>  new ImageBase()
+            int IdUser = this.GetIdUser();
+            DoAnTotNghiepContext Context = this._context;
+            var house = Context.Houses.Include(m => m.FileOfHouses)
+                                            .Include(m => m.RulesInHouses)
+                                            .Include(m => m.UtilitiesInHouses)
+                                            .Include(m => m.Requests)
+                                            .Where(m => m.IdUser == IdUser).ToList();
+            foreach (var item in house)
             {
-                    Name = m.Files == null? string.Empty: m.Files.FileName,
-                    Data = string.Empty,
-                    Folder = m.Files == null? string.Empty: m.Files.PathFolder,
-                    Id = m.IdFile
+                if (item.RulesInHouses != null) Context.RulesInHouses.RemoveRange(item.RulesInHouses);
+                if (item.UtilitiesInHouses != null) Context.UtilitiesInHouse.RemoveRange(item.UtilitiesInHouses);
+                if (item.FileOfHouses != null)
+                {
+                    List<Entity.File> files = new List<Entity.File>();
+                    foreach (var iitem in item.FileOfHouses)
+                    {
+                        Context.Entry(iitem).Reference(m => m.Files).Load();
+                        if (iitem.Files != null)
+                        {
+                            files.Add(iitem.Files);
+                        }
+                    }
+                    Context.FilesOfHouses.RemoveRange(item.FileOfHouses);
+                    Context.Files.RemoveRange(files);
+                }
+                if (item.Requests != null) this._context.Requests.RemoveRange(item.Requests);
+
+                Context.Houses.Remove(item);
+                Context.SaveChanges();
+            }
+
+            return Json(new
+            {
+                Message = "ok"
+            });
+        }
+
+
+        //detail
+        private DetailHouseViewModel? GetDetailsHouse(int Id, int status)
+        {
+            var house = this.CreateHouse(Id, (int)Status.VALID);
+            if (house == null) return null;
+            return this.CreateDetailsHouse(house);
+        }
+        private DetailHouseViewModel CreateDetailsHouse(House house)
+        {
+            byte[] salt = Crypto.Salt(this._configuration);
+            DetailHouseViewModel model = new DetailHouseViewModel(house, salt);
+            string host = this.GetWebsitePath();
+            DoAnTotNghiepContext Context = this._context;
+            if (house.FileOfHouses != null)
+            {
+                foreach (var f in house.FileOfHouses)
+                {
+                    Context.Entry(f).Reference(m => m.Files).Load();
+                    if (f.Files != null)
+                    {
+                        model.Images.Add(new ImageBase(f.Files, host));
+                    }
+                }
+            }
+            return model;
+        }
+        private House? CreateHouse(int Id, int status)
+        {
+            var house = this._context.Houses.Include(m => m.RulesInHouses)
+                                            .Include(m => m.UtilitiesInHouses)
+                                            .Include(m => m.Citys)
+                                            .Include(m => m.Districts)
+                                            .Include(m => m.Wards)
+                                            .Include(m => m.Requests)
+                                            .Include(m => m.FileOfHouses)
+                                            .Include(m => m.Users)
+                                            .FirstOrDefault(m => m.Id == Id && m.Status == status);
+            return house;
+        }
+        [AllowAnonymous]
+        public IActionResult Details(int Id)
+        {
+            var house = this.CreateHouse(Id, (int)Status.VALID);
+            if (house == null) return NotFound();
+            PackageDetailHouse model = new PackageDetailHouse(house, Crypto.Salt(this._configuration), house.Users, this.GetWebsitePath());
+            ViewData["key"] = "Asf_PRzBpUJVcb9lcAg48BLOuAuaBItg4ZzCqaNQaSIFReqieYA02KBcovVD08Jk";
+            model.AllUtilities = this._context.Utilities.ToList();
+            model.AllRules = this._context.Rules.ToList();
+            return View(model);
+        }
+        
+        [AllowAnonymous]
+        [HttpGet("/api/House/Details")]
+        public IActionResult ApiDetails(int Id)
+        {
+            var model = this.GetDetailsHouse(Id, (int)Status.VALID);
+            if (model == null) return BadRequest(new
+            {
+                Status = 404,
+                Message = "Không tìm thấy nhà"
             });
             return Json(new
             {
                 Status = 200,
-                IdHouse = IdHouse,
                 Data = model
             });
         }
-        private bool HouseExists(int id)
+        //ownerView
+        public IActionResult HouseOverView(int Id)
         {
-          return _context.Houses.Any(e => e.Id == id);
+            int IdUser = this.GetIdUser();
+            var house = this._context.Houses.Include(m => m.Users)
+                                            .Where(m => m.Id == Id && m.Users != null && m.IdUser == IdUser)
+                                            .FirstOrDefault();
+            if (house == null) return NotFound();
+            PackageDetailHouse model = new PackageDetailHouse(house, Crypto.Salt(this._configuration), house.Users, this.GetWebsitePath());
+            ViewData["key"] = "Asf_PRzBpUJVcb9lcAg48BLOuAuaBItg4ZzCqaNQaSIFReqieYA02KBcovVD08Jk";
+            model.AllUtilities = this._context.Utilities.ToList();
+            model.AllRules = this._context.Rules.ToList();
+            return View("./Views/Houses/Details.cshtml", model);
         }
+
+        [HttpGet("/api/House/OverView")]
+        public IActionResult OwnerHouseOverView(int Id)
+        {
+            int IdUser = this.GetIdUser();
+            var house = this._context.Houses.Include(m => m.Users)
+                                            .Where(m => m.Id == Id && m.Users != null && m.IdUser == IdUser)
+                                            .FirstOrDefault();
+            if (house == null) return BadRequest(new
+            {
+                Status = 400,
+                Messsage = "Không tìm thấy nhà"
+            });
+            
+            return Json(new
+            {
+                Status = 200,
+                Data = this.CreateDetailsHouse(house)
+            });
+        }
+
+
+
+        //get by userAccess
+        [HttpGet("/api/House/GetByUserAccess")]
+        [AllowAnonymous]
+        public IActionResult ApiGetHomeByUserAccess(string UserAcess)
+        {
+            return this.GetByUserAccess(UserAcess);
+        }
+        [HttpGet("/House/GetByUserAccess")]
+        [AllowAnonymous]
+        public IActionResult GetHomeByUserAccess(string UserAcess)
+        {
+            return this.GetByUserAccess(UserAcess);
+        }
+        private IActionResult GetByUserAccess(string UserAcess)
+        {
+            int UserId = 0;
+
+            byte[] salt = Crypto.Salt(this._configuration);
+            if (int.TryParse(Crypto.DecodeKey(UserAcess, salt), out UserId))
+            {
+                return BadRequest(new
+                {
+                    Status = 400,
+                    Message = "Không thể truy cập người dùng"
+                });
+            }
+
+            var listHouse = this._context.Houses
+                                        .Where(m => m.Status == (int)Status.VALID && m.IdUser == UserId)
+                                        .ToList();
+            string host = this.GetWebsitePath();
+            List<DetailHouseViewModel> res = new List<DetailHouseViewModel>();
+            DoAnTotNghiepContext Context = this._context;
+            foreach (var item in listHouse)
+            {
+                DetailHouseViewModel model = new DetailHouseViewModel(item, salt);
+                if (item.FileOfHouses != null)
+                {
+                    foreach (var f in item.FileOfHouses)
+                    {
+                        Context.Entry(f).Reference(m => m.Files).Load();
+                        if (f.Files != null)
+                        {
+                            model.Images.Add(new ImageBase(f.Files, host));
+                        }
+                    }
+                }
+                res.Add(model);
+            }
+            return Json(new
+            {
+                Status = 200,
+                Message = "Get Successfully",
+                Data = res
+            });
+        }
+
+
+        //get popularHouse
+        [HttpGet("/api/GetPopularHouse")]
+        [AllowAnonymous]
+        public JsonResult GetPopularHouse(int number = 10)
+        {
+            var listHouse = this._context.Houses.Take(number)
+                                                .OrderByDescending(m => m.Rating)
+                                                .Where(m => m.Status == (int) Status.VALID)
+                                                .ToList();
+            byte[] salt = Crypto.Salt(this._configuration);
+            string host = this.GetWebsitePath();
+            List<DetailHouseViewModel> res = new List<DetailHouseViewModel>();
+            DoAnTotNghiepContext Context = this._context;
+            foreach (var item in listHouse)
+            {
+                DetailHouseViewModel model = new DetailHouseViewModel(item, salt);
+                if (item.FileOfHouses != null)
+                {
+                    foreach (var f in item.FileOfHouses)
+                    {
+                        Context.Entry(f).Reference(m => m.Files).Load();
+                        if (f.Files != null)
+                        {
+                            model.Images.Add(new ImageBase(f.Files, host));
+                        }
+                    }
+                }
+                res.Add(model);
+            }
+            return Json(new
+            {
+                Status = 200,
+                Message = "Get Successfully",
+                Data = res
+            });
+        }
+
+
+        //lưu hình ảnh
         private Entity.File? SaveFile(ImageBase imageBase)
         {
             try
@@ -701,13 +865,10 @@ namespace DoAnTotNghiep.Controllers
                 return null;
             }
         }
-
         private Entity.File? SaveFile(IFormFile file)
         {
             try
             {
-                string ext = file.FileName.Split(".").Last();
-
                 string folder = Path.Combine("Uploads", DateTime.Now.ToString("yyyy"), DateTime.Now.ToString("MM"));
 
                 string uploadsFolder = Path.Combine(this.environment.ContentRootPath, "wwwroot", folder);
@@ -716,7 +877,7 @@ namespace DoAnTotNghiep.Controllers
                 {
                     Directory.CreateDirectory(uploadsFolder);
                 }
-                string ImagePath = Guid.NewGuid().ToString() + "." + ext;
+                string ImagePath = Guid.NewGuid().ToString() + ".png";
                 string filePath = Path.Combine(uploadsFolder, ImagePath);
                 using (FileStream fs = new FileStream(filePath, FileMode.Create))
                 {
@@ -735,12 +896,11 @@ namespace DoAnTotNghiep.Controllers
             try
             {
                 string uploadsFolder = Path.Combine(this.environment.ContentRootPath, "wwwroot", file.PathFolder);
-
-                if (!Directory.Exists(uploadsFolder))
+                string filePath = Path.Combine(uploadsFolder, file.FileName);
+                if (!Directory.Exists(filePath))
                 {
                     return false;
                 }
-                string filePath = Path.Combine(uploadsFolder, file.FileName);
                 System.IO.File.Delete(filePath);
                 return true;
             }

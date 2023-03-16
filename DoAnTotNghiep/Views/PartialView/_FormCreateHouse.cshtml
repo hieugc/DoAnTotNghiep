@@ -31,8 +31,8 @@
                     <div class="mb-3">
                         <label for="typeOfHouse">Loại nhà</label>
                         <div class="option-frame">
-                            <div class="option" onclick="getOptionHouse(this, 2)"><i class="fa-solid fa-house"></i><span>Nhà</span></div>
-                            <div class="option" onclick="getOptionHouse(this, 1)"><i class="fa-solid fa-building"></i><span>Căn hộ</span></div>
+                            <div class="option" onclick="getOptionHouse(this, 1)"><i class="fa-solid fa-house"></i><span>Nhà</span></div>
+                            <div class="option" onclick="getOptionHouse(this, 2)"><i class="fa-solid fa-building"></i><span>Căn hộ</span></div>
                         </div>
                     </div>
                     <div class="mb-3">
@@ -67,7 +67,7 @@
                     <div class="mb-3 col-12">
                         <label for="location">Địa chỉ nhà</label>
                         <div class="input-group">
-                            <input type="text" name="location" id="location" class="form-control" placeholder="Địa chỉ" onfocus="getLocationHouse(this)" onchange="getLocationHouse(this)"/>
+                            <input type="text" name="location" id="location" class="form-control" placeholder="Địa chỉ" onchange="getLocationHouse(this)" onfocus="getLocationHouse(this)"/>
                             <span class="btn btn-sm rounded btn-primary input-group-text" id="btnBingMaps" onclick="hideMainForm()" data-bs-target="#BingMapModal" data-bs-toggle="modal"><i class="fa-solid fa-map-location-dot"></i></span>
                         </div>
                     </div>

@@ -20,6 +20,22 @@ namespace DoAnTotNghiep.ViewModels
         public string Password { get; set; } = string.Empty;
     }
 
+    public class ApiLoginData
+    {
+        public string token { get; set; } = string.Empty;
+        public DateTime expire { get; set; } = DateTime.Now;
+        public UserInfo? userInfo { get; set; }
+    }
+
+    public class ApiBoolean
+    {
+        public ApiBoolean(bool value)
+        {
+            this.isExisted = value;
+        }
+        public bool isExisted { get; set; } = false;
+    }
+
     public class UserInfo
     {
         public UserInfo(User user, byte[] salt, string host)

@@ -49,58 +49,65 @@ namespace DoAnTotNghiep.ViewModels
 
     public class DetailHouseViewModel: EditHouseViewModel
     {
-        public int Status { get; set; } = 0;
-        public double Rating { get; set; } = 0;
-        public int Request { get; set; } = 0;
-        public string UserAccess { get; set; } = string.Empty;
-
-        public static DetailHouseViewModel GetByHouse(House house, byte[] salt)
+        public DetailHouseViewModel() { }
+        public DetailHouseViewModel(House house, byte[] salt, User? user = null, string? host = null)
         {
             List<int> rules = new List<int>();
             if (house.RulesInHouses != null)
             {
-                foreach (var rule in house.RulesInHouses)
-                {
-                    if (rule.Status == true) rules.Add(rule.IdRules);
-                }
+                rules.AddRange(house.RulesInHouses.Where(m => m.Status == true).Select(m => m.IdRules));
             }
             List<int> utilities = new List<int>();
 
             if (house.UtilitiesInHouses != null)
             {
-                foreach (var utility in house.UtilitiesInHouses)
-                {
-                    if (utility.Status == true) utilities.Add(utility.IdUtilities);
-                }
+                utilities.AddRange(house.UtilitiesInHouses.Where(m => m.Status == true).Select(m => m.IdUtilities));
             }
-            return new DetailHouseViewModel()
+
+            this.Id = house.Id;
+            this.Name = house.Name;
+            this.Option = house.Type;
+            this.Description = house.Description;//string
+            this.People = house.People;//int
+            this.BathRoom = house.BathRoom;//int
+            this.BedRoom = house.BedRoom;//int
+            this.Square = (int)house.Area; // tạm thời int   check này lại
+            this.Location = house.StreetAddress; //địa chỉ full
+            this.Lat = house.Lat; //mobile có parse => user // viết API lấy BingMapKey
+            this.Lng = house.Lng;// thuộc tính không vấn đề double
+            this.IdCity = house.IdCity == null ? 0 : house.IdCity.Value; //id bắt buộc => tạo yêu cầu xoay vòng
+            this.IdDistrict = house.IdDistrict == null ? 0 : house.IdDistrict.Value;//idDistrict 
+            this.IdWard = house.IdWard == null ? 0 : house.IdWard.Value;// có thể không có
+            this.Price = house.Price;//int
+            this.Utilities = utilities;//list<int>
+            this.Rules = rules;//list<int>
+            this.Images = new List<ImageBase?>();
+            this.Status = house.Status;//int
+            this.Rating = house.Rating;//double :)) quên
+            this.Request = house.Requests == null ? 0 : house.Requests.Count();//int số yêu cầu//hình như là show luôn bên list owner
+            this.UserAccess = Crypto.EncodeKey(house.IdUser.ToString(), salt);//string dùng để liên hệ :)) user người khác t chưa sửa kịp
+            if(user != null && !string.IsNullOrEmpty(host))
             {
-                Id = house.Id,
-                Name = house.Name,
-                Option = house.Type,
-                Description = house.Description,
-                People = house.People,
-                BathRoom = house.BathRoom,
-                BedRoom = house.BedRoom,
-                Square = (int)house.Area,
-                Location = house.StreetAddress,
-                Lat = house.Lat,
-                Lng = house.Lng,
-                IdCity = house.IdCity == null ? 0 : house.IdCity.Value,
-                IdDistrict = house.IdDistrict == null ? 0 : house.IdDistrict.Value,
-                IdWard = house.IdWard == null ? 0 : house.IdWard.Value,
-                Price = house.Price,
-                Utilities = utilities,
-                Rules = rules,
-                Images = new List<ImageBase?>(),
-                Status = house.Status,
-                Rating = house.Rating,
-                Request = house.Requests == null ? 0: house.Requests.Count(),
-                UserAccess = Crypto.EncodeKey(house.IdUser.ToString(), salt)
-            };
+                this.User = new UserInfo(user, salt, host);
+            }
         }
+
+        public int Status { get; set; } = 0;
+        public double Rating { get; set; } = 0;
+        public int Request { get; set; } = 0;
+        public string UserAccess { get; set; } = string.Empty;
+        public UserInfo? User { get; set; }//đã trả lúc login // thông tin là của nó :))
+        //list Url
     }
 
+    public class PackageDetailHouse: DetailHouseViewModel
+    {
+        public PackageDetailHouse(House house, byte[] salt, User? user = null, string? host = null) : base(house, salt, user, host) {
+
+        }
+        public List<Utilities> AllUtilities { get; set; } = new List<Utilities>();
+        public List<Rules> AllRules { get; set; } = new List<Rules>();
+    }
 
     public class MobileCreateHouseViewModel
     {
@@ -122,13 +129,12 @@ namespace DoAnTotNghiep.ViewModels
         [Required(ErrorMessage = "Hãy điền diện tích căn nhà")]
         public int Square { get; set; } = 0;
         [Required(ErrorMessage = "Hãy điền địa chỉ nhà")]
-        public string Location { get; set; } = string.Empty;
-
-        public double Lat { get; set; } = 0;
-        public double Lng { get; set; } = 0;
-        public int IdCity { get; set; } = 0;
-        public int IdDistrict { get; set; } = 0;
-        public int IdWard { get; set; } = 0;
+        public string Location { get; set; } = string.Empty; //địa chỉ
+        public double Lat { get; set; } = 0;// :))
+        public double Lng { get; set; } = 0;//
+        public int IdCity { get; set; } = 0;//sửa lại
+        public int IdDistrict { get; set; } = 0; //sửa lại
+        public int IdWard { get; set; } = 0; //sửa lại
 
         [Required(ErrorMessage = "Hãy điền giá căn nhà")]
         public int Price { get; set; } = 0;
@@ -136,9 +142,14 @@ namespace DoAnTotNghiep.ViewModels
         public List<int> Rules { get; set; } = new List<int>();
 
         [Required(ErrorMessage = "Hãy thêm hình ảnh nhà của bạn")]
-        public IFormFileCollection? Files { get; set; }
+        public IFormFileCollection? Files { get; set; } //
     }
-
+    public class MobileEditHouseViewModel : MobileCreateHouseViewModel
+    {
+        [Required(ErrorMessage = "Không tìm thấy mã định danh. Hãy tải lại trang!")] //id lấy từ lúc get list
+        public int Id { get; set; }
+        public List<int> IdRemove { get; set; } = new List<int>(); //danh sách id hình
+    }
     public class CreateHouse
     {
         public CreateHouse(MobileCreateHouseViewModel? mobileCreateHouseViewModel, CreateHouseViewModel? createHouseViewModel)
@@ -198,19 +209,62 @@ namespace DoAnTotNghiep.ViewModels
         public double Lat { get; set; } = 0;
         public double Lng { get; set; } = 0;
         public int IdCity { get; set; } = 0;
-        public int IdDistrict { get; set; } = 0;
-        public int IdWard { get; set; } = 0;
+        public int? IdDistrict { get; set; } = 0;
+        public int? IdWard { get; set; } = 0;
         public int Price { get; set; } = 0;
         public List<int> Utilities { get; set; } = new List<int>();
         public List<int> Rules { get; set; } = new List<int>();
         public List<ImageBase?> Images { get; set; } = new List<ImageBase?>();
         public IFormFileCollection? Files { get; set; }
     }
+
+    public class EditHouse: CreateHouse
+    {
+        public EditHouse(MobileEditHouseViewModel? mobile, EditHouseViewModel? web): base(mobile, web)
+        {
+            if(mobile == null && web != null)
+            {
+                Id = web.Id;
+            }
+            else if (mobile != null && web == null)
+            {
+                Id = mobile.Id;
+                IdRemove = mobile.IdRemove;
+            }
+        }
+        public int Id { get; set; }
+        public List<int> IdRemove { get; set; } = new List<int>();
+    }
+
     public class ImageBase
     {
+        public ImageBase(Entity.File file, string host)
+        {
+            this.Name = file.FileName;
+            this.Data = host + "/" + file.PathFolder + "/" + file.FileName;
+            this.Id = file.Id;
+        }
+        public ImageBase() { }
+
         public string Name { get; set; } = string.Empty;
-        public string Data { get; set; } = string.Empty;
-        public string? Folder { get; set; } = string.Empty;
-        public int? Id { get; set; } = 0;
+        public int? Id { get; set; } = 0; //Id FILE  => cập hình 
+        public string Data { get; set; } = string.Empty; //image url :)) t còn base64
+    }
+
+    public class Pagination
+    {
+        public Pagination()
+        {
+            Page = 0;
+            Limit = 10;
+        }
+        public Pagination(int page, int limit)
+        {
+            Page = page;
+            Limit = limit;
+        }
+
+        public int Page { get; set; } = 0;
+        public int Limit { get; set; } = 10;
     }
 }
