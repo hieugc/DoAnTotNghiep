@@ -58,7 +58,6 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/homeNameInputEdtTxt"
                 android:textColor="@color/secondary"
-                android:textAlignment="center"
                 />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -91,7 +90,6 @@
                 android:id="@+id/homeAreaEdtTxt"
                 android:textColor="@color/secondary"
                 android:inputType="number"
-                android:textAlignment="center"
                 />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -121,7 +119,6 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/homeAddressEdtTxt"
                 android:textColor="@color/secondary"
-                android:textAlignment="center"
                 />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -151,7 +148,6 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/homeDescriptionEdtTxt"
                 android:textColor="@color/secondary"
-                android:textAlignment="center"
                 />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -184,7 +180,6 @@
                 android:inputType="number"
                 android:id="@+id/homePriceEdtTxt"
                 android:textColor="@color/secondary"
-                android:textAlignment="center"
                 />
 
         </com.google.android.material.textfield.TextInputLayout>

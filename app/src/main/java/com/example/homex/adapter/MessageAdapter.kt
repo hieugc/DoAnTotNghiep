@@ -8,14 +8,14 @@ import com.example.homex.databinding.MessageItemBinding
 import com.example.homex.databinding.MessageItemNoAvatarBinding
 import com.example.homex.databinding.MessageTimeItemBinding
 import com.example.homex.databinding.MyMessageItemBinding
-import com.homex.core.model.Message
+import com.homex.core.model.OldMessage
 
 private const val MY_MESSAGE = 1
 private const val MESSAGE = 2
 private const val TIME = 3
 private const val MESSAGE_NO_AVATAR = 4
 
-class MessageAdapter(val messageList: ArrayList<Message>?): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class MessageAdapter(val messageList: ArrayList<OldMessage>?): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         if (viewType == TIME){

@@ -5,10 +5,10 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class Message(
-    val id: String? = null,
     val message: String? = null,
-    val isMyMessage: Boolean? = null,
-    val date: String? = null,
-    val isDateItem: Boolean? = null,
-    val userID: String? = null
+    val idReply: Int? = 0,
+    val isSeen: Boolean? = null,
+    val idSend: String? = null,
+    val id: Int? = null,
+    val createdDate: String? = null
 ): Parcelable

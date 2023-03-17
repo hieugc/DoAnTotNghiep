@@ -70,6 +70,7 @@
             android:layout_marginEnd="24dp"
             android:textAllCaps="true"
             android:textStyle="bold"
+            android:id="@+id/noHomeTxt"
             style="@style/Regular"
             android:visibility="gone"
             android:textColor="@color/gray"

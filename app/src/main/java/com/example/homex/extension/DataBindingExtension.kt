@@ -1,7 +1,10 @@
 package com.example.homex.extension
 
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
+import com.example.homex.R
+import com.homex.core.model.HomeStatus
 import com.homex.core.util.AppEvent
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -51,4 +54,26 @@ fun AppCompatTextView.getAge(dob: String?, gender: Boolean?){
 //    }else{
 //        ""
 //    }
+}
+
+@BindingAdapter(value =["status"])
+fun AppCompatTextView.setHomeStatus(status: Int?){
+    when(status){
+        HomeStatus.VALID.ordinal->{
+            this.text = "Đang hoạt động"
+            this.setTextColor(ContextCompat.getColor(context, R.color.green))
+        }
+        HomeStatus.PENDING.ordinal->{
+            this.text = "Đang kiểm duyệt"
+            this.setTextColor(ContextCompat.getColor(context, R.color.orange))
+        }
+        HomeStatus.DISABLE.ordinal->{
+            this.text = "Đang ẩn"
+            this.setTextColor(ContextCompat.getColor(context, R.color.gray))
+        }
+        HomeStatus.SWAPPED.ordinal->{
+            this.text = "Đang trao đổi"
+            this.setTextColor(ContextCompat.getColor(context, R.color.yellow))
+        }
+    }
 }

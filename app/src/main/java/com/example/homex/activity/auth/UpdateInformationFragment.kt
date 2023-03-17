@@ -6,6 +6,7 @@ import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import com.example.homex.R
+import com.example.homex.activity.home.HomeActivity
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentUpdateInformationBinding
 import com.example.homex.viewmodel.AuthViewModel
@@ -194,7 +195,8 @@ class UpdateInformationFragment : BaseFragment<FragmentUpdateInformationBinding>
         viewModel.userInfoLiveData.observe(viewLifecycleOwner){ user->
             CoreApplication.instance.saveToken(user?.token)
             CoreApplication.instance.saveProfile(user?.userInfo)
-            activity?.finish()
+            activity?.finishAffinity()
+            startActivity(HomeActivity.open(requireContext()))
         }
     }
 }

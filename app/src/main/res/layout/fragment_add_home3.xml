@@ -398,6 +398,7 @@
 
         <com.google.android.material.chip.ChipGroup
             android:layout_width="0dp"
+            android:id="@+id/rulesGroup"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -422,27 +423,27 @@
                 android:text="@string/no_pet"
                 android:id="@+id/noPetChip"
                 app:chipIcon="@drawable/ic_no_pet"/>
-            <com.google.android.material.chip.Chip
-                style="@style/AppTheme.MyChoiceChip"
-                app:chipIconEnabled="true"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Tiện ích"
-                app:chipIcon="@drawable/ic_house"/>
-            <com.google.android.material.chip.Chip
-                style="@style/AppTheme.MyChoiceChip"
-                app:chipIconEnabled="true"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Tiện ích"
-                app:chipIcon="@drawable/ic_house"/>
-            <com.google.android.material.chip.Chip
-                style="@style/AppTheme.MyChoiceChip"
-                app:chipIconEnabled="true"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Tiện ích"
-                app:chipIcon="@drawable/ic_house"/>
+<!--            <com.google.android.material.chip.Chip-->
+<!--                style="@style/AppTheme.MyChoiceChip"-->
+<!--                app:chipIconEnabled="true"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="Tiện ích"-->
+<!--                app:chipIcon="@drawable/ic_house"/>-->
+<!--            <com.google.android.material.chip.Chip-->
+<!--                style="@style/AppTheme.MyChoiceChip"-->
+<!--                app:chipIconEnabled="true"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="Tiện ích"-->
+<!--                app:chipIcon="@drawable/ic_house"/>-->
+<!--            <com.google.android.material.chip.Chip-->
+<!--                style="@style/AppTheme.MyChoiceChip"-->
+<!--                app:chipIconEnabled="true"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="Tiện ích"-->
+<!--                app:chipIcon="@drawable/ic_house"/>-->
 
         </com.google.android.material.chip.ChipGroup>
 

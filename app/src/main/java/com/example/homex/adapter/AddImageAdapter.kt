@@ -9,7 +9,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.homex.R
 import com.example.homex.databinding.AddHomeImageItemBinding
 
-class AddImageAdapter(val imgList: MutableList<Uri>? = arrayListOf(), val onClick: (Int)->Unit): RecyclerView.Adapter<AddImageAdapter.ImageViewHolder>() {
+class AddImageAdapter(var imgList: MutableList<Pair<Uri, Boolean>>? = arrayListOf(), val onClick: (Int)->Unit): RecyclerView.Adapter<AddImageAdapter.ImageViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
         return ImageViewHolder(
             AddHomeImageItemBinding.bind(
@@ -26,7 +26,8 @@ class AddImageAdapter(val imgList: MutableList<Uri>? = arrayListOf(), val onClic
             onClick.invoke(position)
         }
         Glide.with(holder.itemView.context)
-            .load(item)
+            .load(item?.first)
+            .error(R.drawable.ic_baseline_image_24)
             .into(holder.binding.imgView)
 
     }

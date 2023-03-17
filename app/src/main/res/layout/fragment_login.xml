@@ -98,6 +98,7 @@
                 android:id="@+id/passwordInputEdtTxt"
                 android:layout_width="match_parent"
                 android:layout_height="52dp"
+                android:importantForAutofill="no"
                 android:inputType="textPassword"
                 style="@style/AppTheme.TextViewStyle"/>
         </com.google.android.material.textfield.TextInputLayout>

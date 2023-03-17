@@ -12,8 +12,7 @@ import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentMessageBoxBinding
 import com.example.homex.extension.gone
 import com.example.homex.extension.visible
-import com.homex.core.model.Message
-import java.time.LocalDate
+import com.homex.core.model.OldMessage
 
 
 class MessageBoxFragment : BaseFragment<FragmentMessageBoxBinding>() {
@@ -35,24 +34,24 @@ class MessageBoxFragment : BaseFragment<FragmentMessageBoxBinding>() {
 
     override fun setView() {
         val arrayList = arrayListOf(
-            Message(id = "1", message = "alo bạn ơi", isMyMessage = false, date = "03/03/2023", userID = "1"),
-            Message(id = "1", message = "ok bạn, không có chi", isMyMessage = true, date = "01/03/2023", userID = "2"),
-            Message(id = "1", message = "ok bạn, cảm ơn bạn rất nhiều", isMyMessage = false, date = "01/03/2023", userID = "1"),
-            Message(id = "1", message = "có gì bạn cứ nhắn mình nhé", isMyMessage = true, date = "01/03/2023", userID = "2"),
-            Message(id = "1", message = "ok bạn hiền", isMyMessage = true, date = "01/03/2023", userID = "2"),
-            Message(id = "1", message = "tại mình cần mua một số thứ", isMyMessage = false, date = "01/03/2023", userID = "1"),
-            Message(id = "1", message = "ok bạn, có gì mình sẽ xem qua", isMyMessage = false, date = "01/03/2023", userID = "1"),
-            Message(id = "1", message = "cách căn hộ 3km sẽ có 1 trung tâm mua sắm bạn nhé !", isMyMessage = true, date = "01/03/2023", userID = "2"),
-            Message(id = "1", message = "có bạn ơi", isMyMessage = true, date = "01/03/2023", userID = "2"),
-            Message(id = "1", message = "bạn ơi, nhà của bạn có ở gần trung tâm mua sắm không nhỉ", isMyMessage = false, date = "01/03/2023", userID = "1"),
-            Message(id = "1", message = "alo alo", isMyMessage = false, date = "01/03/2023", userID = "1"),
+            OldMessage(id = "1", message = "alo bạn ơi", isMyMessage = false, date = "03/03/2023", userID = "1"),
+            OldMessage(id = "1", message = "ok bạn, không có chi", isMyMessage = true, date = "01/03/2023", userID = "2"),
+            OldMessage(id = "1", message = "ok bạn, cảm ơn bạn rất nhiều", isMyMessage = false, date = "01/03/2023", userID = "1"),
+            OldMessage(id = "1", message = "có gì bạn cứ nhắn mình nhé", isMyMessage = true, date = "01/03/2023", userID = "2"),
+            OldMessage(id = "1", message = "ok bạn hiền", isMyMessage = true, date = "01/03/2023", userID = "2"),
+            OldMessage(id = "1", message = "tại mình cần mua một số thứ", isMyMessage = false, date = "01/03/2023", userID = "1"),
+            OldMessage(id = "1", message = "ok bạn, có gì mình sẽ xem qua", isMyMessage = false, date = "01/03/2023", userID = "1"),
+            OldMessage(id = "1", message = "cách căn hộ 3km sẽ có 1 trung tâm mua sắm bạn nhé !", isMyMessage = true, date = "01/03/2023", userID = "2"),
+            OldMessage(id = "1", message = "có bạn ơi", isMyMessage = true, date = "01/03/2023", userID = "2"),
+            OldMessage(id = "1", message = "bạn ơi, nhà của bạn có ở gần trung tâm mua sắm không nhỉ", isMyMessage = false, date = "01/03/2023", userID = "1"),
+            OldMessage(id = "1", message = "alo alo", isMyMessage = false, date = "01/03/2023", userID = "1"),
         )
-        val list = arrayListOf<Message>()
+        val list = arrayListOf<OldMessage>()
         var date = arrayList[0].date
-        for(msg in arrayList){
+        for((index, msg) in arrayList.withIndex()){
             if(date != msg.date){
                 list.add(
-                    Message(
+                    OldMessage(
                         id = null,
                         message = null,
                         isMyMessage = false,
@@ -63,6 +62,17 @@ class MessageBoxFragment : BaseFragment<FragmentMessageBoxBinding>() {
                 date = msg.date
             }
             list.add(msg)
+            if(index == arrayList.size - 1){
+                list.add(
+                    OldMessage(
+                        id = null,
+                        message = null,
+                        isMyMessage = false,
+                        date = date,
+                        isDateItem = true
+                    )
+                )
+            }
         }
         adapter = MessageAdapter(
             list

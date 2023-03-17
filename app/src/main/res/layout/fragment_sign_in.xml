@@ -102,6 +102,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="52dp"
                 android:inputType="textPassword"
+                android:importantForAutofill="no"
                 style="@style/AppTheme.TextViewStyle"/>
         </com.google.android.material.textfield.TextInputLayout>
 

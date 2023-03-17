@@ -1,5 +1,6 @@
 package com.example.homex
 
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -14,6 +15,7 @@ import com.example.homex.activity.home.HomeActivity
 import com.example.homex.adapter.HomeRatingAdapter
 import com.example.homex.adapter.ImageSlideAdapter
 import com.example.homex.adapter.SimilarHomeAdapter
+import com.example.homex.app.HOME
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentHomeDetailBinding
 import com.example.homex.extension.betweenDays
@@ -21,6 +23,7 @@ import com.example.homex.extension.longToDate
 import com.example.homex.utils.CenterZoomLayoutManager
 import com.google.android.material.tabs.TabLayoutMediator
 import com.homex.core.model.CalendarDate
+import com.homex.core.model.Home
 import java.util.*
 
 
@@ -41,6 +44,10 @@ class HomeDetailFragment : BaseFragment<FragmentHomeDetailBinding>() {
             showLogo = false,
             showBoxChatLayout = Pair(false, "")
         )
+
+        arguments?.getParcelable<Home>(HOME)?.let {
+            binding.home = it
+        }
 
         findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Pair<CalendarDate?, CalendarDate?>>("DATE")?.observe(viewLifecycleOwner){
                 dates->
@@ -113,11 +120,7 @@ class HomeDetailFragment : BaseFragment<FragmentHomeDetailBinding>() {
 
     private fun setupViewPager(){
         val adapter = ImageSlideAdapter(
-            listOf(
-                "https://www.mymove.com/wp-content/uploads/2014/05/GettyImages-147205632.jpg",
-                "https://assets-news.housing.com/news/wp-content/uploads/2022/03/31010142/Luxury-house-design-Top-10-tips-to-add-luxury-to-your-house-FEATURE-compressed.jpg",
-                "https://sadvice.dxmb.vn/wp-content/uploads/2021/03/luxury-home.jpg",
-            )
+            binding.home?.images
         )
         binding.imgSlideViewPager.adapter = adapter
         binding.imgSlideViewPager.offscreenPageLimit = 3

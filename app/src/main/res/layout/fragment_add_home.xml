@@ -8,6 +8,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/tempImg"
+            android:visibility="invisible"/>
+
         <com.shuhart.stepview.StepView
             android:id="@+id/stepView"
             android:layout_width="match_parent"

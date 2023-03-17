@@ -19,6 +19,7 @@ import org.koin.android.ext.android.inject
 class UserFragment : BaseFragment<FragmentUserBinding>() {
     override val layoutId: Int = R.layout.fragment_user
     private val prefUtil: PrefUtil by inject()
+    private var isAuthenticated = true
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -36,6 +37,7 @@ class UserFragment : BaseFragment<FragmentUserBinding>() {
         if(prefUtil.profile == null && prefUtil.token == null){
             binding.userLayout.gone()
             binding.notLoginLayout.visible()
+            isAuthenticated = false
         }
         else if(prefUtil.profile != null){
             binding.user = prefUtil.profile
@@ -44,25 +46,32 @@ class UserFragment : BaseFragment<FragmentUserBinding>() {
 
     override fun setEvent() {
         binding.btnMyProfile.setOnClickListener {
-            findNavController().navigate(R.id.action_userFragment_to_myProfileFragment)
+            if (isAuthenticated)
+                findNavController().navigate(R.id.action_userFragment_to_myProfileFragment)
         }
         binding.btnYourHouse.setOnClickListener {
-            findNavController().navigate(R.id.action_userFragment_to_myHomeFragment)
+            if (isAuthenticated)
+                findNavController().navigate(R.id.action_userFragment_to_myHomeFragment)
         }
 
         binding.btnHistory.setOnClickListener{
-            findNavController().navigate(R.id.action_userFragment_to_transHistoryFragment)
+            if (isAuthenticated)
+                findNavController().navigate(R.id.action_userFragment_to_transHistoryFragment)
         }
         binding.btnPoint.setOnClickListener{
-            findNavController().navigate(R.id.action_userFragment_to_pointHistoryFragment)
+            if (isAuthenticated)
+                findNavController().navigate(R.id.action_userFragment_to_pointHistoryFragment)
         }
         binding.goToAuthBtn.setOnClickListener {
             startActivity(AuthActivity.open(requireContext()))
         }
         binding.btnPendingRequests.setOnClickListener {
-            findNavController().navigate(R.id.action_userFragment_to_requestFragment)
+            if (isAuthenticated)
+                findNavController().navigate(R.id.action_userFragment_to_requestFragment)
         }
         binding.btnLogout.setOnClickListener {
+            if (!isAuthenticated)
+                return@setOnClickListener
             prefUtil.clearAllData()
             val i = Intent(requireContext(), HomeActivity::class.java)
             activity?.finish()

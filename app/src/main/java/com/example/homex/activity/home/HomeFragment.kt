@@ -2,12 +2,14 @@ package com.example.homex.activity.home
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
 import com.example.homex.R
 import com.example.homex.adapter.PopularHomeAdapter
 import com.example.homex.adapter.PopularLocationAdapter
+import com.example.homex.app.HOME
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentHomeBinding
 import com.example.homex.utils.CenterZoomLayoutManager
@@ -46,7 +48,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
             PopularHomeAdapter(
                 arrayListOf(),
                 onClick = {
-                    findNavController().navigate(R.id.action_global_homeDetailFragment)
+                    findNavController().navigate(R.id.action_global_homeDetailFragment, bundleOf(HOME to it))
                 }
             )
 

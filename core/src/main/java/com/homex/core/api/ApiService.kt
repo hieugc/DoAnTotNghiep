@@ -1,14 +1,16 @@
 package com.homex.core.api
 
 import com.google.gson.JsonObject
-import com.homex.core.model.CheckEmailExisted
-import com.homex.core.model.Home
-import com.homex.core.model.Location
-import com.homex.core.model.Token
+import com.homex.core.model.*
 import com.homex.core.model.general.ListResponse
 import com.homex.core.model.general.ObjectResponse
+import com.homex.core.model.response.MyHomeResponse
 import com.homex.core.model.response.UserResponse
 import com.homex.core.param.auth.*
+import com.homex.core.param.chat.ConnectToRoomParam
+import com.homex.core.param.chat.ContactUserParam
+import com.homex.core.param.chat.SendMessageParam
+import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -54,14 +56,49 @@ interface ApiService {
     //--------------------HOUSE-----------------------------
 
     @POST("api/House/Create")
-    suspend fun createNewHome() : Response<ObjectResponse<JsonObject>>
+    suspend fun createNewHome(
+        @Body body: RequestBody
+    ) : Response<ObjectResponse<JsonObject>>
 
     @PUT("api/House/Update")
-    suspend fun editHome() : Response<ObjectResponse<JsonObject>>
+    suspend fun editHome(
+        @Body body: RequestBody
+    ) : Response<ObjectResponse<JsonObject>>
 
-    @DELETE("api/House/Delete")
-    suspend fun deleteHome() : Response<ObjectResponse<JsonObject>>
+    @POST("api/House/Delete")
+    suspend fun deleteHome(
+        @Query("id") id: Int
+    ) : Response<ObjectResponse<JsonObject>>
 
-    @GET("api/House/GetMyHome")
-    suspend fun getMyHome() : Response<ListResponse<Home>>
+    @GET("api/House/GetMyHome?limit=20")
+    suspend fun getMyHome(
+        @Query("page") page: Int
+    ) : Response<ObjectResponse<MyHomeResponse>>
+
+    //--------------------MESSAGE-----------------------------
+
+    @POST("api/Message/Send")
+    suspend fun sendMessage(
+        @Body param: SendMessageParam
+    ): Response<ObjectResponse<MessageRoom>>
+
+    @POST("api/Message/ContactUser")
+    suspend fun contactUser(
+        @Body param: ContactUserParam
+    ): Response<ListResponse<MessageRoom>>
+
+    @POST("api/ConnectAllRoom")
+    suspend fun connectChat(
+        @Body body: RequestBody
+    ): Response<ListResponse<MessageRoom>>
+
+    @POST("api/Message/ConnectToRoom")
+    suspend fun connectToRoom(
+        @Body param: ConnectToRoomParam
+    ): Response<ListResponse<MessageRoom>>
+
+    @PUT("api/Message/Seen")
+    suspend fun seenAll(
+        @Body body: RequestBody
+    ): Response<ListResponse<MessageRoom>>
 }

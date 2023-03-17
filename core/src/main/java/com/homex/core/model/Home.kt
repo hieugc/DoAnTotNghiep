@@ -28,4 +28,28 @@ data class Home(
     val request : Int? = null,
     val userAccess: String? = null,
     val user: Profile? = null
-): Parcelable
+): Parcelable{
+    fun getHomeType(): String{
+        return if (option == 1) "Căn nhà"  else "Căn hộ"
+    }
+    fun getHomeStatus(): String{
+        return when(status){
+            HomeStatus.VALID.ordinal-> "Đang hoạt động"
+            HomeStatus.PENDING.ordinal-> "Đang kiểm duyệt"
+            HomeStatus.SWAPPED.ordinal-> "Đang trao đổi"
+            HomeStatus.DISABLE.ordinal-> "Đang ẩn"
+            else->""
+        }
+    }
+}
+enum class HomeStatus{
+    VALID,
+    PENDING,
+    SWAPPED,
+    ENABLE,
+    DISABLE,
+    ACCEPT,
+    REJECT,
+    SEEN,
+    UNSEEN
+}

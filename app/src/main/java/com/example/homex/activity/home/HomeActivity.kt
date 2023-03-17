@@ -4,8 +4,11 @@ import android.R.id.input
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
+import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.annotation.MenuRes
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
@@ -19,11 +22,21 @@ import androidx.navigation.ui.NavigationUI.setupActionBarWithNavController
 import androidx.navigation.ui.NavigationUI.setupWithNavController
 import com.example.homex.NotificationDialogFragment
 import com.example.homex.R
+import com.example.homex.activity.home.addhome.FileViewModel
 import com.example.homex.base.BaseActivity
 import com.example.homex.databinding.ActivityHomeBinding
 import com.example.homex.extension.gone
 import com.example.homex.extension.visible
+import com.facebook.stetho.okhttp3.StethoInterceptor
+import com.homex.core.CoreApplication
+import com.microsoft.signalr.HubConnection
 import com.microsoft.signalr.HubConnectionBuilder
+import com.microsoft.signalr.HubConnectionState
+import okhttp3.Interceptor
+import okhttp3.logging.HttpLoggingInterceptor
+import java.io.File
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 
 class HomeActivity : BaseActivity() {
@@ -38,6 +51,9 @@ class HomeActivity : BaseActivity() {
     private var showMsg = true
     private var showBoxChatLayout: Pair<Boolean, String> = Pair(false, "")
     private var showSearchLayout: Boolean = false
+    private lateinit var hubConnection: HubConnection
+    private val fileViewModel: FileViewModel by viewModels()
+    private val tmpFiles = mutableListOf<File>()
 
     companion object{
         fun open(context: Context) = Intent(context, HomeActivity::class.java)
@@ -46,6 +62,48 @@ class HomeActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_home)
+
+//        hubConnection = HubConnectionBuilder.create("https://gcsoft.dev/ChatHub")
+//            .setHttpClientBuilderCallback {
+//                val httpLoggingInterceptor = HttpLoggingInterceptor()
+//                httpLoggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
+//                it.apply {
+//                    readTimeout(10, TimeUnit.SECONDS)
+//                    connectTimeout(10, TimeUnit.SECONDS)
+//                    writeTimeout(10, TimeUnit.SECONDS)
+//                    addNetworkInterceptor(Interceptor { chain ->
+//                        var request = chain.request()
+//                        val builder = request.newBuilder()
+//                        val token = CoreApplication.instance.getToken()
+//                        if (token != null) {
+//                            builder.header("Authorization", "Bearer $token")
+//                        }
+//                        request = builder.build()
+//                        chain.proceed(request)
+//                    })
+//                    addInterceptor(httpLoggingInterceptor)
+//                    addNetworkInterceptor(StethoInterceptor())
+//                    build()
+//                }
+//            }
+//            .build()
+//
+//
+//        if (hubConnection.connectionState == HubConnectionState.DISCONNECTED){
+//            hubConnection.start()
+//                .blockingAwait()
+//            Log.e("start", "hello")
+//        }
+//
+//        if (hubConnection.connectionState == HubConnectionState.CONNECTING){
+//            Log.e("connecting", "hello")
+//        }
+//
+//        Timer().scheduleAtFixedRate(object : TimerTask(){
+//            override fun run() {
+//                Log.e("id", "${hubConnection.connectionId}")
+//            }
+//        }, 0 , 5000)
 
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.statusBarColor = ContextCompat.getColor(this, R.color.white)
@@ -136,7 +194,14 @@ class HomeActivity : BaseActivity() {
         }
     }
 
-    private fun setViewModel(){}
+    private fun setViewModel(){
+        fileViewModel.tmpFiles.observe(this){
+            if(it != null){
+                tmpFiles.clear()
+                tmpFiles.addAll(it)
+            }
+        }
+    }
     private fun setEvent(){
         binding.btnMessage.setOnClickListener {
             findNavController(R.id.nav_main_fragment).navigate(R.id.action_global_messageFragment)
@@ -172,5 +237,13 @@ class HomeActivity : BaseActivity() {
         }
         // Show the popup menu.
         popup.show()
+    }
+
+    override fun onDestroy() {
+        for(item in tmpFiles){
+            Log.e("itemActivity", item.path)
+            item.delete()
+        }
+        super.onDestroy()
     }
 }

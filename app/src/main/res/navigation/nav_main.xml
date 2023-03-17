@@ -342,7 +342,7 @@
     </dialog>
     <fragment
         android:id="@+id/galleryFragment"
-        android:name="com.example.homex.activity.home.addhome.GalleryFragment"
+        android:name="com.example.homex.activity.home.GalleryFragment"
         android:label="GalleryFragment"
         tools:layout="@layout/fragment_gallery"/>
     <fragment
