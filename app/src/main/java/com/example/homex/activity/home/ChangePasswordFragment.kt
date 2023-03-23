@@ -15,7 +15,7 @@ class ChangePasswordFragment : BaseFragment<FragmentChangePasswordBinding>() {
             showMessage = false,
             showTitleApp = Pair(true, getString(R.string.change_password)),
             showBottomNav = false,
-            showBoxChatLayout = Pair(false, ""),
+            showBoxChatLayout = Pair(false, null),
         )
     }
 

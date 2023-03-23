@@ -76,7 +76,12 @@
             app:exitAnim="@anim/fade_out"
             app:enterAnim="@anim/slide_in_left"
             app:popEnterAnim="@anim/fade_in"
-            app:popExitAnim="@anim/slide_in_right"/>
+            app:popExitAnim="@anim/slide_in_right">
+            <argument
+                android:name="id"
+                app:argType="integer"
+                android:defaultValue="0" />
+        </action>
     </fragment>
     <action
         android:id="@+id/action_global_messageFragment"
@@ -96,6 +101,11 @@
         <action
             android:id="@+id/action_messageBoxFragment_to_createRequestFragment"
             app:destination="@id/createRequestFragment" />
+        <argument
+            android:name="id"
+            app:argType="integer"
+            android:defaultValue="0" />
+
     </fragment>
     <fragment
         android:id="@+id/searchFragment"
@@ -129,6 +139,9 @@
         android:name="com.example.homex.HomeDetailFragment"
         android:label="fragment_home_detail"
         tools:layout="@layout/fragment_home_detail" >
+        <argument android:name="id"
+            app:argType="integer"
+            android:defaultValue="0"/>
         <action
             android:id="@+id/action_homeDetailFragment_to_messageBoxFragment"
             app:destination="@id/messageBoxFragment" />
@@ -167,7 +180,11 @@
         app:exitAnim="@anim/fade_out"
         app:enterAnim="@anim/slide_in_left"
         app:popEnterAnim="@anim/fade_in"
-        app:popExitAnim="@anim/slide_in_right"/>
+        app:popExitAnim="@anim/slide_in_right">
+        <argument app:argType="integer"
+            android:name="id"
+            android:defaultValue="0"/>
+    </action>
     <fragment
         android:id="@+id/addHomeFragment"
         android:name="com.example.homex.activity.home.addhome.AddHomeFragment"
@@ -238,7 +255,14 @@
         android:id="@+id/myHomeDetailFragment"
         android:name="com.example.homex.MyHomeDetailFragment"
         android:label="MyHomeDetailFragment"
-        tools:layout="@layout/fragment_my_home_detail"/>
+        tools:layout="@layout/fragment_my_home_detail">
+        <argument android:name="id"
+            app:argType="integer"
+            android:defaultValue="0"/>
+        <action
+            android:id="@+id/action_myHomeDetailFragment_to_addHomeFragment"
+            app:destination="@id/addHomeFragment" />
+    </fragment>
     <fragment
         android:id="@+id/pickYourHomeFragment"
         android:name="com.example.homex.PickYourHomeFragment"
@@ -255,7 +279,11 @@
         app:exitAnim="@anim/fade_out"
         app:enterAnim="@anim/slide_in_left"
         app:popEnterAnim="@anim/fade_in"
-        app:popExitAnim="@anim/slide_in_right"/>
+        app:popExitAnim="@anim/slide_in_right">
+        <argument android:name="id"
+            app:argType="integer"
+            android:defaultValue="0"/>
+    </action>
 
     <fragment
         android:id="@+id/myProfileFragment"

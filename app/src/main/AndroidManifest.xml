@@ -33,7 +33,7 @@
         <activity
             android:name=".activity.home.HomeActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustPan"/>
+            android:windowSoftInputMode="adjustResize"/>
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -44,6 +44,9 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+
+        <service android:name=".service.ChatService"
+            android:exported="false"/>
 
         <activity
             android:name=".activity.auth.AuthActivity"

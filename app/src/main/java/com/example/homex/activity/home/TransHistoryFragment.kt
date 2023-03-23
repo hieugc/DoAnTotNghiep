@@ -23,7 +23,7 @@ class TransHistoryFragment : BaseFragment<FragmentTransHistoryBinding>(),
             showMessage = false,
             showTitleApp = Pair(true, getString(R.string.swap_history)),
             showBottomNav = false,
-            showBoxChatLayout = Pair(false, ""),
+            showBoxChatLayout = Pair(false, null),
         )
     }
 

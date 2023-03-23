@@ -41,9 +41,9 @@ class UpdateInformationFragment : BaseFragment<FragmentUpdateInformationBinding>
             val sex = pos != 0
             val phoneNumber = binding.phoneInputEdtTxt.text.toString().trim()
             val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
-            format.timeZone = TimeZone.getTimeZone("UTC")
+//            format.timeZone = TimeZone.getTimeZone("UTC")
             val userFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-            userFormat.timeZone = TimeZone.getTimeZone("Asia/Vietnam")
+//            userFormat.timeZone = TimeZone.getTimeZone("Asia/Vietnam")
             try {
                 val res = userFormat.parse(binding.dobInputEdtTxt.text.toString())
 

@@ -18,7 +18,7 @@ class ExploreFragment : BaseFragment<FragmentExploreBinding>() {
             showMessage = true,
             showTitleApp = Pair(false, ""),
             showBottomNav = true,
-            showBoxChatLayout = Pair(false, ""),
+            showBoxChatLayout = Pair(false, null),
         )
     }
 }

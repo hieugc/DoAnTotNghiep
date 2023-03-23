@@ -26,7 +26,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
             showBottomNav = false,
             showMenu = false,
             showTitleApp = Pair(true, "Tìm kiếm"),
-            showBoxChatLayout = Pair(false, "")
+            showBoxChatLayout = Pair(false, null),
         )
     }
 

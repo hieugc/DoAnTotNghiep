@@ -4,11 +4,13 @@ import com.google.gson.JsonObject
 import com.homex.core.model.*
 import com.homex.core.model.general.ListResponse
 import com.homex.core.model.general.ObjectResponse
+import com.homex.core.model.response.MessageResponse
 import com.homex.core.model.response.MyHomeResponse
 import com.homex.core.model.response.UserResponse
 import com.homex.core.param.auth.*
 import com.homex.core.param.chat.ConnectToRoomParam
 import com.homex.core.param.chat.ContactUserParam
+import com.homex.core.param.chat.GetMessagesParam
 import com.homex.core.param.chat.SendMessageParam
 import okhttp3.RequestBody
 import retrofit2.Response
@@ -60,7 +62,7 @@ interface ApiService {
         @Body body: RequestBody
     ) : Response<ObjectResponse<JsonObject>>
 
-    @PUT("api/House/Update")
+    @POST("api/House/Update")
     suspend fun editHome(
         @Body body: RequestBody
     ) : Response<ObjectResponse<JsonObject>>
@@ -75,6 +77,11 @@ interface ApiService {
         @Query("page") page: Int
     ) : Response<ObjectResponse<MyHomeResponse>>
 
+    @GET("api/House/Details")
+    suspend fun getHomeDetails(
+        @Query("id") id: Int
+    ): Response<ObjectResponse<Home>>
+
     //--------------------MESSAGE-----------------------------
 
     @POST("api/Message/Send")
@@ -85,20 +92,26 @@ interface ApiService {
     @POST("api/Message/ContactUser")
     suspend fun contactUser(
         @Body param: ContactUserParam
-    ): Response<ListResponse<MessageRoom>>
+    ): Response<ObjectResponse<MessageRoom>>
 
     @POST("api/ConnectAllRoom")
     suspend fun connectChat(
         @Body body: RequestBody
-    ): Response<ListResponse<MessageRoom>>
+    ): Response<ObjectResponse<JsonObject>>
 
     @POST("api/Message/ConnectToRoom")
     suspend fun connectToRoom(
         @Body param: ConnectToRoomParam
-    ): Response<ListResponse<MessageRoom>>
+    ): Response<ObjectResponse<MessageRoom>>
 
-    @PUT("api/Message/Seen")
+    @POST("api/Message/Seen")
     suspend fun seenAll(
         @Body body: RequestBody
-    ): Response<ListResponse<MessageRoom>>
+    ): Response<ObjectResponse<JsonObject>>
+
+    @GET("api/ChatRoom?limit=20")
+    suspend fun getChatRoom(@Query("page") page: Int): Response<ObjectResponse<MessageResponse>>
+
+    @POST("api/MessagesInChatRoom")
+    suspend fun getMessagesInChatRoom(@Body param: GetMessagesParam): Response<ObjectResponse<MessageRoom>>
 }

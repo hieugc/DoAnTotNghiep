@@ -25,6 +25,7 @@ import com.bumptech.glide.request.target.Target
 import com.example.homex.R
 import com.example.homex.activity.home.HomeActivity
 import com.example.homex.adapter.AddHomeViewPager
+import com.example.homex.app.HOME
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentAddHomeBinding
 import com.example.homex.extension.disable
@@ -33,6 +34,7 @@ import com.example.homex.extension.gone
 import com.example.homex.extension.visible
 import com.example.homex.utils.RealPathUtil
 import com.example.homex.viewmodel.YourHomeViewModel
+import com.homex.core.model.Home
 import com.homex.core.util.AppEvent
 import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaType
@@ -55,15 +57,16 @@ class AddHomeFragment : BaseFragment<FragmentAddHomeBinding>() {
     private val tmp = mutableListOf<File>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         (activity as HomeActivity).setPropertiesScreen(
             showLogo = false,
             showBottomNav = false,
             showMessage = false,
             showMenu = false,
             showTitleApp = Pair(true, "Thêm nhà"),
-            showBoxChatLayout = Pair(false, "")
+            showBoxChatLayout = Pair(false, null),
         )
+        super.onViewCreated(view, savedInstanceState)
+        Log.e("viewCreated", "Hello")
     }
 
     fun openBottomSheet(){
@@ -128,6 +131,9 @@ class AddHomeFragment : BaseFragment<FragmentAddHomeBinding>() {
     }
 
     override fun setViewModel() {
+        viewModel.idRemove.observe(viewLifecycleOwner){
+            Log.e("idRemove", "$it")
+        }
         viewModel.rules.observe(viewLifecycleOwner){
             Log.e("rules", "$it")
         }
@@ -136,6 +142,9 @@ class AddHomeFragment : BaseFragment<FragmentAddHomeBinding>() {
         }
         viewModel.files.observe(viewLifecycleOwner){
             Log.e("files", "$it")
+        }
+        viewModel.images.observe(viewLifecycleOwner){
+            Log.e("images", "$it")
         }
 
         homeViewModel.messageLiveData.observe(viewLifecycleOwner){
@@ -252,6 +261,7 @@ class AddHomeFragment : BaseFragment<FragmentAddHomeBinding>() {
     }
 
     fun createHome(){
+        AppEvent.showLoading()
         if(!checkInput(-1))
             return
         val builder : MultipartBody.Builder = MultipartBody.Builder().setType(MultipartBody.FORM)
@@ -263,7 +273,9 @@ class AddHomeFragment : BaseFragment<FragmentAddHomeBinding>() {
         builder.addFormDataPart("bathroom", viewModel.bathroom.value.toString())
         builder.addFormDataPart("square", viewModel.square.value.toString())
         builder.addFormDataPart("location", viewModel.location.value.toString())
-        builder.addFormDataPart("idCity", "1")
+        builder.addFormDataPart("idCity", viewModel.idCity.value.toString())
+        builder.addFormDataPart("idDistrict", viewModel.idDistrict.value.toString())
+        builder.addFormDataPart("idWard", viewModel.idWard.value.toString())
         builder.addFormDataPart("lat", viewModel.lat.value.toString())
         builder.addFormDataPart("lng", viewModel.lng.value.toString())
         builder.addFormDataPart("price", viewModel.price.value.toString())
@@ -290,22 +302,37 @@ class AddHomeFragment : BaseFragment<FragmentAddHomeBinding>() {
             }
         }
 
-        val body: RequestBody = builder.build()
 
-        homeViewModel.createHome(body)
+        if(viewModel.id.value != 0){
+            Log.e("id", "${viewModel.id}")
+            Log.e("status", "${viewModel.status}")
+            Log.e("images", "${viewModel.images}")
+            Log.e("idRemove", "${viewModel.idRemove}")
+            builder.addFormDataPart("id", viewModel.id.value.toString())
+            viewModel.idRemove.value?.let {
+                for ((index, id) in it.withIndex()){
+                    builder.addFormDataPart("idRemove[${index}]", id.toString())
+                }
+            }
+            val body: RequestBody = builder.build()
+            homeViewModel.editHome(body)
+
+        }else{
+            val body: RequestBody = builder.build()
+            homeViewModel.createHome(body)
+        }
     }
 
-
-    override fun onDestroyView() {
-        Log.e("destroyView", "$tmpFiles")
+    override fun onDestroy() {
+        Log.e("destroy", "$tmpFiles")
         fileViewModel.file.postValue(mutableListOf())
         for(item in tmpFiles){
             Log.e("item", item.path)
             item.delete()
         }
         fileViewModel.tmpFiles.postValue(mutableListOf())
-        super.onDestroyView()
-        Log.e("destroyView", "$tmpFiles")
+        super.onDestroy()
+        Log.e("destroy", "$tmpFiles")
     }
 
     private fun createTempFile(uri: Uri?) : File?{
@@ -350,6 +377,40 @@ class AddHomeFragment : BaseFragment<FragmentAddHomeBinding>() {
             e.printStackTrace()
         }
         return null
+    }
+
+    override fun setView() {
+        arguments?.getParcelable<Home>(HOME)?.let {
+            (activity as HomeActivity).setPropertiesScreen(
+                showLogo = false,
+                showBottomNav = false,
+                showMessage = false,
+                showMenu = false,
+                showTitleApp = Pair(true, "Sửa thông tin nhà"),
+                showBoxChatLayout = Pair(false, null),
+            )
+            Log.e("setView", "Hello")
+
+            viewModel.option.postValue(it.option)
+            viewModel.name.postValue(it.name)
+            viewModel.square.postValue(it.square)
+            viewModel.location.postValue(it.location)
+            viewModel.description.postValue(it.description)
+            viewModel.price.postValue(it.price)
+            viewModel.bedroom.postValue(it.bedRoom)
+            viewModel.bathroom.postValue(it.bathRoom)
+            viewModel.people.postValue(it.people)
+            viewModel.utilities.postValue(it.utilities)
+            viewModel.rules.postValue(it.rules)
+            viewModel.lat.postValue(it.lat)
+            viewModel.lng.postValue(it.lng)
+            viewModel.id.postValue(it.id)
+            viewModel.status.postValue(it.status)
+            viewModel.idCity.postValue(it.idCity)
+            viewModel.idDistrict.postValue(it.idDistrict)
+            viewModel.idWard.postValue(it.idWard)
+            viewModel.images.postValue(it.images)
+        }
     }
 
     private fun saveBitmapToSDCard(bitmap: Bitmap?): File{

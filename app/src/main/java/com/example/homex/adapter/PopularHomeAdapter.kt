@@ -1,14 +1,16 @@
 package com.example.homex.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.homex.R
 import com.example.homex.databinding.PopularHomeItemBinding
 import com.example.homex.extension.dpToPx
 import com.homex.core.model.Home
 
-class PopularHomeAdapter(val homeList: ArrayList<Home>?, val onClick: (Home)->Unit): RecyclerView.Adapter<PopularHomeAdapter.PopularHomeViewHolder>() {
+class PopularHomeAdapter(val homeList: ArrayList<Home>?, val onClick: (Int)->Unit): RecyclerView.Adapter<PopularHomeAdapter.PopularHomeViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PopularHomeViewHolder {
         return PopularHomeViewHolder(
             PopularHomeItemBinding.bind(LayoutInflater.from(parent.context).inflate(
@@ -23,6 +25,14 @@ class PopularHomeAdapter(val homeList: ArrayList<Home>?, val onClick: (Home)->Un
         holder.binding.homeNOP.text = "${item?.people} người"
         holder.binding.homePriceTV.text = "${item?.price} point/ngày"
         holder.binding.ratingTV.text = item?.rating.toString()
+        item?.images?.let {
+            if (it.isNotEmpty()){
+                Log.e("url", it[0].data.toString())
+                Glide.with(holder.itemView.context)
+                    .load(it[0].data)
+                    .into(holder.binding.homeImg)
+            }
+        }
         if(position == homeList?.size!! - 1 )
         {
             val lastParams = holder.itemView.layoutParams as ViewGroup.MarginLayoutParams
@@ -35,9 +45,7 @@ class PopularHomeAdapter(val homeList: ArrayList<Home>?, val onClick: (Home)->Un
             holder.itemView.requestLayout()
         }
         holder.binding.root.setOnClickListener {
-            if (item != null) {
-                onClick.invoke(item)
-            }
+            item?.id?.let { it1 -> onClick.invoke(it1) }
         }
     }
 

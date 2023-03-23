@@ -36,7 +36,7 @@ class MyHomeFragment : BaseFragment<FragmentMyHomeBinding>() {
             showTitleApp = Pair(true, "Nhà của bạn"),
             showMenu = false,
             showMessage = false,
-            showBoxChatLayout = Pair(false, "")
+            showBoxChatLayout = Pair(false, null),
         )
         viewModel.getMyHomes(page)
     }
@@ -45,7 +45,8 @@ class MyHomeFragment : BaseFragment<FragmentMyHomeBinding>() {
         adapter = MyHomeAdapter(
             arrayListOf(),
             onClick = {
-                findNavController().navigate(R.id.action_global_myHomeDetailFragment, bundleOf( HOME to it))
+                val action = MyHomeFragmentDirections.actionGlobalMyHomeDetailFragment(id = it)
+                findNavController().navigate(action)
             }
         )
         binding.mainHomeRecView.adapter = adapter

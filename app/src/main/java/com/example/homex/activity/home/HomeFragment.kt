@@ -32,7 +32,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
             showMessage = true,
             showTitleApp = Pair(false, ""),
             showBottomNav = true,
-            showBoxChatLayout = Pair(false, ""),
+            showBoxChatLayout = Pair(false, null),
         )
         viewModel.getPopularHome()
         viewModel.getPopularLocation()
@@ -48,12 +48,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
             PopularHomeAdapter(
                 arrayListOf(),
                 onClick = {
-                    findNavController().navigate(R.id.action_global_homeDetailFragment, bundleOf(HOME to it))
+                    val action = HomeFragmentDirections.actionGlobalHomeDetailFragment(id = it)
+                    findNavController().navigate(action)
                 }
             )
 
         binding.popularHomeRecView.adapter = homeAdapter
-        binding.popularHomeRecView.layoutManager = CenterZoomLayoutManager(context, LinearLayoutManager.HORIZONTAL, false, mShrinkAmount = 0.05f, mShrinkDistance = 0.8f)
+        binding.popularHomeRecView.layoutManager = CenterZoomLayoutManager(context, LinearLayoutManager.HORIZONTAL, false, mShrinkAmount = 0f, mShrinkDistance = 1f)
         //Add snap helper to recyclerview to make it focus at 1 item
         val snapHelper = LinearSnapHelper()
         snapHelper.attachToRecyclerView(binding.popularHomeRecView)

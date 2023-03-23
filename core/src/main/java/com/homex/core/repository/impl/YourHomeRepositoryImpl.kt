@@ -45,4 +45,11 @@ class YourHomeRepositoryImpl(private val api: ApiService): YourHomeRepository {
             override suspend fun createCall(): Response<ObjectResponse<MyHomeResponse>> = api.getMyHome(page)
         }.build().asLiveData()
     }
+
+    override suspend fun getHomeByDetails(id: Int): LiveData<ResultResponse<Home>> {
+        return object : NetworkBoundResource<ObjectResponse<Home>, Home>(){
+            override fun processResponse(response: ObjectResponse<Home>): Home? = response.data
+            override suspend fun createCall(): Response<ObjectResponse<Home>> = api.getHomeDetails(id)
+        }.build().asLiveData()
+    }
 }

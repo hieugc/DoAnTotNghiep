@@ -22,7 +22,7 @@ class PendingRequestDetailFragment : BaseFragment<FragmentPendingRequestDetailBi
             showSearchLayout = false,
             showMessage = false,
             showMenu = false,
-            showBoxChatLayout = Pair(false, "")
+            showBoxChatLayout = Pair(false, null),
         )
     }
 }

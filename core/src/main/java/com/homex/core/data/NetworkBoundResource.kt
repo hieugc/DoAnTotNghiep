@@ -40,7 +40,6 @@ constructor(private val dispatcher: CoroutineDispatcher = Dispatchers.IO) {
 
         result.value = ResultResponse.Loading
 
-        AppEvent.showLoading()
 
         CoroutineScope(dispatcher).launch {
 
@@ -50,7 +49,6 @@ constructor(private val dispatcher: CoroutineDispatcher = Dispatchers.IO) {
                 try {
                     fetchFromNetwork()
                 } catch (e: java.lang.Exception) {
-                    AppEvent.hideLoading()
                     Log.e(TAG, "An error happened: $e")
                     setValue(ResultResponse.Error(e.message ?: "", 404))
                     AppEvent.showPopUpError(e.message)
@@ -59,7 +57,6 @@ constructor(private val dispatcher: CoroutineDispatcher = Dispatchers.IO) {
                 Log.d(TAG, "Return data from local database")
                 if (dbResultResponse != null)
                     setValue(ResultResponse.Success(dbResultResponse))
-                AppEvent.hideLoading()
             }
 
         }
@@ -104,11 +101,9 @@ constructor(private val dispatcher: CoroutineDispatcher = Dispatchers.IO) {
                             setValue(ResultResponse.Success(null, apiResponse.message()))
                         }
                         Log.e("apiSuccess", body.toString())
-                        AppEvent.hideLoading()
                     }
                     else -> {
                         Log.e("apiError", body.toString())
-                        AppEvent.hideLoading()
                         setValue(ResultResponse.Error(apiResponse.message(), apiResponse.code()))
                         AppEvent.showPopUpError(message = apiResponse.message().toString())
                     }
@@ -118,7 +113,6 @@ constructor(private val dispatcher: CoroutineDispatcher = Dispatchers.IO) {
                 {
                     val errorMsg = "502 Bad Gateway"
                     setValue(ResultResponse.Error(errorMsg, apiResponse.code()))
-                    AppEvent.hideLoading()
                     AppEvent.showPopUpError(errorMsg)
                 }else {
                     val response =
@@ -128,14 +122,12 @@ constructor(private val dispatcher: CoroutineDispatcher = Dispatchers.IO) {
                         )
                     val errorMsg = response?.detail ?: ""
                     setValue(ResultResponse.Error(errorMsg, apiResponse.code()))
-                    AppEvent.hideLoading()
                     if (response.detail != "Invalid email or password") {
                         AppEvent.showPopUpError(errorMsg)
                     }
                 }
             }
         }catch (e: Exception){
-            AppEvent.hideLoading()
             AppEvent.showPopUpError(message = e.localizedMessage)
         }
 

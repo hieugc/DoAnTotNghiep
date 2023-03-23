@@ -25,4 +25,8 @@ interface YourHomeRepository {
     suspend fun getMyHomes(
         page: Int
     ): LiveData<ResultResponse<MyHomeResponse>>
+
+    suspend fun getHomeByDetails(
+        id: Int
+    ): LiveData<ResultResponse<Home>>
 }

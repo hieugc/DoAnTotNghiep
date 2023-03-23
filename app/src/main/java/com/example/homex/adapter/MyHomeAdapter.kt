@@ -13,7 +13,7 @@ import com.example.homex.extension.setHomeStatus
 import com.homex.core.model.Home
 import com.homex.core.model.HomeStatus
 
-class MyHomeAdapter(val homeList: ArrayList<Home>?, val onClick: (Home)->Unit): RecyclerView.Adapter<MyHomeAdapter.MyHomeViewHolder>() {
+class MyHomeAdapter(val homeList: ArrayList<Home>?, val onClick: (Int)->Unit): RecyclerView.Adapter<MyHomeAdapter.MyHomeViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyHomeViewHolder {
         return MyHomeViewHolder(
@@ -56,9 +56,7 @@ class MyHomeAdapter(val homeList: ArrayList<Home>?, val onClick: (Home)->Unit): 
             }
         }
         holder.binding.root.setOnClickListener {
-            if (item != null) {
-                onClick.invoke(item)
-            }
+            item?.id?.let { onClick.invoke(it) }
         }
         if(position == homeList?.size!! - 1 )
         {

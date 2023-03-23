@@ -24,7 +24,7 @@ class PickHomeFragment : BaseFragment<FragmentPickHomeBinding>() {
             showMessage = false,
             showMenu = false,
             showTitleApp = Pair(true, "Chọn nhà"),
-            showBoxChatLayout = Pair(false, "")
+            showBoxChatLayout = Pair(false, null),
         )
     }
 

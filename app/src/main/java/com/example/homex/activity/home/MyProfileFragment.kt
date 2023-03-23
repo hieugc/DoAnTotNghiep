@@ -17,7 +17,7 @@ class MyProfileFragment : BaseFragment<FragmentMyProfileBinding>() {
             showMessage = false,
             showTitleApp = Pair(true, getString(R.string.my_profile)),
             showBottomNav = false,
-            showBoxChatLayout = Pair(false, ""),
+            showBoxChatLayout = Pair(false, null),
         )
     }
 

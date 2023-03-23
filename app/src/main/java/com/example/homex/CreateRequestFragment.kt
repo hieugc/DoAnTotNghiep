@@ -37,7 +37,7 @@ class CreateRequestFragment : BaseFragment<FragmentCreateRequestBinding>() {
             showTitleApp = Pair(true, "Tạo yêu cầu"),
             showMenu = false,
             showMessage = false,
-            showBoxChatLayout = Pair(false, ""),
+            showBoxChatLayout = Pair(false, null),
             showBottomNav = false,
             showLogo = false
         )

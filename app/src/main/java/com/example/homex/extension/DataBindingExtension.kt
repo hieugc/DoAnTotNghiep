@@ -13,12 +13,12 @@ import java.util.*
 @BindingAdapter(value = ["dob", "gender"])
 fun AppCompatTextView.getAge(dob: String?, gender: Boolean?){
     val df1: DateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.ENGLISH)
-    df1.timeZone = TimeZone.getTimeZone("UTC")
+//    df1.timeZone = TimeZone.getTimeZone("UTC")
     val result1 = dob?.let { df1.parse(it) }
     val birthDate = Calendar.getInstance()
-    birthDate.timeZone = TimeZone.getTimeZone("Asia/Vietnam")
+//    birthDate.timeZone = TimeZone.getTimeZone("Asia/Vietnam")
     val now = Calendar.getInstance()
-    now.timeZone = TimeZone.getTimeZone("Asia/Vietnam")
+//    now.timeZone = TimeZone.getTimeZone("Asia/Vietnam")
     if (result1 != null) {
         birthDate.time = result1
         var age = now.get(Calendar.YEAR) - birthDate.get(Calendar.YEAR)

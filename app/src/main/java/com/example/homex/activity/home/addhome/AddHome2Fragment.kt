@@ -15,6 +15,18 @@ class AddHome2Fragment : BaseFragment<FragmentAddHome2Binding>() {
     override val layoutId: Int = R.layout.fragment_add_home2
     private val viewModel: AddHomeViewModel by viewModels({requireParentFragment()})
 
+    override fun setView() {
+        viewModel.apply {
+            binding.homeNameInputEdtTxt.setText(this.name.value)
+            if(this.square.value != 0)
+                binding.homeAreaEdtTxt.setText(this.square.value.toString())
+            binding.homeAddressEdtTxt.setText(this.location.value)
+            binding.homeDescriptionEdtTxt.setText(this.description.value)
+            if (this.price.value != 0)
+                binding.homePriceEdtTxt.setText(this.price.value.toString())
+        }
+    }
+
     override fun setEvent() {
         binding.homeAreaEdtTxt.addTextChangedListener {
             if (it?.toString() == "")

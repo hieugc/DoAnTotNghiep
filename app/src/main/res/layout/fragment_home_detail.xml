@@ -101,20 +101,21 @@
                     android:id="@+id/appCompatImageView3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
                     android:src="@drawable/ic_location"
                     app:layout_constraintStart_toStartOf="@id/homeName"
-                    app:layout_constraintTop_toBottomOf="@id/homeName" />
+                    app:layout_constraintTop_toTopOf="@id/homeLocation"
+                    app:layout_constraintBottom_toBottomOf="@id/homeLocation"/>
 
                 <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/homeLocation"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{home.location}"
-                    android:id="@+id/homeLocation"
                     android:layout_marginStart="8dp"
-                    app:layout_constraintBottom_toBottomOf="@+id/appCompatImageView3"
+                    android:text="@{home.location}"
+                    android:maxWidth="200dp"
+                    android:layout_marginTop="8dp"
                     app:layout_constraintStart_toEndOf="@+id/appCompatImageView3"
-                    app:layout_constraintTop_toTopOf="@+id/appCompatImageView3" />
+                    app:layout_constraintTop_toBottomOf="@id/homeName" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/appCompatTextView25"
@@ -123,8 +124,11 @@
                     android:layout_marginStart="8dp"
                     android:text="Xem bản đồ >"
                     android:textColor="@color/link"
+                    app:layout_constraintHorizontal_bias="0"
+                    android:layout_marginEnd="8dp"
                     app:layout_constraintBottom_toBottomOf="@id/homeLocation"
-                    app:layout_constraintStart_toEndOf="@id/homeLocation"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/homeLocation"
                     app:layout_constraintTop_toTopOf="@id/homeLocation" />
 
                 <com.google.android.material.divider.MaterialDivider
@@ -471,8 +475,17 @@
                     android:text="Xem thêm"
                     app:layout_constraintEnd_toEndOf="parent"
                     style="@style/SmallText"
+                    android:visibility="gone"
+                    android:id="@+id/showAllUtil"
                     android:layout_marginEnd="16dp"
                     app:layout_constraintBottom_toBottomOf="@id/homeUtil"
+                    />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/utilRecView"
+                    app:layout_constraintTop_toBottomOf="@id/homeUtil"
                     />
 
                 <com.google.android.material.divider.MaterialDivider
@@ -482,7 +495,7 @@
                     android:id="@+id/materialDivider22"
                     android:layout_marginStart="16dp"
                     android:layout_marginEnd="16dp"
-                    app:layout_constraintTop_toBottomOf="@+id/homeUtil" />
+                    app:layout_constraintTop_toBottomOf="@+id/utilRecView" />
 
 
                 <androidx.appcompat.widget.AppCompatTextView
@@ -496,15 +509,22 @@
                     android:textColor="@color/black_60"
                     />
 
+                <androidx.recyclerview.widget.RecyclerView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/rulesRecView"
+                    app:layout_constraintTop_toBottomOf="@id/homeRule"
+                    />
+
+
                 <com.google.android.material.divider.MaterialDivider
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     app:dividerColor="@color/divider"
-                    android:layout_marginTop="16dp"
                     android:id="@+id/materialDivider23"
                     android:layout_marginStart="16dp"
                     android:layout_marginEnd="16dp"
-                    app:layout_constraintTop_toBottomOf="@+id/homeRule" />
+                    app:layout_constraintTop_toBottomOf="@+id/rulesRecView" />
 
 
                 <androidx.appcompat.widget.AppCompatTextView

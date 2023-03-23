@@ -3,6 +3,8 @@ package com.example.homex.activity.home.addhome
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.homex.core.model.HomeStatus
+import com.homex.core.model.ImageBase
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 import java.io.File
@@ -19,15 +21,23 @@ class AddHomeViewModel: ViewModel() {
     val lat = MutableLiveData(0.0)
     val lng = MutableLiveData(0.0)
     val price = MutableLiveData(0)
+    val idCity = MutableLiveData(1)
+    val idDistrict = MutableLiveData(0)
+    val idWard = MutableLiveData(0)
     val utilities = MutableLiveData<List<Int>>(listOf())
     val rules = MutableLiveData<List<Int>>(listOf())
     val files =  MutableLiveData<MutableList<File>?>(mutableListOf())
+    //For edit
+    val id = MutableLiveData(0)
+    val status = MutableLiveData(HomeStatus.VALID.ordinal)
+    val images = MutableLiveData<List<ImageBase>>()
+    val idRemove = MutableLiveData<MutableList<Int>>()
 
-    fun addFile(file: File){
-        viewModelScope.launch {
-            val tmp = files.value
-            tmp?.add(file)
-            files.postValue(tmp)
-        }
-    }
+//    fun addFile(file: File){
+//        viewModelScope.launch {
+//            val tmp = files.value
+//            tmp?.add(file)
+//            files.postValue(tmp)
+//        }
+//    }
 }

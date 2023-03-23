@@ -3,6 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.example.homex.activity.home.addhome.AddHomeViewModel" />
+    </data>
+
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -308,6 +315,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/wifi"
+                android:checked="@{viewModel.utilities.contains(1)}"
                 android:id="@+id/wifiChip"
                 app:chipIcon="@drawable/ic_wifi"/>
 
@@ -317,6 +325,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/computer"
+                android:checked="@{viewModel.utilities.contains(2)}"
                 android:id="@+id/computerChip"
                 app:chipIcon="@drawable/ic_computer" />
 
@@ -326,6 +335,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/smart_tv"
+                android:checked="@{viewModel.utilities.contains(3)}"
                 android:id="@+id/smartTVChip"
                 app:chipIcon="@drawable/ic_tv"/>
 
@@ -335,6 +345,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/bath_tub"
+                android:checked="@{viewModel.utilities.contains(4)}"
                 android:id="@+id/bathTubChip"
                 app:chipIcon="@drawable/ic_bath"/>
 
@@ -344,6 +355,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/parking_lot"
+                android:checked="@{viewModel.utilities.contains(5)}"
                 android:id="@+id/parkingLotChip"
                 app:chipIcon="@drawable/ic_parking_lot"/>
 
@@ -353,6 +365,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/air_conditioner"
+                android:checked="@{viewModel.utilities.contains(6)}"
                 android:id="@+id/airConditionerChip"
                 app:chipIcon="@drawable/ic_air_conditioning"/>
 
@@ -362,6 +375,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/washing_machine"
+                android:checked="@{viewModel.utilities.contains(7)}"
                 android:id="@+id/washingMachineChip"
                 app:chipIcon="@drawable/ic_wash_machine"/>
 
@@ -371,6 +385,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/fridge"
+                android:checked="@{viewModel.utilities.contains(8)}"
                 android:id="@+id/fridgeChip"
                 app:chipIcon="@drawable/ic_fridge" />
 
@@ -380,6 +395,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/pool"
+                android:checked="@{viewModel.utilities.contains(9)}"
                 android:id="@+id/poolChip"
                 app:chipIcon="@drawable/ic_pool" />
 
@@ -413,6 +429,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/no_smoking"
+                android:checked="@{viewModel.rules.contains(1)}"
                 android:id="@+id/noSmokingChip"
                 app:chipIcon="@drawable/ic_no_smoking"/>
             <com.google.android.material.chip.Chip
@@ -421,6 +438,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/no_pet"
+                android:checked="@{viewModel.rules.contains(2)}"
                 android:id="@+id/noPetChip"
                 app:chipIcon="@drawable/ic_no_pet"/>
 <!--            <com.google.android.material.chip.Chip-->

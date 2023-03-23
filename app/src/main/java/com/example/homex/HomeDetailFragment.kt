@@ -8,6 +8,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.viewpager2.widget.ViewPager2
@@ -15,23 +17,33 @@ import com.example.homex.activity.home.HomeActivity
 import com.example.homex.adapter.HomeRatingAdapter
 import com.example.homex.adapter.ImageSlideAdapter
 import com.example.homex.adapter.SimilarHomeAdapter
+import com.example.homex.adapter.UtilAdapter
 import com.example.homex.app.HOME
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentHomeDetailBinding
 import com.example.homex.extension.betweenDays
 import com.example.homex.extension.longToDate
+import com.example.homex.extension.visible
 import com.example.homex.utils.CenterZoomLayoutManager
+import com.example.homex.viewmodel.YourHomeViewModel
 import com.google.android.material.tabs.TabLayoutMediator
 import com.homex.core.model.CalendarDate
 import com.homex.core.model.Home
+import com.homex.core.model.ImageBase
+import com.homex.core.util.AppEvent
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
 
 
 class HomeDetailFragment : BaseFragment<FragmentHomeDetailBinding>() {
     override val layoutId: Int = R.layout.fragment_home_detail
-
+    private lateinit var adapter: ImageSlideAdapter
+    private lateinit var utilAdapter: UtilAdapter
+    private lateinit var rulesAdapter: UtilAdapter
     private lateinit var ratingAdapter: HomeRatingAdapter
     private lateinit var similarHomeAdapter: SimilarHomeAdapter
+    private val args: HomeDetailFragmentArgs by navArgs()
+    private val viewModel: YourHomeViewModel by viewModel()
     private var selection: Pair<CalendarDate?, CalendarDate?> = Pair(null, null)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -42,12 +54,9 @@ class HomeDetailFragment : BaseFragment<FragmentHomeDetailBinding>() {
             showTitleApp = Pair(true, "Thông tin căn nhà"),
             showBottomNav = false,
             showLogo = false,
-            showBoxChatLayout = Pair(false, "")
+            showBoxChatLayout = Pair(false, null),
         )
-
-        arguments?.getParcelable<Home>(HOME)?.let {
-            binding.home = it
-        }
+        viewModel.getHomeDetails(args.id)
 
         findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Pair<CalendarDate?, CalendarDate?>>("DATE")?.observe(viewLifecycleOwner){
                 dates->
@@ -57,6 +66,26 @@ class HomeDetailFragment : BaseFragment<FragmentHomeDetailBinding>() {
             binding.dayCountTV.text = "${startDate.betweenDays(endDate)} ngày"
             Log.e("betweenDate",  "${startDate.betweenDays(endDate)}")
             selection = dates
+        }
+    }
+
+    override fun setViewModel() {
+        viewModel.homeDetailsLiveData.observe(this){
+            if (it != null){
+                binding.home = it
+                adapter.imgList = it.images
+                utilAdapter.itemList = it.utilities
+                if(it.utilities != null){
+                    if(it.utilities!!.size > 4){
+                        binding.showAllUtil.visible()
+                    }
+                }
+                rulesAdapter.itemList = it.rules
+                adapter.notifyDataSetChanged()
+                utilAdapter.notifyDataSetChanged()
+                rulesAdapter.notifyDataSetChanged()
+            }
+            AppEvent.hideLoading()
         }
     }
 
@@ -90,6 +119,14 @@ class HomeDetailFragment : BaseFragment<FragmentHomeDetailBinding>() {
         val snapHelper2 = LinearSnapHelper()
         snapHelper2.attachToRecyclerView(binding.homeSimilarRecView)
 
+        utilAdapter = UtilAdapter(arrayListOf(), showAll =  false, rule = false)
+        binding.utilRecView.adapter = utilAdapter
+        binding.utilRecView.layoutManager = GridLayoutManager(requireContext(), 2)
+
+        rulesAdapter = UtilAdapter(arrayListOf(), showAll =  false, rule = true)
+        binding.rulesRecView.adapter = rulesAdapter
+        binding.rulesRecView.layoutManager = GridLayoutManager(requireContext(), 2)
+
         setupViewPager()
         setupTabLayout()
 
@@ -119,9 +156,7 @@ class HomeDetailFragment : BaseFragment<FragmentHomeDetailBinding>() {
     }
 
     private fun setupViewPager(){
-        val adapter = ImageSlideAdapter(
-            binding.home?.images
-        )
+        adapter = ImageSlideAdapter(listOf())
         binding.imgSlideViewPager.adapter = adapter
         binding.imgSlideViewPager.offscreenPageLimit = 3
         binding.imgSlideViewPager.clipToOutline = false
@@ -139,6 +174,17 @@ class HomeDetailFragment : BaseFragment<FragmentHomeDetailBinding>() {
         binding.createRequestBtn.setOnClickListener {
             val action = HomeDetailFragmentDirections.actionHomeDetailFragmentToCreateRequestFragment(selection.first, selection.second)
             findNavController().navigate(action)
+        }
+        binding.showAllUtil.setOnClickListener {
+            if(utilAdapter.showAll){
+                binding.showAllUtil.text = "Xem thêm"
+                utilAdapter.showAll = false
+            }else{
+                binding.showAllUtil.text = "Ẩn bớt"
+                utilAdapter.showAll = true
+            }
+            utilAdapter.notifyDataSetChanged()
+
         }
     }
 }

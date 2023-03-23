@@ -1,13 +1,20 @@
 package com.example.homex.adapter
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.homex.R
 import com.example.homex.databinding.MessageBoxItemBinding
-import com.homex.core.model.MessageBox
+import com.example.homex.extension.convertToRelativeDateTime
+import com.example.homex.extension.gone
+import com.example.homex.extension.visible
+import com.homex.core.model.MessageRoom
+import kotlin.collections.ArrayList
 
-class MessageBoxAdapter(private val messageBoxList: ArrayList<MessageBox>?, private val onClick: ()->Unit): RecyclerView.Adapter<MessageBoxAdapter.MessageBoxViewHolder>() {
+class MessageBoxAdapter(var messageBoxList: ArrayList<MessageRoom>?, private val onClick: (MessageRoom)->Unit, var userAccess : String? = null): RecyclerView.Adapter<MessageBoxAdapter.MessageBoxViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageBoxViewHolder {
         return MessageBoxViewHolder(
             MessageBoxItemBinding.bind(
@@ -20,15 +27,46 @@ class MessageBoxAdapter(private val messageBoxList: ArrayList<MessageBox>?, priv
 
     override fun onBindViewHolder(holder: MessageBoxViewHolder, position: Int) {
         val item = messageBoxList?.get(position)
-        holder.binding.boxName.text = item?.user
-        holder.binding.lastMsg.text = item?.preview
+        holder.binding.boxName.text = item?.userMessages?.get(0)?.userName
+        if (item?.messages?.get(0)?.idSend == userAccess){
+            holder.binding.lastMsg.text = "Bạn: ${item?.messages?.get(0)?.message}"
+        }else{
+            holder.binding.lastMsg.text = item?.messages?.get(0)?.message
+        }
+        Glide.with(holder.itemView.context)
+            .load(item?.userMessages?.get(0)?.imageUrl)
+            .placeholder(R.drawable.ic_baseline_image_24)
+            .error(R.mipmap.avatar)
+            .into(holder.binding.appCompatImageView2)
+        holder.binding.msgTime.text = item?.messages?.get(0)?.createdDate.convertToRelativeDateTime()
+        if(item?.messages?.get(0)?.isSeen == true){
+            notificationWasRead(holder.binding, holder.itemView.context)
+        }else{
+            notificationWasNotRead(holder.binding, holder.itemView.context)
+        }
         holder.binding.root.setOnClickListener {
-            onClick.invoke()
+            if (item != null) {
+                onClick.invoke(item)
+            }
         }
     }
 
     override fun getItemCount(): Int {
         return messageBoxList?.size?:0
+    }
+
+    private fun notificationWasRead(binding: MessageBoxItemBinding, context: Context){
+        binding.boxName.setTextColor(ContextCompat.getColor(context, R.color.gray))
+        binding.lastMsg.setTextColor(ContextCompat.getColor(context, R.color.gray))
+        binding.msgTime.setTextColor(ContextCompat.getColor(context, R.color.gray))
+        binding.isReadIndicator.gone()
+    }
+
+    private fun notificationWasNotRead(binding: MessageBoxItemBinding, context: Context){
+        binding.boxName.setTextColor(ContextCompat.getColor(context, R.color.black))
+        binding.lastMsg.setTextColor(ContextCompat.getColor(context, R.color.black))
+        binding.msgTime.setTextColor(ContextCompat.getColor(context, R.color.gray6))
+        binding.isReadIndicator.visible()
     }
 
     class MessageBoxViewHolder(val binding: MessageBoxItemBinding): RecyclerView.ViewHolder(binding.root)

@@ -35,7 +35,7 @@ class SearchResultFragment : BaseFragment<FragmentSearchResultBinding>(), EasyPe
             showBottomNav = false,
             showMenu = false,
             showTitleApp = Pair(false, ""),
-            showBoxChatLayout = Pair(false, "")
+            showBoxChatLayout = Pair(false, null),
         )
 
         (activity as HomeActivity).showSearchLayout()

@@ -22,6 +22,7 @@ open class CoreApplication: Application() {
     private var profile: Profile? = null
     private var listProfile: List<Profile>? = listOf()
     private var token: String? = null
+    private var connectionId: String? = null
 
 
     override fun onCreate() {
@@ -54,6 +55,11 @@ open class CoreApplication: Application() {
         this.token = token
     }
 
+    fun saveConnectionId(connectionId: String?){
+        prefsUtil.connectionId = connectionId
+        this.connectionId = connectionId
+    }
+
     fun saveListProfile(list: List<Profile>?){
         prefsUtil.listProfile = list
         this.listProfile = list
@@ -62,6 +68,7 @@ open class CoreApplication: Application() {
 
     fun getProfile(): Profile? = profile
     fun getToken(): String? = token
+    fun getConnectionId(): String? = connectionId
     fun getListProfile(): List<Profile>? = listProfile
 
 }

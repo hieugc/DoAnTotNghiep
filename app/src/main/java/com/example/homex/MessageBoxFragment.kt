@@ -5,20 +5,41 @@ import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.homex.activity.home.HomeActivity
 import com.example.homex.adapter.MessageAdapter
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentMessageBoxBinding
+import com.example.homex.extension.formatIso8601ToFormat
 import com.example.homex.extension.gone
 import com.example.homex.extension.visible
+import com.example.homex.viewmodel.ChatViewModel
+import com.homex.core.model.Message
 import com.homex.core.model.OldMessage
+import com.homex.core.model.UserMessage
+import com.homex.core.param.chat.GetMessagesParam
+import com.homex.core.param.chat.Pagination
+import com.homex.core.param.chat.SendMessageParam
+import com.homex.core.util.PrefUtil
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 
 class MessageBoxFragment : BaseFragment<FragmentMessageBoxBinding>() {
     override val layoutId: Int = R.layout.fragment_message_box
-
+    private val args: MessageBoxFragmentArgs by navArgs()
+    private val viewModel: ChatViewModel by sharedViewModel()
     private lateinit var adapter: MessageAdapter
+    private val messageList = arrayListOf<Message>()
+    private val userMessages = arrayListOf<UserMessage>()
+    private lateinit var body: RequestBody
+    private var page = 0
+    private val limit = 20
+    private val prefUtil : PrefUtil by inject()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -28,54 +49,20 @@ class MessageBoxFragment : BaseFragment<FragmentMessageBoxBinding>() {
             showTitleApp = Pair(false, ""),
             showMessage = false,
             showMenu = true,
-            showBoxChatLayout = Pair(true, "Chat"),
+            showBoxChatLayout = Pair(false, null),
         )
+        val param = Pagination(page++, limit)
+        viewModel.getMessagesInChatRoom(param = GetMessagesParam(idRoom = args.id, param))
+        val mediaType = "application/json".toMediaType()
+        body = "\"${args.id}\"".toRequestBody(mediaType)
+        viewModel.seenAll(body)
     }
 
     override fun setView() {
-        val arrayList = arrayListOf(
-            OldMessage(id = "1", message = "alo bạn ơi", isMyMessage = false, date = "03/03/2023", userID = "1"),
-            OldMessage(id = "1", message = "ok bạn, không có chi", isMyMessage = true, date = "01/03/2023", userID = "2"),
-            OldMessage(id = "1", message = "ok bạn, cảm ơn bạn rất nhiều", isMyMessage = false, date = "01/03/2023", userID = "1"),
-            OldMessage(id = "1", message = "có gì bạn cứ nhắn mình nhé", isMyMessage = true, date = "01/03/2023", userID = "2"),
-            OldMessage(id = "1", message = "ok bạn hiền", isMyMessage = true, date = "01/03/2023", userID = "2"),
-            OldMessage(id = "1", message = "tại mình cần mua một số thứ", isMyMessage = false, date = "01/03/2023", userID = "1"),
-            OldMessage(id = "1", message = "ok bạn, có gì mình sẽ xem qua", isMyMessage = false, date = "01/03/2023", userID = "1"),
-            OldMessage(id = "1", message = "cách căn hộ 3km sẽ có 1 trung tâm mua sắm bạn nhé !", isMyMessage = true, date = "01/03/2023", userID = "2"),
-            OldMessage(id = "1", message = "có bạn ơi", isMyMessage = true, date = "01/03/2023", userID = "2"),
-            OldMessage(id = "1", message = "bạn ơi, nhà của bạn có ở gần trung tâm mua sắm không nhỉ", isMyMessage = false, date = "01/03/2023", userID = "1"),
-            OldMessage(id = "1", message = "alo alo", isMyMessage = false, date = "01/03/2023", userID = "1"),
-        )
-        val list = arrayListOf<OldMessage>()
-        var date = arrayList[0].date
-        for((index, msg) in arrayList.withIndex()){
-            if(date != msg.date){
-                list.add(
-                    OldMessage(
-                        id = null,
-                        message = null,
-                        isMyMessage = false,
-                        date = date,
-                        isDateItem = true
-                    )
-                )
-                date = msg.date
-            }
-            list.add(msg)
-            if(index == arrayList.size - 1){
-                list.add(
-                    OldMessage(
-                        id = null,
-                        message = null,
-                        isMyMessage = false,
-                        date = date,
-                        isDateItem = true
-                    )
-                )
-            }
-        }
         adapter = MessageAdapter(
-            list
+            messageList,
+            userMessages,
+            prefUtil.profile?.userAccess
         )
         binding.messageRecView.adapter = adapter
         val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, true)
@@ -141,10 +128,91 @@ class MessageBoxFragment : BaseFragment<FragmentMessageBoxBinding>() {
             findNavController().navigate(R.id.action_messageBoxFragment_to_createRequestFragment)
         }
         binding.sendBtn.setOnClickListener {
-            Log.e("send", "hello")
+            if(binding.msgEditText.text.toString() != ""){
+                val param = SendMessageParam(
+                    idRoom = args.id,
+                    idReply = 0,
+                    message = binding.msgEditText.text.toString()
+                )
+                viewModel.sendMessage(param)
+                binding.msgEditText.setText("")
+            }
         }
         binding.msgInputLayout.setOnClickListener {
             Log.e("layout", "hello")
         }
     }
+
+    override fun setViewModel() {
+        viewModel.messages.observe(this){
+            if(it != null){
+                Log.e("messagesList", "${it.messages}")
+                userMessages.clear()
+                if(page == 1){
+                    messageList.clear()
+                }
+                val messages = it.messages
+                if (messages != null){
+                    val tmpList = arrayListOf<Message>()
+                    var date = messages[0].createdDate
+                    for((index, msg) in messages.withIndex()){
+                        if(date?.formatIso8601ToFormat("dd/MM/yyyy") != msg.createdDate?.formatIso8601ToFormat("dd/MM/yyyy")){
+                            tmpList.add(
+                                Message(
+                                    createdDate = date,
+                                    isDateItem = true
+                                )
+                            )
+                            date = msg.createdDate
+                        }
+                        tmpList.add(msg)
+                        if(index == messages.size - 1){
+                            tmpList.add(
+                                Message(
+                                    createdDate = date,
+                                    isDateItem = true
+                                )
+                            )
+                        }
+                    }
+                    messageList.addAll(tmpList)
+                }
+                val users = it.userMessages
+                if(users != null){
+                    userMessages.addAll(users)
+                    if (users.size > 0){
+                        (activity as HomeActivity).setPropertiesScreen(
+                            showLogo = false,
+                            showBottomNav = false,
+                            showTitleApp = Pair(false, ""),
+                            showMessage = false,
+                            showMenu = true,
+                            showBoxChatLayout = Pair(true, it.userMessages?.get(0)),
+                        )
+                    }
+                }
+                adapter.notifyDataSetChanged()
+            }
+        }
+
+        viewModel.seenAll.observe(this){
+            if(it != null){
+                Log.e("seenAll", "hello")
+            }
+        }
+
+        viewModel.newMessage.observe(this){
+            if (it != null){
+                Log.e("newMessage", "${it.messages}")
+                val messages = it.messages
+                if (messages != null){
+                    messageList.addAll(0, messages)
+                    adapter.notifyDataSetChanged()
+                    viewModel.seenAll(body)
+                }
+                viewModel.newMessage.postValue(null)
+            }
+        }
+    }
+
 }

@@ -13,6 +13,7 @@ const val EVENT_ID = "EVENT_ID"
 const val ALERT_SETTING = "ALERT_SETTING"
 const val PROFILE_LIST = "PROFILE_LIST"
 const val USER_PARTICIPANT = "USER_PARTICIPANT"
+const val CONNECTION_ID = "CONNECTION_ID"
 
 class PrefUtil constructor(
     private val context: Context,
@@ -42,6 +43,10 @@ class PrefUtil constructor(
     var token: String?
         get() = prefs.getString(TOKEN, null)
         set(value) = prefs.edit().putString(TOKEN, value).apply()
+
+    var connectionId : String?
+        get() = prefs.getString(CONNECTION_ID, null)
+        set(value) = prefs.edit().putString(CONNECTION_ID, value).apply()
 
     var eventID: String?
         get() = prefs.getString(EVENT_ID, null)

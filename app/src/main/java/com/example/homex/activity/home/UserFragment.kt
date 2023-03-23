@@ -29,7 +29,7 @@ class UserFragment : BaseFragment<FragmentUserBinding>() {
             showMessage = true,
             showTitleApp = Pair(false, ""),
             showBottomNav = true,
-            showBoxChatLayout = Pair(false, ""),
+            showBoxChatLayout = Pair(false, null),
         )
     }
 

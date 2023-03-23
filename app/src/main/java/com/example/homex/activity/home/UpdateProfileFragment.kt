@@ -15,7 +15,7 @@ class UpdateProfileFragment : BaseFragment<FragmentUpdateProfileBinding>() {
             showMessage = false,
             showTitleApp = Pair(true, getString(R.string.user_profile)),
             showBottomNav = false,
-            showBoxChatLayout = Pair(false, ""),
+            showBoxChatLayout = Pair(false, null),
         )
     }
 

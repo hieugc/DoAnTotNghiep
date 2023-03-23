@@ -69,6 +69,7 @@
                             <androidx.appcompat.widget.AppCompatImageView
                                 android:layout_width="40dp"
                                 android:layout_height="40dp"
+                                android:id="@+id/ivAvatar"
                                 android:layout_gravity="center_vertical"
                                 android:src="@mipmap/avatar" />
 

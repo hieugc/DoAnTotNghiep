@@ -1,18 +1,17 @@
 package com.example.homex.activity.home
 
-import android.R.id.input
-import android.content.Context
-import android.content.Intent
+import android.content.*
 import android.os.Bundle
+import android.os.IBinder
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.annotation.MenuRes
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
@@ -20,23 +19,27 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI.navigateUp
 import androidx.navigation.ui.NavigationUI.setupActionBarWithNavController
 import androidx.navigation.ui.NavigationUI.setupWithNavController
+import com.bumptech.glide.Glide
 import com.example.homex.NotificationDialogFragment
 import com.example.homex.R
 import com.example.homex.activity.home.addhome.FileViewModel
+import com.example.homex.app.RECEIVE_MESSAGE
 import com.example.homex.base.BaseActivity
 import com.example.homex.databinding.ActivityHomeBinding
 import com.example.homex.extension.gone
 import com.example.homex.extension.visible
-import com.facebook.stetho.okhttp3.StethoInterceptor
-import com.homex.core.CoreApplication
-import com.microsoft.signalr.HubConnection
-import com.microsoft.signalr.HubConnectionBuilder
-import com.microsoft.signalr.HubConnectionState
-import okhttp3.Interceptor
-import okhttp3.logging.HttpLoggingInterceptor
+import com.example.homex.service.ChatService
+import com.example.homex.viewmodel.ChatViewModel
+import com.homex.core.model.MessageRoom
+import com.homex.core.model.UserMessage
+import com.homex.core.util.PrefUtil
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 import java.util.*
-import java.util.concurrent.TimeUnit
 
 
 class HomeActivity : BaseActivity() {
@@ -49,11 +52,16 @@ class HomeActivity : BaseActivity() {
     private var showTitleApp : Pair<Boolean, String> = Pair(false, "")
     private var showMenu = false
     private var showMsg = true
-    private var showBoxChatLayout: Pair<Boolean, String> = Pair(false, "")
+    private var showBoxChatLayout: Pair<Boolean, UserMessage?> = Pair(false, null)
     private var showSearchLayout: Boolean = false
-    private lateinit var hubConnection: HubConnection
     private val fileViewModel: FileViewModel by viewModels()
     private val tmpFiles = mutableListOf<File>()
+
+    private val prefUtil: PrefUtil by inject()
+    private val mContext: Context = this
+    private var mService: ChatService? = null
+    private var mBound = false
+    private val chatViewModel: ChatViewModel by viewModel()
 
     companion object{
         fun open(context: Context) = Intent(context, HomeActivity::class.java)
@@ -62,48 +70,6 @@ class HomeActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_home)
-
-//        hubConnection = HubConnectionBuilder.create("https://gcsoft.dev/ChatHub")
-//            .setHttpClientBuilderCallback {
-//                val httpLoggingInterceptor = HttpLoggingInterceptor()
-//                httpLoggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
-//                it.apply {
-//                    readTimeout(10, TimeUnit.SECONDS)
-//                    connectTimeout(10, TimeUnit.SECONDS)
-//                    writeTimeout(10, TimeUnit.SECONDS)
-//                    addNetworkInterceptor(Interceptor { chain ->
-//                        var request = chain.request()
-//                        val builder = request.newBuilder()
-//                        val token = CoreApplication.instance.getToken()
-//                        if (token != null) {
-//                            builder.header("Authorization", "Bearer $token")
-//                        }
-//                        request = builder.build()
-//                        chain.proceed(request)
-//                    })
-//                    addInterceptor(httpLoggingInterceptor)
-//                    addNetworkInterceptor(StethoInterceptor())
-//                    build()
-//                }
-//            }
-//            .build()
-//
-//
-//        if (hubConnection.connectionState == HubConnectionState.DISCONNECTED){
-//            hubConnection.start()
-//                .blockingAwait()
-//            Log.e("start", "hello")
-//        }
-//
-//        if (hubConnection.connectionState == HubConnectionState.CONNECTING){
-//            Log.e("connecting", "hello")
-//        }
-//
-//        Timer().scheduleAtFixedRate(object : TimerTask(){
-//            override fun run() {
-//                Log.e("id", "${hubConnection.connectionId}")
-//            }
-//        }, 0 , 5000)
 
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.statusBarColor = ContextCompat.getColor(this, R.color.white)
@@ -138,7 +104,7 @@ class HomeActivity : BaseActivity() {
         }
     }
 
-    fun setPropertiesScreen(showLogo: Boolean, showBottomNav: Boolean, showTitleApp: Pair<Boolean, String>, showMessage: Boolean, showMenu: Boolean, showBoxChatLayout: Pair<Boolean, String>, showSearchLayout: Boolean = false){
+    fun setPropertiesScreen(showLogo: Boolean, showBottomNav: Boolean, showTitleApp: Pair<Boolean, String>, showMessage: Boolean, showMenu: Boolean, showBoxChatLayout: Pair<Boolean, UserMessage?>, showSearchLayout: Boolean = false){
         this.showLogo = showLogo
         this.showBottomNav = showBottomNav
         this.showTitleApp = showTitleApp
@@ -167,7 +133,7 @@ class HomeActivity : BaseActivity() {
             binding.toolbarTitle.gone()
         }
 
-        if(showMsg)
+        if(showMsg && prefUtil.token != null)
             binding.btnMessage.visible()
         else
             binding.btnMessage.gone()
@@ -178,7 +144,11 @@ class HomeActivity : BaseActivity() {
             binding.btnMenu.gone()
 
         if (showBoxChatLayout.first){
-            binding.boxChatName.text = showBoxChatLayout.second
+            binding.boxChatName.text = showBoxChatLayout.second?.userName
+            Glide.with(this)
+                .load(showBoxChatLayout.second?.imageUrl)
+                .error(R.mipmap.avatar)
+                .into(binding.ivAvatar)
             binding.userChatLayout.visible()
         }
         else
@@ -245,5 +215,73 @@ class HomeActivity : BaseActivity() {
             item.delete()
         }
         super.onDestroy()
+    }
+
+    override fun onStart() {
+        //Start ChatService
+        if (prefUtil.token != null){
+            val intent = Intent()
+            intent.setClass(mContext, ChatService::class.java)
+            bindService(intent, mConnection, Context.BIND_AUTO_CREATE)
+        }
+        super.onStart()
+    }
+
+    override fun onStop() {
+        // Unbind from the service
+        if (mBound) {
+            unbindService(mConnection)
+            mBound = false
+        }
+        super.onStop()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Register for the particular broadcast based on ACTION string
+        val filter = IntentFilter(ChatService.TAG)
+        LocalBroadcastManager.getInstance(this).registerReceiver(myReceiver, filter)
+        // or `registerReceiver(testReceiver, filter)` for a normal broadcast
+    }
+
+    override fun onPause() {
+        super.onPause()
+        // Unregister the listener when the application is paused
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(myReceiver);
+        // or `unregisterReceiver(testReceiver)` for a normal broadcast
+    }
+
+    /**
+     * Defines callbacks for service binding, passed to bindService()
+     */
+    private val mConnection : ServiceConnection =  object: ServiceConnection {
+        override fun onServiceConnected(p0: ComponentName?, p1: IBinder?) {
+            // We've bound to ChatService, cast the IBinder and get ChatService instance
+            val binder = p1 as ChatService.LocalBinder
+            mService = binder.service
+            mBound = true
+            binder.service.hubConnection.connectionId?.let{
+                val mediaType = "application/json".toMediaType()
+                val body: RequestBody = "\"$it\"".toRequestBody(mediaType)
+                Log.e("connectionId", it)
+                chatViewModel.connectAllRoom(body)
+            }
+            binder.service.hubConnection.connectionState?.let{
+                Log.e("connectionStatus", "$it")
+            }
+        }
+
+        override fun onServiceDisconnected(p0: ComponentName?) {
+            mBound = false
+        }
+    }
+
+    private val myReceiver =  object:  BroadcastReceiver(){
+        override fun onReceive(p0: Context?, p1: Intent?) {
+            val message = p1?.getParcelableExtra<MessageRoom>(RECEIVE_MESSAGE)
+            if (message != null){
+                this@HomeActivity.chatViewModel.newMessage.postValue(message)
+            }
+        }
     }
 }

@@ -5,6 +5,7 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.JsonObject
+import com.homex.core.model.Home
 import com.homex.core.model.general.ResultResponse
 import com.homex.core.model.response.MyHomeResponse
 import com.homex.core.param.yourhome.IdParam
@@ -16,7 +17,7 @@ import okhttp3.RequestBody
 class YourHomeViewModel(private val repository: YourHomeRepository): ViewModel() {
     val myHomesLiveData = MediatorLiveData<MyHomeResponse?>()
     val messageLiveData =  MediatorLiveData<JsonObject?>()
-
+    val homeDetailsLiveData = MediatorLiveData<Home?>()
 
     fun createHome(body: RequestBody){
         viewModelScope.launch {
@@ -80,6 +81,23 @@ class YourHomeViewModel(private val repository: YourHomeRepository): ViewModel()
                     }
                     else -> {
                         Log.e("NotSuccessGetHome", "hello")
+                    }
+                }
+            }
+        }
+    }
+
+    fun getHomeDetails(id: Int){
+        viewModelScope.launch {
+            homeDetailsLiveData.addSource(repository.getHomeByDetails(id)){
+                Log.e("response", it.toString())
+                when (it) {
+                    is ResultResponse.Success -> {
+                        Log.e("SuccessGetHomeDetails", "${it.data}")
+                        homeDetailsLiveData.value = it.data
+                    }
+                    else -> {
+                        Log.e("FailedGetHomeDetails", "hello")
                     }
                 }
             }

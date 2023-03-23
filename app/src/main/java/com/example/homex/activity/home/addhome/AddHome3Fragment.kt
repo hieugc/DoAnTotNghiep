@@ -15,6 +15,15 @@ class AddHome3Fragment : BaseFragment<FragmentAddHome3Binding>() {
     private lateinit var utilsList : List<Int>
     private lateinit var rulesList: List<Int>
 
+    override fun setView() {
+        viewModel.apply {
+            binding.edtBedRoom.setText(this.bedroom.value.toString())
+            binding.edtBathRoom.setText(this.bathroom.value.toString())
+            binding.edtPeople.setText(this.people.value.toString())
+            binding.viewModel = viewModel
+        }
+    }
+
     override fun setEvent() {
         setEventAddMinus()
 

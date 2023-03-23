@@ -92,13 +92,13 @@
                 />
 
             <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/resendOTP"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/resend_verification"
-                android:textStyle="bold"
-                android:id="@+id/resendOTP"
                 android:layout_marginStart="4dp"
-                android:textSize="14sp"/>
+                android:text="@string/resend_verification"
+                android:textSize="14sp"
+                android:textStyle="bold" />
         </LinearLayout>
 
 

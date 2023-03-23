@@ -22,7 +22,7 @@ class RequestFragment : BaseFragment<FragmentRequestBinding>() {
         super.onViewCreated(view, savedInstanceState)
         (activity as HomeActivity).setPropertiesScreen(
             showLogo = false,
-            showBoxChatLayout = Pair(false, ""),
+            showBoxChatLayout = Pair(false, null),
             showMenu = false,
             showMessage = false,
             showBottomNav = false,
