@@ -1,12 +1,16 @@
 package com.example.homex.activity.home
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.homex.R
 import com.example.homex.adapter.MessageBoxAdapter
+import com.example.homex.app.ID
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentMessageBinding
 import com.example.homex.viewmodel.ChatViewModel
@@ -37,6 +41,15 @@ class MessageFragment : BaseFragment<FragmentMessageBinding>() {
             showBoxChatLayout = Pair(false, null),
         )
         viewModel.getChatRoom(page)
+
+        arguments?.getInt(ID)?.let {
+            if (it == 0)
+                return@let
+            Handler(Looper.getMainLooper()).post {
+                findNavController().navigate(MessageFragmentDirections.actionMessageFragmentToMessageBoxFragment(it))
+                arguments?.clear()
+            }
+        }
     }
 
     override fun setView() {

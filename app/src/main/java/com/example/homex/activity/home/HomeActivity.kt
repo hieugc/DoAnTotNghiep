@@ -171,6 +171,12 @@ class HomeActivity : BaseActivity() {
                 tmpFiles.addAll(it)
             }
         }
+        chatViewModel.connectChat.observe(this){
+            if(it != null){
+                Log.i("ConnectAllRoom", "Connect success")
+            }
+        }
+        chatViewModel
     }
     private fun setEvent(){
         binding.btnMessage.setOnClickListener {
@@ -264,6 +270,7 @@ class HomeActivity : BaseActivity() {
                 val mediaType = "application/json".toMediaType()
                 val body: RequestBody = "\"$it\"".toRequestBody(mediaType)
                 Log.e("connectionId", it)
+                chatViewModel.connectionId.postValue(it)
                 chatViewModel.connectAllRoom(body)
             }
             binder.service.hubConnection.connectionState?.let{

@@ -99,29 +99,6 @@ class ChatService: Service() {
         Log.e("token", "$token")
         if (token != null) {
             hubConnection = HubConnectionBuilder.create(CHAT_HUB_URL)
-//                .setHttpClientBuilderCallback {
-//                val httpLoggingInterceptor = HttpLoggingInterceptor()
-//                httpLoggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
-//                it.apply {
-//                    readTimeout(10, TimeUnit.SECONDS)
-//                    connectTimeout(10, TimeUnit.SECONDS)
-//                    writeTimeout(10, TimeUnit.SECONDS)
-//                    addNetworkInterceptor(Interceptor { chain ->
-//                        var request = chain.request()
-//                        val builder = request.newBuilder()
-//                        val token = CoreApplication.instance.getToken()
-//                        Log.e("token", "$token")
-//                        if (token != null) {
-//                            builder.header("Authorization", "Bearer $token")
-//                        }
-//                        request = builder.build()
-//                        chain.proceed(request)
-//                    })
-//                    addInterceptor(httpLoggingInterceptor)
-//                    addNetworkInterceptor(StethoInterceptor())
-//                    build()
-//                }
-//            }
                 .withHeader("Authorization", "Bearer $token")
                 .build()
         }else{

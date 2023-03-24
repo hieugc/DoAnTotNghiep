@@ -52,10 +52,12 @@ class MessageBoxFragment : BaseFragment<FragmentMessageBoxBinding>() {
             showBoxChatLayout = Pair(false, null),
         )
         val param = Pagination(page++, limit)
-        viewModel.getMessagesInChatRoom(param = GetMessagesParam(idRoom = args.id, param))
-        val mediaType = "application/json".toMediaType()
-        body = "\"${args.id}\"".toRequestBody(mediaType)
-        viewModel.seenAll(body)
+        if (args.id != 0){
+            viewModel.getMessagesInChatRoom(param = GetMessagesParam(idRoom = args.id, param))
+            val mediaType = "application/json".toMediaType()
+            body = "\"${args.id}\"".toRequestBody(mediaType)
+            viewModel.seenAll(body)
+        }
     }
 
     override fun setView() {
@@ -211,6 +213,12 @@ class MessageBoxFragment : BaseFragment<FragmentMessageBoxBinding>() {
                     viewModel.seenAll(body)
                 }
                 viewModel.newMessage.postValue(null)
+            }
+        }
+
+        viewModel.sendMessage.observe(this){
+            if (it != null){
+                Log.i("sendMessage", "Success")
             }
         }
     }

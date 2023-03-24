@@ -10,6 +10,7 @@ import com.homex.core.model.MessageRoom
 import com.homex.core.model.general.ResultResponse
 import com.homex.core.model.response.MessageResponse
 import com.homex.core.param.chat.ConnectToRoomParam
+import com.homex.core.param.chat.ContactUserParam
 import com.homex.core.param.chat.GetMessagesParam
 import com.homex.core.param.chat.SendMessageParam
 import com.homex.core.repository.ChatRepository
@@ -18,13 +19,14 @@ import okhttp3.RequestBody
 
 class ChatViewModel(private val repository: ChatRepository): ViewModel() {
     val connectChat = MediatorLiveData<JsonObject?>()
-    val connectToUser = MediatorLiveData<JsonObject?>()
+    val connectToUser = MediatorLiveData<MessageRoom?>()
     val connectToRoom = MediatorLiveData<JsonObject?>()
     val messages = MediatorLiveData<MessageRoom?>()
     val chatRoom = MediatorLiveData<MessageResponse?>()
     val seenAll = MediatorLiveData<JsonObject?>()
     val sendMessage = MediatorLiveData<MessageRoom?>()
     val newMessage = MutableLiveData<MessageRoom>()
+    val connectionId = MutableLiveData<String>()
 
     fun connectAllRoom(body: RequestBody){
         viewModelScope.launch {
@@ -105,6 +107,23 @@ class ChatViewModel(private val repository: ChatRepository): ViewModel() {
                     }
                     else -> {
                         Log.e("NotSuccessSeenAll", "hello")
+                    }
+                }
+            }
+        }
+    }
+
+    fun contactToUser(param: ContactUserParam){
+        viewModelScope.launch {
+            connectToUser.addSource(repository.contactUser(param)){
+                Log.e("response", it.toString())
+                when (it) {
+                    is ResultResponse.Success -> {
+                        Log.e("SuccessContactUser", "${it.data}")
+                        connectToUser.value = it.data
+                    }
+                    else -> {
+                        Log.e("NotSuccessContactUser", "hello")
                     }
                 }
             }

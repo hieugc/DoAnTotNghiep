@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
@@ -18,19 +19,24 @@ import com.example.homex.adapter.HomeRatingAdapter
 import com.example.homex.adapter.ImageSlideAdapter
 import com.example.homex.adapter.SimilarHomeAdapter
 import com.example.homex.adapter.UtilAdapter
+import com.example.homex.app.CONTACT_USER
 import com.example.homex.app.HOME
+import com.example.homex.app.ID
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentHomeDetailBinding
 import com.example.homex.extension.betweenDays
 import com.example.homex.extension.longToDate
 import com.example.homex.extension.visible
 import com.example.homex.utils.CenterZoomLayoutManager
+import com.example.homex.viewmodel.ChatViewModel
 import com.example.homex.viewmodel.YourHomeViewModel
 import com.google.android.material.tabs.TabLayoutMediator
 import com.homex.core.model.CalendarDate
 import com.homex.core.model.Home
 import com.homex.core.model.ImageBase
+import com.homex.core.param.chat.ContactUserParam
 import com.homex.core.util.AppEvent
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
 
@@ -44,6 +50,7 @@ class HomeDetailFragment : BaseFragment<FragmentHomeDetailBinding>() {
     private lateinit var similarHomeAdapter: SimilarHomeAdapter
     private val args: HomeDetailFragmentArgs by navArgs()
     private val viewModel: YourHomeViewModel by viewModel()
+    private val chatViewModel: ChatViewModel by sharedViewModel()
     private var selection: Pair<CalendarDate?, CalendarDate?> = Pair(null, null)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -86,6 +93,18 @@ class HomeDetailFragment : BaseFragment<FragmentHomeDetailBinding>() {
                 rulesAdapter.notifyDataSetChanged()
             }
             AppEvent.hideLoading()
+        }
+
+        chatViewModel.connectToUser.observe(this){ messageRoom ->
+            if (messageRoom != null){
+                messageRoom.idRoom?.let {
+                    findNavController().navigate(R.id.action_global_messageFragment, bundleOf(
+                        ID to it,
+                        CONTACT_USER to true
+                        ))
+                }
+                chatViewModel.connectToUser.postValue(null)
+            }
         }
     }
 
@@ -164,9 +183,6 @@ class HomeDetailFragment : BaseFragment<FragmentHomeDetailBinding>() {
     }
 
     override fun setEvent() {
-        binding.contactBtn.setOnClickListener {
-            findNavController().navigate(R.id.action_homeDetailFragment_to_messageBoxFragment)
-        }
         binding.changeDateBtn.setOnClickListener {
             val action = HomeDetailFragmentDirections.actionHomeDetailFragmentToBottomSheetChangeDateFragment(selection.first, selection.second)
             findNavController().navigate(action)
@@ -184,6 +200,19 @@ class HomeDetailFragment : BaseFragment<FragmentHomeDetailBinding>() {
                 utilAdapter.showAll = true
             }
             utilAdapter.notifyDataSetChanged()
+
+        }
+        binding.contactBtn.setOnClickListener {
+            chatViewModel.connectionId.value?.let { it1->
+                binding.home?.userAccess?.let { it2->
+                    chatViewModel.contactToUser(
+                        ContactUserParam(
+                            connectionId =  it1,
+                            userAccess = it2
+                        )
+                    )
+                }
+            }
 
         }
     }

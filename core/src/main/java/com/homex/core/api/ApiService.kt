@@ -6,12 +6,15 @@ import com.homex.core.model.general.ListResponse
 import com.homex.core.model.general.ObjectResponse
 import com.homex.core.model.response.MessageResponse
 import com.homex.core.model.response.MyHomeResponse
+import com.homex.core.model.response.RequestResponse
 import com.homex.core.model.response.UserResponse
 import com.homex.core.param.auth.*
 import com.homex.core.param.chat.ConnectToRoomParam
 import com.homex.core.param.chat.ContactUserParam
 import com.homex.core.param.chat.GetMessagesParam
 import com.homex.core.param.chat.SendMessageParam
+import com.homex.core.param.request.CreateRequestParam
+import com.homex.core.param.request.EditRequestParam
 import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.*
@@ -89,7 +92,7 @@ interface ApiService {
         @Body param: SendMessageParam
     ): Response<ObjectResponse<MessageRoom>>
 
-    @POST("api/Message/ContactUser")
+    @POST("api/Message/ContactToUser")
     suspend fun contactUser(
         @Body param: ContactUserParam
     ): Response<ObjectResponse<MessageRoom>>
@@ -114,4 +117,24 @@ interface ApiService {
 
     @POST("api/MessagesInChatRoom")
     suspend fun getMessagesInChatRoom(@Body param: GetMessagesParam): Response<ObjectResponse<MessageRoom>>
+
+    //--------------------REQUEST-----------------------------
+
+    @POST("api/Request/Create")
+    suspend fun createNewRequest(@Body param: CreateRequestParam): Response<ObjectResponse<JsonObject>>
+
+    @POST("api/Request/Delete")
+    suspend fun deleteRequest(@Body body: RequestBody): Response<ObjectResponse<JsonObject>>
+
+    @GET("api/Request/Detail")
+    suspend fun getRequestById(@Query("Id") id: Int): Response<ObjectResponse<RequestResponse>>
+
+    @GET("api/Request/GetByHouse")
+    suspend fun getRequestByHouse(@Query("idHouse") id: Int): Response<ListResponse<RequestResponse>>
+
+    @GET("api/Request/GetRequestSent")
+    suspend fun getRequestSent(): Response<ListResponse<RequestResponse>>
+
+    @POST("api/Request/Update")
+    suspend fun editRequest(@Body param: EditRequestParam): Response<ObjectResponse<JsonObject>>
 }
