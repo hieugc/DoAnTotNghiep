@@ -52,4 +52,11 @@ class YourHomeRepositoryImpl(private val api: ApiService): YourHomeRepository {
             override suspend fun createCall(): Response<ObjectResponse<Home>> = api.getHomeDetails(id)
         }.build().asLiveData()
     }
+
+    override suspend fun getHomeByUser(userAccess: String): LiveData<ResultResponse<ArrayList<Home>>> {
+        return object : NetworkBoundResource<ListResponse<Home>, ArrayList<Home>>(){
+            override fun processResponse(response: ListResponse<Home>): ArrayList<Home>? = response.data
+            override suspend fun createCall(): Response<ListResponse<Home>> = api.getHomeByUser(userAccess)
+        }.build().asLiveData()
+    }
 }

@@ -157,10 +157,8 @@ class SearchResultFragment : BaseFragment<FragmentSearchResultBinding>(), EasyPe
     override fun setView() {
         adapter =
             SearchHomeAdapter(
-                arrayListOf(
-                    "Nhà của Hiếu", "Nhà của tui", "Nhà Nhà Nhà", "Hello mudafakar"
-                )
-            )
+                arrayListOf()
+            ){}
 
         binding.searchHomeRecView.adapter = adapter
         val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)

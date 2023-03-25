@@ -8,6 +8,24 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/noHomeTxt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:layout_marginBottom="25dp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:text="Người dùng này hiện tại\nchưa có nhà trong hệ thống"
+            android:textColor="@color/gray"
+            android:textSize="16sp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:textAllCaps="true" />
+
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/appCompatTextView28"
@@ -26,6 +44,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            android:visibility="visible"
             tools:listitem="@layout/search_home_item"
             app:layout_constraintTop_toBottomOf="@+id/appCompatTextView28" />
 

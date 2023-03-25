@@ -25,6 +25,7 @@ import com.example.homex.app.ID
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentHomeDetailBinding
 import com.example.homex.extension.betweenDays
+import com.example.homex.extension.gone
 import com.example.homex.extension.longToDate
 import com.example.homex.extension.visible
 import com.example.homex.utils.CenterZoomLayoutManager
@@ -36,6 +37,8 @@ import com.homex.core.model.Home
 import com.homex.core.model.ImageBase
 import com.homex.core.param.chat.ContactUserParam
 import com.homex.core.util.AppEvent
+import com.homex.core.util.PrefUtil
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
@@ -52,6 +55,7 @@ class HomeDetailFragment : BaseFragment<FragmentHomeDetailBinding>() {
     private val viewModel: YourHomeViewModel by viewModel()
     private val chatViewModel: ChatViewModel by sharedViewModel()
     private var selection: Pair<CalendarDate?, CalendarDate?> = Pair(null, null)
+    private val prefUtil: PrefUtil by inject()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -64,6 +68,7 @@ class HomeDetailFragment : BaseFragment<FragmentHomeDetailBinding>() {
             showBoxChatLayout = Pair(false, null),
         )
         viewModel.getHomeDetails(args.id)
+        AppEvent.showLoading()
 
         findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Pair<CalendarDate?, CalendarDate?>>("DATE")?.observe(viewLifecycleOwner){
                 dates->
@@ -91,6 +96,14 @@ class HomeDetailFragment : BaseFragment<FragmentHomeDetailBinding>() {
                 adapter.notifyDataSetChanged()
                 utilAdapter.notifyDataSetChanged()
                 rulesAdapter.notifyDataSetChanged()
+
+                if (binding.home?.userAccess == prefUtil.profile?.userAccess){
+                    binding.pickDateLayout.gone()
+                    binding.userLayout.gone()
+                }else{
+                    binding.pickDateLayout.visible()
+                    binding.userLayout.visible()
+                }
             }
             AppEvent.hideLoading()
         }
@@ -188,8 +201,14 @@ class HomeDetailFragment : BaseFragment<FragmentHomeDetailBinding>() {
             findNavController().navigate(action)
         }
         binding.createRequestBtn.setOnClickListener {
-            val action = HomeDetailFragmentDirections.actionHomeDetailFragmentToCreateRequestFragment(selection.first, selection.second)
-            findNavController().navigate(action)
+            binding.home?.userAccess?.let { userAccess->
+                if (userAccess != ""){
+                    binding.home?.let {
+                        val action = HomeDetailFragmentDirections.actionHomeDetailFragmentToCreateRequestFragment( it, userAccess, selection.first, selection.second)
+                        findNavController().navigate(action)
+                    }
+                }
+            }
         }
         binding.showAllUtil.setOnClickListener {
             if(utilAdapter.showAll){

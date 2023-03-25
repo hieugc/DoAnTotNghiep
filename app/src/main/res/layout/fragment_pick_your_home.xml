@@ -9,6 +9,41 @@
         android:layout_height="match_parent">
 
         <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/noHomeTxt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:layout_marginBottom="25dp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:text="Bạn hiện tại chưa có nhà\nThêm nhà vào hệ thống ngay nào"
+            android:textColor="@color/gray"
+            android:textSize="16sp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@id/addHomeBtn"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1"
+            app:textAllCaps="true" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/addHomeBtn"
+            style="@style/ButtonPrimary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:paddingLeft="40dp"
+            android:paddingRight="40dp"
+            android:text="Thêm nhà"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.6" />
+
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/appCompatTextView28"
             style="@style/Regular"
             android:layout_width="wrap_content"
@@ -27,6 +62,8 @@
             android:layout_marginTop="16dp"
             tools:listitem="@layout/search_home_item"
             app:layout_constraintTop_toBottomOf="@+id/appCompatTextView28" />
+
+
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

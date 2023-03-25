@@ -100,7 +100,11 @@
             app:destination="@id/createRequestBottomSheetFragment" />
         <action
             android:id="@+id/action_messageBoxFragment_to_createRequestFragment"
-            app:destination="@id/createRequestFragment" />
+            app:destination="@id/createRequestFragment">
+            <argument android:defaultValue=""
+                android:name="userAccess"
+                app:argType="string"/>
+        </action>
         <argument
             android:name="id"
             app:argType="integer"
@@ -160,6 +164,13 @@
             android:id="@+id/action_homeDetailFragment_to_createRequestFragment"
             app:destination="@id/createRequestFragment">
             <argument
+                android:name="userAccess"
+                app:argType="string"
+                android:defaultValue=""/>
+
+            <argument android:name="targetHome"
+                app:argType="com.homex.core.model.Home"/>
+            <argument
                 android:name="startDate"
                 app:argType="com.homex.core.model.CalendarDate"
                 app:nullable="true"
@@ -196,7 +207,7 @@
     </fragment>
     <fragment
         android:id="@+id/createRequestFragment"
-        android:name="com.example.homex.CreateRequestFragment"
+        android:name="com.example.homex.activity.home.request.CreateRequestFragment"
         android:label="CreateRequestFragment"
         tools:layout="@layout/fragment_create_request">
         <argument
@@ -209,6 +220,13 @@
             app:argType="com.homex.core.model.CalendarDate"
             app:nullable="true"
             android:defaultValue="@null" />
+        <argument app:argType="string"
+            android:name="userAccess"
+            android:defaultValue=""/>
+        <argument app:argType="com.homex.core.model.Home"
+            android:name="targetHome"
+            app:nullable="true"
+            android:defaultValue="@null"/>
         <action
             android:id="@+id/action_createRequestFragment_to_pickHomeFragment"
             app:destination="@id/pickHomeFragment"
@@ -265,12 +283,16 @@
     </fragment>
     <fragment
         android:id="@+id/pickYourHomeFragment"
-        android:name="com.example.homex.PickYourHomeFragment"
+        android:name="com.example.homex.activity.home.request.PickYourHomeFragment"
         android:label="PickYourHomeFragment"
-        tools:layout="@layout/fragment_pick_your_home"/>
+        tools:layout="@layout/fragment_pick_your_home">
+        <action
+            android:id="@+id/action_pickYourHomeFragment_to_myHomeFragment"
+            app:destination="@id/myHomeFragment" />
+    </fragment>
     <fragment
         android:id="@+id/pickHomeFragment"
-        android:name="com.example.homex.PickHomeFragment"
+        android:name="com.example.homex.activity.home.request.PickHomeFragment"
         android:label="PickHomeFragment"
         tools:layout="@layout/fragment_pick_home"/>
     <action

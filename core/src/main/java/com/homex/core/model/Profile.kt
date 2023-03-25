@@ -15,6 +15,9 @@ class Profile(
     var gender: Boolean? = null,
     var phoneNumber: String? = null,
     var userAccess: String? = null,
+    var point: Int? = null,
+    var userRating: Int? = null,
+    var numberOfHouses: Int? = null
 
 ): Parcelable {
     fun getFullName(): String{

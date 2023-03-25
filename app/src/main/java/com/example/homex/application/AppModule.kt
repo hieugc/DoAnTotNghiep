@@ -1,9 +1,6 @@
 package com.example.homex.application
 
-import com.example.homex.viewmodel.AuthViewModel
-import com.example.homex.viewmodel.ChatViewModel
-import com.example.homex.viewmodel.HomeViewModel
-import com.example.homex.viewmodel.YourHomeViewModel
+import com.example.homex.viewmodel.*
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -12,4 +9,5 @@ val appModules = module {
     viewModel { AuthViewModel(get()) }
     viewModel { YourHomeViewModel(get()) }
     viewModel { ChatViewModel(get()) }
+    viewModel { RequestViewModel(get()) }
 }

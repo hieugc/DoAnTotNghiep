@@ -11,5 +11,7 @@ class Request(
     val idSwapHouse: Int? = null,
     val startDate: String? = null,
     val endDate: String? = null,
-    val id: Int? = null
+    val id: Int? = null,
+    val status: Int? = null,
+    val user: UserMessage? = null
 ): Parcelable

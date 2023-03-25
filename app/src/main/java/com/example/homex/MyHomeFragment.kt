@@ -62,21 +62,23 @@ class MyHomeFragment : BaseFragment<FragmentMyHomeBinding>() {
 
     override fun setViewModel() {
         viewModel.myHomesLiveData.observe(viewLifecycleOwner){
-            val homes = it?.homes
-            Log.e("homes", "$homes")
-            adapter.homeList?.clear()
-            if (homes != null){
-                if(homes.size > 0){
-                    adapter.homeList?.addAll(homes)
-                    adapter.notifyDataSetChanged()
+            if (it != null){
+                val homes = it.homes
+                Log.e("homes", "$homes")
+                adapter.homeList?.clear()
+                if (homes != null){
+                    if(homes.size > 0){
+                        adapter.homeList?.addAll(homes)
+                        adapter.notifyDataSetChanged()
+                    }
                 }
-            }
-            if(adapter.homeList.isNullOrEmpty()){
-                binding.mainHomeRecView.gone()
-                binding.noHomeTxt.visible()
-            }else{
-                binding.mainHomeRecView.visible()
-                binding.noHomeTxt.gone()
+                if(adapter.homeList.isNullOrEmpty()){
+                    binding.mainHomeRecView.gone()
+                    binding.noHomeTxt.visible()
+                }else{
+                    binding.mainHomeRecView.visible()
+                    binding.noHomeTxt.gone()
+                }
             }
             AppEvent.hideLoading()
         }

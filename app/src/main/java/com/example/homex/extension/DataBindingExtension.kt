@@ -1,14 +1,40 @@
 package com.example.homex.extension
 
+import android.view.View
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.request.RequestOptions
 import com.example.homex.R
 import com.homex.core.model.HomeStatus
 import com.homex.core.util.AppEvent
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
+
+
+@BindingAdapter(value = ["setVisibility"])
+fun View.setVisibility(visible: Boolean) {
+    visibility = if(visible) View.VISIBLE else View.INVISIBLE
+}
+
+@BindingAdapter(value = ["setVisibilityGone"])
+fun View.setVisibilityGone(visible: Boolean) {
+    visibility = if(visible) View.VISIBLE else View.GONE
+}
+
+@BindingAdapter(value = ["loadImage"])
+fun AppCompatImageView.loadImage(url: String?){
+    Glide.with(context)
+        .asBitmap()
+        .placeholder(R.drawable.ic_baseline_image_24)
+        .error(R.mipmap.location)
+        .load(url)
+        .into(this)
+}
 
 @BindingAdapter(value = ["dob", "gender"])
 fun AppCompatTextView.getAge(dob: String?, gender: Boolean?){

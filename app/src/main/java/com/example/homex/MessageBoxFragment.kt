@@ -127,7 +127,14 @@ class MessageBoxFragment : BaseFragment<FragmentMessageBoxBinding>() {
         }
 
         binding.createRequestBtn.setOnClickListener {
-            findNavController().navigate(R.id.action_messageBoxFragment_to_createRequestFragment)
+            if (userMessages.isNotEmpty()){
+                val user = userMessages[0]
+                user.userAccess?.let {
+                    val action = MessageBoxFragmentDirections.actionMessageBoxFragmentToCreateRequestFragment(it)
+                    findNavController().navigate(action)
+                }
+            }
+
         }
         binding.sendBtn.setOnClickListener {
             if(binding.msgEditText.text.toString() != ""){

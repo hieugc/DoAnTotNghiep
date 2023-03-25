@@ -85,6 +85,11 @@ interface ApiService {
         @Query("id") id: Int
     ): Response<ObjectResponse<Home>>
 
+    @GET("api/House/GetByUserAccess")
+    suspend fun getHomeByUser(
+        @Query("UserAccess") userAccess: String
+    ): Response<ListResponse<Home>>
+
     //--------------------MESSAGE-----------------------------
 
     @POST("api/Message/Send")

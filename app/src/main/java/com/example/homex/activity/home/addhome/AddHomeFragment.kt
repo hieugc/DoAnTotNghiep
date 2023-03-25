@@ -42,6 +42,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
@@ -51,7 +52,7 @@ import java.util.*
 class AddHomeFragment : BaseFragment<FragmentAddHomeBinding>() {
     override val layoutId: Int = R.layout.fragment_add_home
     private val viewModel: AddHomeViewModel by viewModels()
-    private val homeViewModel: YourHomeViewModel by inject()
+    private val homeViewModel: YourHomeViewModel by viewModel()
     private val fileViewModel: FileViewModel by activityViewModels()
     private val tmpFiles = mutableListOf<File>()
     private val tmp = mutableListOf<File>()

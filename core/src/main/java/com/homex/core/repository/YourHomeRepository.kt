@@ -29,4 +29,8 @@ interface YourHomeRepository {
     suspend fun getHomeByDetails(
         id: Int
     ): LiveData<ResultResponse<Home>>
+
+    suspend fun getHomeByUser(
+        userAccess: String
+    ): LiveData<ResultResponse<ArrayList<Home>>>
 }

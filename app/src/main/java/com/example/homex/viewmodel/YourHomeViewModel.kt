@@ -18,6 +18,7 @@ class YourHomeViewModel(private val repository: YourHomeRepository): ViewModel()
     val myHomesLiveData = MediatorLiveData<MyHomeResponse?>()
     val messageLiveData =  MediatorLiveData<JsonObject?>()
     val homeDetailsLiveData = MediatorLiveData<Home?>()
+    val listHomeLiveData = MediatorLiveData<ArrayList<Home>?>()
 
     fun createHome(body: RequestBody){
         viewModelScope.launch {
@@ -98,6 +99,23 @@ class YourHomeViewModel(private val repository: YourHomeRepository): ViewModel()
                     }
                     else -> {
                         Log.e("FailedGetHomeDetails", "hello")
+                    }
+                }
+            }
+        }
+    }
+
+    fun getHomeByUser(userAccess: String){
+        viewModelScope.launch {
+            listHomeLiveData.addSource(repository.getHomeByUser(userAccess)){
+                Log.e("response", it.toString())
+                when (it) {
+                    is ResultResponse.Success -> {
+                        Log.e("SuccessGetHomeUser", "${it.data}")
+                        listHomeLiveData.value = it.data
+                    }
+                    else -> {
+                        Log.e("NotSuccessGetHomeUser", "hello")
                     }
                 }
             }

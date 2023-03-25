@@ -13,3 +13,8 @@ fun Long.longToDate(): String{
     val format = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
     return format.format(date)
 }
+fun Long.longToFormat(format: String): String{
+    val date = Date(this)
+    val formatter = SimpleDateFormat(format, Locale.getDefault())
+    return formatter.format(date)
+}
