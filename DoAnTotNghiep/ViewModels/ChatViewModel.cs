@@ -83,7 +83,7 @@ namespace DoAnTotNghiep.ViewModels
     public class DataGetMessageViewModel
     {
         public int IdRoom { get; set; } = 0;
-        public RangeRoom RangeRoom { get; set; } = new RangeRoom();
+        public Pagination Pagination { get; set; } = new Pagination();
     }
     public class RangeRoom
     {

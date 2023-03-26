@@ -1,10 +1,10 @@
 ﻿@using DoAnTotNghiep.Enum;
 @using Newtonsoft.Json;
 @{
-    UserMessageViewModel? userInfo = null;
+    UserInfo? userInfo = null;
         string? info = Context.Request.Cookies[Cookie.UserInfo()];
         if (!string.IsNullOrEmpty(info))
-            userInfo = JsonConvert.DeserializeObject<UserMessageViewModel>(info);
+            userInfo = JsonConvert.DeserializeObject<UserInfo>(info);
 }
 
 
@@ -20,7 +20,7 @@
     <link rel="shortcut icon" href="~/Image/tiny-logo.png" type="image/x-icon" />
     <link rel="stylesheet" href="~/assets/vendor/fonts/boxicons.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/litepicker/dist/css/litepicker.css" />
 
     <!--Start Icon Kit-->
     <script src="https://kit.fontawesome.com/19075407b9.js" crossorigin="anonymous"></script>
@@ -44,9 +44,12 @@
                             </div>
                             <form name="search" class="d-flex">
                                 <input type="search" class="rounded-start rounded-0 form-control" placeholder="Bạn muốn đi đâu?" name="explore" id="explore-1" />
-                                <button class="btn btn-sm btn-dark rounded-0 rounded-end"><i class="fa-sharp fa-solid fa-magnifying-glass"></i></button>
+                                <button class="btn btn-sm btn-primary rounded-0 rounded-end"><i class="fa-sharp fa-solid fa-magnifying-glass"></i></button>
                             </form>
                         </div>
+                    </div>
+                    <div class="sm-device">
+                        <div class="menu-tab"><i class="fa-sharp fa-solid fa-magnifying-glass"></i></div>
                     </div>
                     <div class="authorize">
                         <div id="tag_notification">
@@ -119,7 +122,7 @@
                         </div>
                         <div id="tag_chats">
                             <a class="position-relative" href="#" role="button" id="dropdownMenuChat" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fa-solid fa-message"></i>
+                                <i class="fa-solid fa-comments"></i>
                                 <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle">
                                 </span>
                             </a>
@@ -128,53 +131,77 @@
                                 <div class="alert-frame"></div>
                             </div>
                         </div>
-                <div class="avt" style="display: none;">
-                    <a class="position-relative" href="#" role="button" id="dropdownMenuMember" data-bs-toggle="dropdown" aria-expanded="false">
-                            @if (userInfo != null && !string.IsNullOrEmpty(userInfo.ImageUrl))
-                            {
-                                <img src="@userInfo.ImageUrl" alt="avatar" />
-                            }
-                            else
-                            {
-                                    <span><i class="fa-solid fa-circle-info"></i></span>
-                            }
-                    </a>
-
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuMember">
-                            <a class="dropdown-item" href="@Url.Action("Infomation", "Member")">Hồ sơ cá nhân</a>
-                            <a class="dropdown-item" href="@Url.Action("House", "Member")">Danh sách nhà</a>
-                            <a class="dropdown-item" href="@Url.Action("Requested", "Member")">Danh sách yêu cầu</a>
-                            <a class="dropdown-item" href="@Url.Action("WaitingRequest", "Member")">Gợi ý trao đổi</a>
-                            <a class="dropdown-item" href="@Url.Action("History", "Member")">Lịch sử giao dịch</a>
-                            <a class="dropdown-item" href="@Url.Action("Messages", "Member")">Tin nhắn</a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item text-danger" href="@Url.Action("Logout", "Authorize")">Đăng xuất <i class="fa-solid fa-arrow-right-from-bracket"></i></a>
+                        <div class="avt d-block d-xl-none">
+                            <a class="position-relative" href="#" role="button" id="dropdownMenuMember" data-bs-toggle="dropdown" aria-expanded="false">
+                                @if (userInfo != null && !string.IsNullOrEmpty(userInfo.UrlImage))
+                                {
+                                    <img src="@userInfo.UrlImage" alt="avatar" />
+                                }
+                                else
+                                {
+                                    <img src="~/Image/user.svg" alt="avatar" />
+                                }
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuMember">
+                                <div class="tab-attr">
+                                    <div>
+                                        <a href="@Url.Action("Infomation", "Member")"><i class="fa-solid fa-circle-info"></i><span>Thông tin tài khoản</span></a>
+                                    </div>
+                                </div>
+                                <div class="tab-attr">
+                                    <div>
+                                        <a href="@Url.Action("House", "Member")"><i class="fa-solid fa-house"></i><span>Danh sách căn hộ</span></a>
+                                    </div>
+                                </div>
+                                <div class="tab-attr">
+                                    <div>
+                                        <a href="@Url.Action("Requested", "Member")"><i class="fa-solid fa-bullhorn"></i><span>Yêu cầu đã gửi</span></a>
+                                    </div>
+                                </div>
+                                <div class="tab-attr">
+                                    <div>
+                                        <a href="@Url.Action("WaitingRequest", "Member")"><i class="fa-solid fa-lightbulb"></i><span>Gợi ý trao đổi</span></a>
+                                    </div>
+                                </div>
+                                <div class="tab-attr">
+                                    <div>
+                                        <a href="@Url.Action("History", "Member")"><i class="fa-solid fa-clock-rotate-left"></i><span>Lịch sử giao dịch</span></a>
+                                    </div>
+                                </div>
+                                <div class="tab-attr">
+                                    <div>
+                                        <a href="@Url.Action("Messages", "Member")"><i class="fa-solid fa-comment-dots"></i><span>Tin nhắn</span></a>
+                                    </div>
+                                </div>
+                                <div class="dropdown-divider"></div>
+                                <div>
+                                    <div>
+                                        <a class="dropdown-item text-danger" href="@Url.Action("Logout", "Authorize")">Đăng xuất <i class="fa-solid fa-arrow-right-from-bracket"></i></a>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                </div>
-                </div>
-                    <div class="sm-device">
-                        <div class="menu-tab"><i class="fa-solid fa-bars"></i></div>
                     </div>
                 </div>
             </div>
         </div>
     </nav>
     <main role="main">
-        <div class="tab-left">
+        <div class="tab-left d-none d-xl-block">
             <div class="infomation">
                 <div class="avt">
-                    @if (userInfo != null && !string.IsNullOrEmpty(userInfo.ImageUrl))
+                    @if (userInfo != null && !string.IsNullOrEmpty(userInfo.UrlImage))
                     {
-                        <img src="@userInfo.ImageUrl" alt="avatar" />
+                        <img src="@userInfo.UrlImage" alt="avatar" />
                     }
                     else
                     {
-                        <span><i class="fa-solid fa-circle-info"></i></span>
+                        <img src="~/Image/user.svg" alt="avatar" />
                     }
                 </div>
                 <div class="name">
-                    <span>@userInfo.UserName</span>
-                    <span>350Point</span>
+                    <span>@userInfo.FirstName @userInfo.LastName</span>
+                    <span>@userInfo.Point Point</span>
                 </div>
             </div>
             <div class="info-frame">
@@ -212,7 +239,8 @@
                     <div><i class="fa-solid fa-envelope"></i>
                     <span>Hộp thư góp ý</span>
                     </div>
-                </div>*@
+                    </div>
+                *@
             </div>
             <div>
                 <a href="@Url.Action("Logout", "Authorize")" class="btn btn-danger">Đăng xuất</a>
@@ -222,192 +250,8 @@
             @RenderBody()
         </div>
     </main>
-
-    
-    <div class="modal fade" id="changePWDModal" tabindex="-1" aria-labelledby="changePWDModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                    <h3>Thay đổi mật khẩu</h3>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form>
-                    <div class="mb-3">
-                        <input type="password" class="form-control" name="CurrentPwd" id="CurrentPwd" placeholder="Mật khẩu hiện tại" />
-                    </div>
-                    <div class="mb-3">
-                        <input type="password" class="form-control" name="NewPwd" id="ForgotPwd" placeholder="Mật khẩu mới" />
-                    </div>
-                    <div class="mb-3">
-                        <input type="password" class="form-control" name="NewConfirmPwd" id="ForgotConfirmPwd" placeholder="Xác nhận mật khẩu" />
-                    </div>
-                </form>
-                <button type="button" class="btn btn-primary">Xác nhận</button>
-            </div>
-        </div>
-    </div>
-</div>
-    <div class="modal fade" id="messageRequestModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="messageRequestModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <div class="my-modal-title">
-                        <h3 class="house-title">Tạo yêu cầu</h3>
-                    </div>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="">Chọn nhà muốn trao đổi</label>
-                        <div class="house-request" onclick="showListHouseModal(1)">
-                            <div class="frame-empty">+</div>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="">Phương thức trao đổi</label>
-                        <div class="contain-option">
-                            <div class="form-check">
-                                <label class="form-check-label" for="swap-option-1">
-                                    Trao đổi bằng điểm
-                                </label>
-                                <input class="form-check-input" type="radio" name="swap-option" id="swap-option-1" value="swap-option-1" checked>
-                            </div>
-                            <div class="form-check">
-                                <label class="form-check-label" for="swap-option-2">
-                                    Trao đổi bằng nhà
-                                </label>
-                                <input class="form-check-input" type="radio" name="swap-option" id="swap-option-2" value="swap-option-2">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="">Chọn nhà của bạn để trao đổi</label>
-                        <div class="house-request" onclick="showListHouseModal(1)">
-                            <div class="frame-empty">+</div>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="">Chọn thời gian đến</label>
-                        <div class="">
-                            <input type="text" name="requestdaterange" id="requestdaterange" value="01/01/2018 - 01/15/2018" class="form-control" />
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="">Điểm bạn cần phải trả</label>
-                        <div class="contain-price">
-                            1400 Point/ngày
-                        </div>
-                    </div>
-
-                    <div class=""><button class="btn btn-primary" type="button">Tạo yêu cầu</button></div>
-                </div>
-            </div>
-            <div class="modal-content list-house modal-content-hide">
-                <div class="modal-header">
-                    <span class="back-step" onclick="HTMLInputElement(0)"> <i class="fa-solid fa-angle-left"></i> </span>
-                    <h3 class="house-title">Chọn nhà</h3>
-                </div>
-                <div class="modal-body">
-                    <div class="list">
-                        <div class="house-card selected">
-                            <img src="~/Image/house-demo.png" alt="Mike" style="width:100%">
-                            <div class="house-img-container">
-                                <h2>Nhà của Hiếu</h2>
-                                <p class="attribute"><i class="fa-solid fa-map-location-dot"></i><span>268 Ly Thuong Kiet Street - Ward 14, District 10, HCMC, Ho Chi Minh City</span></p>
-                                <div class="list-attribute">
-                                    <p class="attribute"><span>4</span><i class="fa-solid fa-star"></i></p>
-                                    <p class="attribute"><i class="fa-solid fa-users"></i><span>4</span></p>
-                                    <p class="attribute"><i class="fa-solid fa-bed"></i><span>2</span></p>
-                                </div>
-                                <p>
-                                    <button class="item-button">
-                                        <span class="label-show">200point/night</span>
-                                        <span class="label-hide">Chọn</span>
-                                    </button>
-                                </p>
-                            </div>
-                        </div>
-                        @for (var item = 0; item < 5; item++)
-                        {
-                            <div class="house-card">
-                                <img src="~/Image/house-demo.png" alt="Mike" style="width:100%">
-                                <div class="house-img-container">
-                                    <h2>Nhà của Hiếu</h2>
-                                    <p class="attribute"><i class="fa-solid fa-map-location-dot"></i><span>268 Ly Thuong Kiet Street - Ward 14, District 10, HCMC, Ho Chi Minh City</span></p>
-                                    <div class="list-attribute">
-                                        <p class="attribute"><span>4</span><i class="fa-solid fa-star"></i></p>
-                                        <p class="attribute"><i class="fa-solid fa-users"></i><span>4</span></p>
-                                        <p class="attribute"><i class="fa-solid fa-bed"></i><span>2</span></p>
-                                    </div>
-                                    <p>
-                                        <button class="item-button">
-                                            <span class="label-show">200point/night</span>
-                                            <span class="label-hide">Chọn</span>
-                                        </button>
-                                    </p>
-                                </div>
-                            </div>
-                        }
-                    </div>
-                    <div class=""><button class="btn btn-primary" type="button">Xác nhận</button></div>
-                </div>
-            </div>
-            <div class="modal-content list-house modal-content-hide">
-                <div class="modal-header">
-                    <span class="back-step" onclick="hideListHouseModal(1)"> <i class="fa-solid fa-angle-left"></i> </span>
-                    <h3 class="house-title">Chọn nhà</h3>
-                </div>
-                <div class="modal-body">
-                    <div class="list">
-                        <div class="house-card selected">
-                            <img src="~/Image/house-demo.png" alt="Mike" style="width:100%">
-                            <div class="house-img-container">
-                                <h2>Nhà của Hiếu</h2>
-                                <p class="attribute"><i class="fa-solid fa-map-location-dot"></i><span>268 Ly Thuong Kiet Street - Ward 14, District 10, HCMC, Ho Chi Minh City</span></p>
-                                <div class="list-attribute">
-                                    <p class="attribute"><span>4</span><i class="fa-solid fa-star"></i></p>
-                                    <p class="attribute"><i class="fa-solid fa-users"></i><span>4</span></p>
-                                    <p class="attribute"><i class="fa-solid fa-bed"></i><span>2</span></p>
-                                </div>
-                                <p>
-                                    <button class="item-button">
-                                        <span class="label-show">200point/night</span>
-                                        <span class="label-hide">Chọn</span>
-                                    </button>
-                                </p>
-                            </div>
-                        </div>
-                        @for (var item = 0; item < 5; item++)
-                        {
-                            <div class="house-card">
-                                <img src="~/Image/house-demo.png" alt="Mike" style="width:100%">
-                                <div class="house-img-container">
-                                    <h2>Nhà của Hiếu</h2>
-                                    <p class="attribute"><i class="fa-solid fa-map-location-dot"></i><span>268 Ly Thuong Kiet Street - Ward 14, District 10, HCMC, Ho Chi Minh City</span></p>
-                                    <div class="list-attribute">
-                                        <p class="attribute"><span>4</span><i class="fa-solid fa-star"></i></p>
-                                        <p class="attribute"><i class="fa-solid fa-users"></i><span>4</span></p>
-                                        <p class="attribute"><i class="fa-solid fa-bed"></i><span>2</span></p>
-                                    </div>
-                                    <p>
-                                        <button class="item-button">
-                                            <span class="label-show">200point/night</span>
-                                            <span class="label-hide">Chọn</span>
-                                        </button>
-                                    </p>
-                                </div>
-                            </div>
-                        }
-                    </div>
-                    <div class=""><button class="btn btn-primary" type="button">Xác nhận</button></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     @(Html.Partial("~/Views/PartialView/_Footer.cshtml"))
+    <div id="renderModal"></div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
@@ -422,29 +266,16 @@
     @RenderSection("createHouse", required: false)
     @RenderSection("membersInCircleSwap", required: false)
 
+    @(Html.Partial("~/Views/PartialView/_Authorized.cshtml", userInfo))
     <script type="text/javascript">
         $(document).ready(function () {
-            document.getElementsByClassName("tab-attr")[@ViewData["active"]].classList.add("tab-attr-active");
+            document.getElementsByClassName("info-frame")[0].getElementsByClassName("tab-attr")[@ViewData["active"]].classList.add("tab-attr-active");
         });
     </script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/litepicker/dist/css/litepicker.css" />
     <script src="https://cdn.jsdelivr.net/npm/litepicker/dist/litepicker.js"></script>
-
-    @(Html.Partial("~/Views/PartialView/_Authorized.cshtml", userInfo))
-
-    <script type='text/javascript'>
-        const picker = new Litepicker({
-            element: document.getElementById('requestdaterange'),
-            singleMode: false,
-            tooltipText: {
-                one: 'night',
-                other: 'nights'
-            },
-            tooltipNumber: (totalDays) => {
-                return totalDays - 1;
-            }
-        })
-    </script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

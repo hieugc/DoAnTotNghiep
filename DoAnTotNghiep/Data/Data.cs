@@ -48,7 +48,7 @@ namespace DoAnTotNghiep.Data
         public DbSet<Entity.File> Files { get; set; }
         public DbSet<FileOfHouse> FilesOfHouses { get; set;}
         public DbSet<FileInAdminReport> FileInAdminReports { get; set; }
-        public DbSet<FileInUserReport> FilesOfUsers { get; set; }
+        public DbSet<FileInUserReport> FileInUserReports { get; set; }
         public DbSet<FileInUserResponse> FilesOfUsersResponses { get; set;}
         public DbSet<Message> Messages { get; set; }
         public DbSet<Request> Requests { get; set; }

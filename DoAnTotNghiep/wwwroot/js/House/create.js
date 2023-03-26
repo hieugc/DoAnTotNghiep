@@ -98,7 +98,7 @@ function finish() {
                 data: JSON.stringify(data),
                 dataType: "json",
                 contentType: "application/json",
-                type: "PUT",
+                type: "POST",
                 success: function (result) {
                     //nếu đúng
                     console.log(result);
@@ -453,4 +453,11 @@ function reloadPage() {
     for (let e in listHouse) {
         $("#list-house").append(houseItem(listHouse[e]));
     }
+}
+
+
+//lấy bước hiện tại
+//thêm thông tin từng bước
+function getStep() {
+
 }

@@ -30,5 +30,7 @@ namespace DoAnTotNghiep.Entity
 
         [ForeignKey(name: nameof(IdHouse))]
         public virtual House? Houses { get; set; }
+
+        public ICollection<FileInUserReport>? Files { get; set; }
     }
 }

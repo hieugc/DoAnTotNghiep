@@ -31,7 +31,9 @@ namespace DoAnTotNghiep.Controllers
         private readonly DoAnTotNghiepContext _context;
         private readonly IConfiguration _configuration;
 
-        public AuthorizeController(DoAnTotNghiepContext context, IConfiguration configuration)
+        public AuthorizeController(DoAnTotNghiepContext context, 
+                                    IConfiguration configuration,
+                                    IHostEnvironment environment): base(environment)
         {
             _context = context;
             _configuration = configuration;
@@ -40,8 +42,8 @@ namespace DoAnTotNghiep.Controllers
         public async Task<IActionResult> SignIn()
         {
             var role = this.GetRole();
-            if (role == Role.NoneString() || role == Role.UpdateInfo()) await this.SignOutCookie();
-            if (this.GetIdUser() != 0) return RedirectToAction("Index", "Home");
+            if (role != Role.Member) await this.SignOutCookie();
+            if (role == Role.Member) return RedirectToAction("Index", "Home");
             return View();
         }
 
@@ -60,17 +62,19 @@ namespace DoAnTotNghiep.Controllers
                     {
                         var claims = new List<Claim>() {
                             new Claim(ClaimTypes.Name, checkUser.Id.ToString()),
-                            new Claim(ClaimTypes.Role, Role.MemberString()),
+                            new Claim(ClaimTypes.Role, Role.Member),
                             new Claim(ClaimTypes.Email, checkUser.Email),
                         };
 
                         await this.SignClaim(claims, Scheme.AuthenticationCookie(), DateTime.UtcNow.AddHours(24));
-                        SetCookie(Enum.Cookie.RoleAccess(), Role.MemberString(), 24);
+                        SetCookie(Enum.Cookie.RoleAccess(), Role.Member, 24);
 
                         this._context.Entry(checkUser).Reference(m => m.Files).Load();
 
                         byte[] RSA = Crypto.Salt(this._configuration);
-                        string userInfo = JsonConvert.SerializeObject(new UserMessageViewModel(checkUser, RSA, this.GetWebsitePath()));
+                        this._context.Entry(checkUser).Collection(m => m.Houses).Query().Load();
+
+                        string userInfo = JsonConvert.SerializeObject(new UserInfo(checkUser, RSA, this.GetWebsitePath()));
 
                         SetCookie(Enum.Cookie.UserInfo(), userInfo, 24);
                         return RedirectToAction("Index", "Home");
@@ -117,10 +121,10 @@ namespace DoAnTotNghiep.Controllers
                     {
                         var token = new JwtHelper(this._configuration).GenerateToken(new List<Claim>() {
                             new Claim(ClaimTypes.Name, checkUser.Id.ToString()),
-                            new Claim(ClaimTypes.Role, Role.MemberString()),
+                            new Claim(ClaimTypes.Role, Role.Member),
                             new Claim(ClaimTypes.Email, checkUser.Email),
                         });
-
+                        this._context.Entry(checkUser).Collection(m => m.Houses).Query().Load();
                         return Json(new
                         {
                             Status = 200,
@@ -153,12 +157,12 @@ namespace DoAnTotNghiep.Controllers
         public IActionResult SignUpCheckMail()
         {
             string role = this.GetRole();
-            if(role == Role.UnAuthorize()) return View(new RegisterCheckMailViewModel());
-            else if(role == Role.MemberString())
+            if(role == Role.UnAuthorize) return View(new RegisterCheckMailViewModel());
+            else if(role == Role.Member)
             {
                 return RedirectToAction("Index", "Home");
             }
-            else if (role == Role.AdminString())
+            else if (role == Role.Admin)
             {
                 return RedirectToAction("Index", "Home");
             }
@@ -214,12 +218,12 @@ namespace DoAnTotNghiep.Controllers
         public IActionResult SignUpPassword(string Email)
         {
             string role = this.GetRole();
-            if(role == Role.UnAuthorize()) return View(new RegisterPasswordViewModel() { Email = Email});
-            else if(role == Role.MemberString())
+            if(role == Role.UnAuthorize) return View(new RegisterPasswordViewModel() { Email = Email});
+            else if(role == Role.Member)
             {
                 return RedirectToAction("Index", "Home");
             }
-            else if (role == Role.AdminString())
+            else if (role == Role.Admin)
             {
                 return RedirectToAction("Index", "Home");
             }
@@ -244,7 +248,7 @@ namespace DoAnTotNghiep.Controllers
                     {
                         var claims = new List<Claim>() {
                             new Claim(ClaimTypes.Name, OTP),
-                            new Claim(ClaimTypes.Role, Role.NoneString()),
+                            new Claim(ClaimTypes.Role, Role.None),
                             new Claim(ClaimTypes.Email, registerPasswordViewModel.Email),
                             new Claim(ClaimTypes.Expired, DateTime.UtcNow.AddMinutes(3).ToString()),
                             new Claim(ClaimTypes.Hash, registerPasswordViewModel.Password)
@@ -282,7 +286,7 @@ namespace DoAnTotNghiep.Controllers
                     {
                         var claims = new List<Claim>() {
                             new Claim(ClaimTypes.Name, OTP), //OTP => token
-                            new Claim(ClaimTypes.Role, Role.NoneString()),
+                            new Claim(ClaimTypes.Role, Role.None),
                             new Claim(ClaimTypes.Email, data.Email),
                             new Claim(ClaimTypes.Expired, DateTime.UtcNow.AddMinutes(3).ToString()),
                             new Claim(ClaimTypes.Hash, data.Password)
@@ -327,13 +331,13 @@ namespace DoAnTotNghiep.Controllers
             return true;
         }
         [HttpGet]
-        [Authorize(Roles = "NONE")]
+        [Authorize(Roles = Enum.Role.None)]
         public IActionResult SignUpOTP()
         {
             return View(new RegisterOTPViewModel());
         }
         [HttpGet]
-        [Authorize(Roles = "NONE")]
+        [Authorize(Roles = Enum.Role.None)]
         public async Task<IActionResult> ResendSignUpOTP()
         {
             string OTP = new Random().Next(100000, 999999).ToString();
@@ -345,7 +349,7 @@ namespace DoAnTotNghiep.Controllers
             {
                 var claims = new List<Claim>() {
                             new Claim(ClaimTypes.Name, OTP),
-                            new Claim(ClaimTypes.Role, Role.NoneString()),
+                            new Claim(ClaimTypes.Role, Role.None),
                             new Claim(ClaimTypes.Email, email),
                             new Claim(ClaimTypes.Expired, DateTime.UtcNow.AddMinutes(3).ToString()),
                             new Claim(ClaimTypes.Hash, password)
@@ -358,7 +362,7 @@ namespace DoAnTotNghiep.Controllers
         }
 
         [HttpGet("/api/SignUp/ResendOTP")]
-        [Authorize(Roles = "NONE")]
+        [Authorize(Roles = Enum.Role.None)]
         public IActionResult ApiResendSignUpOTP()
         {
             string OTP = new Random().Next(100000, 999999).ToString();
@@ -370,7 +374,7 @@ namespace DoAnTotNghiep.Controllers
             {
                 var claims = new List<Claim>() {
                             new Claim(ClaimTypes.Name, OTP),
-                            new Claim(ClaimTypes.Role, Role.NoneString()),
+                            new Claim(ClaimTypes.Role, Role.None),
                             new Claim(ClaimTypes.Email, email),
                             new Claim(ClaimTypes.Expired, DateTime.UtcNow.AddMinutes(3).ToString()),
                             new Claim(ClaimTypes.Hash, password)
@@ -394,7 +398,7 @@ namespace DoAnTotNghiep.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "NONE")]
+        [Authorize(Roles = Enum.Role.None)]
         public async Task<IActionResult> SignUpOTP(RegisterOTPViewModel model)
         {
             if (ModelState.IsValid)
@@ -432,7 +436,7 @@ namespace DoAnTotNghiep.Controllers
 
                         var claims = new List<Claim>() {
                             new Claim(ClaimTypes.Name, userModel.Id.ToString()),
-                            new Claim(ClaimTypes.Role, Role.UpdateInfo()),
+                            new Claim(ClaimTypes.Role, Role.UpdateInfo),
                             new Claim(ClaimTypes.Email, userModel.Email),
                         };
                         await this.SignClaim(claims, scheme: Scheme.AuthenticationCookie(), DateTime.UtcNow.AddHours(24));
@@ -457,7 +461,7 @@ namespace DoAnTotNghiep.Controllers
         {
             //    var claims = new List<Claim>() {
             //                    new Claim(ClaimTypes.Name, OTP),
-            //                    new Claim(ClaimTypes.Role, Role.NoneString()),
+            //                    new Claim(ClaimTypes.Role, Role.None),
             //                    new Claim(ClaimTypes.Email, data.Email),
             //                    new Claim(ClaimTypes.Expired, DateTime.UtcNow.AddMinutes(3).ToString()),
             //                    new Claim(ClaimTypes.Hash, data.Password)
@@ -471,7 +475,7 @@ namespace DoAnTotNghiep.Controllers
         }
 
         [HttpPost("/api/SignUp/OTP")]
-        [Authorize(Roles = "NONE")]
+        [Authorize(Roles = Enum.Role.None)]
         public async Task<IActionResult> ConfirmOTP([FromBody] RegisterOTPViewModel model)
         {
             if (ModelState.IsValid)
@@ -497,7 +501,8 @@ namespace DoAnTotNghiep.Controllers
                             BonusPoint = 0,
                             IdFile = null,
                             BirthDay = DateTime.UtcNow,
-                            Gender = false
+                            Gender = false,
+                            UserRating = 0
                         };
 
                         this._context.Add(userModel);
@@ -506,7 +511,7 @@ namespace DoAnTotNghiep.Controllers
 
                         var claims = new List<Claim>() {
                             new Claim(ClaimTypes.Name, userModel.Id.ToString()),
-                            new Claim(ClaimTypes.Role, Role.UpdateInfo()),
+                            new Claim(ClaimTypes.Role, Role.UpdateInfo),
                             new Claim(ClaimTypes.Email, userModel.Email),
                         };
                         var token = new JwtHelper(this._configuration).GenerateToken(claims);
@@ -539,7 +544,7 @@ namespace DoAnTotNghiep.Controllers
             });
         }
         [HttpGet]
-        [Authorize(Roles = "UPDATEINFO")]
+        [Authorize(Roles = Enum.Role.UpdateInfo)]
         public IActionResult SignUpInfo()
         {
             ViewData["Gender"] = new SelectList(new List<GenderSelect>() { new GenderSelect() { Value = false, Name = "Nữ"}, new GenderSelect() { Value = true, Name = "Nam" } }, "Value", "Name");
@@ -548,7 +553,7 @@ namespace DoAnTotNghiep.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "UPDATEINFO")]
+        [Authorize(Roles = Enum.Role.UpdateInfo)]
         public async Task<IActionResult> SignUpInfo(RegisterInfoViewModel model)
         {
             if (ModelState.IsValid)
@@ -579,7 +584,7 @@ namespace DoAnTotNghiep.Controllers
         }
 
         [HttpPost("/api/SignUp/UpdateInfo")]
-        [Authorize(Roles = "UPDATEINFO")]
+        [Authorize(Roles = Enum.Role.UpdateInfo)]
         public async Task<IActionResult> UpdateInfomation([FromBody] RegisterInfoViewModel model)
         { 
             if (ModelState.IsValid)
@@ -598,12 +603,12 @@ namespace DoAnTotNghiep.Controllers
 
                     var claims = new List<Claim>() {
                             new Claim(ClaimTypes.Name, user.Id.ToString()),
-                            new Claim(ClaimTypes.Role, Role.MemberString()),
+                            new Claim(ClaimTypes.Role, Role.Member),
                             new Claim(ClaimTypes.Email, user.Email),
                         };
                     var token = new JwtHelper(this._configuration).GenerateToken(claims);
 
-
+                    this._context.Entry(user).Collection(m => m.Houses).Query().Load();
                     return Json(new
                     {
                         Status = 200,
@@ -636,86 +641,6 @@ namespace DoAnTotNghiep.Controllers
             var email = this._context.Users.Where(m => m.Email == Email);
             return email.Any();
         }
-
-
-
-        //[HttpGet]
-        //public IActionResult SignUp()
-        //{
-        //    if (this.GetIdUser() != 0) return RedirectToAction("Index", "Home");
-        //    return View(new RegisterViewModel());
-        //}
-
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> SignUp(RegisterViewModel registerViewModel)
-        //{
-        //    if (this.GetIdUser() != 0) return NotFound();
-        //    if (ModelState.IsValid)
-        //    {
-        //        byte[] salt = Crypto.Salt();
-
-        //        registerViewModel.Password = Crypto.HashPass(registerViewModel.Password, salt);
-
-        //        User userModel = new User
-        //        {
-        //            Email = registerViewModel.Email,
-        //            Password = registerViewModel.Password,
-        //            Salt = Crypto.SaltStr(salt),
-        //            PhoneNumber = registerViewModel.PhoneNumber,
-        //            FirstName = registerViewModel.FirstName,
-        //            LastName  = registerViewModel.LastName,
-        //            Point = 0,
-        //            BonusPoint = 0,
-        //            IdFile = null
-        //        };
-
-        //        this._context.Add(userModel);
-        //        await _context.SaveChangesAsync();
-        //        return RedirectToAction(nameof(SignIn));
-        //    }
-        //    return View(registerViewModel);
-        //}
-
-        //[HttpPost("/api/SignUp")]
-        //public async Task<IActionResult> ApiSignUp([FromBody] RegisterViewModel registerViewModel)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        byte[] salt = Crypto.Salt();
-        //        registerViewModel.Password = Crypto.HashPass(registerViewModel.Password, salt);
-
-        //        User userModel = new User
-        //        {
-        //            Email = registerViewModel.Email,
-        //            Password = registerViewModel.Password,
-        //            Salt = Crypto.SaltStr(salt),
-        //            PhoneNumber = registerViewModel.PhoneNumber,
-        //            FirstName = registerViewModel.FirstName,
-        //            LastName = registerViewModel.LastName,
-        //            Point = 0,
-        //            BonusPoint = 0,
-        //            IdFile = null
-        //        };
-
-        //        this._context.Add(userModel);
-        //        await _context.SaveChangesAsync();
-
-        //        return Json(new
-        //        {
-        //            Status = 200,
-        //            Message = "Đăng ký thành công"
-        //        });
-        //    }
-        //    return Json(new
-        //    {
-        //        Status = 400,
-        //        Message = this.ModelErrors()
-        //    });
-        //}
-
-        
-        
         [Authorize]
         public async Task<IActionResult> Logout()
         {
@@ -759,7 +684,7 @@ namespace DoAnTotNghiep.Controllers
                     {
                         var claims = new List<Claim>() {
                             new Claim(ClaimTypes.Name, OTP),
-                            new Claim(ClaimTypes.Role, Role.NoneString()),
+                            new Claim(ClaimTypes.Role, Role.None),
                             new Claim(ClaimTypes.Email, data.Email),
                             new Claim(ClaimTypes.Expired, DateTime.UtcNow.AddMinutes(3).ToString())
                         };
@@ -794,7 +719,7 @@ namespace DoAnTotNghiep.Controllers
                     {
                         var claims = new List<Claim>() {
                             new Claim(ClaimTypes.Name, OTP),
-                            new Claim(ClaimTypes.Role, Role.NoneString()),
+                            new Claim(ClaimTypes.Role, Role.None),
                             new Claim(ClaimTypes.Email, data.Email),
                             new Claim(ClaimTypes.Expired, DateTime.UtcNow.AddMinutes(3).ToString())
                         };
@@ -832,7 +757,7 @@ namespace DoAnTotNghiep.Controllers
             });
         }
         [HttpGet]
-        [Authorize(Roles = "NONE")]
+        [Authorize(Roles = Enum.Role.None)]
         public IActionResult ForgotOTP()
         {
             return View(new RegisterOTPViewModel());
@@ -840,7 +765,7 @@ namespace DoAnTotNghiep.Controllers
         
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "NONE")]
+        [Authorize(Roles = Enum.Role.None)]
         public async Task<IActionResult> ForgotOTP(RegisterOTPViewModel data)
         {
             if (ModelState.IsValid)
@@ -853,13 +778,13 @@ namespace DoAnTotNghiep.Controllers
                     {
                         string email = this.GetEmail();
                         await this.Logout();
-                        if (email == Role.UnAuthorize()) return RedirectToAction(nameof(Forgot));
+                        if (email == Role.UnAuthorize) return RedirectToAction(nameof(Forgot));
 
                         var user = this._context.Users.Where(m => m.Email == email).FirstOrDefault();
                         if (user == null) return NotFound();
                         var claims = new List<Claim>() {
                             new Claim(ClaimTypes.Name, user.Id.ToString()),
-                            new Claim(ClaimTypes.Role, Role.MemberString()),
+                            new Claim(ClaimTypes.Role, Role.Member),
                             new Claim(ClaimTypes.Email, user.Email)
                         };
                         await this.SignClaim(claims, Scheme.AuthenticationCookie(), DateTime.UtcNow.AddMinutes(5));
@@ -880,14 +805,14 @@ namespace DoAnTotNghiep.Controllers
         }
 
         [HttpPost("/api/Forgot/OTP")]
-        [Authorize(Roles = "NONE")]
+        [Authorize(Roles = Enum.Role.None)]
         public IActionResult ApiForgotConfirmOTP([FromBody] RegisterOTPViewModel data)
         {
             if (ModelState.IsValid)
             {
                 int IdUser = this.GetIdUser();//OTP
                 string email = this.GetEmail();
-                if(email == Role.UnAuthorize())
+                if(email == Role.UnAuthorize)
                 {
                     return Json(new
                     {
@@ -911,7 +836,7 @@ namespace DoAnTotNghiep.Controllers
                         }
                         var claims = new List<Claim>() {
                                 new Claim(ClaimTypes.Name, user.Id.ToString()),
-                                new Claim(ClaimTypes.Role, Role.MemberString()),
+                                new Claim(ClaimTypes.Role, Role.Member),
                                 new Claim(ClaimTypes.Email, user.Email)
                             };
                         var token = new JwtHelper(this._configuration).GenerateToken(claims);
@@ -953,7 +878,7 @@ namespace DoAnTotNghiep.Controllers
         }
 
         [HttpGet("/api/Forgot/ResendOTP")]
-        [Authorize(Roles = "NONE")]
+        [Authorize(Roles = Enum.Role.None)]
         public IActionResult ApiForgotResendOTP()
         {
             string OTP = new Random().Next(100000, 999999).ToString();
@@ -963,7 +888,7 @@ namespace DoAnTotNghiep.Controllers
             {
                 var claims = new List<Claim>() {
                             new Claim(ClaimTypes.Name, OTP),
-                            new Claim(ClaimTypes.Role, Role.NoneString()),
+                            new Claim(ClaimTypes.Role, Role.None),
                             new Claim(ClaimTypes.Email, email),
                             new Claim(ClaimTypes.Expired, DateTime.UtcNow.AddMinutes(3).ToString())
                         };
@@ -988,7 +913,7 @@ namespace DoAnTotNghiep.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "NONE")]
+        [Authorize(Roles = Enum.Role.None)]
         public async Task<IActionResult> ForgotResendOTP()
         {
             string OTP = new Random().Next(100000, 999999).ToString();
@@ -998,7 +923,7 @@ namespace DoAnTotNghiep.Controllers
             {
                 var claims = new List<Claim>() {
                             new Claim(ClaimTypes.Name, OTP),
-                            new Claim(ClaimTypes.Role, Role.NoneString()),
+                            new Claim(ClaimTypes.Role, Role.None),
                             new Claim(ClaimTypes.Email, email),
                             new Claim(ClaimTypes.Expired, DateTime.UtcNow.AddMinutes(3).ToString())
                         };
@@ -1010,7 +935,7 @@ namespace DoAnTotNghiep.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "MEMBER")]
+        [Authorize(Roles = Enum.Role.Member)]
         public IActionResult RefreshPassword()
         {
             return View(new UpdatePasswordViewModel());
@@ -1018,7 +943,7 @@ namespace DoAnTotNghiep.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "MEMBER")]
+        [Authorize(Roles = Enum.Role.Member)]
         public async Task<IActionResult> RefreshPassword(UpdatePasswordViewModel data)
         {
             if (ModelState.IsValid)
@@ -1045,7 +970,7 @@ namespace DoAnTotNghiep.Controllers
         }
 
         [HttpPost("/api/Forgot/Password")]
-        [Authorize(Roles = "MEMBER")]
+        [Authorize(Roles = Enum.Role.Member)]
         public IActionResult ApiRefreshPassword([FromBody] UpdatePasswordViewModel data)
         {
             if (ModelState.IsValid)
@@ -1101,29 +1026,71 @@ namespace DoAnTotNghiep.Controllers
             RemoveCookie(Enum.Cookie.UserInfo());
         }
 
-        //public IActionResult TestSignUp()
-        //{
-        //    byte[] salt = Crypto.Salt();
-        //    string password = Crypto.HashPass(this.GetPassword(), salt);
+        [HttpGet("/api/User/AddUser")]
+        public IActionResult AddUser()
+        {
+            byte[] salt1 = Crypto.Salt();
+            User user = new User()
+            {
+                FirstName = "Lộc Minh",
+                LastName = "Hiếu",
+                Gender = true,
+                BirthDay = DateTime.Now,
+                Email = "jayson@vinova.com.sg",
+                Password = Crypto.HashPass("Vinova123", salt1),
+                Salt = Crypto.SaltStr(salt1),
+                PhoneNumber = "0973409127",
+                Point = 0,
+                BonusPoint = 0,
+                IdFile = null,
+                UserRating = 0
+            };
 
-        //    User userModel = new User
-        //    {
-        //        Email = "phamminhhieu1594@gmail.com",
-        //        Password = password,
-        //        Salt = Crypto.SaltStr(salt),
-        //        PhoneNumber = string.Empty,
-        //        FirstName = string.Empty,
-        //        LastName = string.Empty,
-        //        Point = 0,
-        //        BonusPoint = 0,
-        //        IdFile = null,
-        //        BirthDay = DateTime.UtcNow,
-        //        Gender = false
-        //    };
+            byte[] salt2 = Crypto.Salt();
+            User user2 = new User()
+            {
+                FirstName = "Phạm Minh",
+                LastName = "Hiếu",
+                Gender = true,
+                BirthDay = DateTime.Now,
+                Email = "hieu.phamgc@gmail.com",
+                Password = Crypto.HashPass("Vinova123", salt2),
+                Salt = Crypto.SaltStr(salt2),
+                PhoneNumber = "0973409127",
+                Point = 0,
+                BonusPoint = 0,
+                IdFile = null,
+                UserRating = 0
+            };
 
-        //    this._context.Add(userModel);
-        //    this._context.SaveChangesAsync();
-        //    return RedirectToAction("Index", "Home");
-        //}
+            byte[] salt3 = Crypto.Salt();
+            User user3 = new User()
+            {
+                FirstName = "Bùi Phát",
+                LastName = "Đạt",
+                Gender = true,
+                BirthDay = DateTime.Now,
+                Email = "buiphatdat2001@gmail.com",
+                Password = Crypto.HashPass("Vinova123", salt2),
+                Salt = Crypto.SaltStr(salt2),
+                PhoneNumber = "0973409127",
+                Point = 0,
+                BonusPoint = 0,
+                IdFile = null,
+                UserRating = 0
+            };
+
+            this._context.AddRange(new List<User>()
+            {
+                user, user2, user3
+            }); ;
+            this._context.SaveChanges();
+
+
+            return Json(new { 
+                Status = 200,
+                Message = "oke"
+            });
+        }
     }
 }

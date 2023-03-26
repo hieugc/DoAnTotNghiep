@@ -1,0 +1,133 @@
+﻿
+#messageRequestModal .modal-content-hide {
+    display: none;
+}
+
+#messageRequestModal .my-modal-title {
+    width: 100%;
+    text-align: center;
+}
+
+#messageRequestModal .modal-body {
+    padding: 1rem;
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+#messageRequestModal .modal-body > div {
+    width: 33.33%;
+}
+    #messageRequestModal .modal-body > div:nth-child(2) {
+        order: 3;
+    }
+    #messageRequestModal .modal-body .mb-3 > label,
+    #messageRequestModal .modal-body .mb-3 > div:last-child > label {
+        margin-bottom: 6px;
+        font-weight: 700;
+    }
+
+.houseSwap{
+    display: none;
+}
+.houseSwap.houseSwap-show {
+    display: block;
+}
+#messageRequestModal .modal-bottom{
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: center;
+}
+#messageRequestModal .modal-bottom button{
+    width: 350px;
+}
+
+#messageRequestModal .modal-body .house-request {
+    border: 2px dashed var(--bs-gray-800);
+    min-height: 10rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 32px;
+}
+#messageRequestModal .modal-body .house-request:hover {
+    border-color: var(--bs-primary);
+    color: var(--bs-primary);
+    cursor: pointer;
+}
+
+#messageRequestModal .contain-option {
+    margin-top: 12px;
+    background-color: rgba(var(--bs-primary-rgb), 0.1);
+    padding: 6px 12px;
+    border-radius: 6px;
+}
+
+#messageRequestModal .contain-price {
+    padding: 1rem 0;
+    text-align: center;
+    background-color: rgba(var(--bs-primary-rgb), 0.1);
+    padding: 6px 12px;
+    border-radius: 6px;
+}
+#messageRequestModal .modal-content.list-house .modal-body{
+    display: block;
+}
+#messageRequestModal .modal-content.list-house .modal-body > div{
+    width: unset;
+}
+#messageRequestModal .list-house .list {
+    display: flex;
+    overflow: auto;
+    padding: 12px;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+#messageRequestModal .list-house .list > div {
+    min-width: 350px;
+}
+
+#messageRequestModal .list-house .list::-webkit-scrollbar {
+    width: 1px;
+    height: 2px;
+}
+
+#messageRequestModal .list-house .list::-webkit-scrollbar-thumb {
+    background: var(--bs-primary);
+}
+
+#messageRequestModal .list-house .list::-webkit-scrollbar-track {
+    background: rgba(161, 172, 184, 0.3);
+}
+
+#messageRequestModal .list-house .modal-header {
+    position: relative;
+}
+
+    #messageRequestModal .list-house .modal-header .back-step {
+        position: absolute;
+        left: 12px;
+        font-size: 22px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    #messageRequestModal .list-house .modal-header h3 {
+        text-align: center;
+        width: 100%;
+    }
+
+#messageRequestModal > .container-lg > div > .btn {
+    width: 350px;
+}
+
+#messageRequestModal > .container-lg > div:last-child {
+    display: flex;
+    justify-content: center;
+}
+
+#messageRequestModal > .container-lg > .list {
+    display: flex;
+    gap: 24px;
+    overflow: auto;
+    padding: 32px;
+}

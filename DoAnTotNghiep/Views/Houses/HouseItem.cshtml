@@ -4,7 +4,6 @@
     int count = 1;
 }
 
-
 <div class="card mb-3 status-@Model.Status">
     <div class="row g-0">
         <div class="col-md-8">
@@ -27,7 +26,7 @@
                 <div class="body-head">
                     <h5 class="card-title">@Model.Name</h5>
                     <div>
-                        <div class="rating"><span>@Model.Rating</span><i class="fa-solid fa-star"></i></div>
+                        <div class="rating"><span>@Model.Rating (@Model.NumberRating)</span><i class="fa-solid fa-star"></i></div>
                         <div class="point"><strong>@Model.Price p/ngày</strong></div>
                     </div>
                 </div>
@@ -39,14 +38,13 @@
                         <div><i class="fa-solid fa-bath"></i><span>@Model.BathRoom</span></div>
                         <div><i class="fa-solid fa-maximize"></i><span>@Model.Square &#13217;</span></div>
                     </div>
-                    <div class="alert-swap">
-                        @if (Model.Status == (int)Status.VALID)
+                    <div class="alert-swap model-house-@Model.Id">
+                        @if (Model.Status == (int)StatusHouse.VALID)
                         {
                             <label class="position-relative" title="Người dùng yêu cầu" onclick="showRequest(@Model.Id)">
                                 <i class="fa-solid fa-bell"></i>
-                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger value-request">
                                     @Model.Request
-                                    <span class="visually-hidden">unread messages</span>
                                 </span>
                             </label>
                         }
@@ -55,7 +53,7 @@
                 <p class="card-text">@Model.Location</p>
                 <p class="card-control">
                     <a href="@Url.Action("HouseOverView", "Houses", new{Id = Model.Id})" class="btn btn-primary" title="Xem chi tiết">Chi tiết</a>
-                    @if (Model.Status != (int)Status.SWAPPED)
+                    @if (Model.Status != (int)StatusHouse.SWAPPING)
                     {
                         <button type="button" class="btn btn-warning" onclick="editHouse(@Model.Id)">Chỉnh sửa</button>
                         <button type="button" class="btn btn-danger" confirm="Bạn chắc muốn xóa nhà này chứ?" onclick="deleteHouse(@Model.Id)">Xóa</button>

@@ -12,13 +12,16 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using DoAnTotNghiep.Modules;
 using Microsoft.AspNetCore.Authorization;
 using DoAnTotNghiep.Enum;
+using DoAnTotNghiep.ViewModels;
 
 namespace DoAnTotNghiep.Controllers
 {
     public abstract class BaseController : Controller
     {
-        public BaseController()
+        protected readonly IHostEnvironment environment;
+        public BaseController(IHostEnvironment environment)
         {
+            this.environment = environment;
         }
         public IActionResult NotFound() => PartialView("./Views/Base/NotFound.cshtml");
         public IActionResult UnderMaintenance() => PartialView("./Views/Base/UnderMaintenance.cshtml");
@@ -42,12 +45,12 @@ namespace DoAnTotNghiep.Controllers
             try
             {
                 Claim? claim = this.HttpContext.User.FindFirst(ClaimTypes.Role);
-                return claim == null ? Role.UnAuthorize() : claim.Value;
+                return claim == null ? Role.UnAuthorize : claim.Value;
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
-                return Role.UnAuthorize();
+                return Role.UnAuthorize;
             }
         }
         [Authorize]
@@ -56,12 +59,12 @@ namespace DoAnTotNghiep.Controllers
             try
             {
                 Claim? claim = this.HttpContext.User.FindFirst(ClaimTypes.Email);
-                return claim == null ? Role.UnAuthorize() : claim.Value;
+                return claim == null ? Role.UnAuthorize : claim.Value;
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
-                return Role.UnAuthorize();
+                return Role.UnAuthorize;
             }
         }
         [Authorize]
@@ -124,5 +127,81 @@ namespace DoAnTotNghiep.Controllers
             }
             return string.Join(". \n", errors);
         }
+
+
+        //lưu hình ảnh
+        protected Entity.File? SaveFile(ImageBase imageBase)
+        {
+            try
+            {
+                string[] arr = imageBase.Data.Split("base64,");
+                string ext = imageBase.Name.Split(".").Last();
+                var bytes = Convert.FromBase64String(arr[1]);
+
+                string folder = Path.Combine("Uploads", DateTime.Now.ToString("yyyy"), DateTime.Now.ToString("MM"));
+
+                string uploadsFolder = Path.Combine(this.environment.ContentRootPath, "wwwroot", folder);
+                Console.WriteLine(uploadsFolder);
+                if (!Directory.Exists(uploadsFolder))
+                {
+                    Directory.CreateDirectory(uploadsFolder);
+                }
+                string ImagePath = Guid.NewGuid().ToString() + "." + ext;
+                string filePath = Path.Combine(uploadsFolder, ImagePath);
+                System.IO.File.WriteAllBytes(filePath, bytes);
+                return new Entity.File() { FileName = ImagePath, PathFolder = folder };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return null;
+            }
+        }
+        protected Entity.File? SaveFile(IFormFile file)
+        {
+            try
+            {
+                string folder = Path.Combine("Uploads", DateTime.Now.ToString("yyyy"), DateTime.Now.ToString("MM"));
+
+                string uploadsFolder = Path.Combine(this.environment.ContentRootPath, "wwwroot", folder);
+                Console.WriteLine(uploadsFolder);
+                if (!Directory.Exists(uploadsFolder))
+                {
+                    Directory.CreateDirectory(uploadsFolder);
+                }
+                string ImagePath = Guid.NewGuid().ToString() + ".png";
+                string filePath = Path.Combine(uploadsFolder, ImagePath);
+                using (FileStream fs = new FileStream(filePath, FileMode.Create))
+                {
+                    file.CopyTo(fs);
+                }
+                return new Entity.File() { FileName = ImagePath, PathFolder = folder };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return null;
+            }
+        }
+        protected bool DeleteFile(Entity.File file)
+        {
+            try
+            {
+                string uploadsFolder = Path.Combine(this.environment.ContentRootPath, "wwwroot", file.PathFolder);
+                string filePath = Path.Combine(uploadsFolder, file.FileName);
+                if (!Directory.Exists(filePath))
+                {
+                    return false;
+                }
+                System.IO.File.Delete(filePath);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return false;
+            }
+        }
+
     }
 }

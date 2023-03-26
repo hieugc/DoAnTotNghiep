@@ -1,9 +1,13 @@
 ﻿function getDataCity() {
     if (dataLocation == null) {
-        changeDataForSelect2("#district-select", [{ "id": -1, "text": "Quận / Huyện" }]);
-        $("#district-select").prop("disabled", true);
-        changeDataForSelect2("#ward-select", [{ "id": -1, "text": "Phường / Xã" }]);
-        $("#ward-select").prop("disabled", true);
+        if ($("#district-select").length > 0) {
+            changeDataForSelect2("#district-select", [{ "id": -1, "text": "Quận / Huyện" }]);
+            $("#district-select").prop("disabled", true);
+        }
+        if ($("#ward-select").length > 0) {
+            changeDataForSelect2("#ward-select", [{ "id": -1, "text": "Phường / Xã" }]);
+            $("#ward-select").prop("disabled", true);
+        }
         $.ajax({
             url: "/Location/GetCity",
             type: "GET",
@@ -33,7 +37,9 @@
 
                 let model = JSON.stringify(data.city).replaceAll("name", "text");
 
-                changeDataForSelect2("#city-select", [{ "id": -1, "text": "Thành phố / Tỉnh" }].concat(JSON.parse(model)));
+                if ($("#city-select").length > 0) {
+                    changeDataForSelect2("#city-select", [{ "id": -1, "text": "Thành phố / Tỉnh" }].concat(JSON.parse(model)));
+                }
             },
             error: function (e) {
                 console.log(e);
@@ -48,14 +54,20 @@ function getDataDistrict() {
     }
     else {
         if (!(id in dataLocation)) {
-            changeDataForSelect2("#district-select", [{ "id": -1, "text": "Quận / Huyện" }]);
-            $("#district-select").prop("disabled", true);
-            changeDataForSelect2("#ward-select", [{ "id": -1, "text": "Phường / Xã" }]);
-            $("#ward-select").prop("disabled", true);
+            if ($("#district-select").length > 0) {
+                changeDataForSelect2("#district-select", [{ "id": -1, "text": "Quận / Huyện" }]);
+                $("#district-select").prop("disabled", true);
+            }
+            if ($("#ward-select").length > 0) {
+                changeDataForSelect2("#ward-select", [{ "id": -1, "text": "Phường / Xã" }]);
+                $("#ward-select").prop("disabled", true);
+            }
         }
         else {
-            changeDataForSelect2("#ward-select", [{ "id": -1, "text": "Phường / Xã" }]);
-            $("#ward-select").prop("disabled", true);
+            if ($("#ward-select").length > 0) {
+                changeDataForSelect2("#ward-select", [{ "id": -1, "text": "Phường / Xã" }]);
+                $("#ward-select").prop("disabled", true);
+            }
             if (dataLocation[id].district == null) {
                 $.ajax({
                     url: "/Location/GetDistrict?Id=" + id,
@@ -85,7 +97,10 @@ function getDataDistrict() {
                         dataBingLocation[dataLocation[id].bingName].district = JSON.parse(bingStr);
 
                         let model = JSON.stringify(data.district).replaceAll("name", "text");
-                        changeDataForSelect2("#district-select", [{ "id": -1, "text": "Quận / Huyện" }].concat(JSON.parse(model)));
+                        
+                        if ($("#district-select").length > 0) {
+                            changeDataForSelect2("#district-select", [{ "id": -1, "text": "Quận / Huyện" }].concat(JSON.parse(model)));
+                        }
                     },
                     error: function (e) {
                         console.log(e);
@@ -113,14 +128,21 @@ function getDataWard() {
         var id_city = $("#city-select").val();
         var id = $("#district-select").val();
         if (!(id_city in dataLocation)) {
-            changeDataForSelect2("#district-select", [{ "id": -1, "text": "Quận / Huyện" }]);
-            $("#district-select").prop("disabled", true);
-            changeDataForSelect2("#ward-select", [{ "id": -1, "text": "Phường / Xã" }]);
-            $("#ward-select").prop("disabled", true);
+            if ($("#district-select").length > 0) {
+                changeDataForSelect2("#district-select", [{ "id": -1, "text": "Quận / Huyện" }]);
+                $("#district-select").prop("disabled", true);
+            }
+            if ($("#ward-select").length > 0) {
+                changeDataForSelect2("#ward-select", [{ "id": -1, "text": "Phường / Xã" }]);
+                $("#ward-select").prop("disabled", true);
+            }
         }
         else if(dataLocation[id_city].district == null || !(id in dataLocation[id_city].district)) {
-            changeDataForSelect2("#ward-select", [{ "id": -1, "text": "Phường / Xã" }]);
-            $("#ward-select").prop("disabled", true);
+
+            if ($("#ward-select").length > 0) {
+                changeDataForSelect2("#ward-select", [{ "id": -1, "text": "Phường / Xã" }]);
+                $("#ward-select").prop("disabled", true);
+            }
         }
         else{
             if (dataLocation[id_city].district[id].ward == null) {
@@ -151,7 +173,11 @@ function getDataWard() {
 
                         let model = JSON.stringify(data.ward).replaceAll("name", "text");
 
-                        changeDataForSelect2("#ward-select", [{ "id": -1, "text": "Phường / Xã" }].concat(JSON.parse(model)));
+
+                        if ($("#ward-select").length > 0) {
+
+                            changeDataForSelect2("#ward-select", [{ "id": -1, "text": "Phường / Xã" }].concat(JSON.parse(model)));
+                        }
                     },
                     error: function (e) {
                         console.log(e);
@@ -201,7 +227,7 @@ function showAddress(address) {
 function hideMainForm() {
     $("#houseModalToggle").hide();
     if ($("#mapAddress").text().replace("Địa chỉ nhà: ", "").length > 0 && loc != null) {
-        getLocation($("#mapAddress").text().replace("Địa chỉ nhà: ", ""));
+        getLocation(null);
     }
 }
 function showMainForm() {
@@ -303,13 +329,11 @@ function getLocation(temp_address) {
         address = temp_address
     }
     else {
-        address = $("#map-location").val()
-            + ", " + dataLocation[$("#city-select").val()].district[$("#district-select").val()].ward[$("#ward-select").val()].name
-            + ", " + dataLocation[$("#city-select").val()].district[$("#district-select").val()].name
-            + ", " + dataLocation[$("#city-select").val()].name;
+        address = "adminDistrict=" + encodeURIComponent(dataLocation[$("#city-select").val()].bingName)
+            + "&locality=" + encodeURIComponent(dataLocation[$("#city-select").val()].district[$("#district-select").val()].bingName)
+            + "&addressLine=" + encodeURIComponent($("#map-location").val() + ", " + dataLocation[$("#city-select").val()].district[$("#district-select").val()].ward[$("#ward-select").val()].bingName);
     }
-
-    var url_temp = 'http://dev.virtualearth.net/REST/v1/Locations?query=' + address + '&key=' + key;
+    var url_temp = window.location.protocol + '//dev.virtualearth.net/REST/v1/Locations?CountryRegion=VN&' + address + '&key=' + key;
     
     $.ajax({
         url: url_temp,
@@ -319,8 +343,12 @@ function getLocation(temp_address) {
             if (data.statusCode == 200) {
                 var result = data.resourceSets[0].resources[0].geocodePoints[0].coordinates;
                 loc = new Microsoft.Maps.Location(result[0], result[1]);
-                reloadMap(address);
-                $("#mapAddress").html("<strong>Địa chỉ nhà: </strong>" + address);
+                let temp_address = $("#map-location").val()
+                    + ", " + dataLocation[$("#city-select").val()].district[$("#district-select").val()].ward[$("#ward-select").val()].name
+                    + ", " + dataLocation[$("#city-select").val()].district[$("#district-select").val()].name
+                    + ", " + dataLocation[$("#city-select").val()].name;
+                reloadMap(temp_address);
+                $("#mapAddress").html("<strong>Địa chỉ nhà: </strong>" + temp_address);
             }
             else {
                 alert("Bạn hãy thử lại");

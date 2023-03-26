@@ -24,14 +24,23 @@
     }
     else
     {
-        <ul class="list-user">
+        <ul class="list-user" onscroll="scrollLoadUser(this)">
             @foreach (var item in Model)
             {
                 if (count++ == 1)
                 {
                     <li class="user user-@item.Key active" onclick="loadMessages(@item.Key, this)">
                         <a href="#message-@item.Key">
-                            <span class="avt"><img src="@item.Value.UserMessages.First().ImageUrl" alt="avatar" /></span>
+                            <span class="avt">
+                                @if (!string.IsNullOrEmpty(item.Value.UserMessages.First().ImageUrl))
+                                {
+                                    <img src="@item.Value.UserMessages.First().ImageUrl" alt="avatar" />
+                                }
+                                else
+                                {
+                                    <img src="~/Image/user.svg" alt="avatar" />
+                                }
+                                </span>
                             <span class="name">@item.Value.UserMessages.First().UserName</span>
                         </a>
                     </li>
@@ -42,7 +51,16 @@
                     {
                         <li class="user user-@item.Key" onclick="loadMessages(@item.Key, this)">
                             <a href="#message-@item.Key">
-                                <span class="avt"><img src="@item.Value.UserMessages.First().ImageUrl" alt="avatar" /></span>
+                                <span class="avt">
+                                    @if (!string.IsNullOrEmpty(item.Value.UserMessages.First().ImageUrl))
+                                    {
+                                        <img src="@item.Value.UserMessages.First().ImageUrl" alt="avatar" />
+                                    }
+                                    else
+                                    {
+                                        <img src="~/Image/user.svg" alt="avatar" />
+                                    }
+                                    </span>
                                 <span class="name">@item.Value.UserMessages.First().UserName</span>
                             </a>
                         </li>
@@ -51,7 +69,16 @@
                     {
                         <li class="user user-@item.Key new-message" onclick="loadMessages(@item.Key, this)">
                             <a href="#message-@item.Key">
-                                <span class="avt"><img src="@item.Value.UserMessages.First().ImageUrl" alt="avatar" /></span>
+                                <span class="avt">
+                                    @if (!string.IsNullOrEmpty(item.Value.UserMessages.First().ImageUrl))
+                                    {
+                                        <img src="@item.Value.UserMessages.First().ImageUrl" alt="avatar" />
+                                    }
+                                    else
+                                    {
+                                        <img src="~/Image/user.svg" alt="avatar" />
+                                    }
+                                </span>
                                 <span class="name">@item.Value.UserMessages.First().UserName</span>
                             </a>
                         </li>
@@ -98,7 +125,7 @@
                                             <div class="chat-head">
                                                 @if (string.IsNullOrEmpty(item.Value.UserMessages.First().ImageUrl))
                                                 {
-                                                    <div class="avt"><img src="~/Image/logo.png" alt="avatar" /></div>
+                                                    <div class="avt"><img src="~/Image/user.svg" alt="avatar" /></div>
                                                 }
                                                 else
                                                 {
@@ -120,7 +147,7 @@
                                             <div class="chat-head">
                                                 @if (string.IsNullOrEmpty(item.Value.UserMessages.First().ImageUrl))
                                                 {
-                                                    <div class="avt"><img src="~/Image/logo.png" alt="avatar" /></div>
+                                                    <div class="avt"><img src="~/Image/user.svg" alt="avatar" /></div>
                                                 }
                                                 else
                                                 {
@@ -148,7 +175,7 @@
                                         <div class="chat-head">
                                             @if (string.IsNullOrEmpty(item.Value.UserMessages.First().ImageUrl))
                                             {
-                                                <div class="avt"><img src="~/Image/logo.png" alt="avatar" /></div>
+                                                <div class="avt"><img src="~/Image/user.svg" alt="avatar" /></div>
                                             }
                                             else
                                             {
@@ -170,7 +197,7 @@
                                         <div class="chat-head">
                                             @if (string.IsNullOrEmpty(item.Value.UserMessages.First().ImageUrl))
                                             {
-                                                <div class="avt"><img src="~/Image/logo.png" alt="avatar" /></div>
+                                                <div class="avt"><img src="~/Image/user.svg" alt="avatar" /></div>
                                             }
                                             else
                                             {
@@ -192,13 +219,13 @@
                             <div class="tooltip-control dropup">
                                 <button type="button" class="control-label" data-bs-toggle="dropdown"><i class="fa-solid fa-plus"></i></button>
                                 <div class="control-frame dropdown-menu">
-                                    <div class="request dropdown-item" data-bs-toggle="modal" data-bs-target="#messageRequestModal">Tạo yêu cầu</div>
+                                    <div class="request dropdown-item" onclick="getRequestFormByUserAccess('@item.Value.UserMessages.First().UserAccess')">Tạo yêu cầu</div>
                                     <div class="dropdown-item"><label for="image-send">Thêm ảnh</label><input type="file" name="image-send" id="image-send" hidden /></div>
                                 </div>
                             </div>
 
                             <div class="frame-control">
-                                <textarea rows="1" maxlength="500" class="form-control" name="input-message-@item.Key" id="input-message-@item.Key" placeholder="Tin nhắn" oninput="changeHeight(this)"></textarea>
+                                <textarea rows="1" maxlength="500" class="form-control" name="input-message-@item.Key" id="input-message-@item.Key" placeholder="Tin nhắn" oninput="changeHeight(this, @item.Key)"></textarea>
                                 <button type="button" class="btn btn-primary" onclick="SendMessage('@item.Key')"><i class="fa-solid fa-paper-plane"></i></button>
                             </div>
                         </div>
@@ -220,4 +247,6 @@
         </script>
     }
     <script type="text/javascript" src="~/js/Chat/loadChat.js"></script>
+    <script src="~/js/Request/create.js" type="text/javascript"></script>
+    <script src="~/js/Request/getFormByUserAccess.js type="text/javascript"></script>
 }

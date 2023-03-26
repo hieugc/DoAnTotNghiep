@@ -3,8 +3,7 @@
     border-radius: 12px;
     padding: 12px;
     gap: 12px;
-    max-width: 1200px;
-    width: 1200px;
+    width: 100%;
     box-shadow: 0 0.25rem 0.75rem rgba(161, 172, 184, 0.3);
 }
 
@@ -174,6 +173,7 @@
 
 .frame-control textarea {
     max-height: 100px;
+    resize: none;
 }
 
 .request > label {
@@ -243,4 +243,26 @@
     align-items: center;
     justify-content: center;
     padding: 12px;
+}
+
+@media (max-width:850px){
+    .list-user{
+        min-width: unset;
+        padding-right: 0;
+    }
+    .list-user .name{
+        display: none;
+    }
+    .list-user > .user  a{
+        padding: unset;
+    }
+    .list-user > .user.active{
+        border-left: 4px solid var(--bs-primary);
+        border-bottom-left-radius: unset;
+        border-top-left-radius: unset;
+        margin: 12px 0;
+        padding-left: 12px;
+        background: var(--bs-gray-200);
+    }
+    
 }

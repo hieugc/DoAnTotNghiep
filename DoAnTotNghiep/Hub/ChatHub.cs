@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.Authorization;
 using DoAnTotNghiep.ViewModels;
+using DoAnTotNghiep.Enum;
 
 namespace DoAnTotNghiep.Hubs
 {
-    [Authorize]
+    [Authorize(Roles = Role.Member)]
     public class ChatHub : Hub
     {
         private IHubContext<ChatHub> _context;
@@ -17,9 +18,9 @@ namespace DoAnTotNghiep.Hubs
             await this._context.Clients.Group(group).SendAsync(target, message);
         }
 
-        public async Task ConnectToGroup(string target, string IdRoom)
+        public async Task ConnectToGroup(string target, string IdRoom, string userAccess)
         {
-            await this._context.Clients.All.SendAsync(target, IdRoom);
+            await this._context.Clients.Group(userAccess).SendAsync(target, IdRoom);
         }
 
         public async Task AddToGroup(string ConnectionId, string IdRoom)

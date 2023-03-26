@@ -1,18 +1,20 @@
 ﻿"use strict";
 var connection = new signalR.HubConnectionBuilder().withUrl(window.location.origin + "/ChatHub").build();
-var chatRoomData = {}
+var chatRoomData = null;
 var listRoom = null;
 
 connection.start().then(function () {
     let connectionid = connection.connection.connectionId;
     //>>>kết nối tất cả phòng => lấy danh sách người dùng kèm 1 tin nhắn mới nhất
     connectServer(connectionid);
-
 }).catch(function (err) {
     return console.error(err.toString());
 });
-connection.on("ReceiveMessages", function (message) {
 
+//TARGET t gửi tới 
+connection.on("ReceiveMessages", function (message) {
+    console.log(message);
+    listRoom = message;
     updateNoti(message);
     if (window.location.href.indexOf("Member/Messages") != -1) {
         let tag = ".user-" + message.idRoom;
@@ -26,12 +28,10 @@ connection.on("ReceiveMessages", function (message) {
                 console.log(isContinue);
             }
             addMessage(message.messages[0], message.idRoom, (userAccess.userAccess == idAccess), isContinue);
-
             prependNewMessage(tag);
         }
-        listRoom = message;
         if (message.idRoom in chatRoom) {
-            chatRoom[idRoom].messages = [].concat(message.messages, chatRoom[idRoom].messages);
+            chatRoom[message.idRoom].messages = [].concat(message.messages, chatRoom[message.idRoom].messages);
         }
         else {
             chatRoom[message.idRoom] = message;
@@ -39,9 +39,10 @@ connection.on("ReceiveMessages", function (message) {
     }
     else {
         let userName = chatRoomData[message.idRoom].userMessages[0].userName;
-        showNotification(userName, message.message.message, 1);
+        showNotification(userName, message.messages[0].message, 1);
     }
 });
+
 function connectServer(connectionId) {
     $.ajax({
         url: window.location.origin + '/ConnectAllChat',
@@ -77,12 +78,21 @@ function connectServerWithRoom(connectionId, idRoom) {
         success: function (result) {
             console.log(result);
             if (result.status == 200) {
+                if (window.location.href.indexOf("Member/Messages") != -1) {
+                    if (idRoom in chatRoom) {
+                        chatRoom[idRoom].messages = [].concat(result.data[idRoom].messages, chatRoom[idRoom].messages);
+                    }
+                    else {
+                        chatRoom[idRoom] = result.data[idRoom];
+                    }
+                }
+
                 //cập nhật chatRoomData
                 if (idRoom in chatRoomData) {
-                    chatRoomData[idRoom].messages = result.data.messages;
+                    chatRoomData[idRoom].messages = result.data[idRoom].messages;
                 }
                 else {
-                    chatRoomData[idRoom] = result.data;
+                    chatRoomData[idRoom] = result.data[idRoom];
                 }
             }
         },
@@ -100,12 +110,12 @@ function notiUserName(user, idSend) {
     return "Bạn";
 }
 function htmlChatNotification(user, chat, idRoom) {
-    let str = `<div class="dropdown-item message-${idRoom}">`;
+    let str = `<a href="${window.location.origin + "/Member/Messages?connectionId=" + user.userAccess}" class="dropdown-item message-${idRoom}">`;
     if (user.imageUrl != null) {
         str += `<div class="avt"><img src="${user.imageUrl}" alt="avt" /></div>`;
     }
     else {
-        str += `<span class="avt"><span><i class="fa-solid fa-circle-info"></i></span></span>`;
+        str += `<div class="avt"><img src="${window.location.origin + "/Image/user.svg"}" alt="avt" /></div>`;
     }
     str += `<div class="content"><strong>${user.userName}</strong><small> đã gửi tin nhắn</small>
             <div style="margin: 6px 0;" class="message-${idRoom}"><small><strong>${notiUserName(user, chat.idSend)}</strong></small>: ${chat.message}</div >
@@ -113,7 +123,7 @@ function htmlChatNotification(user, chat, idRoom) {
     if (!chat.isSeen) {
         str += `<div class="status"><i class="fa-solid fa-circle"></i></div>`;
     }
-    str += `</div>`;
+    str += `</a>`;
     return str;
 }
 function showNewSignal(tag_element) {
@@ -155,12 +165,19 @@ function prependNewNotification(tag) {
 }
 function updateNoti(data) {
     //cập nhật lại chatRoomData
-    if (data.idRoom in chatRoomData) {
-        chatRoomData[data.idRoom].messages = data.messages;
+    if (chatRoomData != null) {
+        if (data.idRoom in chatRoomData) {
+            chatRoomData[data.idRoom].messages = data.messages;
+        }
+        else {
+            chatRoomData[data.idRoom] = data;
+        }
     }
     else {
+        chatRoomData = {};
         chatRoomData[data.idRoom] = data;
     }
+    
     console.log("Hy");
     console.log(data);
     let tag_message = ".message-" + data.idRoom;
@@ -168,11 +185,4 @@ function updateNoti(data) {
     $(".dropdown-item" + tag_message + " " + tag_message)
         .html(`<div style="margin: 6px 0;" class="message message-${data.idRoom}"><small><strong>${notiUserName(data.userMessages[0], data.messages[0].idSend)}</strong></small>: ${data.messages[0].message}</div >`);
     prependNewNotification(".dropdown-item" + tag_message);
-}
-
-
-function getChatRoom() {
-    //gọi ajax load phòng
-    //cập nhật vào chatRoomData
-    //cập nhật vào chatRoom nếu có
 }

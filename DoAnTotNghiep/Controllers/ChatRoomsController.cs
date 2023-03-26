@@ -1,4 +1,4 @@
-﻿    using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -22,20 +22,18 @@ using System.Net;
 
 namespace DoAnTotNghiep.Controllers
 {
-    [Authorize(Roles = "MEMBER")]
-    [Route("Chat")]
+    [Authorize(Roles = Enum.Role.Member)]
     public class ChatRoomsController : BaseController
     {
         private readonly DoAnTotNghiepContext _context;
         private readonly IHubContext<ChatHub> _signalContext;
         private readonly IConfiguration _configuration;
-        public ChatRoomsController(DoAnTotNghiepContext context, IHubContext<ChatHub> signalContext, IConfiguration configuration)
+        public ChatRoomsController(DoAnTotNghiepContext context, IHubContext<ChatHub> signalContext, IConfiguration configuration, IHostEnvironment environment) : base(environment)
         {
             _context = context;
             _signalContext = signalContext;
             _configuration = configuration;
         }
-
 
         //Kết nối tất cả phòng
         [HttpPost("/ConnectAllChat")]
@@ -43,7 +41,7 @@ namespace DoAnTotNghiep.Controllers
         {
             return await this.ConnectAll(ConnectionId, true);
         }
-        [HttpPost("/api/ConnectAllRoom")]
+        [HttpPost("/api/ConnectAllRoom")]//kết nối đã có sẳn
         public async Task<IActionResult> ApiConnectChat([FromBody] string ConnectionId)
         {
             return await this.ConnectAll(ConnectionId, false);
@@ -73,21 +71,22 @@ namespace DoAnTotNghiep.Controllers
                                 }
                             }
                         }
-                        else
-                        {
-                            foreach (var item in rooms)
-                            {
-                                if (item.ChatRooms != null)
-                                {
-                                    mobileModel.Add(this.CreateChatRoom(item.ChatRooms, Context, 1, salt, IdUser));
-                                }
-                            }
-                        }
+                        //else
+                        //{
+                        //    foreach (var item in rooms)
+                        //    {
+                        //        if (item.ChatRooms != null)
+                        //        {
+                        //            mobileModel.Add(this.CreateChatRoom(item.ChatRooms, Context, 1, salt, IdUser));
+                        //        }
+                        //    }
+                        //}
 
                         foreach (var room in rooms)
                         {
                             await chatHub.AddToGroup(ConnectionId, room.IdChatRoom.ToString());
                         }
+                        await chatHub.AddToGroup(ConnectionId, Crypto.EncodeKey(IdUser.ToString(), salt));
 
                         if (isWeb)
                         {
@@ -103,8 +102,7 @@ namespace DoAnTotNghiep.Controllers
                             return Json(new
                             {
                                 Status = 200,
-                                Message = "Kết nối thành công",
-                                Data = mobileModel
+                                Message = "Kết nối thành công"
                             });
                         }
                     }
@@ -134,7 +132,7 @@ namespace DoAnTotNghiep.Controllers
         {
             return await this.ConnectToRoom(data, true);
         }
-        [HttpPost("/api/Message/ConnectToRoom")]
+        [HttpPost("/api/Message/ConnectToRoom")]//người thứ 2 bị kết nối
         public async Task<IActionResult> ApiConnectChat([FromBody] ConnectRoom data)
         {
             return await this.ConnectToRoom(data, false);
@@ -198,7 +196,7 @@ namespace DoAnTotNghiep.Controllers
                         {
                             Status = 200,
                             Message = "Kết nối thành công",
-                            Data = mobileModel
+                            Data = mobileModel.First()
                         });
                     }
                 }
@@ -221,7 +219,7 @@ namespace DoAnTotNghiep.Controllers
         }
 
         //Kết nối với người dùng
-        [HttpPost("/api/Message/ContactToUser")]
+        [HttpPost("/api/Message/ContactToUser")]//kết nối trang detail (nút liên hệ) => kết nối cho người dùng mới
         public async Task<IActionResult> ApiContactUser([FromBody] ConnectUser data)
         {
             if (ModelState.IsValid)
@@ -316,7 +314,8 @@ namespace DoAnTotNghiep.Controllers
                                         });
                                         ChatHub chatHub = new ChatHub(this._signalContext);
 
-                                        await chatHub.ConnectToGroup((TargetSignalR.Connect() + "-" + Crypto.EncodeKey(user.Id.ToString(), salt)), chatRoom.Id.ToString());
+                                        string userAccess = Crypto.EncodeKey(user.Id.ToString(), salt);
+                                        await chatHub.ConnectToGroup((TargetSignalR.Connect() + "-" + userAccess), chatRoom.Id.ToString(), userAccess);
                                     }
                                     catch (Exception ex)
                                     {
@@ -335,7 +334,7 @@ namespace DoAnTotNghiep.Controllers
                             {
                                 Status = 200,
                                 Message = "Kết nối người dùng thành công",
-                                Data = model
+                                Data = model.First()
                             });
                         }
                         else
@@ -366,7 +365,6 @@ namespace DoAnTotNghiep.Controllers
             });
         }
 
-
         //Lấy danh sách phòng
         [HttpGet("/ChatRoom")]
         public JsonResult GetChatRoom(Pagination pagination)
@@ -378,9 +376,10 @@ namespace DoAnTotNghiep.Controllers
                 Data = allRooms
             });
         }
-        [HttpGet("/api/ChatRoom")]
-        public JsonResult ApiGetChatRoom(Pagination pagination)
+        [HttpGet("/api/ChatRoom")]//lấy danh sách phòng chat (những người chat với nhau)
+        public JsonResult ApiGetChatRoom(int page = 0, int limit = 10)
         {
+            Pagination pagination = new Pagination(page, limit);
             return Json(new
             {
                 Status = 200,
@@ -391,18 +390,28 @@ namespace DoAnTotNghiep.Controllers
                 }
             });
         }
-        private List<int> ChatRoom(Pagination pagination)
+        private List<RoomChatViewModel> ChatRoom(Pagination pagination)
         {
             int IdUser = this.GetIdUser();
             var allRooms = this._context.UsersInChatRooms
-                                        .Where(m => m.IdUser == IdUser)
+                                        .Include(m => m.ChatRooms)
+                                        .Where(m => m.IdUser == IdUser && m.ChatRooms != null)
                                         .Skip((pagination.Page))
                                         .Take((pagination.Limit))
-                                        .Select(m => m.IdChatRoom);
-            return allRooms == null ? new List<int>() : allRooms.ToList();
+                                        .Select(m => m.ChatRooms).ToList();
+            DoAnTotNghiepContext Context = this._context;
+            byte[] salt = Crypto.Salt(this._configuration);
+            List<RoomChatViewModel> Chat = new List<RoomChatViewModel>();
+            foreach (var item in allRooms)
+            {
+                if(item != null)
+                {
+                    Chat.Add(this.CreateChatRoom(item, Context, 1, salt, IdUser));
+
+                }
+            }
+            return Chat;
         }
-
-
 
         //Gửi tin nhắn
         [HttpPost("/Send")]
@@ -410,7 +419,7 @@ namespace DoAnTotNghiep.Controllers
         {
             return await this.Send(data);
         }
-        [HttpPost("/api/Message/Send")]
+        [HttpPost("/api/Message/Send")]//gửi tin nhắn
         public async Task<IActionResult> ApiSendMessage([FromBody] CreateMessageViewModel data)
         {
             return await this.Send(data);
@@ -425,7 +434,7 @@ namespace DoAnTotNghiep.Controllers
                     IdChatRoom = data.IdRoom,
                     Content = data.Message,
                     IdReply = (data.IdReply == 0 ? null : data.IdReply),
-                    Status = (int)Status.UNSEEN,
+                    Status = (int)StatusMessage.UNSEEN,
                     CreatedDate = DateTime.Now,
                     IdUser = IdUser
                 };
@@ -494,12 +503,12 @@ namespace DoAnTotNghiep.Controllers
 
 
         //Cập nhật tin nhắn
-        [HttpPut("/Message/Seen")]
+        [HttpPost("/Message/Seen")]
         public IActionResult UpdateSeenChat([FromBody] int idRoom)
         {
             return this.UpdateSeen(idRoom);
         }
-        [HttpPut("/api/Message/Seen")]
+        [HttpPost("/api/Message/Seen")]//cập nhật đã xem
         public IActionResult ApiUpdateSeenChat([FromBody] int idRoom)
         {
             return this.UpdateSeen(idRoom);
@@ -511,8 +520,7 @@ namespace DoAnTotNghiep.Controllers
                 this.UpdateMessageIsSeen(idRoom);
                 return Ok(new
                 {
-                    Status = 200,
-                    Message = "Cập nhật thành công"
+                    Status = 200
                 });
             }
             return BadRequest(new
@@ -527,18 +535,17 @@ namespace DoAnTotNghiep.Controllers
             var otherMessage = this._context.Messages
                                           .Where(m => m.IdChatRoom == idRoom
                                                         && m.IdUser != IdUser
-                                                        && m.Status == (int)Status.UNSEEN);
+                                                        && m.Status == (int)StatusMessage.UNSEEN);
 
             foreach (var item in otherMessage)
             {
-                item.Status = (int)Status.SEEN;
+                item.Status = (int)StatusMessage.SEEN;
             }
 
             this._context.UpdateRange(otherMessage);
             this._context.SaveChanges();
             return true;
         }
-
 
         //Lấy tin nhắn --chưa có mobile
         [HttpPost("/MessagesInChatRoom")]
@@ -570,12 +577,12 @@ namespace DoAnTotNghiep.Controllers
                                             .Select(
                                                     m => new MessageViewModel(
                                                                 m.IdReply == null ? 0 : m.IdReply.Value,
-                                                                ((m.Status == (int)Status.SEEN) || m.IdUser == IdUser),
+                                                                ((m.Status == (int)StatusMessage.SEEN) || m.IdUser == IdUser),
                                                                 Crypto.EncodeKey(m.IdUser.ToString(), salt),
                                                                 m.Content, m.Id, m.CreatedDate)
                                             )
-                                            .Skip(data.RangeRoom.Start)
-                                            .Take(data.RangeRoom.Length)
+                                            .Skip(data.Pagination.Page)
+                                            .Take(data.Pagination.Limit)
                                             .ToList();
 
             var userInChatRoom = this._context.UsersInChatRooms
@@ -599,10 +606,28 @@ namespace DoAnTotNghiep.Controllers
                 Messages = messagesInRoom
             };
         }
-
+        [HttpPost("/api/MessagesInChatRoom")]
+        public JsonResult ApiGetMessagesInChatRoom([FromBody] DataGetMessageViewModel data)
+        {
+            if (ModelState.IsValid)
+            {
+                int IdUser = this.GetIdUser();
+                byte[] salt = Crypto.Salt(this._configuration);
+                return Json(new
+                {
+                    Status = 200,
+                    Data = this.GetRoomChatViewModel(data, salt, IdUser)
+                });
+            }
+            return Json(new
+            {
+                Status = 400,
+                Message = this.ModelErrors()
+            });
+        }
 
         //clear all Chat
-        [HttpPost("/ChatRoom/ClearAll")]
+        [HttpPost("/ChatRoom/ClearAll")]//api khi mà m test lỗi mà muốn xóa full => full chat -- HIEUPHAM-HIEULOC-MINHNHAT
         [AllowAnonymous]
         public async Task<IActionResult> ClearAllDataChatRoom([FromBody] string WebsiteKey)
         {
@@ -645,6 +670,7 @@ namespace DoAnTotNghiep.Controllers
             });
         }
 
+
         private KeyValuePair<int, RoomChatViewModel> CreateDictionary(ChatRoom room, DoAnTotNghiepContext Context, int number, byte[] salt, int IdUser)
         {
             RoomChatViewModel model = this.CreateChatRoom(room, Context, number, salt, IdUser);
@@ -674,7 +700,7 @@ namespace DoAnTotNghiep.Controllers
                 Messages = (number == 0 || room.Messages == null) ? new List<MessageViewModel>() :
                                 room.Messages.OrderByDescending(m => m.Id).Take(number).Select(m => new MessageViewModel(
                                 m.IdReply == null ? 0 : m.IdReply.Value,
-                                ((m.Status == (int)Status.SEEN) || m.IdUser == IdUser),
+                                ((m.Status == (int)StatusMessage.SEEN) || m.IdUser == IdUser),
                                 Crypto.EncodeKey(m.IdUser.ToString(), salt),
                                 m.Content, m.Id, m.CreatedDate)).ToList(),
                 UserMessages = users

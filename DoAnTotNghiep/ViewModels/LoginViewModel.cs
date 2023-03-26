@@ -2,6 +2,7 @@
 using DoAnTotNghiep.Modules;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Drawing.Printing;
 
 namespace DoAnTotNghiep.ViewModels
 {
@@ -38,6 +39,7 @@ namespace DoAnTotNghiep.ViewModels
 
     public class UserInfo
     {
+        public UserInfo() { }
         public UserInfo(User user, byte[] salt, string host)
         {
             this.PhoneNumber = user.PhoneNumber;
@@ -48,6 +50,12 @@ namespace DoAnTotNghiep.ViewModels
             this.Gender = user.Gender;
             this.UserAccess = Crypto.EncodeKey(user.Id.ToString(), salt);
             this.UrlImage = user.Files == null ? null : (host + "/" + user.Files.PathFolder + "/" + user.Files.FileName);
+            this.Point = user.BonusPoint + user.Point;
+            this.UserRating = user.UserRating;
+            if(user.Houses != null)
+            {
+                this.NumberOfHouses = user.Houses.Count;
+            }
         }
 
         public string? LastName { get; set; } = string.Empty;
@@ -58,5 +66,8 @@ namespace DoAnTotNghiep.ViewModels
         public DateTime? BirthDay { get; set; } = DateTime.Now;
         public bool? Gender { get; set; } = false;
         public string? UrlImage { get; set; } = string.Empty;
+        public int Point { get; set; } = 0;
+        public int UserRating { get; set; } = 0;
+        public int NumberOfHouses { get; set; } = 0;
     }
 }

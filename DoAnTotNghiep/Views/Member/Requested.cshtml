@@ -1,111 +1,153 @@
-﻿@model DoAnTotNghiep.Entity.AdminReport
-
+﻿@model List<DoAnTotNghiep.ViewModels.DetailRequest>
+@using DoAnTotNghiep.Enum;
 @{
     ViewData["Title"] = "Yêu cầu đã đăng";
     Layout = "_LayoutMember";
 }
 
-
-@*
-    
-*@
-
 <div class="house">
     <div class="house-head">
-        <h2>Danh sách yêu cầu đã khởi tạo</h2>
+        <h2>Danh sách yêu cầu đã gửi</h2>
+    </div>
+    <div class="nav nav-tabs mb-2">
+        <div class="nav-link active" onclick="tabContent(null, this)">Tất cả</div>
+        @foreach (var item in StatusRequestStr.getStatus())
+        {
+            <div class="nav-link" onclick="tabContent('.status-request-@item', this)">@StatusRequestStr.getStatus(item)</div>
+        }
     </div>
     <div class="list-house">
-        @for (var item = 0; item < 1; item++)
+        @foreach(var item in Model)
         {
-            <div class="card mb-3">
+            <div class="card card-@item.Request.Id mb-3 status status-request-@item.Request.Status">
                 <div class="row g-0">
                     <div class="col-md-12">
-                        <div class="user">
-                            <div class="avt"><img src="~/Image/logo.png" alt="avatar" /></div>
-                            <div class="name">Phạm Minh Hiếu</div>
+                        <div class="user-info">
+                            <div>Người bạn đã gửi yêu cầu: </div>
+                            <div class="user">
+                                @if (item.House.User != null)
+                                {
+                                    @if (!string.IsNullOrEmpty(item.House.User.UrlImage))
+                                    {
+                                        <img src="@item.House.User.UrlImage" alt="avt" />
+                                    }
+                                    else
+                                    {
+                                        <img src="~/Image/user.svg" alt="avt" />
+                                    }
+                                    <div class="name">@item.House.User.FirstName @item.House.User.LastName</div>
+                                }
+                                else
+                                {
+                                    <img src="~/Image/user.svg" alt="avt" />
+                                }
+                            </div>
                         </div>
-                        <span class="status text-success">Xác nhận để hoàn tất</span>
+                        <span class="status-@item.Request.Status text-success">@StatusRequestStr.getStatus(item.Request.Status)</span>
                     </div>
-                    <div class="col-md-7">
-                        <img src="~/Image/logo.png" class="img-fluid rounded-start" alt="hình ảnh nhà">
-                    </div>
-                    <div class="col-md-5">
-                        <div class="card-body">
-                            <div class="body-head">
-                                <h5 class="card-title">Nhà 1</h5>
-                                <div>
-                                    <div class="point"><span>Thông tin </span><i class="fa-solid fa-circle-info"></i></div>
-                                    <div class="rating"><span>4.3</span><i class="fa-solid fa-star"></i></div>
+
+                    <div class="d-flex col-12">
+                        <div class="request-info">
+                            <p>Nhà bạn đã yêu cầu trao đổi: </p>
+                            <div class="house-result">
+                                <div class="house-card">
+                                @if (item.House.Images.Count() == 0)
+                                {
+                                    <img src="~/Image/house-demo.png" alt="Mike" style="width:100%">
+                                }
+                                else
+                                {
+                                    @foreach (var img in item.House.Images)
+                                    {
+                                        if (img != null)
+                                        {
+                                            <img src="@img.Data" alt="Mike" style="width:100%">
+                                            break;
+                                        }
+                                    }
+                                }
+                                    <div class="house-img-container">
+                                        <h2>@item.House.Name</h2>
+                                        <p class="attribute"><i class="fa-solid fa-map-location-dot"></i><span>@item.House.Location</span></p>
+                                            <div class="list-attribute">
+                                            <p class="attribute"><span>@item.House.Rating (@item.House.NumberRating)</span><i class="fa-solid fa-star"></i></p>
+                                            <p class="attribute"><i class="fa-solid fa-users"></i><span>@item.House.People</span></p>
+                                            <p class="attribute"><i class="fa-solid fa-bed"></i><span>@item.House.BedRoom</span></p>
+                                            </div>
+                                            <p>
+                                                <button class="item-button">
+                                                <span>@item.House.Price (point/ngày)</span>
+                                                </button>
+                                            </p>
+                                        </div>
+                                    <a target="_blank" href='@Url.Action("Details", "Houses", new {Id = item.House.Id})' class="finding">
+                                        <i class="fa-sharp fa-solid fa-magnifying-glass"></i>
+                                    </a>
                                 </div>
                             </div>
-                            <div class="request-info">
-                                <span class="label">Phương thức: </span>
-                                <span class="value">Trao đổi bằng nhà</span>
-                            </div>
-                            <div class="request-info">
-                                <span class="label">Địa điểm: </span>
-                                <span class="value">165 Trương Định, kp2, p5,......</span>
-                            </div>
-                            <div class="request-info request-time">
-                                <span class="label">Thời gian: </span>
-                                <span class="value">22/02/2023 - 03/03/2023</span>
-                            </div>
-                            <div class="request-info request-price">
-                                <span class="label">Điểm bạn phải trả: </span>
-                                <span class="value">1200 Point</span>
-                            </div>
-                            <p class="card-control">
-                                <button type="button" class="btn btn-primary">Xác nhận</button>
-                                <button type="button" class="btn btn-danger">Từ chối</button>
-                            </p>
                         </div>
-                    </div>
-                </div>
-            </div>
-        }
-        @for (var item = 0; item < 2; item++)
-        {
-            <div class="card mb-3">
-                <div class="row g-0">
-                    <div class="col-md-12">
-                        <div class="user">
-                            <div class="avt"><img src="~/Image/logo.png" alt="avatar" /></div>
-                            <div class="name">Phạm Minh Hiếu</div>
-                        </div>
-                        <span class="status text-warning">Chờ xác nhận</span>
-                    </div>
-                    <div class="col-md-7">
-                        <img src="~/Image/logo.png" class="img-fluid rounded-start" alt="hình ảnh nhà">
-                    </div>
-                    <div class="col-md-5">
-                        <div class="card-body">
-                            <div class="body-head">
-                                <h5 class="card-title">Nhà 1</h5>
-                                <div>
-                                    <div class="point"><span>Thông tin </span><i class="fa-solid fa-circle-info"></i></div>
-                                    <div class="rating"><span>4.3</span><i class="fa-solid fa-star"></i></div>
+                        @if(item.SwapHouse != null){
+                            <div class="request-info">
+                                <p>Nhà bạn dùng để trao đổi: </p>
+                                <div class="house-result">
+                                    <div class="house-card">
+                                        @if (item.SwapHouse.Images.Count() == 0)
+                                        {
+                                            <img src="~/Image/house-demo.png" alt="Mike" style="width:100%">
+                                        }
+                                        else
+                                        {
+                                            @foreach (var img in item.SwapHouse.Images)
+                                            {
+                                                if (img != null)
+                                                {
+                                                    <img src="@img.Data" alt="Mike" style="width:100%">
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                        <div class="house-img-container">
+                                            <h2>@item.SwapHouse.Name</h2>
+                                            <p class="attribute"><i class="fa-solid fa-map-location-dot"></i><span>@item.SwapHouse.Location</span></p>
+                                            <div class="list-attribute">
+                                                <p class="attribute"><span>@item.SwapHouse.Rating (@item.SwapHouse.NumberRating)</span><i class="fa-solid fa-star"></i></p>
+                                                <p class="attribute"><i class="fa-solid fa-users"></i><span>@item.SwapHouse.People</span></p>
+                                                <p class="attribute"><i class="fa-solid fa-bed"></i><span>@item.SwapHouse.BedRoom</span></p>
+                                            </div>
+                                            <p>
+                                                <button class="item-button">
+                                                    <span>@item.SwapHouse.Price (point/ngày)</span>
+                                                </button>
+                                            </p>
+                                        </div>
+                                        <a target="_blank" href='@Url.Action("Details", "Houses", new {Id = item.SwapHouse.Id})' class="finding">
+                                            <i class="fa-sharp fa-solid fa-magnifying-glass"></i>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="request-info">
-                                <span class="label">Phương thức: </span>
-                                <span class="value">Trao đổi bằng nhà</span>
+                        }
+                        <div class="request-info">
+                            <p>Thông tin yêu cầu</p>
+                            <div class="mb-3">
+                                <label class="">Thời gian:</label>
+                                <span class="value">@item.Request.StartDate.ToString("dd/MM/yyyy") <span>-</span> @item.Request.EndDate.ToString("dd/MM/yyyy")</span>
                             </div>
-                            <div class="request-info">
-                                <span class="label">Địa điểm: </span>
-                                <span class="value">165 Trương Định, kp2, p5,......</span>
+                            <div class="mb-3">
+                                <label class="">Phương thức trao đổi: </label>
+                                <span class="value">@(item.Request.Type == 1 ? "Trao đổi bằng điểm": "Trao đổi bằng nhà")</span>
                             </div>
-                            <div class="request-info request-time">
-                                <span class="label">Thời gian: </span>
-                                <span class="value">22/02/2023 - 03/03/2023</span>
+                            <div class="mb-3">
+                                <label class="">Điểm trao đổi:</label>
+                                <span class="contain-price">
+                                    @(item.Request.Price < 0 ? "Bạn sẽ trả " + item.Request.Price.ToString(): 
+                                                                "Bạn sẽ nhận " + item.Request.Price.ToString()) (Point/ngày)
+                                </span>
                             </div>
-                            <div class="request-info request-price">
-                                <span class="label">Điểm bạn phải trả: </span>
-                                <span class="value">1200 Point</span>
-                                </div>
-                                <p class="card-control">
-                                <button type="button" class="btn btn-primary" data-bs-target="#messageRequestModal" data-bs-toggle="modal">Cập nhật</button>
-                                    <button type="button" class="btn btn-danger">Xóa</button>
-                                </p>
+                            @if(item.Request.Status == (int)StatusRequest.WAIT_FOR_SWAP)
+                            {
+                                <div class="control" onclick="deleteRequest(@item.Request.Id)"><button class="btn btn-danger">Hủy yêu cầu</button></div>
+                            }
                         </div>
                     </div>
                 </div>
@@ -113,3 +155,23 @@
         }
     </div>
 </div>
+
+@section Scripts{
+    <script src="~/js/Request/edit.js" type="text/javascript"></script>
+    <script src="~/js/Request/index.js" type="text/javascript"></script>
+    <script src="~/js/Request/delete.js" type="text/javascript"></script>
+    <button type="button" id="confirmClick" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#confirmPopup" hidden></button>
+    <div class="modal fade" id="confirmPopup" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="confirmPopupLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <p class="text-danger" id="confirmContent"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" onclick="confirmDeleteHouse(false)">Hủy</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="confirmDeleteHouse(true)">Xác nhận</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

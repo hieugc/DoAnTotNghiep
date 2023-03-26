@@ -17,10 +17,17 @@ namespace DoAnTotNghiep.Controllers
     {
         private readonly DoAnTotNghiepContext _context;
 
-        public LocationController(DoAnTotNghiepContext context)
+        public LocationController(DoAnTotNghiepContext context,
+                                    IHostEnvironment environment) : base(environment)
         {
             _context = context;
         }
+
+
+        //Viết thêm api lấy City+district+ward => tên đường số nhà tự nhập
+        //từ địa chỉ nhà + idCity+ iddistrict + ward => bing map => lat lng
+
+        //mobile => location: => ghép sẳn [tên đường số nhà tự nhập] City+district+ward
 
         [HttpGet]
         public JsonResult Get()
@@ -177,7 +184,6 @@ namespace DoAnTotNghiep.Controllers
                 }
             );
         }
-
 
         [HttpPut("/District/Update")]
         public JsonResult UpdateDistrict([FromBody] BingMapViewModel data)

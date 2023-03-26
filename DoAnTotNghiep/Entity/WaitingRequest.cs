@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.VisualBasic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DoAnTotNghiep.Entity
@@ -37,7 +38,7 @@ namespace DoAnTotNghiep.Entity
 
         [Required]
         [Column("id_city")]
-        public virtual int? IdCity { get; set; }
+        public virtual int IdCity { get; set; }
         [ForeignKey(nameof(IdCity))]
         public virtual City? Citys { get; set; }
 
@@ -52,9 +53,11 @@ namespace DoAnTotNghiep.Entity
 
         [Required]
         [Column("id_house")]
-        public virtual int? IdHouse { get; set; }
+        public virtual int IdHouse { get; set; }
 
         [ForeignKey(nameof(IdHouse))]
         public virtual House? Houses { get; set; }
+
+        public ICollection<RequestInCircleExchangeHouse>? Requests { get; set; }
     }
 }

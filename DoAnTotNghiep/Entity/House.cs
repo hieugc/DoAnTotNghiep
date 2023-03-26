@@ -83,5 +83,7 @@ namespace DoAnTotNghiep.Entity
         public virtual ICollection<FileOfHouse>? FileOfHouses { get; set; }
         [InverseProperty("Houses")]
         public virtual ICollection<Request>? Requests { get; set; }
+        public virtual ICollection<UserReport>? UserReports { get; set; }
+        public virtual ICollection<FeedBack>? FeedBacks { get; set; }
     }
 }

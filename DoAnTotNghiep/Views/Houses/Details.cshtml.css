@@ -295,12 +295,15 @@ img.hover-shadow {
     grid-template-columns: 1fr 1fr 1fr;
     margin: 24px 0;
 }
-.frame > .left > .content > #tab1 > div:last-child div,
-.item-frame{
-    display: flex;
-    gap: 12px;
-    align-items: center;
-}
+    .frame > .left > .content > section > div > .item-show{
+        gap: 12px;
+    }
+    .frame > .left > .content > #tab1 > div:last-child div,
+    .item-frame {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+    }
 .frame > .left > .content > #tab1 > div:last-child i,
 .item-frame i{
     font-size: 32px;
@@ -319,10 +322,15 @@ img.hover-shadow {
     text-decoration: line-through;
 }
 .item-frame{
-    opacity: 0.7;
+    opacity: 0.5;
+    padding: 6px 12px;
+    background-color: var(--bs-secondary);
+    border-radius: 6px;
 }
 .item-frame.item-checked{
     opacity: 1;
+    background-color: var(--bs-primary);
+    color: white;
 }
 .item-frame.item-checked span{
     text-decoration: none;
@@ -628,3 +636,6 @@ input[type="file"]{
             display: none;
         }
 
+.item-contain{
+    display: flex;
+}

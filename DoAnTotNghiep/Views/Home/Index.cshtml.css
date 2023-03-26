@@ -1,4 +1,5 @@
-﻿.list > .img-container {
+﻿
+.list > .img-container {
     position: relative;
     max-width: 800px;
     margin: 0 auto;
@@ -19,7 +20,7 @@
     cursor: pointer;
 }
 .container-fluid {
-    margin-top: 450px;
+    margin-top: 420px;
     padding: unset;
 }
 
@@ -58,6 +59,26 @@
 .frame_1 > .container-lg > .description > h1{
     margin-bottom: 32px;
 }
+
+@media (max-width: 1200px){
+    .frame_1 > .container-lg > .description > h1 {
+        font-size: calc(1.35rem + 0.8vh);
+    }
+    .frame_1 > .container-lg {
+        grid-template-columns: 2fr 3fr;
+    }
+    .frame_1 > .container-lg > .description {
+        padding: 0 12px;
+    }
+    .frame_1 > .container-lg > .list h2 {
+        font-size: calc(1rem + 0.7vh);
+    }
+    .list > .img-container .content {
+        padding: 12px;
+    }
+}
+
+
 
 .frame_2 > .container-lg > h2{
     text-align: center;
@@ -111,6 +132,8 @@
 .frame_2 > .container-lg > .list .house-card {
     min-width: 350px;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    padding: 6px;
+    border-radius: 6px;
 }
 
 /* Some left and right padding inside the container */
@@ -150,14 +173,14 @@
     display: inline-block;
     padding: 8px;
     color: white;
-    background-color: rgba(var(--bs-success-rgb), 1);
+    background-color: rgba(var(--bs-primary-rgb), 1);
     text-align: center;
     cursor: pointer;
     width: 100%;
 }
 
 .frame_2 .house-img-container .item-button:hover {
-    background-color: rgba(var(--bs-success-rgb), 0.5);
+    background-color: rgba(var(--bs-primary-rgb), 0.8);
 }
 .frame_2 .house-img-container .item-button .label-hide {
     display: none;
@@ -167,6 +190,10 @@
 }
 .frame_2 .house-img-container .item-button:hover .label-show {
     display: none;
+}
+.frame_2 .house-img-container .item-button a{
+    color: white;
+    text-decoration: none;
 }
 
 .frame_3 {
@@ -186,4 +213,31 @@
 }
 .carousel-caption{
     position: static;
+}
+
+
+
+@media (max-width: 1200px) {
+    .container-fluid {
+        margin-top: 300px;
+    }
+}
+
+@media (max-width: 800px) {
+    .container-fluid {
+        margin-top: 200px;
+    }
+}
+
+@media (max-width: 600px) {
+    .container-fluid {
+        margin-top: 150px;
+    }
+}
+
+
+@media (max-width: 500px) {
+    .container-fluid {
+        margin-top: 20px;
+    }
 }

@@ -22,19 +22,18 @@ using Microsoft.AspNetCore.SignalR;
 using DoAnTotNghiep.Hubs;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.AspNetCore.Routing;
+using System.Security.Cryptography.X509Certificates;
 
 namespace DoAnTotNghiep.Controllers
 {
-    [Authorize(Roles = "MEMBER")]
+    [Authorize(Roles = Enum.Role.Member)]
     public class MemberController : BaseController
     {
         private readonly DoAnTotNghiepContext _context;
         private readonly IConfiguration _configuration;
         private IHubContext<ChatHub> _signalContext;
 
-        public MemberController(DoAnTotNghiepContext context, 
-            IConfiguration configuration, 
-            IHubContext<ChatHub> signalContext)
+        public MemberController(DoAnTotNghiepContext context, IConfiguration configuration, IHubContext<ChatHub> signalContext, IHostEnvironment environment) : base(environment)
         {
             _context = context;
             _configuration = configuration;
@@ -43,7 +42,6 @@ namespace DoAnTotNghiep.Controllers
 
 
         [HttpPost("api/GetIdMobile")]
-        [Authorize(AuthenticationSchemes = "SecurityJWTScheme")]
         public IActionResult apiMobile()
         {
             return Ok(new
@@ -51,11 +49,16 @@ namespace DoAnTotNghiep.Controllers
                 Message = this.GetIdUser()
             });
         }
-
         public IActionResult Infomation()
         {
             ViewData["active"] = 0;
-            return View();
+            int IdUser = this.GetIdUser();
+            var user = this._context.Users.Where(m => m.Id == IdUser).FirstOrDefault();
+            if(user == null)
+            {
+                return View(new UpdateUserInfo());
+            }
+            return View(new UpdateUserInfo(user, this.GetWebsitePath()));
         }
         private List<DetailHouseViewModel> GetHouseInMemberPage(Pagination pagination)
         {
@@ -150,8 +153,96 @@ namespace DoAnTotNghiep.Controllers
         public IActionResult Requested()
         {
             ViewData["active"] = 2;
-            return View();
+            return View(this.GetAllRequestsSent());
         }
+        private List<DetailRequest> GetAllRequestsSent()
+        {
+            int IdUser = this.GetIdUser();
+            var requests = this._context.Requests
+                                        .Where(m => m.IdUser == IdUser).ToList();
+            List<DetailRequest> model = new List<DetailRequest>();
+            DoAnTotNghiepContext Context = this._context;
+
+            byte[] salt = Crypto.Salt(this._configuration);
+            string host = this.GetWebsitePath();
+            foreach (var item in requests)
+            {
+                if (item != null)
+                {
+                    DetailRequest? request = this.CreateDetailRequest(item);
+                    if (request != null)
+                    {
+                        model.Add(request);
+                    }
+                }
+            }
+
+            return model;
+        }
+        private DetailRequest? CreateDetailRequest(Request item)
+        {
+            DoAnTotNghiepContext Context = this._context;
+
+            byte[] salt = Crypto.Salt(this._configuration);
+            string host = this.GetWebsitePath();
+            Context.Entry(item).Reference(m => m.Houses).Query().Load();
+            if (item.Houses != null)
+            {
+                Context.Entry(item.Houses).Reference(m => m.Users).Query().Load();
+                Context.Entry(item.Houses).Collection(m => m.FileOfHouses).Query().Load();
+                if (item.Houses.Users != null)
+                {
+                    DetailHouseViewModel house = this.CreateDetailsHouse(item.Houses);
+                    DetailHouseViewModel? swapHouse = null;
+                    Context.Entry(item).Reference(m => m.Users).Query().Load();
+                    if (item.IdSwapHouse != null)
+                    {
+                        Context.Entry(item).Reference(m => m.SwapHouses).Query().Load();
+                        if (item.SwapHouses != null)
+                        {
+                            Context.Entry(item.SwapHouses).Reference(m => m.Users).Query().Load();
+                            Context.Entry(item.SwapHouses).Collection(m => m.FileOfHouses).Query().Load();
+                            swapHouse = this.CreateDetailsHouse(item.SwapHouses);
+                        }
+                    }
+                    DetailRequestViewModel request = new DetailRequestViewModel(item, item.Users, salt, host);
+                    return new DetailRequest()
+                    {
+                        Request = request,
+                        SwapHouse = swapHouse,
+                        House = house
+                    };
+                }
+            }
+            return null;
+        }
+
+        private DetailHouseViewModel CreateDetailsHouse(House house)
+        {
+            byte[] salt = Crypto.Salt(this._configuration);
+            string host = this.GetWebsitePath();
+            if (house.Users != null)
+            {
+                this._context.Entry(house.Users).Collection(m => m.Houses).Query().Where(m => m.Status == (int)StatusHouse.VALID).Load();
+            }
+            DetailHouseViewModel model = new DetailHouseViewModel(house, salt, house.Users, host);
+            DoAnTotNghiepContext Context = this._context;
+            if (house.FileOfHouses != null)
+            {
+                foreach (var f in house.FileOfHouses)
+                {
+                    Context.Entry(f).Reference(m => m.Files).Load();
+                    if (f.Files != null)
+                    {
+                        model.Images.Add(new ImageBase(f.Files, host));
+                        break;
+                    }
+                }
+            }
+            return model;
+        }
+
+
         public IActionResult WaitingRequest()
         {
             ViewData["active"] = 3;
@@ -186,14 +277,9 @@ namespace DoAnTotNghiep.Controllers
                 {
                     string IdStr = Crypto.DecodeKey(connection, salt);
                     int Id = 0;
-                    try
+                    if(!int.TryParse(IdStr, out Id))
                     {
-                        Id = int.Parse(IdStr);
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex);
-                        return this.NotFound();
+                            return this.NotFound();
                     }
                     if(Id != IdUser)
                     {
@@ -265,7 +351,8 @@ namespace DoAnTotNghiep.Controllers
 
                                     ChatHub chatHub = new ChatHub(this._signalContext);
 
-                                    await chatHub.ConnectToGroup((TargetSignalR.Connect() + "-" + Crypto.EncodeKey(user.Id.ToString(), salt)), chatRoom.Id.ToString());
+                                    string userAccess = Crypto.EncodeKey(user.Id.ToString(), salt);
+                                    await chatHub.ConnectToGroup((TargetSignalR.Connect() + "-" + userAccess), chatRoom.Id.ToString(), userAccess);
 
                                 }
                                 catch (Exception ex)
@@ -335,7 +422,7 @@ namespace DoAnTotNghiep.Controllers
                 Messages = (room.Messages == null || number == 0) ? new List<MessageViewModel>() : 
                                         room.Messages.OrderByDescending(m => m.CreatedDate).Take(number).Select(m => new MessageViewModel(
                                                 m.IdReply == null ? 0 : m.IdReply.Value,
-                                                ((m.Status == (int)Status.SEEN) || m.IdUser == IdUser),
+                                                ((m.Status == (int)StatusMessage.SEEN) || m.IdUser == IdUser),
                                                 Crypto.EncodeKey(m.IdUser.ToString(), salt),
                                                 m.Content, m.Id, m.CreatedDate)).ToList(),
                 UserMessages = users
@@ -346,6 +433,169 @@ namespace DoAnTotNghiep.Controllers
         {
             ViewData["active"] = 0;
             return View();
+        }
+
+        //view GET ListHouse => userAccess + my house
+        //sửa form createRequest
+
+        //Update Info
+        [HttpPost("/User/UpdateInfo")]
+        public IActionResult UpdateInfo([FromBody] UpdateUserInfo model)
+        {
+            return this.UpdateInfoMember(model);
+        }
+        [HttpPost("/api/User/UpdateInfo")]
+        public IActionResult ApiUpdateInfo([FromBody] UpdateUserInfo model)
+        {
+            return this.UpdateInfoMember(model);
+        }
+        private IActionResult UpdateInfoMember(UpdateUserInfo model)
+        {
+            using (var Context = this._context)
+            {
+                using (var Transaction = Context.Database.BeginTransaction())
+                {
+                    if (ModelState.IsValid)
+                    {
+                        try
+                        {
+                            int IdUser = this.GetIdUser();
+                            var user = Context.Users.Where(m => m.Id == IdUser).FirstOrDefault();
+                            if (user == null)
+                            {
+                                return BadRequest(new
+                                {
+                                    Status = 400,
+                                    Message = "Không tìm thấy user"
+                                });
+                            }
+                            if (user.Email != model.Email)
+                            {
+                                var checkEmail = Context.Users.Where(m => m.Id != IdUser && m.Email.Contains(model.Email)).ToList();
+                                if (checkEmail.Any())
+                                {
+                                    return BadRequest(new
+                                    {
+                                        Status = 400,
+                                        Message = "Email đã tồn tại"
+                                    });
+                                }
+                            }
+
+                            if (model.image != null)
+                            {
+                                if (user.IdFile == null)
+                                {
+                                    Entity.File? file = this.SaveFile(model.image);
+                                    if (file != null)
+                                    {
+                                        Context.Files.Add(file);
+                                        Context.SaveChanges();
+                                        user.IdFile = file.Id;
+                                    }
+                                }
+                                else
+                                {
+                                    var file = Context.Files.Where(m => m.Id == user.Id).FirstOrDefault();
+                                    if (file != null)
+                                    {
+                                        Entity.File? saveFile = this.SaveFile(model.image);
+                                        if (saveFile != null)
+                                        {
+                                            this.DeleteFile(file);
+                                            file.PathFolder = saveFile.PathFolder;
+                                            file.FileName = saveFile.FileName;
+                                            Context.Files.Update(file);
+                                            Context.SaveChanges();
+                                        }
+                                    }
+                                }
+                            }
+
+                            user.UpdateInfoUser(model);
+                            Context.Users.Update(user);
+                            Context.SaveChanges();
+
+                            Transaction.Commit();
+
+                            return Json(new
+                            {
+                                Status = 200
+                            });
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex);
+                            Transaction.Rollback();
+                        }
+                    }
+                    else
+                    {
+                        return BadRequest(new
+                        {
+                            Status = 400,
+                            Message = this.ModelErrors()
+                        });
+                    }
+                }
+            }
+
+            return BadRequest(new
+            {
+                Status = 500,
+                Message = "Hệ thống đang bảo trì"
+            });
+        }
+
+        //Update Password
+        [HttpGet("/User/UpdatePassword")]
+        public IActionResult UpdatePassword()
+        {
+            return PartialView("./Views/Member/_UpdatePassword.cshtml", new UpdatePasswordViewModel());
+        }
+
+        //Update Password
+        [HttpPost("/User/UpdatePassword")]
+        public IActionResult UpdatePassword([FromBody] UpdatePasswordViewModel model)
+        {
+            return this.UpdatePasswordMember(model);
+        }
+        [HttpPost("/api/User/UpdatePassword")]
+        public IActionResult ApiUpdatePassword([FromBody] UpdatePasswordViewModel model)
+        {
+            return this.UpdatePasswordMember(model);  
+        }
+        private IActionResult UpdatePasswordMember(UpdatePasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                int IdUser = this.GetIdUser();
+                var user = this._context.Users.Where(m => m.Id == IdUser).FirstOrDefault();
+                if (user == null)
+                {
+                    return BadRequest(new
+                    {
+                        Status = 400,
+                        Message = "Không tìm thấy người dùng"
+                    });
+                }
+                byte[] salt = Crypto.Salt();
+                string password = Crypto.HashPass(model.Password, salt);
+                user.Password = password;
+                user.Salt = Crypto.SaltStr(salt);
+                this._context.Users.Update(user);
+                this._context.SaveChanges();
+                return Json(new
+                {
+                    Status = 200,
+                    Message = "ok"
+                });
+            }
+            return BadRequest(new
+            {
+                Status = 400,
+                Message = this.ModelErrors()
+            });
         }
     }
 }

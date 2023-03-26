@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using DoAnTotNghiep.ViewModels;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DoAnTotNghiep.Entity
@@ -6,6 +7,18 @@ namespace DoAnTotNghiep.Entity
     [Table("Request")]
     public class Request
     {
+        public void UpdateRequest(EditRequestViewModel model)
+        {
+            this.UpdatedDate = DateTime.Now;
+            this.Point = model.Price;
+            this.Type = model.Type;
+            this.IdHouse = model.IdHouse;
+            this.IdSwapHouse = model.IdSwapHouse;
+            this.StartDate = model.StartDate;
+            this.EndDate = model.EndDate;
+        }
+
+
         [Key]
         [Column("id")]
         public int Id { get; set; }

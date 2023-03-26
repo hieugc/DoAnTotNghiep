@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using DoAnTotNghiep.Entity;
 
 namespace DoAnTotNghiep.ViewModels
 {
@@ -71,7 +72,6 @@ namespace DoAnTotNghiep.ViewModels
         public DateTime expire { get; set; } = DateTime.Now;
     }
 
-
     public class UpdatePasswordViewModel
     {
         [Required(ErrorMessage = "Hãy điền mật khẩu")]
@@ -99,7 +99,6 @@ namespace DoAnTotNghiep.ViewModels
         public string Password { get; set; } = string.Empty;
     }
     
-
     public class RegisterOTPViewModel
     {
         [Required(ErrorMessage = "Hãy nhập OTP hệ thống đã gửi")]
@@ -123,9 +122,10 @@ namespace DoAnTotNghiep.ViewModels
         [MinLength(10, ErrorMessage = "Số điện thoại 10 số")]
         public string PhoneNumber { get; set; } = string.Empty;
         public bool Gender { get; set; } = false;
+
+        [DataType(DataType.Date)]
         public DateTime BirthDay { get; set; } = DateTime.Now;
     }
-
     public class GenderSelect
     {
         public bool Value { get; set; } = false;

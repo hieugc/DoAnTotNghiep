@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using DoAnTotNghiep.ViewModels;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DoAnTotNghiep.Entity
@@ -6,6 +7,16 @@ namespace DoAnTotNghiep.Entity
     [Table("User")]
     public class User
     {
+        public void UpdateInfoUser(UpdateUserInfo model)
+        {
+            this.BirthDay = model.BirthDay;
+            this.LastName = model.LastName;
+            this.FirstName= model.FirstName;
+            this.Gender = model.Gender;
+            this.PhoneNumber = model.PhoneNumber;
+            this.Email = model.Email;
+        }
+
         [Key]
         [Column("id")]
         public int Id { get; set; }
@@ -49,6 +60,10 @@ namespace DoAnTotNghiep.Entity
         [Column("birth_day")]
         public DateTime? BirthDay { get; set; } = DateTime.Now;
 
+        [Column("user_rating")]
+        public int UserRating { get; set; } = 0;
+
+
         [Column("id_file")]
         public virtual int? IdFile { get; set; }
 
@@ -57,5 +72,6 @@ namespace DoAnTotNghiep.Entity
 
         public virtual ICollection<UsersInChatRoom>? ChatRoom { get; set; }
         public virtual ICollection<Message>? Messages { get; set; }
+        public virtual ICollection<House>? Houses { get; set; }
     }
 }

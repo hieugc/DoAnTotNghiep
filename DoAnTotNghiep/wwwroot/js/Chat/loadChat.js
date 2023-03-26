@@ -1,5 +1,5 @@
 ﻿function layoutInit() {
-    return `<ul class="list-user"></ul><div class="tab-message"></div>`;
+    return `<ul class="list-user" onscroll="scrollLoadUser(this)"></ul><div class="tab-message"></div>`;
 }
 //>>> khung user bên trái
 function activeUser(room) {
@@ -20,7 +20,7 @@ function unSeenUser(room) {
 function userItem(room) {
     let str = "";
     if (room.userMessages[0].imageUrl == null) {
-        str += `<span class="avt"><span><i class="fa-solid fa-circle-info"></i></span></span>`;
+        str += `<span class="avt"><img src=${window.location.origin + "/Image/user.svg"} alt="avatar" /></span>`;
     }
     else {
         str += `<span class="avt"><img src="${room.userMessages[0].imageUrl}" alt="avatar" /></span>`;
@@ -81,13 +81,13 @@ function appendMessage(idTag, object) {
                 <div class="tooltip-control dropup">
                     <button type="button" class="control-label" data-bs-toggle="dropdown"><i class="fa-solid fa-plus"></i></button>
                     <div class="control-frame dropdown-menu">
-                        <div class="request dropdown-item" data-bs-toggle="modal" data-bs-target="#messageRequestModal">Tạo yêu cầu</div>
+                        <div class="request dropdown-item" onclick="getRequestFormByUserAccess('${object.userMessages[0].userAccess}')">Tạo yêu cầu</div>
                         <div class="dropdown-item"><label for="image-send">Thêm ảnh</label><input type="file" name="image-send" id="image-send" hidden /></div>
                     </div>
                 </div>
 
                 <div class="frame-control">
-                <textarea rows="1" maxlength="500" class="form-control" name="input-message-${object.idRoom}" id="input-message-${object.idRoom}" placeholder="Tin nhắn" oninput="changeHeight(this)"></textarea>
+                <textarea rows="1" maxlength="500" class="form-control" name="input-message-${object.idRoom}" id="input-message-${object.idRoom}" placeholder="Tin nhắn" oninput="changeHeight(this, ${object.idRoom})"></textarea>
                     <button type="button" class="btn btn-primary" onclick="SendMessage('${object.idRoom}')"><i class="fa-solid fa-paper-plane"></i></button>
                 </div>
             </div>`;
@@ -112,7 +112,7 @@ function otherMessage(urlImage, name, listchat) {
 function headMessage(urlImage, name) {
     let str = `<div class="chat-head">`;
     if (urlImage == null) {
-        str += `<div class="avt"><span><i class="fa-solid fa-circle-info"></i></span></div>`;
+        str += `<div class="avt"><img src=${window.location.origin + "/Image/user.svg"} alt="avatar" /></div>`;
     }
     else {
         str += `<div class="avt"><img src="${urlImage}" alt="avatar" /></div>`;
@@ -143,9 +143,9 @@ function loadMessages(idRoom, othis) {
         if (chatRoom[idRoom]["isFull"] != true && chatRoom[idRoom]["isLoad"] != true) {
             let data = {
                 idRoom: idRoom,
-                rangeRoom: {
-                    start: chatRoom[idRoom].messages.legnth,
-                    length: 10,
+                pagination: {
+                    page: chatRoom[idRoom].messages.legnth,
+                    limit: 10,
                 }
             };
             $.ajax({
@@ -198,7 +198,7 @@ function updateSeen(idRoom) {
         url: window.location.origin + "/Message/Seen",
         data: JSON.stringify(idRoom),
         contentType: "application/json",
-        type: "PUT",
+        type: "POST",
         success: function (result) {
             updateIsSeenInLocal(idRoom);
         },
@@ -217,21 +217,34 @@ function updateIsSeenInLocal(idRoom) {
 ///////////////////////////////////
 
 //thêm message lúc gửi
-function changeHeight(element) {
+function changeHeight(element, idRoom) {
     element.style.height = 'auto';
     element.style.height = (element.scrollHeight) + 'px';
+    
+    element.onkeydown = function (e) {
+        if (!e.shiftKey && e.keyCode == 13) {
+            SendMessage(idRoom);
+            $("#input-message-" + idRoom).val(null);
+            element.style.height = 'auto';
+        }
+    }
 }
 function addMessageToFrame(chat, tag) {
     $(tag + " .message-frame").first().prepend(message(chat));
 }
 function addMessage(messageModel, idRoom, isSelf, isContinue) {
+    if ($(".list-user").length == 0) {
+        layoutInit();
+
+    }
+
     //isSelf == true => bản thân gửi 
     if (isContinue == true) {
         addMessageToFrame(messageModel.message, "#message-" + idRoom);
     }
     else {
         if (isSelf == true) {
-            $(`#message-${idRoom} .list-message`).prepend(seftMessage(userAccess.imageUrl, userAccess.userName, [messageModel.message]));
+            $(`#message-${idRoom} .list-message`).prepend(selfMessage(userAccess.imageUrl, userAccess.firstName + " " + userAccess.lastName, [messageModel.message]));
         }
         else {
             $(`#message-${idRoom} .list-message`).prepend(otherMessage(chatRoom[idRoom].userMessages[0].imageUrl, chatRoom[idRoom].userMessages[0].userName, [messageModel.message]));
@@ -239,13 +252,14 @@ function addMessage(messageModel, idRoom, isSelf, isContinue) {
     }
 }
 function SendMessage(idRoom) {
-    if ($("#input-message-" + idRoom).val().length > 0) {
+    if ($("#input-message-" + idRoom).val().trim().length > 0) {
         let data = {
-            message: $("#input-message-" + idRoom).val(),
+            message: $("#input-message-" + idRoom).val().trim(),
             idRoom: idRoom,
             idReply: 0
         }
-
+        $("#input-message-" + idRoom).val(null);
+        $("#input-message-" + idRoom)[0].style.height = "auto";
         $.ajax({
             url: window.location.origin + "/Send",
             data: JSON.stringify(data),
@@ -255,7 +269,8 @@ function SendMessage(idRoom) {
                 console.log(result);
                 if (result.status == 200) {
                     //>>> thành công thì => clear khung chat
-                    $("#input-message-" + idRoom).val('');
+                    $("#input-message-" + idRoom).val(null);
+                    $("#input-message-" + idRoom)[0].style.height = "auto";
                     //>>> xóa new message
                     $(".user-" + idRoom).removeClass("new-message");
                     //>>> cập nhật danh sách đã xem
@@ -277,8 +292,6 @@ function scrollLoad(element, idRoom) {
     if (chatRoom[idRoom]["isLoad"] != true && top == 0) {
         chatRoom[idRoom]["isLoad"] = true;
         getAndLoadMessage(idRoom);
-        //show dấu hiệu load
-
         console.log("croll");
     }
 }
@@ -286,9 +299,9 @@ function getAndLoadMessage(idRoom) {
     if (chatRoom[idRoom]["isFull"] != true) {
         let data = {
             idRoom: idRoom,
-            rangeRoom: {
-                start: chatRoom[idRoom].messages.length,
-                length: 20,
+            pagination: {
+                page: chatRoom[idRoom].messages.length,
+                limit: 20,
             }
         };
         $.ajax({
@@ -373,3 +386,42 @@ function prependNewMessage(tag) {
 
 //scroll user
 //function load 10 user tiếp theo => append
+
+function scrollLoadUser(element) {
+    let top = element.scrollTop.toFixed();
+    if (chatRoom["isLoadUser"] != true && top >= element.style.height) {
+        let data = {
+            page: chatRoom.length,
+            limit: 10
+        };
+        chatRoom["isLoadUser"] = true;
+        $.ajax({
+            url: window.location.origin + "/ChatRoom",
+            data: JSON.stringify(data),
+            contentType: "application/json",
+            type: "POST",
+            success: function (result) {
+                chatRoom["isLoadUser"] = false;
+                console.log(result);
+                if (result.status == 200) {
+                    for (e in result.data) {
+                        if (result.data[e].messages[0].isSeen) {
+                            $(".list-user").append(seenUser(result.data[e]));
+                        }
+                        else {
+                            $(".list-user").append(unSeenUser(result.data[e]));
+                        }
+                    }
+                    if (result.data.length < 10 && chatRoom["isFullUser"] != true) {
+                        chatRoom["isFullUser"] = true;
+                    }
+                }
+            },
+            error: function (xhr, status, error) {
+                console.log(xhr);
+                console.log(status);
+                console.log(error);
+            }
+        });
+    }
+}

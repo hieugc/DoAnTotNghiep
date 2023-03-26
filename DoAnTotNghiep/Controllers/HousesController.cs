@@ -20,22 +20,58 @@ using Microsoft.AspNetCore.Routing;
 using DoAnTotNghiep.Modules;
 using NuGet.Packaging;
 using System.Text;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace DoAnTotNghiep.Controllers
 {
-    [Authorize(Roles = "MEMBER")]
+    [Authorize(Roles = Enum.Role.Member)]
     public class HousesController : BaseController
     {
         private readonly DoAnTotNghiepContext _context;
-        protected readonly IHostEnvironment environment;
         private readonly IConfiguration _configuration;
-        public HousesController(DoAnTotNghiepContext context, IHostEnvironment environment, IConfiguration configuration)
+        public HousesController(DoAnTotNghiepContext context,
+                                IHostEnvironment environment,
+                                IConfiguration configuration) : base(environment)
         {
             _context = context;
-            this.environment = environment;
             _configuration = configuration;
         }
 
+        private async Task<List<double>> GetLocation(string query)
+        {
+            string protocol = this.Request.Scheme;
+            string key = "Asf_PRzBpUJVcb9lcAg48BLOuAuaBItg4ZzCqaNQaSIFReqieYA02KBcovVD08Jk";
+            Uri localRequest = RequestAPI.GeoCodeRequest(protocol, query, key);
+            var localResult = await RequestAPI.Get<string>(localRequest);
+            double lat = 0;
+            double lng = 0;
+            if (!string.IsNullOrEmpty(localResult) && localResult.IndexOf("coordinates") != -1)
+            {
+                var split = localResult.Split("\"coordinates\":[")[1].Split("]")[0].Trim();
+                double.TryParse(split.Split(",")[0], out lat);
+                double.TryParse(split.Split(",")[1], out lng);
+            }
+
+            return new List<double>() { lat, lng};
+        }
+
+        private async Task<List<double>> GetLocation(string city, string district, string ward, string address)
+        {
+            string protocol = this.Request.Scheme;
+            string key = "Asf_PRzBpUJVcb9lcAg48BLOuAuaBItg4ZzCqaNQaSIFReqieYA02KBcovVD08Jk";
+            Uri localRequest = RequestAPI.GeoCodeRequest(protocol, city, district, ward, address, key);
+            var localResult = await RequestAPI.Get<string>(localRequest);
+            double lat = 0;
+            double lng = 0;
+            if (!string.IsNullOrEmpty(localResult) && localResult.IndexOf("coordinates") != -1)
+            {
+                var split = localResult.Split("\"coordinates\":[")[1].Split("]")[0].Trim();
+                double.TryParse(split.Split(",")[0], out lat);
+                double.TryParse(split.Split(",")[1], out lng);
+            }
+
+            return new List<double>() { lat, lng };
+        }
 
         //create
         private async Task<DetailHouseViewModel> CreateHouse(CreateHouse data)
@@ -48,6 +84,15 @@ namespace DoAnTotNghiep.Controllers
                     {
                         try
                         {
+                            //Lat == 0
+                            //Lng == 0
+                            if(data.Lat == 0 || data.Lng == 0)
+                            {
+                                List<double> doubles = await this.GetLocation(data.Location);
+                                data.Lat = doubles[0];
+                                data.Lng = doubles[1];
+                            }
+
                             House house = new House()
                             {
                                 Name = data.Name,
@@ -61,11 +106,11 @@ namespace DoAnTotNghiep.Controllers
                                 Lng = data.Lng,
                                 Price = data.Price,
                                 IdCity = (data.IdCity == 0? 1: data.IdCity),
-                                IdDistrict = data.IdDistrict,
-                                IdWard = data.IdWard,
+                                IdDistrict = (data.IdDistrict == 0? null: data.IdDistrict),
+                                IdWard = (data.IdWard == 0? null: data.IdWard),
                                 Rating = 0,
                                 IdUser = this.GetIdUser(),
-                                Status = (int)DoAnTotNghiep.Enum.Status.PENDING,
+                                Status = (int) Enum.StatusHouse.VALID,
                                 StreetAddress = data.Location
                             };
 
@@ -190,7 +235,7 @@ namespace DoAnTotNghiep.Controllers
             return files;
         }
         [HttpPost("House/Create")]
-        [ValidateAntiForgeryToken]//test lại
+        [ValidateAntiForgeryToken]
         public async Task<JsonResult> Create([FromBody] CreateHouseViewModel data)
         {
             DetailHouseViewModel returnCode = await this.CreateHouse(new CreateHouse(null, data));
@@ -216,7 +261,7 @@ namespace DoAnTotNghiep.Controllers
                 Data = returnCode
             });
         }
-        [HttpPost("/api/House/Create")]//test lại
+        [HttpPost("/api/House/Create")]
         public async Task<IActionResult> ApiCreate(MobileCreateHouseViewModel data)
         {
             DetailHouseViewModel returnCode = await this.CreateHouse(new CreateHouse(data, null));
@@ -244,6 +289,7 @@ namespace DoAnTotNghiep.Controllers
         }
 
 
+
         //update
         private async Task<IActionResult> EditHouse(EditHouse data)
         {
@@ -259,7 +305,9 @@ namespace DoAnTotNghiep.Controllers
                             var listHouse = Context.Houses.Include(m => m.RulesInHouses)
                                                         .Include(m => m.UtilitiesInHouses)
                                                         .Include(m => m.FileOfHouses)
-                                                        .Where(m => m.IdUser == IdUser && m.Id == data.Id)
+                                                        .Where(m => m.IdUser == IdUser 
+                                                                    && m.Id == data.Id
+                                                                    && m.Status != (int) StatusHouse.SWAPPING)
                                                         .ToList();
                             if (listHouse == null || listHouse.Count < 1)
                             {
@@ -268,6 +316,15 @@ namespace DoAnTotNghiep.Controllers
                                     Status = 404,
                                     Message = "Không tìm thấy nhà"
                                 });
+                            }
+
+                            //Lat == 0
+                            //Lng == 0
+                            if (data.Lat == 0 || data.Lng == 0)
+                            {
+                                List<double> doubles = await this.GetLocation(data.Location);
+                                data.Lat = doubles[0];
+                                data.Lng = doubles[1];
                             }
 
                             var model = listHouse.First();
@@ -282,9 +339,10 @@ namespace DoAnTotNghiep.Controllers
                             model.Lng = data.Lng;
                             model.StreetAddress = data.Location;
                             model.IdCity = data.IdCity;
-                            model.IdDistrict = data.IdDistrict;
-                            model.IdWard = data.IdWard;
+                            model.IdDistrict = (data.IdDistrict == 0? null: data.IdDistrict);
+                            model.IdWard = (data.IdWard == 0 ? null : data.IdWard);
                             model.Price = data.Price;
+                            model.Status = data.Status;
 
                             Context.Houses.Update(model);
                             Context.SaveChanges();
@@ -423,10 +481,13 @@ namespace DoAnTotNghiep.Controllers
                                 if (model.FileOfHouses != null)
                                 {
                                     var deleteFileOfHouse = model.FileOfHouses
-                                                                .Where(m => m.IdHouse == model.Id && !idRemove.Contains(m.IdFile))
-                                                                .Select(m => m.IdFile);
-                                    List<Entity.File> deleteFiles = Context.Files.Where(m => deleteFileOfHouse.Contains(m.Id)).ToList();
+                                                                .Where(m => m.IdHouse == model.Id 
+                                                                            && !idRemove.Contains(m.IdFile))
+                                                                .ToList();
+                                    List<Entity.File> deleteFiles = Context.Files.Where(m => idRemove.Contains(m.Id)).ToList();
                                     Context.Files.RemoveRange(deleteFiles);
+                                    Context.FilesOfHouses.RemoveRange(deleteFileOfHouse);
+                                    Context.SaveChanges();
                                 }
                             }
                             else
@@ -445,10 +506,13 @@ namespace DoAnTotNghiep.Controllers
                                 if (model.FileOfHouses != null)
                                 {
                                     var deleteFileOfHouse = model.FileOfHouses
-                                                                .Where(m => m.IdHouse == model.Id && !data.IdRemove.Contains(m.IdFile))
-                                                                .Select(m => m.IdFile);
-                                    List<Entity.File> deleteFiles = Context.Files.Where(m => deleteFileOfHouse.Contains(m.Id)).ToList();
+                                                                .Where(m => m.IdHouse == model.Id 
+                                                                            && data.IdRemove.Contains(m.IdFile))
+                                                                .ToList();
+                                    List<Entity.File> deleteFiles = Context.Files.Where(m => data.IdRemove.Contains(m.Id)).ToList();
                                     Context.Files.RemoveRange(deleteFiles);
+                                    Context.FilesOfHouses.RemoveRange(deleteFileOfHouse);
+                                    Context.SaveChanges();
                                 }
                             }
 
@@ -518,19 +582,18 @@ namespace DoAnTotNghiep.Controllers
                 Message = this.ModelErrors()
             });
         }
-        [HttpPut("/House/Update")]
+        [HttpPost("/House/Update")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit([FromBody] EditHouseViewModel data)
         {
             return await this.EditHouse(new EditHouse(null, data));
         }
-        [HttpPut("/api/House/Update")]
+        [HttpPost("/api/House/Update")]
         public async Task<IActionResult> ApiEdit(MobileEditHouseViewModel data)
         {
             return await this.EditHouse(new EditHouse(data, null));
         }
-
-
+        
         //remove
         private async Task<IActionResult> DeleteHouse(int id)
         {
@@ -548,7 +611,8 @@ namespace DoAnTotNghiep.Controllers
                                     .Include(m => m.UtilitiesInHouses)
                                     .Include(m => m.Requests)
                                     .Include(m => m.FileOfHouses)
-                                    .Where(m => m.Id == id && m.IdUser == IdUser && m.Status != (int)Status.SWAPPED).ToList();
+                                    .Include(m => m.FeedBacks)
+                                    .Where(m => m.Id == id && m.IdUser == IdUser && m.Status != (int)StatusHouse.SWAPPING).ToList();
             if (house == null || house.Count() < 1)
             {
                 return BadRequest(new
@@ -576,6 +640,7 @@ namespace DoAnTotNghiep.Controllers
                 this._context.Files.RemoveRange(files);
             }
             if (removeHouse.Requests != null) this._context.Requests.RemoveRange(removeHouse.Requests);
+            if (removeHouse.FeedBacks != null) this._context.FeedBacks.RemoveRange(removeHouse.FeedBacks);
 
             this._context.Houses.Remove(removeHouse);
             await this._context.SaveChangesAsync();
@@ -605,6 +670,7 @@ namespace DoAnTotNghiep.Controllers
                                             .Include(m => m.RulesInHouses)
                                             .Include(m => m.UtilitiesInHouses)
                                             .Include(m => m.Requests)
+                                            .Include(m => m.FeedBacks)
                                             .Where(m => m.IdUser == IdUser).ToList();
             foreach (var item in house)
             {
@@ -625,6 +691,7 @@ namespace DoAnTotNghiep.Controllers
                     Context.Files.RemoveRange(files);
                 }
                 if (item.Requests != null) this._context.Requests.RemoveRange(item.Requests);
+                if (item.FeedBacks != null) this._context.FeedBacks.RemoveRange(item.FeedBacks);
 
                 Context.Houses.Remove(item);
                 Context.SaveChanges();
@@ -640,15 +707,19 @@ namespace DoAnTotNghiep.Controllers
         //detail
         private DetailHouseViewModel? GetDetailsHouse(int Id, int status)
         {
-            var house = this.CreateHouse(Id, (int)Status.VALID);
+            var house = this.CreateHouse(Id, (int)StatusHouse.VALID);
             if (house == null) return null;
             return this.CreateDetailsHouse(house);
         }
         private DetailHouseViewModel CreateDetailsHouse(House house)
         {
             byte[] salt = Crypto.Salt(this._configuration);
-            DetailHouseViewModel model = new DetailHouseViewModel(house, salt);
             string host = this.GetWebsitePath();
+            if(house.Users != null)
+            {
+                this._context.Entry(house.Users).Collection(m => m.Houses).Query().Load();
+            }
+            DetailHouseViewModel model = new DetailHouseViewModel(house, salt, house.Users, host);
             DoAnTotNghiepContext Context = this._context;
             if (house.FileOfHouses != null)
             {
@@ -679,20 +750,22 @@ namespace DoAnTotNghiep.Controllers
         [AllowAnonymous]
         public IActionResult Details(int Id)
         {
-            var house = this.CreateHouse(Id, (int)Status.VALID);
+            var house = this.CreateHouse(Id, (int)StatusHouse.VALID);
             if (house == null) return NotFound();
+            int IdUser = this.GetIdUser();
+            ViewData["isAuthorize"] = IdUser == 0? "false": "true";
+            ViewData["isOwner"] = IdUser == house.Users.Id? "true": "false";
             PackageDetailHouse model = new PackageDetailHouse(house, Crypto.Salt(this._configuration), house.Users, this.GetWebsitePath());
             ViewData["key"] = "Asf_PRzBpUJVcb9lcAg48BLOuAuaBItg4ZzCqaNQaSIFReqieYA02KBcovVD08Jk";
             model.AllUtilities = this._context.Utilities.ToList();
             model.AllRules = this._context.Rules.ToList();
             return View(model);
         }
-        
         [AllowAnonymous]
         [HttpGet("/api/House/Details")]
         public IActionResult ApiDetails(int Id)
         {
-            var model = this.GetDetailsHouse(Id, (int)Status.VALID);
+            var model = this.GetDetailsHouse(Id, (int)StatusHouse.VALID);
             if (model == null) return BadRequest(new
             {
                 Status = 404,
@@ -740,26 +813,25 @@ namespace DoAnTotNghiep.Controllers
         }
 
 
-
         //get by userAccess
         [HttpGet("/api/House/GetByUserAccess")]
         [AllowAnonymous]
-        public IActionResult ApiGetHomeByUserAccess(string UserAcess)
+        public IActionResult ApiGetHomeByUserAccess(string UserAccess)
         {
-            return this.GetByUserAccess(UserAcess);
+            return this.GetByUserAccess(UserAccess);
         }
         [HttpGet("/House/GetByUserAccess")]
         [AllowAnonymous]
-        public IActionResult GetHomeByUserAccess(string UserAcess)
+        public IActionResult GetHomeByUserAccess(string UserAccess)
         {
-            return this.GetByUserAccess(UserAcess);
+            return this.GetByUserAccess(UserAccess);
         }
-        private IActionResult GetByUserAccess(string UserAcess)
+        private IActionResult GetByUserAccess(string UserAccess)
         {
             int UserId = 0;
 
             byte[] salt = Crypto.Salt(this._configuration);
-            if (int.TryParse(Crypto.DecodeKey(UserAcess, salt), out UserId))
+            if (!int.TryParse(Crypto.DecodeKey(UserAccess, salt), out UserId))
             {
                 return BadRequest(new
                 {
@@ -769,7 +841,8 @@ namespace DoAnTotNghiep.Controllers
             }
 
             var listHouse = this._context.Houses
-                                        .Where(m => m.Status == (int)Status.VALID && m.IdUser == UserId)
+                                        .Where(m => m.Status == (int)StatusHouse.VALID 
+                                                    && m.IdUser == UserId)
                                         .ToList();
             string host = this.GetWebsitePath();
             List<DetailHouseViewModel> res = new List<DetailHouseViewModel>();
@@ -798,15 +871,15 @@ namespace DoAnTotNghiep.Controllers
             });
         }
 
-
         //get popularHouse
         [HttpGet("/api/GetPopularHouse")]
         [AllowAnonymous]
         public JsonResult GetPopularHouse(int number = 10)
         {
-            var listHouse = this._context.Houses.Take(number)
+            var listHouse = this._context.Houses
+                                                .Take(number)
                                                 .OrderByDescending(m => m.Rating)
-                                                .Where(m => m.Status == (int) Status.VALID)
+                                                .Where(m => m.Status == (int) StatusHouse.VALID)
                                                 .ToList();
             byte[] salt = Crypto.Salt(this._configuration);
             string host = this.GetWebsitePath();
@@ -814,7 +887,17 @@ namespace DoAnTotNghiep.Controllers
             DoAnTotNghiepContext Context = this._context;
             foreach (var item in listHouse)
             {
-                DetailHouseViewModel model = new DetailHouseViewModel(item, salt);
+                Context.Entry(item).Reference(m => m.Users).Load();
+                Context.Entry(item).Collection(m => m.RulesInHouses).Query().Load();
+                Context.Entry(item).Collection(m => m.UtilitiesInHouses).Query().Load();
+                Context.Entry(item).Reference(m => m.Citys).Query().Load();
+                Context.Entry(item).Reference(m => m.Districts).Query().Load();
+                Context.Entry(item).Reference(m => m.Wards).Query().Load();
+                Context.Entry(item).Collection(m => m.Requests).Query().Load();
+                Context.Entry(item).Collection(m => m.FileOfHouses).Query().Load();
+                Context.Entry(item).Collection(m => m.FeedBacks).Query().Load();
+
+                DetailHouseViewModel model = new DetailHouseViewModel(item, salt, item.Users, host);
                 if (item.FileOfHouses != null)
                 {
                     foreach (var f in item.FileOfHouses)
@@ -828,6 +911,7 @@ namespace DoAnTotNghiep.Controllers
                 }
                 res.Add(model);
             }
+
             return Json(new
             {
                 Status = 200,
@@ -836,79 +920,39 @@ namespace DoAnTotNghiep.Controllers
             });
         }
 
-
-        //lưu hình ảnh
-        private Entity.File? SaveFile(ImageBase imageBase)
+        [Authorize]
+        [HttpGet("/api/File/Delelet")]
+        public IActionResult DeleteEmptyFile()
         {
-            try
-            {
-                string[] arr = imageBase.Data.Split("base64,");
-                string ext = imageBase.Name.Split(".").Last();
-                var bytes = Convert.FromBase64String(arr[1]);
+            string path = Path.Combine(this.environment.ContentRootPath, "wwwroot");
+            var existFile = this._context.Files.Select(m => Path.Combine(path, m.PathFolder, m.FileName)).ToList();
+            List<bool> bools = new List<bool>();
 
-                string folder = Path.Combine("Uploads", DateTime.Now.ToString("yyyy"), DateTime.Now.ToString("MM"));
+            if(System.IO.Directory.Exists(Path.Combine(path, "Uploads", "2023", "03")))
+            {
+                string[] fileEntries = Directory.GetFiles(Path.Combine(path, "Uploads", "2023", "03"));
+                foreach(var item in fileEntries)
+                {
+                    if (!existFile.Contains(item))
+                    {
+                        System.IO.File.Delete(item);
+                    }
+                }
+                string[] afileEntries = Directory.GetFiles(Path.Combine(path, "Uploads", "2023", "03"));
 
-                string uploadsFolder = Path.Combine(this.environment.ContentRootPath, "wwwroot", folder);
-                Console.WriteLine(uploadsFolder);
-                if (!Directory.Exists(uploadsFolder))
+                return Json(new
                 {
-                    Directory.CreateDirectory(uploadsFolder);
-                }
-                string ImagePath = Guid.NewGuid().ToString() + "." + ext;
-                string filePath = Path.Combine(uploadsFolder, ImagePath);
-                System.IO.File.WriteAllBytes(filePath, bytes);
-                return new Entity.File() { FileName = ImagePath, PathFolder = folder };
+                    Data = new {
+                        Db = existFile,
+                        BeforeFiles = fileEntries,
+                        AfterFiles = afileEntries
+                    }
+                });
             }
-            catch (Exception ex)
+            return Json(new
             {
-                Console.WriteLine(ex);
-                return null;
-            }
-        }
-        private Entity.File? SaveFile(IFormFile file)
-        {
-            try
-            {
-                string folder = Path.Combine("Uploads", DateTime.Now.ToString("yyyy"), DateTime.Now.ToString("MM"));
-
-                string uploadsFolder = Path.Combine(this.environment.ContentRootPath, "wwwroot", folder);
-                Console.WriteLine(uploadsFolder);
-                if (!Directory.Exists(uploadsFolder))
-                {
-                    Directory.CreateDirectory(uploadsFolder);
-                }
-                string ImagePath = Guid.NewGuid().ToString() + ".png";
-                string filePath = Path.Combine(uploadsFolder, ImagePath);
-                using (FileStream fs = new FileStream(filePath, FileMode.Create))
-                {
-                    file.CopyTo(fs);
-                }
-                return new Entity.File() { FileName = ImagePath, PathFolder = folder };
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                return null;
-            }
-        }
-        private bool DeleteFile(Entity.File file)
-        {
-            try
-            {
-                string uploadsFolder = Path.Combine(this.environment.ContentRootPath, "wwwroot", file.PathFolder);
-                string filePath = Path.Combine(uploadsFolder, file.FileName);
-                if (!Directory.Exists(filePath))
-                {
-                    return false;
-                }
-                System.IO.File.Delete(filePath);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                return false;
-            }
+                Message = "Không có folder"
+            });
         }
     }
 }

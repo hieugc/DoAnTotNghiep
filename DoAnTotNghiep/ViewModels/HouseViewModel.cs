@@ -1,4 +1,5 @@
 ﻿using DoAnTotNghiep.Entity;
+using DoAnTotNghiep.Enum;
 using DoAnTotNghiep.Modules;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing.Printing;
@@ -84,9 +85,10 @@ namespace DoAnTotNghiep.ViewModels
             this.Images = new List<ImageBase?>();
             this.Status = house.Status;//int
             this.Rating = house.Rating;//double :)) quên
-            this.Request = house.Requests == null ? 0 : house.Requests.Count();//int số yêu cầu//hình như là show luôn bên list owner
-            this.UserAccess = Crypto.EncodeKey(house.IdUser.ToString(), salt);//string dùng để liên hệ :)) user người khác t chưa sửa kịp
-            if(user != null && !string.IsNullOrEmpty(host))
+            this.Request = house.Requests == null ? 0 : house.Requests.Count();
+            this.UserAccess = Crypto.EncodeKey(house.IdUser.ToString(), salt);
+            this.NumberRating = house.FeedBacks == null ? 0 : house.FeedBacks.Count();
+            if (user != null && !string.IsNullOrEmpty(host))
             {
                 this.User = new UserInfo(user, salt, host);
             }
@@ -94,6 +96,7 @@ namespace DoAnTotNghiep.ViewModels
 
         public int Status { get; set; } = 0;
         public double Rating { get; set; } = 0;
+        public int NumberRating { get; set; } = 0;
         public int Request { get; set; } = 0;
         public string UserAccess { get; set; } = string.Empty;
         public UserInfo? User { get; set; }//đã trả lúc login // thông tin là của nó :))
@@ -107,8 +110,8 @@ namespace DoAnTotNghiep.ViewModels
         }
         public List<Utilities> AllUtilities { get; set; } = new List<Utilities>();
         public List<Rules> AllRules { get; set; } = new List<Rules>();
-    }
 
+    }
     public class MobileCreateHouseViewModel
     {
         [Required(ErrorMessage = "Hãy điền tên căn nhà")]
@@ -234,6 +237,7 @@ namespace DoAnTotNghiep.ViewModels
         }
         public int Id { get; set; }
         public List<int> IdRemove { get; set; } = new List<int>();
+        public int Status { get; set; } = (int)StatusHouse.VALID;
     }
 
     public class ImageBase

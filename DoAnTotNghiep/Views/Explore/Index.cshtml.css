@@ -47,14 +47,15 @@
     grid-template-columns: 1fr 1fr;
     gap: 6px;
     overflow: auto;
+    padding: 12px;
 }
 
-.house-card {
+/*.house-card {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-}
+}*/
 
 /* Some left and right padding inside the container */
-.house-img-container {
+/*.house-img-container {
     padding: 0 16px;
 }
 
@@ -112,7 +113,7 @@ display: inline-block;
 
 .house-img-container .item-button:hover .label-show {
 display: none;
-}
+}*/
 
 .pagination {
     margin-top: 24px;

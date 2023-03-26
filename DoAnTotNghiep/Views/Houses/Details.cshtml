@@ -4,6 +4,8 @@
     ViewData["Title"] = "Chi tiết nhà";
     Layout = "_Layout";
     string key = (ViewData["key"] as string) ?? string.Empty;
+    bool isAuthorize = (ViewData["isAuthorize"] == null ? false: ViewData["isAuthorize"] == "false" ? false : true);
+    bool isOwner = (ViewData["isOwner"] == null ? false : ViewData["isOwner"] == "false" ? false : true);
 }
 
 <div class="Banner">
@@ -54,7 +56,7 @@
                 <div class="general">
                     <div>@Model.Name</div>
                     <div>
-                        <div class="rating"><span>@Model.Rating</span><i class="fa-solid fa-star"></i></div>
+                        <div class="rating"><span>@Model.Rating (@Model.NumberRating)</span><i class="fa-solid fa-star"></i></div>
                         <div class="point"><strong>@Model.Price (p/ngày)</strong></div>
                     </div>
                 </div>
@@ -81,9 +83,11 @@
                     <div class="item-show">
                     @foreach(var item in Model.AllUtilities)
                     {
-                        <div class="item-frame @(Model.Utilities.Contains(item.Id)  ? "item-checked": string.Empty) ">
-                                @Html.Raw(item.Icon)
-                            <span>@item.Content</span>
+                        <div class="item-contain">
+                            <div class="item-frame @(Model.Utilities.Contains(item.Id)  ? "item-checked": string.Empty) ">
+                                    @Html.Raw(item.Icon)
+                                <span>@item.Content</span>
+                            </div>
                         </div>
                     }
                     </div>
@@ -96,9 +100,11 @@
                     <div class="item-show">
                         @foreach (var item in Model.AllRules)
                         {
-                            <div class="item-frame @(Model.Rules.Contains(item.Id)  ? "item-checked": string.Empty)">
-                                @Html.Raw(item.Icon)
-                                <span>@item.Content</span>
+                            <div class="item-contain">
+                                <div class="item-frame @(Model.Rules.Contains(item.Id)  ? "item-checked": string.Empty)">
+                                    @Html.Raw(item.Icon)
+                                    <span>@item.Content</span>
+                                </div>
                             </div>
                         }
                     </div>
@@ -235,24 +241,24 @@
                         <div class="avt"><img src="@Model.User.UrlImage" alt="avt-user" /></div>
                     }
                     else{
-                        <div class="avt"><span><i class="fa-solid fa-circle-info"></i></span></div>
+                        <div class="avt"><img src="~/Image/user.svg" alt="avt-user" /></div>
                     }
                     <div class="info">
                         <h5><span class="name">@(Model.User.FirstName + " " + Model.User.LastName)</span></h5>
-                        <div class="rating"><span>4.3</span><i class="fa-solid fa-star"></i></div>
+                        <div class="rating"><span>@Model.User.UserRating</span><i class="fa-solid fa-star"></i></div>
                     </div>
                 }
                 else{
                     <div class="avt"><span><i class="fa-solid fa-circle-info"></i></span></div>
                     <div class="info">
                         <h5><span class="name">NotFound</span></h5>
-                        <div class="rating"><span>4.3</span><i class="fa-solid fa-star"></i></div>
+                        <div class="rating"><span>-</span><i class="fa-solid fa-star"></i></div>
                     </div>
                 }
             </div>
             <div class="validate">
                 <div>
-                    <i class="fa-solid fa-house"></i><span>2 căn nhà</span>
+                    <i class="fa-solid fa-house"></i><span>@(Model.User?.NumberOfHouses) căn nhà</span>
                 </div>
                 <div>
                     <i class="fa-solid fa-phone"></i><span class="text-success">Đã xác thực</span>
@@ -262,11 +268,17 @@
                 </div>
             </div>
         </div>
-        <div class="bot">
-            <div><a href="@Url.Action("Messages", "Member", new {connection = Model.User?.UserAccess})" class="btn btn-primary" style="display: block;">Liên hệ</a></div>
-            <div><button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#messageRequestModal">Yêu cầu trao đổi</button></div>
-            <div><button class="btn btn-danger" type="button" data-bs-toggle="modal" data-bs-target="#reportModal">Báo cáo</button></div>
-        </div>
+        @if (isAuthorize)
+        {
+            <div class="bot">
+                <div><a href="@Url.Action("Messages", "Member", new {connection = Model.User?.UserAccess})" class="btn btn-primary" style="display: block;">Liên hệ</a></div>
+                @if (!isOwner)
+                {
+                     <div><button class="btn btn-success" onclick="getRequestFormByHouseId(@Model.Id)">Yêu cầu trao đổi</button></div>
+                }
+                <div><button class="btn btn-danger" type="button" data-bs-toggle="modal" data-bs-target="#reportModal">Báo cáo</button></div>
+            </div>
+        }
     </div>
 </div>
 
@@ -306,187 +318,15 @@
     </div>
 </div>
 
-
-    <div class="modal fade" id="messageRequestModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="messageRequestModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <div class="my-modal-title">
-                        <h3 class="house-title">Tạo yêu cầu</h3>
-                    </div>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <div class="house-card selected">
-                            <img src="~/Image/house-demo.png" alt="Mike" style="width:100%">
-                            <div class="house-img-container">
-                                <h2>@Model.Name</h2>
-                                <p class="attribute"><i class="fa-solid fa-map-location-dot"></i><span>@Model.Location</span></p>
-                                <div class="list-attribute">
-                                    <p class="attribute"><span>@Model.Rating</span><i class="fa-solid fa-star"></i></p>
-                                    <p class="attribute"><i class="fa-solid fa-users"></i><span>@Model.People</span></p>
-                                    <p class="attribute"><i class="fa-solid fa-bed"></i><span>@Model.BedRoom</span></p>
-                                </div>
-                                <p>
-                                    <button class="item-button">
-                                    <span class="label-show">@Model.Price (point/ngày)</span>
-                                    </button>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="">Phương thức trao đổi</label>
-                        <div class="contain-option">
-                            <div class="form-check">
-                                <label class="form-check-label" for="swap-option-1">
-                                    Trao đổi bằng điểm
-                                </label>
-                                <input class="form-check-input" type="radio" name="swap-option" id="swap-option-1" value="swap-option-1" checked>
-                            </div>
-                            <div class="form-check">
-                                <label class="form-check-label" for="swap-option-2">
-                                    Trao đổi bằng nhà
-                                </label>
-                                <input class="form-check-input" type="radio" name="swap-option" id="swap-option-2" value="swap-option-2">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="">Chọn nhà của bạn để trao đổi</label>
-                        <div class="house-request" onclick="showListHouseModal(1)">
-                            <div class="frame-empty">+</div>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="">Chọn thời gian đến</label>
-                        <div class="">
-                            <input type="text" name="requestdaterange" id="requestdaterange" value="01/01/2018 - 01/15/2018" class="form-control" />
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="">Điểm bạn cần phải trả</label>
-                        <div class="contain-price">
-                            1400 Point/ngày
-                        </div>
-                    </div>
-
-                    <div class=""><button class="btn btn-primary" type="button">Tạo yêu cầu</button></div>
-                </div>
-            </div>
-            <div class="modal-content list-house modal-content-hide">
-                <div class="modal-header">
-                    <span class="back-step" onclick="HTMLInputElement(0)"> <i class="fa-solid fa-angle-left"></i> </span>
-                    <h3 class="house-title">Chọn nhà</h3>
-                </div>
-                <div class="modal-body">
-                    <div class="list">
-                        <div class="house-card selected">
-                            <img src="~/Image/house-demo.png" alt="Mike" style="width:100%">
-                            <div class="house-img-container">
-                                <h2>Nhà của Hiếu</h2>
-                                <p class="attribute"><i class="fa-solid fa-map-location-dot"></i><span>268 Ly Thuong Kiet Street - Ward 14, District 10, HCMC, Ho Chi Minh City</span></p>
-                                <div class="list-attribute">
-                                    <p class="attribute"><span>4</span><i class="fa-solid fa-star"></i></p>
-                                    <p class="attribute"><i class="fa-solid fa-users"></i><span>4</span></p>
-                                    <p class="attribute"><i class="fa-solid fa-bed"></i><span>2</span></p>
-                                </div>
-                                <p>
-                                    <button class="item-button">
-                                        <span class="label-show">200point/night</span>
-                                        <span class="label-hide">Chọn</span>
-                                    </button>
-                                </p>
-                            </div>
-                        </div>
-                        @for (var item = 0; item < 5; item++)
-                        {
-                            <div class="house-card">
-                                <img src="~/Image/house-demo.png" alt="Mike" style="width:100%">
-                                <div class="house-img-container">
-                                    <h2>Nhà của Hiếu</h2>
-                                    <p class="attribute"><i class="fa-solid fa-map-location-dot"></i><span>268 Ly Thuong Kiet Street - Ward 14, District 10, HCMC, Ho Chi Minh City</span></p>
-                                    <div class="list-attribute">
-                                        <p class="attribute"><span>4</span><i class="fa-solid fa-star"></i></p>
-                                        <p class="attribute"><i class="fa-solid fa-users"></i><span>4</span></p>
-                                        <p class="attribute"><i class="fa-solid fa-bed"></i><span>2</span></p>
-                                    </div>
-                                    <p>
-                                        <button class="item-button">
-                                            <span class="label-show">200point/night</span>
-                                            <span class="label-hide">Chọn</span>
-                                        </button>
-                                    </p>
-                                </div>
-                            </div>
-                        }
-                    </div>
-                    <div class=""><button class="btn btn-primary" type="button">Xác nhận</button></div>
-                </div>
-            </div>
-            <div class="modal-content list-house modal-content-hide">
-                <div class="modal-header">
-                    <span class="back-step" onclick="hideListHouseModal(1)"> <i class="fa-solid fa-angle-left"></i> </span>
-                    <h3 class="house-title">Chọn nhà</h3>
-                </div>
-                <div class="modal-body">
-                    <div class="list">
-                        <div class="house-card selected">
-                            <img src="~/Image/house-demo.png" alt="Mike" style="width:100%">
-                            <div class="house-img-container">
-                                <h2>Nhà của Hiếu</h2>
-                                <p class="attribute"><i class="fa-solid fa-map-location-dot"></i><span>268 Ly Thuong Kiet Street - Ward 14, District 10, HCMC, Ho Chi Minh City</span></p>
-                                <div class="list-attribute">
-                                    <p class="attribute"><span>4</span><i class="fa-solid fa-star"></i></p>
-                                    <p class="attribute"><i class="fa-solid fa-users"></i><span>4</span></p>
-                                    <p class="attribute"><i class="fa-solid fa-bed"></i><span>2</span></p>
-                                </div>
-                                <p>
-                                    <button class="item-button">
-                                        <span class="label-show">200point/night</span>
-                                        <span class="label-hide">Chọn</span>
-                                    </button>
-                                </p>
-                            </div>
-                        </div>
-                        @for (var item = 0; item < 5; item++)
-                        {
-                            <div class="house-card">
-                                <img src="~/Image/house-demo.png" alt="Mike" style="width:100%">
-                                <div class="house-img-container">
-                                    <h2>Nhà của Hiếu</h2>
-                                    <p class="attribute"><i class="fa-solid fa-map-location-dot"></i><span>268 Ly Thuong Kiet Street - Ward 14, District 10, HCMC, Ho Chi Minh City</span></p>
-                                    <div class="list-attribute">
-                                        <p class="attribute"><span>4</span><i class="fa-solid fa-star"></i></p>
-                                        <p class="attribute"><i class="fa-solid fa-users"></i><span>4</span></p>
-                                        <p class="attribute"><i class="fa-solid fa-bed"></i><span>2</span></p>
-                                    </div>
-                                    <p>
-                                        <button class="item-button">
-                                            <span class="label-show">200point/night</span>
-                                            <span class="label-hide">Chọn</span>
-                                        </button>
-                                    </p>
-                                </div>
-                            </div>
-                        }
-                    </div>
-                    <div class=""><button class="btn btn-primary" type="button">Xác nhận</button></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
+<div id="renderModal"></div>
 
 @section Scripts{
     <!--BingMap-->
     <script type='text/javascript'
         src='https://www.bing.com/api/maps/mapcontrol?callback=GetMap&key=@key'
         async defer></script>
-        <script type="text/javascript">
-            var lat = @Model.Lat;
+    <script type="text/javascript">
+        var lat = @Model.Lat;
         var lng = @Model.Lng;
         var map = null;
         function GetMap() {
@@ -502,6 +342,10 @@
             console.log(map);
             map.entities.push(pin);
         }
-            </script>
+        $(".material-symbols-outlined")[3].innerHTML = "mic";
+    </script>
     <script src="~/js/House/detail.js" type="text/javascript" async defer></script>
+
+    <script src="~/js/Request/create.js" type="text/javascript"></script>
+    <script src="~/js/Request/getFormByHouseId.js" type="text/javascript"></script>
 }

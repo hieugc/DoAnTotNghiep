@@ -70,6 +70,6 @@ namespace DoAnTotNghiep.Modules
     {
         public string Email { get; set; } = string.Empty;
         public int Id { get; set; } = 0;
-        public string Role { get; set; } = DoAnTotNghiep.Enum.Role.MemberString();
+        public string Role { get; set; } = DoAnTotNghiep.Enum.Role.Member;
     } 
 }

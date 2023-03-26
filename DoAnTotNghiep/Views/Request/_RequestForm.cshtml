@@ -1,0 +1,329 @@
+﻿@model DoAnTotNghiep.ViewModels.ModelRequestForm
+@{
+    int index = 0;
+}
+
+@if(Model.UserHouses.Count() < 1)
+{
+    <button type="button" class="d-none" id="requestFormClick" data-bs-target="#messageRequestModal" data-bs-toggle="modal"></button>
+    <div class="modal fade" id="messageRequestModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="messageRequestModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="my-modal-title">
+                        <h3 class="house-title">Thông báo</h3>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <span class="text-danger">
+                        Người dùng hiện không có nhà phù hợp để trao đổi
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        $("#requestFormClick").click();
+    </script>
+}
+else
+{
+    <button type="button" class="d-none" id="requestFormClick" data-bs-target="#messageRequestModal" data-bs-toggle="modal"></button>
+    <div class="modal fade" id="messageRequestModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="messageRequestModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="my-modal-title">
+                        <h3 class="house-title">Tạo yêu cầu</h3>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="">Chọn nhà muốn trao đổi</label>
+                        <div class="house-request">
+                            @if (Model.UserHouses.Count() == 1)
+                            {
+                            <div class="house-result">
+                                @foreach (var item in Model.UserHouses)
+                                {
+                                <div class="house-card house-card-@(index++)">
+                                    @if (item.Images.Count() == 0)
+                                    {
+                                        <img src="~/Image/house-demo.png" alt="Mike" style="width:100%">
+                                    }
+                                    else
+                                    {
+                                        @foreach (var img in item.Images)
+                                        {
+                                            if (img != null)
+                                            {
+                                                <img src="@img.Data" alt="Mike" style="width:100%">
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    <div class="house-img-container">
+                                        <h2>@item.Name</h2>
+                                        <p class="attribute"><i class="fa-solid fa-map-location-dot"></i><span>@item.Location</span></p>
+                                        <div class="list-attribute">
+                                            <p class="attribute"><span>@item.Rating (@item.NumberRating)</span><i class="fa-solid fa-star"></i></p>
+                                            <p class="attribute"><i class="fa-solid fa-users"></i><span>@item.User</span></p>
+                                            <p class="attribute"><i class="fa-solid fa-bed"></i><span>@item.BedRoom</span></p>
+                                        </div>
+                                        <p>
+                                            <button class="item-button">
+                                                <span>@item.Price (point/ngày)</span>
+                                            </button>
+                                        </p>
+                                    </div>
+                                    <a target="_blank" href='@Url.Action("Details", "Houses", new {Id = item.Id})' class="finding">
+                                        <i class="fa-sharp fa-solid fa-magnifying-glass"></i>
+                                    </a>
+                                </div>
+                                }
+                            </div>
+                            }
+                            else
+                            {
+                            <div class="frame-empty" onclick="showListHouseModal(0)">+</div>
+                            <div class="house-result"></div>
+                            }
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="mb-3">
+                            <label class="">Chọn thời gian đến</label>
+                            <div class="">
+                                <input type="text" name="requestdaterange" id="requestdaterange" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="">Phương thức trao đổi</label>
+                            <div class="contain-option">
+                                <div class="form-check">
+                                    <label class="form-check-label" for="swap-option-1">
+                                        Trao đổi bằng điểm
+                                    </label>
+                                    <input class="form-check-input" type="radio" name="swap-option" onchange="showOption()" id="swap-option-1" value="swap-option-1" checked>
+                                </div>
+                                @if (Model.MyHouses.Count() > 0)
+                                {
+                                    <div class="form-check">
+                                        <label class="form-check-label" for="swap-option-2">
+                                            Trao đổi bằng nhà
+                                        </label>
+                                        <input class="form-check-input" type="radio" name="swap-option" onchange="showOption()" id="swap-option-2" value="swap-option-2">
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                        <div>
+                            <label class="">Điểm trao đổi</label>
+                            <div class="contain-price">
+                                0 (Point/ngày)
+                            </div>
+                        </div>
+                    </div>
+                    @if (Model.MyHouses.Count() > 0)
+                    {
+                        <div class="mb-3 houseSwap">
+                            <label class="">Chọn nhà của bạn để trao đổi</label>
+                            <div class="house-request">
+                                @if (Model.MyHouses.Count() == 1)
+                                {
+                                    {
+                                        index = 0;
+                                    }
+                                    <div class="house-result">
+                                        @foreach (var item in Model.MyHouses)
+                                        {
+                                            <div class="house-card house-card-@(index++)">
+                                                @if (item.Images.Count() == 0)
+                                                {
+                                                    <img src="~/Image/house-demo.png" alt="Mike" style="width:100%">
+                                                }
+                                                else
+                                                {
+                                                    @foreach (var img in item.Images)
+                                                    {
+                                                        @if (img != null)
+                                                        {
+                                                            <img src="@img.Data" alt="Mike" style="width:100%">
+                                                            break;
+                                                        }
+                                                    }
+                                                }
+                                                <div class="house-img-container">
+                                                    <h2>@item.Name</h2>
+                                                    <p class="attribute"><i class="fa-solid fa-map-location-dot"></i><span>@item.Location</span></p>
+                                                    <div class="list-attribute">
+                                                        <p class="attribute"><span>@item.Rating (@item.NumberRating)</span><i class="fa-solid fa-star"></i></p>
+                                                        <p class="attribute"><i class="fa-solid fa-users"></i><span>@item.User</span></p>
+                                                        <p class="attribute"><i class="fa-solid fa-bed"></i><span>@item.BedRoom</span></p>
+                                                    </div>
+                                                    <p>
+                                                        <button class="item-button">
+                                                            <span>@item.Price (point/ngày)</span>
+                                                        </button>
+                                                    </p>
+                                                </div>
+                                                <a target="_blank" href="@Url.Action("Details", "Houses", new {Id = item.Id})" class="finding">
+                                                    <i class="fa-sharp fa-solid fa-magnifying-glass"></i>
+                                                </a>
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="frame-empty" onclick="showListHouseModal(1)">+</div>
+                                    <div class="house-result"></div>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="modal-bottom"><button class="btn btn-primary" type="button" onclick="createRequest()">Tạo yêu cầu</button></div>
+            </div>
+            <div class="modal-content list-house list-house-1 modal-content-hide">
+                <div class="modal-header">
+                    <span class="back-step" onclick="HTMLInputElement(0)"> <i class="fa-solid fa-angle-left"></i> </span>
+                    <h3 class="house-title">Chọn nhà</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="list">
+                        @{
+                            index = 0;
+                        }
+                        @foreach (var item in Model.UserHouses)
+                        {
+                            <div class="house-card house-card-@(index)">
+                                @if (item.Images.Count() == 0)
+                                {
+                                    <img src="~/Image/house-demo.png" alt="Mike" style="width:100%">
+                                }
+                                else
+                                {
+                                    @foreach (var img in item.Images)
+                                    {
+                                        @if (img != null)
+                                        {
+                                            <img src="@img.Data" alt="Mike" style="width:100%">
+                                            break;
+                                        }
+                                    }
+                                }
+                                <div class="house-img-container">
+                                    <h2>@item.Name</h2>
+                                    <p class="attribute"><i class="fa-solid fa-map-location-dot"></i><span>@item.Location</span></p>
+                                    <div class="list-attribute">
+                                        <p class="attribute"><span>@item.Rating (@item.NumberRating)</span><i class="fa-solid fa-star"></i></p>
+                                        <p class="attribute"><i class="fa-solid fa-users"></i><span>@item.User</span></p>
+                                        <p class="attribute"><i class="fa-solid fa-bed"></i><span>@item.BedRoom</span></p>
+                                    </div>
+                                    <p>
+                                        <button class="item-button" onclick="selectItem('.list-house-1', '.house-card-@(index++)')">
+                                            <span class="label-show">@item.Price (point/ngày)</span>
+                                            <span class="label-hide">Chọn</span>
+                                        </button>
+                                    </p>
+                                </div>
+                                <a target="_blank" href="@Url.Action("Details", "Houses", new {Id = item.Id})" class="finding">
+                                    <i class="fa-sharp fa-solid fa-magnifying-glass"></i>
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div class="modal-bottom"><button class="btn btn-primary" type="button" onclick="confirmSelection(0)">Xác nhận</button></div>
+            </div>
+            <div class="modal-content list-house list-house-2 modal-content-hide">
+                <div class="modal-header">
+                    <span class="back-step" onclick="hideListHouseModal(1)"> <i class="fa-solid fa-angle-left"></i> </span>
+                    <h3 class="house-title">Chọn nhà</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="list">
+                        @{
+                            index = 0;
+                        }
+                        @foreach (var item in Model.UserHouses)
+                        {
+                            <div class="house-card house-card-@(index)">
+                                @if (item.Images.Count() == 0)
+                                {
+                                    <img src="~/Image/house-demo.png" alt="Mike" style="width:100%">
+                                }
+                                else
+                                {
+                                    @foreach (var img in item.Images)
+                                    {
+                                        @if (img != null)
+                                        {
+                                            <img src="@img.Data" alt="Mike" style="width:100%">
+                                            break;
+                                        }
+                                    }
+                                }
+                                <div class="house-img-container">
+                                    <h2>@item.Name</h2>
+                                    <p class="attribute"><i class="fa-solid fa-map-location-dot"></i><span>@item.Location</span></p>
+                                    <div class="list-attribute">
+                                        <p class="attribute"><span>@item.Rating (@item.NumberRating)</span><i class="fa-solid fa-star"></i></p>
+                                        <p class="attribute"><i class="fa-solid fa-users"></i><span>@item.User</span></p>
+                                        <p class="attribute"><i class="fa-solid fa-bed"></i><span>@item.BedRoom</span></p>
+                                    </div>
+                                    <p>
+                                        <button class="item-button" onclick="selectItem('.list-house-2', '.house-card-@(index++)')">
+                                            <span class="label-show">@item.Price (point/ngày)</span>
+                                            <span class="label-hide">Chọn</span>
+                                        </button>
+                                    </p>
+                                </div>
+                                <a target="_blank" href="@Url.Action("Details", "Houses", new {Id = item.Id})" class="finding">
+                                    <i class="fa-sharp fa-solid fa-magnifying-glass"></i>
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div class="modal-bottom"><button class="btn btn-primary" type="button" onclick="confirmSelection(1)">Xác nhận</button></div>
+            </div>
+        </div>
+    </div>
+
+    <script type='text/javascript'>
+        const picker = new Litepicker({
+            element: document.getElementById('requestdaterange'),
+            singleMode: false,
+            tooltipText: {
+                one: 'ngày',
+                other: 'ngày'
+            },
+            setup: (picker) => {
+                picker.on("selected", (date1, date2) => {
+                    getDateSwap();
+                })
+            },
+            minDate: new Date('@DateTime.Now.ToString("yyyy-MM-dd")'),
+            maxDate: new Date('@DateTime.Now.AddYears(2).ToString("yyyy-MM-dd")'),
+            tooltipNumber: (totalDays) => {
+                return totalDays;
+            }
+        })
+    </script>
+    <script type="text/javascript">
+        var listModel_1 = @Html.Raw(Json.Serialize(Model.UserHouses));
+        var listModel_2 = @Html.Raw(Json.Serialize(Model.MyHouses));
+        var model_1 = null;
+        var model_2 = null;
+        if (listModel_1.length == 1) {
+            model_1 = listModel_1[0];
+        }
+        $(".contain-price").html(calPrice(model_1, model_2));
+        $("#requestFormClick").click();
+    </script>
+}

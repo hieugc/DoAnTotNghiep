@@ -1,8 +1,8 @@
-﻿.house {
+﻿/*.house {
     display: flex;
     flex-flow: column;
     padding: 24px;
-    max-width: 1200px;
+    width: 100%;
     border-radius: 12px;
     box-shadow: 0 0.25rem 0.75rem 0 rgba(161, 172, 184, 0.12);
 }
@@ -58,31 +58,6 @@
     margin-top: 12px;
 }
 
-.user{
-    display: flex;
-    gap: 12px;
-    align-items: center;
-}
-.user .avt{
-    height: 40px;
-    width: 40px;
-    border-radius: 50%;
-    border: 1px solid rgba(161, 172, 184, 0.4);
-}
-.list-house .card .col-md-12 {
-    display: flex;
-    justify-content: space-between;
-    padding: 12px;
-    border-bottom: 1px solid rgba(161, 172, 184, 0.4);
-    align-items: center;
-    margin-bottom: 12px;
-}
-
-
-.list-house .card .col-md-12 .status {
-    font-size: 16px;
-    font-weight: 500;
-}
 
 .list-house .col-md-7 {
     padding: 12px;
@@ -127,3 +102,62 @@
     margin-bottom: 6px;
     font-weight: 500;
 }
+*/
+.user-info,
+.user {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+    .user .avt {
+        height: 40px;
+        width: 40px;
+        border-radius: 50%;
+        border: 1px solid rgba(161, 172, 184, 0.4);
+    }
+
+.list-house .card .col-md-12 {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px;
+    border-bottom: 1px solid rgba(161, 172, 184, 0.4);
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+
+    .list-house .card .col-md-12 .status {
+        font-size: 16px;
+        font-weight: 500;
+    }
+
+.d-flex.col-12{
+    gap: 24px;
+    justify-content: center;
+}
+.d-flex.col-12 > .request-info {
+    width: 33.33%;
+}
+.d-flex.col-12 > .request-info > p{
+    font-weight: 700;
+    font-size: calc(1rem + 0.2vh);
+}
+    .d-flex.col-12 > .request-info:last-child > div {
+        display: flex;
+        gap: 12px;
+        background-color: rgba(var(--bs-primary-rgb), 0.4);
+        padding: 12px;
+        border-radius: 8px;
+        align-items: center;
+    }
+    .d-flex.col-12 > .request-info:last-child span {
+        font-weight: 700;
+        font-size: 1rem;
+    }
+    .d-flex.col-12 > .request-info:last-child > div.control {
+        background-color: unset;
+    }
+    .nav-link{
+        cursor: pointer;
+    }

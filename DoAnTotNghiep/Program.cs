@@ -16,7 +16,6 @@ builder.Services.AddDbContext<DoAnTotNghiepContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DataContext")));
 builder.Services.AddSignalR();
 
-
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddAuthentication(Scheme.Authentication())
