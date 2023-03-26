@@ -20,4 +20,6 @@ interface RequestRepository {
     suspend fun getRequestByHouse(id: Int): LiveData<ResultResponse<ArrayList<RequestResponse>>>
 
     suspend fun getRequestSent(): LiveData<ResultResponse<ArrayList<RequestResponse>>>
+
+    suspend fun getPendingRequest(): LiveData<ResultResponse<ArrayList<RequestResponse>>>
 }

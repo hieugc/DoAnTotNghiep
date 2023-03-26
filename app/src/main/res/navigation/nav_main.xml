@@ -63,7 +63,11 @@
             app:popExitAnim="@anim/slide_in_right"/>
         <action
             android:id="@+id/action_userFragment_to_requestFragment"
-            app:destination="@id/requestFragment" />
+            app:destination="@id/requestFragment"
+            app:exitAnim="@anim/fade_out"
+            app:enterAnim="@anim/slide_in_left"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/slide_in_right"/>
     </fragment>
     <fragment
         android:id="@+id/messageFragment"
@@ -100,7 +104,11 @@
             app:destination="@id/createRequestBottomSheetFragment" />
         <action
             android:id="@+id/action_messageBoxFragment_to_createRequestFragment"
-            app:destination="@id/createRequestFragment">
+            app:destination="@id/createRequestFragment"
+            app:exitAnim="@anim/fade_out"
+            app:enterAnim="@anim/slide_in_left"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/slide_in_right">
             <argument android:defaultValue=""
                 android:name="userAccess"
                 app:argType="string"/>
@@ -162,7 +170,11 @@
         </action>
         <action
             android:id="@+id/action_homeDetailFragment_to_createRequestFragment"
-            app:destination="@id/createRequestFragment">
+            app:destination="@id/createRequestFragment"
+            app:exitAnim="@anim/fade_out"
+            app:enterAnim="@anim/slide_in_left"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/slide_in_right">
             <argument
                 android:name="userAccess"
                 app:argType="string"
@@ -279,7 +291,11 @@
             android:defaultValue="0"/>
         <action
             android:id="@+id/action_myHomeDetailFragment_to_addHomeFragment"
-            app:destination="@id/addHomeFragment" />
+            app:destination="@id/addHomeFragment"
+            app:exitAnim="@anim/fade_out"
+            app:enterAnim="@anim/slide_in_left"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/slide_in_right"/>
     </fragment>
     <fragment
         android:id="@+id/pickYourHomeFragment"
@@ -288,7 +304,11 @@
         tools:layout="@layout/fragment_pick_your_home">
         <action
             android:id="@+id/action_pickYourHomeFragment_to_myHomeFragment"
-            app:destination="@id/myHomeFragment" />
+            app:destination="@id/myHomeFragment"
+            app:exitAnim="@anim/fade_out"
+            app:enterAnim="@anim/slide_in_left"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/slide_in_right"/>
     </fragment>
     <fragment
         android:id="@+id/pickHomeFragment"
@@ -388,7 +408,11 @@
         tools:layout="@layout/fragment_bottom_sheet_dialog_select_image">
         <action
             android:id="@+id/action_bottomSheetDialogSelectImage_to_galleryFragment"
-            app:destination="@id/galleryFragment" />
+            app:destination="@id/galleryFragment"
+            app:exitAnim="@anim/fade_out"
+            app:enterAnim="@anim/slide_in_left"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/slide_in_right"/>
     </dialog>
     <fragment
         android:id="@+id/galleryFragment"
@@ -402,13 +426,24 @@
         tools:layout="@layout/fragment_request">
         <action
             android:id="@+id/action_requestFragment_to_pendingRequestDetailFragment"
-            app:destination="@id/pendingRequestDetailFragment" />
+            app:destination="@id/pendingRequestDetailFragment"
+            app:exitAnim="@anim/fade_out"
+            app:enterAnim="@anim/slide_in_left"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/slide_in_right">
+            <argument android:name="id"
+                app:argType="integer"/>
+        </action>
     </fragment>
     <fragment
         android:id="@+id/pendingRequestDetailFragment"
         android:name="com.example.homex.activity.home.PendingRequestDetailFragment"
         android:label="PendingRequestDetailFragment"
-        tools:layout="@layout/fragment_pending_request_detail"/>
+        tools:layout="@layout/fragment_pending_request_detail">
+        <argument android:name="id"
+            app:argType="integer"
+            android:defaultValue="0"/>
+    </fragment>
     <dialog
         android:id="@+id/bottomSheetChangeDateFragment"
         android:name="com.example.homex.extension.BottomSheetChangeDateFragment"

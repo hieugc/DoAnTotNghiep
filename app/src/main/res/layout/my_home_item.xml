@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <data>
+        <variable
+            name="home"
+            type="com.homex.core.model.Home" />
+    </data>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -19,6 +25,7 @@
             android:id="@+id/homeImg"
             android:layout_width="match_parent"
             android:layout_height="170dp"
+            loadImage="@{ !home.images.empty ? home.images.get(0).data : null}"
             app:layout_constraintTop_toTopOf="parent"
             android:src="@mipmap/location"/>
 
@@ -46,7 +53,7 @@
                 android:layout_gravity="center_vertical"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="Ngõ 157 xyz abc, Phường xxTiền Giang"
+                android:text="@{home.location}"
                 android:textColor="@color/white" />
 
 
@@ -55,7 +62,7 @@
         <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Nhà của Hiếu"
+            android:text="@{home.name}"
             android:id="@+id/homeName"
             android:layout_marginTop="16dp"
             app:layout_constraintStart_toStartOf="parent"
@@ -75,7 +82,7 @@
         <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="4 người"
+            android:text="@{home.people + ` người`}"
             android:layout_marginStart="8dp"
             android:id="@+id/homeNOP"
             style="@style/HomeTitle"
@@ -99,7 +106,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="4dp"
-            android:text="4.8"
+            android:text="@{home.rating.toString()}"
             app:layout_constraintBottom_toBottomOf="@id/ratingIcon"
             app:layout_constraintEnd_toStartOf="@+id/numberOfRatingTV"
             app:layout_constraintTop_toTopOf="@+id/ratingIcon" />
@@ -110,7 +117,7 @@
             android:textColor="@color/gray6"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="(10)"
+            android:text="@{`(`+ home.numberRating +`)`}"
             android:layout_marginEnd="8dp"
             app:layout_constraintBottom_toBottomOf="@id/ratingIcon"
             app:layout_constraintEnd_toStartOf="@+id/ratingIcon"
@@ -121,7 +128,7 @@
             style="@style/HomePrice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="200 point/ngày"
+            android:text="@{home.price + ` point/ngày`}"
             android:layout_marginEnd="8dp"
             app:layout_constraintStart_toStartOf="@id/homeName"
             app:layout_constraintBottom_toBottomOf="parent"/>
@@ -141,7 +148,7 @@
             android:id="@+id/homeStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Đang hoạt động"
+            status="@{home.status}"
             android:layout_marginTop="4dp"
             app:layout_constraintEnd_toEndOf="@+id/appCompatTextView31"
             app:layout_constraintTop_toBottomOf="@+id/appCompatTextView31" />
@@ -150,3 +157,5 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.cardview.widget.CardView>
+
+</layout>

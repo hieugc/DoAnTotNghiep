@@ -39,6 +39,7 @@ class MyHomeFragment : BaseFragment<FragmentMyHomeBinding>() {
             showBoxChatLayout = Pair(false, null),
         )
         viewModel.getMyHomes(page)
+        AppEvent.showLoading()
     }
 
     override fun setView() {

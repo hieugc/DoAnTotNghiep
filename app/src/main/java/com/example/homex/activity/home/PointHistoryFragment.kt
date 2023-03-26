@@ -11,12 +11,17 @@ import com.example.homex.databinding.FragmentPointHistoryBinding
 class PointHistoryFragment : BaseFragment<FragmentPointHistoryBinding>() {
     override val layoutId: Int = R.layout.fragment_point_history
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_point_history, container, false)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        (activity as HomeActivity).setPropertiesScreen(
+            showLogo = false,
+            showBottomNav = false,
+            showTitleApp = Pair(true, "Điểm tích lũy"),
+            showMessage = false,
+            showMenu = false,
+            showBoxChatLayout = Pair(false, null),
+            showSearchLayout = false
+        )
     }
 
 }

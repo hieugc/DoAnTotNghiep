@@ -119,4 +119,23 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
             }
         }
     }
+
+    fun getPendingRequest(){
+        viewModelScope.launch {
+            requestResponseListLiveDate.addSource(repository.getPendingRequest()){
+                Log.e("response", it.toString())
+                when (it) {
+                    is ResultResponse.Success -> {
+                        Log.e("SuccessGetPending", "${it.data}")
+                        requestResponseListLiveDate.value = it.data
+                    }
+                    else -> {
+                        Log.e("NotSuccessGetPending", "hello")
+                    }
+                }
+            }
+        }
+    }
+
+
 }

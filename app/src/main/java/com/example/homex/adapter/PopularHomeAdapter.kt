@@ -30,6 +30,8 @@ class PopularHomeAdapter(val homeList: ArrayList<Home>?, val onClick: (Int)->Uni
                 Log.e("url", it[0].data.toString())
                 Glide.with(holder.itemView.context)
                     .load(it[0].data)
+                    .placeholder(R.drawable.ic_baseline_image_24)
+                    .error(R.mipmap.location)
                     .into(holder.binding.homeImg)
             }
         }

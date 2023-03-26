@@ -56,4 +56,11 @@ class RequestRepositoryImpl(private val api: ApiService): RequestRepository {
             override suspend fun createCall(): Response<ListResponse<RequestResponse>> = api.getRequestSent()
         }.build().asLiveData()
     }
+
+    override suspend fun getPendingRequest(): LiveData<ResultResponse<ArrayList<RequestResponse>>> {
+        return object : NetworkBoundResource<ListResponse<RequestResponse>, ArrayList<RequestResponse>>(){
+            override fun processResponse(response: ListResponse<RequestResponse>): ArrayList<RequestResponse>? = response.data
+            override suspend fun createCall(): Response<ListResponse<RequestResponse>> = api.getPendingRequest()
+        }.build().asLiveData()
+    }
 }

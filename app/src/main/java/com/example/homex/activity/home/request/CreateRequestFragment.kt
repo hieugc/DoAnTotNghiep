@@ -30,15 +30,7 @@ import java.util.*
 
 
 class CreateRequestFragment : BaseFragment<FragmentCreateRequestBinding>() {
-    companion object{
-        const val MILLIS_IN_A_DAY = 1000 * 60 * 60 * 24
-    }
     override val layoutId: Int = R.layout.fragment_create_request
-//    private lateinit var dateRangePicker: MaterialDatePicker<androidx.core.util.Pair<Long, Long>>
-//    private lateinit var builder: MaterialDatePicker.Builder<androidx.core.util.Pair<Long, Long>>
-//    private lateinit var constraintBuilder: CalendarConstraints.Builder
-//    private var selectedDate: androidx.core.util.Pair<Long, Long> = androidx.core.util.Pair(MaterialDatePicker.todayInUtcMilliseconds(), MaterialDatePicker.todayInUtcMilliseconds() + 7 * MILLIS_IN_A_DAY)
-//    private var selection: Pair<CalendarDate?, CalendarDate?> = Pair(null, null)
     private val args: CreateRequestFragmentArgs by navArgs()
     private val viewModel: CreateRequestViewModel by viewModels()
     private val requestViewModel: RequestViewModel by viewModel()
@@ -60,12 +52,6 @@ class CreateRequestFragment : BaseFragment<FragmentCreateRequestBinding>() {
 
         findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Pair<CalendarDate?, CalendarDate?>>("DATE")?.observe(viewLifecycleOwner){
             dates->
-//            val startDate = dates.first?.time?.time?.longToDate()
-//            val endDate = dates.second?.time?.time?.longToDate()
-//            binding.fromDateTV.text =  startDate
-//            binding.toDateTV.text = endDate
-//            Log.e("betweenDate",  "${startDate.betweenDays(endDate)}")
-//            selection = dates
             viewModel.startDate.postValue(dates.first)
             viewModel.endDate.postValue(dates.second)
         }
@@ -85,38 +71,13 @@ class CreateRequestFragment : BaseFragment<FragmentCreateRequestBinding>() {
     }
 
     override fun setView() {
-
-        //Date Range Picker
-//        val calendar = Calendar.getInstance(TimeZone.getDefault())
-//        calendar.clear()
-//
-//        val today = MaterialDatePicker.todayInUtcMilliseconds()
-//        calendar.timeInMillis = today
-//
-//        calendar.add(Calendar.YEAR, 5)
-//        val next_year = calendar.timeInMillis
-//
-//        constraintBuilder = CalendarConstraints.Builder()
-//        constraintBuilder.setOpenAt(selectedDate.first)
-//        constraintBuilder.setStart(today)
-//        constraintBuilder.setEnd(next_year)
-//        constraintBuilder.setValidator(DateValidatorPointForward.now())
-//
-//        builder = MaterialDatePicker.Builder.dateRangePicker()
-//            .setTitleText("Chọn khoảng thời gian trao đổi")
-//            .setSelection(selectedDate)
-//            .setCalendarConstraints(constraintBuilder.build())
-//        dateRangePicker = builder.build()
+        if (prefUtil.profile != null){
+            binding.yourPointTV.text = "Bạn hiện đang có ${prefUtil.profile?.point} Point"
+        }
 
         if(args.startDate != null && args.endDate != null){
             viewModel.startDate.postValue(args.startDate)
             viewModel.endDate.postValue(args.endDate)
-//            selection = Pair(
-//                args.startDate,
-//                args.endDate
-//            )
-//            binding.fromDateTV.text = selection.first?.time?.time?.longToDate()
-//            binding.toDateTV.text = selection.second?.time?.time?.longToDate()
         }
         else {
             val cal = Calendar.getInstance()
@@ -125,13 +86,8 @@ class CreateRequestFragment : BaseFragment<FragmentCreateRequestBinding>() {
             cal.add(Calendar.DATE, 7)
             val second = CalendarDate(cal.time, cal.get(Calendar.DAY_OF_MONTH).toString())
             Log.e("second", cal.get(Calendar.DAY_OF_MONTH).toString())
-//            selection = Pair(
-//                first, second
-//            )
             viewModel.startDate.postValue(first)
             viewModel.endDate.postValue(second)
-//            binding.fromDateTV.text = first.time?.time?.longToDate()
-//            binding.toDateTV.text = second.time?.time?.longToDate()
         }
     }
 
@@ -151,15 +107,9 @@ class CreateRequestFragment : BaseFragment<FragmentCreateRequestBinding>() {
         }
 
         binding.changeDateBtn.setOnClickListener {
-//            dateRangePicker.show(parentFragmentManager, "Chọn ngày trao đổi")
             val action = CreateRequestFragmentDirections.actionCreateRequestFragmentToBottomSheetChangeDateFragment(viewModel.startDate.value, viewModel.endDate.value)
             findNavController().navigate(action)
-//            findNavController().navigate(R.id.action_createRequestFragment_to_bottomSheetChangeDateFragment)
         }
-
-//        dateRangePicker.addOnPositiveButtonClickListener { sel->
-//            updatePicker(sel)
-//        }
 
         binding.addYourHomeBtn.setOnClickListener {
             findNavController().navigate(R.id.action_createRequestFragment_to_pickYourHomeFragment)
@@ -245,20 +195,6 @@ class CreateRequestFragment : BaseFragment<FragmentCreateRequestBinding>() {
             }
         }
     }
-
-//    private fun updatePicker(sel: androidx.core.util.Pair<Long, Long>) {
-//        binding.fromDateTV.text = sel.first.longToDate()
-//        binding.toDateTV.text = sel.second.longToDate()
-//        selectedDate = sel
-//        constraintBuilder.setOpenAt(sel.first)
-//        dateRangePicker =
-//            builder.setSelection(sel).setCalendarConstraints(constraintBuilder.build())
-//                .build()
-//        dateRangePicker.addOnPositiveButtonClickListener {
-//            updatePicker(it)
-//        }
-//    }
-
 
     override fun setViewModel() {
         requestViewModel.messageLiveData.observe(viewLifecycleOwner){

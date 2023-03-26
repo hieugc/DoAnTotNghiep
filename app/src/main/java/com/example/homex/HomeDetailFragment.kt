@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import androidx.core.text.HtmlCompat
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
@@ -212,10 +213,10 @@ class HomeDetailFragment : BaseFragment<FragmentHomeDetailBinding>() {
         }
         binding.showAllUtil.setOnClickListener {
             if(utilAdapter.showAll){
-                binding.showAllUtil.text = "Xem thêm"
+                binding.showAllUtil.text = HtmlCompat.fromHtml(String.format(getString(R.string.see_more)), HtmlCompat.FROM_HTML_MODE_LEGACY)
                 utilAdapter.showAll = false
             }else{
-                binding.showAllUtil.text = "Ẩn bớt"
+                binding.showAllUtil.text = HtmlCompat.fromHtml(String.format(getString(R.string.see_less)), HtmlCompat.FROM_HTML_MODE_LEGACY)
                 utilAdapter.showAll = true
             }
             utilAdapter.notifyDataSetChanged()

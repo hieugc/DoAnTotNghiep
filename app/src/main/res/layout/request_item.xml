@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+            name="request"
+            type="com.homex.core.model.response.RequestResponse" />
+    </data>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -22,7 +28,7 @@
             android:drawableStart="@drawable/ic_user"
             android:drawablePadding="12dp"
             android:gravity="center_vertical"
-            android:text="Phạm Minh Hiếu" />
+            android:text="@{request.request.user.userName}" />
 
         <androidx.appcompat.widget.AppCompatTextView
             style="@style/MediumText"
@@ -51,6 +57,7 @@
             android:layout_height="100dp"
             android:layout_gravity="center"
             android:scaleType="fitXY"
+            loadImage="@{ !request.house.images.empty ? request.house.images.get(0).data : null}"
             android:src="@mipmap/location" />
 
         <LinearLayout
@@ -65,7 +72,7 @@
                 style="@style/HomeTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Nhà của hiếu"
+                android:text="@{request.house.name}"
                 android:textStyle="bold" />
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -73,7 +80,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:text="Phương thức: Trao đổi bằng điểm" />
+                android:text="@{(request.request.type == 1) ? `Phương thức: Trao đổi bằng điểm` : `Phương thức: Trao đổi bằng nhà`}" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -100,7 +107,8 @@
                         android:layout_marginTop="4dp"
                         android:drawableStart="@drawable/ic_from_date"
                         android:gravity="center"
-                        android:text="03/10/2022" />
+                        android:id="@+id/fromDateRequest"
+                        app:formatDate="@{request.request.startDate}"/>
                 </LinearLayout>
 
                 <com.google.android.material.divider.MaterialDivider
@@ -128,7 +136,9 @@
                         android:layout_marginTop="4dp"
                         android:drawableStart="@drawable/ic_to_date"
                         android:gravity="center"
-                        android:text="10/10/2022" />
+                        android:id="@+id/toDateRequest"
+                        app:formatDate="@{request.request.endDate}"
+                        />
                 </LinearLayout>
             </LinearLayout>
 
@@ -146,3 +156,5 @@
 
 
 </LinearLayout>
+</layout>
+

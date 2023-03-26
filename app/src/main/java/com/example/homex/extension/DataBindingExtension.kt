@@ -36,6 +36,16 @@ fun AppCompatImageView.loadImage(url: String?){
         .into(this)
 }
 
+@BindingAdapter(value = ["loadAvatar"])
+fun AppCompatImageView.loadAvatar(url: String?){
+    Glide.with(context)
+        .asBitmap()
+        .placeholder(R.drawable.ic_user_solid)
+        .error(R.mipmap.avatar)
+        .load(url)
+        .into(this)
+}
+
 @BindingAdapter(value = ["dob", "gender"])
 fun AppCompatTextView.getAge(dob: String?, gender: Boolean?){
     val df1: DateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.ENGLISH)
@@ -86,20 +96,56 @@ fun AppCompatTextView.getAge(dob: String?, gender: Boolean?){
 fun AppCompatTextView.setHomeStatus(status: Int?){
     when(status){
         HomeStatus.VALID.ordinal->{
-            this.text = "Đang hoạt động"
+            this.text = context.getString(R.string.status_active)
             this.setTextColor(ContextCompat.getColor(context, R.color.green))
         }
         HomeStatus.PENDING.ordinal->{
-            this.text = "Đang kiểm duyệt"
+            this.text = context.getString(R.string.status_pending)
             this.setTextColor(ContextCompat.getColor(context, R.color.orange))
         }
         HomeStatus.DISABLE.ordinal->{
-            this.text = "Đang ẩn"
+            this.text = context.getString(R.string.status_hidden)
             this.setTextColor(ContextCompat.getColor(context, R.color.gray))
         }
         HomeStatus.SWAPPED.ordinal->{
-            this.text = "Đang trao đổi"
+            this.text = context.getString(R.string.status_swapping)
             this.setTextColor(ContextCompat.getColor(context, R.color.yellow))
         }
     }
+}
+
+
+@BindingAdapter(value =["requestStatus"])
+fun AppCompatTextView.setRequestStatus(requestStatus: Int?){
+    when(requestStatus){
+
+    }
+}
+
+
+@BindingAdapter(value = ["formatDate"])
+fun AppCompatTextView.getFormatDate(formatDate: String?){
+    val df1: DateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+    if (formatDate != null) {
+        val result1 = df1.parse(formatDate)
+        val df2: DateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        result1?.let {
+            text = df2.format(it)
+            return
+        }
+    }
+    text = ""
+}
+
+@BindingAdapter(value = ["price", "startDate", "endDate"])
+fun AppCompatTextView.getPrice(price: Int?, startDate: String?, endDate: String?){
+    if (price != null && startDate != null && endDate != null){
+        val days = startDate.betweenDays(endDate)
+        if (days != null){
+            val p = days * price
+            text = p.toString()
+            return
+        }
+    }
+    text = "0"
 }

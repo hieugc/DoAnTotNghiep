@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.core.os.bundleOf
+import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -53,6 +54,7 @@ class MyHomeDetailFragment : BaseFragment<FragmentMyHomeDetailBinding>() {
         )
 
         viewModel.getHomeDetails(args.id)
+        AppEvent.showLoading()
     }
 
     override fun setView() {
@@ -165,13 +167,15 @@ class MyHomeDetailFragment : BaseFragment<FragmentMyHomeDetailBinding>() {
                 binding.home = it
                 adapter.imgList = it.images
                 utilAdapter.itemList = it.utilities
-                utilAdapter.itemList = it.utilities
                 if(it.utilities != null){
                     if(it.utilities!!.size > 4){
                         binding.showAllUtil.visible()
                     }
                 }
                 rulesAdapter.itemList = it.rules
+                adapter.notifyDataSetChanged()
+                utilAdapter.notifyDataSetChanged()
+                rulesAdapter.notifyDataSetChanged()
             }
             AppEvent.hideLoading()
         }
@@ -180,10 +184,10 @@ class MyHomeDetailFragment : BaseFragment<FragmentMyHomeDetailBinding>() {
     override fun setEvent() {
         binding.showAllUtil.setOnClickListener {
             if(utilAdapter.showAll){
-                binding.showAllUtil.text = "Xem thêm"
+                binding.showAllUtil.text = HtmlCompat.fromHtml(String.format(getString(R.string.see_more)), HtmlCompat.FROM_HTML_MODE_LEGACY)
                 utilAdapter.showAll = false
             }else{
-                binding.showAllUtil.text = "Ẩn bớt"
+                binding.showAllUtil.text = HtmlCompat.fromHtml(String.format(getString(R.string.see_less)), HtmlCompat.FROM_HTML_MODE_LEGACY)
                 utilAdapter.showAll = true
             }
             utilAdapter.notifyDataSetChanged()

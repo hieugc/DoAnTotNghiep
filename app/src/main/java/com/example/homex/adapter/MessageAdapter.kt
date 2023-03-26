@@ -11,6 +11,7 @@ import com.example.homex.databinding.MessageItemNoAvatarBinding
 import com.example.homex.databinding.MessageTimeItemBinding
 import com.example.homex.databinding.MyMessageItemBinding
 import com.example.homex.extension.convertToRelativeDate
+import com.example.homex.extension.dpToPx
 import com.example.homex.extension.formatIso8601ToFormat
 import com.homex.core.model.Message
 import com.homex.core.model.UserMessage
@@ -75,6 +76,23 @@ class MessageAdapter(var messageList: ArrayList<Message>?, var userMessages: Arr
             MY_MESSAGE->{
                 val tempHolder = holder as MyMessageViewHolder
                 tempHolder.binding.textMsg.text = item?.message
+                if(position > 0)
+                {
+                    val nextItem = messageList?.get(position - 1)
+                    if (nextItem?.idSend == userAccess){
+                        val lastParams = holder.itemView.layoutParams as ViewGroup.MarginLayoutParams
+                        lastParams.bottomMargin = 4f.dpToPx(holder.itemView.context)
+                        holder.itemView.requestLayout()
+                    }else{
+                        val lastParams = holder.itemView.layoutParams as ViewGroup.MarginLayoutParams
+                        lastParams.bottomMargin = 8f.dpToPx(holder.itemView.context)
+                        holder.itemView.requestLayout()
+                    }
+                }else{
+                    val lastParams = holder.itemView.layoutParams as ViewGroup.MarginLayoutParams
+                    lastParams.bottomMargin = 8f.dpToPx(holder.itemView.context)
+                    holder.itemView.requestLayout()
+                }
             }
             TIME->{
                 Log.e("time", "${item?.createdDate}")

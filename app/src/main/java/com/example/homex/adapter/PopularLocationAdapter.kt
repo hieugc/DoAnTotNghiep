@@ -25,10 +25,10 @@ class PopularLocationAdapter(var list: ArrayList<Location>? = arrayListOf()): Re
     override fun onBindViewHolder(holder: PopularLocationViewHolder, position: Int) {
         val item = list?.get(position)
         holder.binding.locationTxt.text = item?.name ?: ""
-        Glide.with(holder.itemView.context)
-            .load(item?.imageUrl)
-            .apply(RequestOptions.bitmapTransform(RoundedCorners(5f.dpToPx(holder.itemView.context))))
-            .into(holder.binding.locationImg)
+//        Glide.with(holder.itemView.context)
+//            .load(item?.imageUrl)
+//            .apply(RequestOptions.bitmapTransform(RoundedCorners(5f.dpToPx(holder.itemView.context))))
+//            .into(holder.binding.locationImg)
         if(position == list?.size!! - 1 )
         {
             val lastParams = holder.itemView.layoutParams as ViewGroup.MarginLayoutParams

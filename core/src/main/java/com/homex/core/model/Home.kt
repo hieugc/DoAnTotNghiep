@@ -27,7 +27,9 @@ data class Home(
     val rating: Double? = null,
     val request : Int? = null,
     val userAccess: String? = null,
-    val user: Profile? = null
+    val user: Profile? = null,
+    val numberRating: Int? = null,
+
 ): Parcelable{
     fun getHomeType(): String{
         return if (option == 1) "Căn nhà"  else "Căn hộ"

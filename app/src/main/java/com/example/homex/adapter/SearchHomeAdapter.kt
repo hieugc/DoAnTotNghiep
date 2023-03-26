@@ -27,10 +27,6 @@ class SearchHomeAdapter(val searchList: ArrayList<Home>?, private val onClick: (
             val lastParams = holder.itemView.layoutParams as ViewGroup.MarginLayoutParams
             lastParams.bottomMargin = 80f.dpToPx(holder.itemView.context)
             holder.itemView.requestLayout()
-        }else{
-            val lastParams = holder.itemView.layoutParams as ViewGroup.MarginLayoutParams
-            lastParams.bottomMargin = 16f.dpToPx(holder.itemView.context)
-            holder.itemView.requestLayout()
         }
         holder.binding.root.setOnClickListener {
             if (item != null) {

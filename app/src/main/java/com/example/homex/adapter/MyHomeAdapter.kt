@@ -27,34 +27,7 @@ class MyHomeAdapter(val homeList: ArrayList<Home>?, val onClick: (Int)->Unit): R
 
     override fun onBindViewHolder(holder: MyHomeViewHolder, position: Int) {
         val item = homeList?.get(position)
-        item?.images?.let {
-            if (it.isNotEmpty()){
-                Log.e("url", it[0].data.toString())
-                Glide.with(holder.itemView.context)
-                    .load(it[0].data)
-                    .into(holder.binding.homeImg)
-            }
-        }
-        holder.binding.homeName.text = item?.name
-        holder.binding.homeLocation.text = item?.location
-        holder.binding.homeNOP.text = "${item?.people} người"
-        holder.binding.homePriceTV.text = "${item?.price} point/ngày"
-        holder.binding.ratingTV.text = "${item?.rating}"
-        holder.binding.homeStatus.text = item?.getHomeStatus()
-        when(item?.status){
-            HomeStatus.VALID.ordinal->{
-                holder.binding.homeStatus.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.green))
-            }
-            HomeStatus.PENDING.ordinal->{
-                holder.binding.homeStatus.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.orange))
-            }
-            HomeStatus.DISABLE.ordinal->{
-                holder.binding.homeStatus.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.gray))
-            }
-            HomeStatus.SWAPPED.ordinal->{
-                holder.binding.homeStatus.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.yellow))
-            }
-        }
+        holder.binding.home = item
         holder.binding.root.setOnClickListener {
             item?.id?.let { onClick.invoke(it) }
         }
@@ -62,10 +35,6 @@ class MyHomeAdapter(val homeList: ArrayList<Home>?, val onClick: (Int)->Unit): R
         {
             val lastParams = holder.itemView.layoutParams as ViewGroup.MarginLayoutParams
             lastParams.bottomMargin = 80f.dpToPx(holder.itemView.context)
-            holder.itemView.requestLayout()
-        }else{
-            val lastParams = holder.itemView.layoutParams as ViewGroup.MarginLayoutParams
-            lastParams.bottomMargin = 16f.dpToPx(holder.itemView.context)
             holder.itemView.requestLayout()
         }
     }

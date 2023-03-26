@@ -142,4 +142,7 @@ interface ApiService {
 
     @POST("api/Request/Update")
     suspend fun editRequest(@Body param: EditRequestParam): Response<ObjectResponse<JsonObject>>
+
+    @GET("api/Request/GetRequestReceived")
+    suspend fun getPendingRequest(): Response<ListResponse<RequestResponse>>
 }

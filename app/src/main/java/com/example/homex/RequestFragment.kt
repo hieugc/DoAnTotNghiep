@@ -11,11 +11,18 @@ import com.example.homex.activity.home.HomeActivity
 import com.example.homex.adapter.RequestItemAdapter
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentRequestBinding
+import com.example.homex.extension.gone
+import com.example.homex.extension.visible
+import com.example.homex.viewmodel.RequestViewModel
+import com.homex.core.model.response.RequestResponse
+import com.homex.core.util.AppEvent
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class RequestFragment : BaseFragment<FragmentRequestBinding>() {
     override val layoutId: Int = R.layout.fragment_request
-
+    private val viewModel: RequestViewModel by viewModel()
+    private val requestList = arrayListOf<RequestResponse>()
     private lateinit var adapter: RequestItemAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -29,20 +36,35 @@ class RequestFragment : BaseFragment<FragmentRequestBinding>() {
             showSearchLayout = false,
             showTitleApp = Pair(true, "Yêu cầu trao đổi")
         )
+        viewModel.getPendingRequest()
+        AppEvent.showLoading()
     }
 
     override fun setView() {
         adapter = RequestItemAdapter(
-            listOf(
-                "Nhà của Hiếu",
-                "Nhà của Phạm",
-                "Nhà của Nhật"
-            )
+            requestList
         ){
-            findNavController().navigate(R.id.action_requestFragment_to_pendingRequestDetailFragment)
+            val action = RequestFragmentDirections.actionRequestFragmentToPendingRequestDetailFragment(it)
+            findNavController().navigate(action)
         }
         binding.requestRecView.adapter = adapter
         val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         binding.requestRecView.layoutManager = layoutManager
+    }
+
+    override fun setViewModel() {
+        viewModel.requestResponseListLiveDate.observe(this){
+            if (it != null){
+                requestList.clear()
+                requestList.addAll(it)
+                adapter.notifyDataSetChanged()
+                if (requestList.isEmpty()){
+                    binding.noHomeTxt.visible()
+                }else{
+                    binding.noHomeTxt.gone()
+                }
+            }
+            AppEvent.hideLoading()
+        }
     }
 }

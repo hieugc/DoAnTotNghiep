@@ -134,4 +134,11 @@
     <string name="temp_image">temp_image.jpg</string>
     <string name="pending">Chờ xác nhận</string>
     <string name="detail">Chi tiết</string>
+    <string name="status_hidden">Đang ẩn</string>
+    <string name="status_pending">Đang kiểm duyệt</string>
+    <string name="status_active">Đang hoạt động</string>
+    <string name="status_swapping">Đang trao đổi</string>
+    <string name="see_more">&lt;u>Xem thêm&lt;/u></string>
+    <string name="see_less">&lt;u>Ẩn bớt&lt;/u></string>
+    <string name="see_more_html"><u>Xem thêm</u></string>
 </resources>
