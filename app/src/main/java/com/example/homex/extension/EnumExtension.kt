@@ -17,3 +17,16 @@ enum class Rules{
     NO_PET
 }
 
+enum class RequestStatus{
+    WAITING,
+    ACCEPTED,
+    REJECTED,
+    REVIEWING,
+    DONE
+}
+
+enum class RequestType{
+    NONE,
+    BY_POINT,
+    BY_HOME
+}
