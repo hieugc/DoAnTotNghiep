@@ -1,13 +1,12 @@
-package com.example.homex.activity.home
+package com.example.homex.activity.home.profile
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.navigation.fragment.findNavController
-import com.example.homex.MainActivity
 import com.example.homex.R
 import com.example.homex.activity.auth.AuthActivity
+import com.example.homex.activity.home.HomeActivity
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentUserBinding
 import com.example.homex.extension.gone

@@ -5,11 +5,15 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.homex.R
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentPendingRequestDetailBinding
+import com.example.homex.extension.RequestStatus
 import com.example.homex.viewmodel.RequestViewModel
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.homex.core.param.request.UpdateStatusParam
 import com.homex.core.util.AppEvent
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -39,11 +43,45 @@ class PendingRequestDetailFragment : BaseFragment<FragmentPendingRequestDetailBi
 
     override fun setEvent() {
         binding.rejectBtn.setOnClickListener {
-
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Từ chối yêu cầu")
+                .setMessage("Bạn có muốn từ chối yêu cầu trao đổi này ?")
+                .setNegativeButton(resources.getString(R.string.cancel)) { dialog, which ->
+                    // Respond to negative button press
+                }
+                .setPositiveButton(resources.getString(R.string.confirm)) { dialog, which ->
+                    // Respond to positive button press
+                    dialog.dismiss()
+                    if (args.id != 0){
+                        val param = UpdateStatusParam(
+                            id = args.id,
+                            status = RequestStatus.REJECTED.ordinal
+                        )
+                        viewModel.updateStatus(param)
+                    }
+                }
+                .show()
         }
 
         binding.acceptBtn.setOnClickListener {
-
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Chấp nhận yêu cầu")
+                .setMessage("Bạn có muốn chấp nhận yêu cầu trao đổi này ?")
+                .setNegativeButton(resources.getString(R.string.cancel)) { dialog, which ->
+                    // Respond to negative button press
+                }
+                .setPositiveButton(resources.getString(R.string.confirm)) { dialog, which ->
+                    // Respond to positive button press
+                    dialog.dismiss()
+                    if (args.id != 0){
+                        val param = UpdateStatusParam(
+                            id = args.id,
+                            status = RequestStatus.ACCEPTED.ordinal
+                        )
+                        viewModel.updateStatus(param)
+                    }
+                }
+                .show()
         }
     }
 

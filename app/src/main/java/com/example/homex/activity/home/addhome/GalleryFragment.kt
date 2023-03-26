@@ -1,10 +1,9 @@
-package com.example.homex.activity.home
+package com.example.homex.activity.home.addhome
 
 import android.Manifest
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
@@ -12,11 +11,10 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.navGraphViewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.homex.R
-import com.example.homex.activity.home.addhome.FileViewModel
 import com.example.homex.adapter.GalleryAdapter
+import com.example.homex.app.IMAGE
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentGalleryBinding
 import com.example.homex.viewmodel.GalleryViewModel
@@ -25,16 +23,12 @@ import kotlinx.coroutines.flow.collectLatest
 
 class GalleryFragment : BaseFragment<FragmentGalleryBinding>() {
     override val layoutId: Int = R.layout.fragment_gallery
-    private var uri: Uri? = null
     private val viewModel: GalleryViewModel by viewModels()
     private val fileVM : FileViewModel by activityViewModels()
     private val permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()){ success->
         if(success == true){
-            Log.e("ext", "granted")
             viewModel.loadImages()
             setupCollecting()
-        }else{
-            Log.e("ext", "denied")
         }
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -65,6 +59,7 @@ class GalleryFragment : BaseFragment<FragmentGalleryBinding>() {
                     binding.galleryRecView.adapter = GalleryAdapter(list){
                         if (it != null) {
                             fileVM.addFile(it, false)
+                            findNavController().previousBackStackEntry?.savedStateHandle?.set(IMAGE, it)
                         }
                         findNavController().popBackStack()
                     }

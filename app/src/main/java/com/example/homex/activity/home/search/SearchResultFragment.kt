@@ -1,12 +1,13 @@
-package com.example.homex
+package com.example.homex.activity.home.search
 
 import android.Manifest
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import androidx.lifecycle.Transformations.map
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.homex.BuildConfig
+import com.example.homex.R
 import com.example.homex.activity.home.HomeActivity
 import com.example.homex.adapter.SearchHomeAdapter
 import com.example.homex.base.BaseFragment

@@ -1,4 +1,4 @@
-package com.example.homex
+package com.example.homex.activity.home.message
 
 import android.os.Bundle
 import android.util.Log
@@ -7,6 +7,7 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.homex.R
 import com.example.homex.activity.home.HomeActivity
 import com.example.homex.adapter.MessageAdapter
 import com.example.homex.base.BaseFragment
@@ -16,7 +17,6 @@ import com.example.homex.extension.gone
 import com.example.homex.extension.visible
 import com.example.homex.viewmodel.ChatViewModel
 import com.homex.core.model.Message
-import com.homex.core.model.OldMessage
 import com.homex.core.model.UserMessage
 import com.homex.core.param.chat.GetMessagesParam
 import com.homex.core.param.chat.Pagination
@@ -117,12 +117,16 @@ class MessageBoxFragment : BaseFragment<FragmentMessageBoxBinding>() {
             if(binding.actionLayout.visibility == View.GONE)
             {
                 binding.actionLayout.visible()
-                binding.addBtn.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_close_circle))
+                binding.addBtn.setImageDrawable(ContextCompat.getDrawable(requireContext(),
+                    R.drawable.ic_close_circle
+                ))
             }
             else if(binding.actionLayout.visibility == View.VISIBLE)
             {
                 binding.actionLayout.gone()
-                binding.addBtn.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_pluscircle))
+                binding.addBtn.setImageDrawable(ContextCompat.getDrawable(requireContext(),
+                    R.drawable.ic_pluscircle
+                ))
             }
         }
 

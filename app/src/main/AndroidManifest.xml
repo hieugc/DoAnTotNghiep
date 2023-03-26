@@ -51,9 +51,6 @@
         <activity
             android:name=".activity.auth.AuthActivity"
             android:exported="false" />
-        <activity
-            android:name=".MainActivity"
-            android:exported="false" />
     </application>
 
 </manifest>

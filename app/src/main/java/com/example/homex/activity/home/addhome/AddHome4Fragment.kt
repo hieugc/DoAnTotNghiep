@@ -1,23 +1,11 @@
 package com.example.homex.activity.home.addhome
 
-import android.content.ContentResolver
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.ImageDecoder
 import android.net.Uri
-import android.os.Build
-import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.provider.MediaStore
 import android.util.Log
-import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.navigation.fragment.findNavController
-import androidx.navigation.navGraphViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.homex.R
 import com.example.homex.adapter.AddImageAdapter
@@ -27,14 +15,7 @@ import com.example.homex.extension.disable
 import com.example.homex.extension.enable
 import com.example.homex.extension.gone
 import com.example.homex.extension.visible
-import com.example.homex.utils.RealPathUtil
 import com.homex.core.model.ImageBase
-import okhttp3.MediaType
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
-import java.io.File
-import java.io.FileOutputStream
 
 
 class AddHome4Fragment : BaseFragment<FragmentAddHome4Binding>() {

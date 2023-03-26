@@ -20,7 +20,6 @@ import androidx.navigation.ui.NavigationUI.navigateUp
 import androidx.navigation.ui.NavigationUI.setupActionBarWithNavController
 import androidx.navigation.ui.NavigationUI.setupWithNavController
 import com.bumptech.glide.Glide
-import com.example.homex.NotificationDialogFragment
 import com.example.homex.R
 import com.example.homex.activity.home.addhome.FileViewModel
 import com.example.homex.app.RECEIVE_MESSAGE
@@ -39,7 +38,6 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
-import java.util.*
 
 
 class HomeActivity : BaseActivity() {

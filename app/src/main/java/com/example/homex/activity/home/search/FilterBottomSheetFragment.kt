@@ -1,4 +1,4 @@
-package com.example.homex
+package com.example.homex.activity.home.search
 
 import android.app.Dialog
 import android.graphics.Color
@@ -12,6 +12,7 @@ import androidx.appcompat.widget.AppCompatCheckBox
 import androidx.appcompat.widget.AppCompatRadioButton
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
+import com.example.homex.R
 import com.example.homex.databinding.FragmentFilterBottomSheetBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog

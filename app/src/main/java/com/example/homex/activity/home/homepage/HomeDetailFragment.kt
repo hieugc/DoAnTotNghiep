@@ -1,12 +1,8 @@
-package com.example.homex
+package com.example.homex.activity.home.homepage
 
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.core.text.HtmlCompat
 import androidx.navigation.fragment.findNavController
@@ -15,13 +11,13 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.viewpager2.widget.ViewPager2
+import com.example.homex.R
 import com.example.homex.activity.home.HomeActivity
 import com.example.homex.adapter.HomeRatingAdapter
 import com.example.homex.adapter.ImageSlideAdapter
 import com.example.homex.adapter.SimilarHomeAdapter
 import com.example.homex.adapter.UtilAdapter
 import com.example.homex.app.CONTACT_USER
-import com.example.homex.app.HOME
 import com.example.homex.app.ID
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentHomeDetailBinding
@@ -34,8 +30,6 @@ import com.example.homex.viewmodel.ChatViewModel
 import com.example.homex.viewmodel.YourHomeViewModel
 import com.google.android.material.tabs.TabLayoutMediator
 import com.homex.core.model.CalendarDate
-import com.homex.core.model.Home
-import com.homex.core.model.ImageBase
 import com.homex.core.param.chat.ContactUserParam
 import com.homex.core.util.AppEvent
 import com.homex.core.util.PrefUtil
@@ -112,7 +106,8 @@ class HomeDetailFragment : BaseFragment<FragmentHomeDetailBinding>() {
         chatViewModel.connectToUser.observe(this){ messageRoom ->
             if (messageRoom != null){
                 messageRoom.idRoom?.let {
-                    findNavController().navigate(R.id.action_global_messageFragment, bundleOf(
+                    findNavController().navigate(
+                        R.id.action_global_messageFragment, bundleOf(
                         ID to it,
                         CONTACT_USER to true
                         ))

@@ -68,6 +68,38 @@ class AddHomeFragment : BaseFragment<FragmentAddHomeBinding>() {
         )
         super.onViewCreated(view, savedInstanceState)
         Log.e("viewCreated", "Hello")
+        arguments?.getParcelable<Home>(HOME)?.let {
+            (activity as HomeActivity).setPropertiesScreen(
+                showLogo = false,
+                showBottomNav = false,
+                showMessage = false,
+                showMenu = false,
+                showTitleApp = Pair(true, "Sửa thông tin nhà"),
+                showBoxChatLayout = Pair(false, null),
+            )
+            Log.e("setView", "Hello")
+
+            viewModel.option.postValue(it.option)
+            viewModel.name.postValue(it.name)
+            viewModel.square.postValue(it.square)
+            viewModel.location.postValue(it.location)
+            viewModel.description.postValue(it.description)
+            viewModel.price.postValue(it.price)
+            viewModel.bedroom.postValue(it.bedRoom)
+            viewModel.bathroom.postValue(it.bathRoom)
+            viewModel.people.postValue(it.people)
+            viewModel.utilities.postValue(it.utilities)
+            viewModel.rules.postValue(it.rules)
+            viewModel.lat.postValue(it.lat)
+            viewModel.lng.postValue(it.lng)
+            viewModel.id.postValue(it.id)
+            viewModel.status.postValue(it.status)
+            viewModel.idCity.postValue(it.idCity)
+            viewModel.idDistrict.postValue(it.idDistrict)
+            viewModel.idWard.postValue(it.idWard)
+            viewModel.images.postValue(it.images)
+            arguments?.remove(HOME)
+        }
     }
 
     fun openBottomSheet(){
@@ -146,6 +178,27 @@ class AddHomeFragment : BaseFragment<FragmentAddHomeBinding>() {
         }
         viewModel.images.observe(viewLifecycleOwner){
             Log.e("images", "$it")
+        }
+        viewModel.lat.observe(viewLifecycleOwner){
+            Log.e("lat", "$it")
+        }
+        viewModel.lng.observe(viewLifecycleOwner){
+            Log.e("lng", "$it")
+        }
+        viewModel.id.observe(viewLifecycleOwner){
+            Log.e("id", "$it")
+        }
+        viewModel.status.observe(viewLifecycleOwner){
+            Log.e("status", "$it")
+        }
+        viewModel.idCity.observe(viewLifecycleOwner){
+            Log.e("idCity", "$it")
+        }
+        viewModel.idDistrict.observe(viewLifecycleOwner){
+            Log.e("idDistrict", "$it")
+        }
+        viewModel.idWard.observe(viewLifecycleOwner){
+            Log.e("idWard", "$it")
         }
 
         homeViewModel.messageLiveData.observe(viewLifecycleOwner){
@@ -380,39 +433,6 @@ class AddHomeFragment : BaseFragment<FragmentAddHomeBinding>() {
         return null
     }
 
-    override fun setView() {
-        arguments?.getParcelable<Home>(HOME)?.let {
-            (activity as HomeActivity).setPropertiesScreen(
-                showLogo = false,
-                showBottomNav = false,
-                showMessage = false,
-                showMenu = false,
-                showTitleApp = Pair(true, "Sửa thông tin nhà"),
-                showBoxChatLayout = Pair(false, null),
-            )
-            Log.e("setView", "Hello")
-
-            viewModel.option.postValue(it.option)
-            viewModel.name.postValue(it.name)
-            viewModel.square.postValue(it.square)
-            viewModel.location.postValue(it.location)
-            viewModel.description.postValue(it.description)
-            viewModel.price.postValue(it.price)
-            viewModel.bedroom.postValue(it.bedRoom)
-            viewModel.bathroom.postValue(it.bathRoom)
-            viewModel.people.postValue(it.people)
-            viewModel.utilities.postValue(it.utilities)
-            viewModel.rules.postValue(it.rules)
-            viewModel.lat.postValue(it.lat)
-            viewModel.lng.postValue(it.lng)
-            viewModel.id.postValue(it.id)
-            viewModel.status.postValue(it.status)
-            viewModel.idCity.postValue(it.idCity)
-            viewModel.idDistrict.postValue(it.idDistrict)
-            viewModel.idWard.postValue(it.idWard)
-            viewModel.images.postValue(it.images)
-        }
-    }
 
     private fun saveBitmapToSDCard(bitmap: Bitmap?): File{
         val dir = context?.getExternalFilesDir(Environment.DIRECTORY_PICTURES)

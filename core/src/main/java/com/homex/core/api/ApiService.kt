@@ -15,6 +15,7 @@ import com.homex.core.param.chat.GetMessagesParam
 import com.homex.core.param.chat.SendMessageParam
 import com.homex.core.param.request.CreateRequestParam
 import com.homex.core.param.request.EditRequestParam
+import com.homex.core.param.request.UpdateStatusParam
 import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.*
@@ -145,4 +146,7 @@ interface ApiService {
 
     @GET("api/Request/GetRequestReceived")
     suspend fun getPendingRequest(): Response<ListResponse<RequestResponse>>
+
+    @POST("api/Request/UpdateStatus")
+    suspend fun updateStatus(param: UpdateStatusParam): Response<ObjectResponse<JsonObject>>
 }

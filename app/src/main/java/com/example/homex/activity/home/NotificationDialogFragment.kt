@@ -1,12 +1,12 @@
-package com.example.homex
+package com.example.homex.activity.home
 
 import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.*
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.DialogFragment
+import com.example.homex.R
 import com.example.homex.databinding.FragmentNotificationDialogBinding
 
 class NotificationDialogFragment : DialogFragment() {

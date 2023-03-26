@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.example.homex.activity.home.HomeFragment"
+        android:name="com.example.homex.activity.home.homepage.HomeFragment"
         android:label="HomeFragment"
         tools:layout="@layout/fragment_home">
         <action
@@ -20,7 +20,7 @@
     </fragment>
     <fragment
         android:id="@+id/exploreFragment"
-        android:name="com.example.homex.activity.home.ExploreFragment"
+        android:name="com.example.homex.activity.home.explore.ExploreFragment"
         android:label="fragment_explore"
         tools:layout="@layout/fragment_explore" />
     <fragment
@@ -30,7 +30,7 @@
         tools:layout="@layout/fragment_notification" />
     <fragment
         android:id="@+id/userFragment"
-        android:name="com.example.homex.activity.home.UserFragment"
+        android:name="com.example.homex.activity.home.profile.UserFragment"
         android:label="fragment_user"
         tools:layout="@layout/fragment_user" >
         <action
@@ -71,7 +71,7 @@
     </fragment>
     <fragment
         android:id="@+id/messageFragment"
-        android:name="com.example.homex.activity.home.MessageFragment"
+        android:name="com.example.homex.activity.home.message.MessageFragment"
         android:label="fragment_message"
         tools:layout="@layout/fragment_message">
         <action
@@ -96,12 +96,9 @@
         app:popExitAnim="@anim/slide_in_right"/>
     <fragment
         android:id="@+id/messageBoxFragment"
-        android:name="com.example.homex.MessageBoxFragment"
+        android:name="com.example.homex.activity.home.message.MessageBoxFragment"
         android:label="MessageBoxFragment"
         tools:layout="@layout/fragment_message_box">
-        <action
-            android:id="@+id/action_messageBoxFragment_to_createRequestBottomSheetFragment"
-            app:destination="@id/createRequestBottomSheetFragment" />
         <action
             android:id="@+id/action_messageBoxFragment_to_createRequestFragment"
             app:destination="@id/createRequestFragment"
@@ -121,7 +118,7 @@
     </fragment>
     <fragment
         android:id="@+id/searchFragment"
-        android:name="com.example.homex.SearchFragment"
+        android:name="com.example.homex.activity.home.search.SearchFragment"
         android:label="SearchFragment"
         tools:layout="@layout/fragment_search">
         <action
@@ -134,7 +131,7 @@
     </fragment>
     <fragment
         android:id="@+id/searchResultFragment"
-        android:name="com.example.homex.SearchResultFragment"
+        android:name="com.example.homex.activity.home.search.SearchResultFragment"
         android:label="SearchResultFragment"
         tools:layout="@layout/fragment_search_result">
         <action
@@ -143,12 +140,12 @@
     </fragment>
     <dialog
         android:id="@+id/filterBottomSheetFragment"
-        android:name="com.example.homex.FilterBottomSheetFragment"
+        android:name="com.example.homex.activity.home.search.FilterBottomSheetFragment"
         android:label="FilterBottomSheetFragment"
         tools:layout="@layout/fragment_filter_bottom_sheet"/>
     <fragment
         android:id="@+id/homeDetailFragment"
-        android:name="com.example.homex.HomeDetailFragment"
+        android:name="com.example.homex.activity.home.homepage.HomeDetailFragment"
         android:label="fragment_home_detail"
         tools:layout="@layout/fragment_home_detail" >
         <argument android:name="id"
@@ -270,7 +267,7 @@
     </fragment>
     <fragment
         android:id="@+id/myHomeFragment"
-        android:name="com.example.homex.MyHomeFragment"
+        android:name="com.example.homex.activity.home.myhome.MyHomeFragment"
         android:label="MyHomeFragment"
         tools:layout="@layout/fragment_my_home">
         <action
@@ -283,7 +280,7 @@
     </fragment>
     <fragment
         android:id="@+id/myHomeDetailFragment"
-        android:name="com.example.homex.MyHomeDetailFragment"
+        android:name="com.example.homex.activity.home.myhome.MyHomeDetailFragment"
         android:label="MyHomeDetailFragment"
         tools:layout="@layout/fragment_my_home_detail">
         <argument android:name="id"
@@ -329,7 +326,7 @@
 
     <fragment
         android:id="@+id/myProfileFragment"
-        android:name="com.example.homex.activity.home.MyProfileFragment"
+        android:name="com.example.homex.activity.home.profile.MyProfileFragment"
         android:label="fragment_my_profile"
         tools:layout="@layout/fragment_my_profile" >
         <action
@@ -349,27 +346,19 @@
     </fragment>
     <fragment
         android:id="@+id/updateProfileFragment"
-        android:name="com.example.homex.activity.home.UpdateProfileFragment"
+        android:name="com.example.homex.activity.home.profile.UpdateProfileFragment"
         android:label="UpdateProfileFragment"
-        tools:layout="@layout/fragment_update_profile"/>
+        tools:layout="@layout/fragment_update_profile">
+
+        <action
+            android:id="@+id/action_updateProfileFragment_to_bottomSheetDialogSelectImage"
+            app:destination="@id/bottomSheetDialogSelectImage" />
+    </fragment>
     <fragment
         android:id="@+id/changePasswordFragment"
-        android:name="com.example.homex.activity.home.ChangePasswordFragment"
+        android:name="com.example.homex.activity.home.profile.ChangePasswordFragment"
         android:label="ChangePasswordFragment"
         tools:layout="@layout/fragment_change_password"/>
-    <dialog
-        android:id="@+id/createRequestBottomSheetFragment"
-        android:name="com.example.homex.CreateRequestBottomSheetFragment"
-        android:label="CreateRequestBottomSheetFragment"
-        tools:layout="@layout/fragment_create_request_bottom_sheet">
-        <action
-            android:id="@+id/action_createRequestBottomSheetFragment_to_createRequestFragment"
-            app:destination="@id/createRequestFragment"
-            app:exitAnim="@anim/fade_out"
-            app:enterAnim="@anim/slide_in_left"
-            app:popEnterAnim="@anim/fade_in"
-            app:popExitAnim="@anim/slide_in_right"/>
-    </dialog>
     <fragment
         android:id="@+id/transHistoryFragment"
         android:name="com.example.homex.activity.home.TransHistoryFragment"
@@ -403,7 +392,7 @@
         tools:layout="@layout/fragment_point_history"/>
     <dialog
         android:id="@+id/bottomSheetDialogSelectImage"
-        android:name="com.example.homex.BottomSheetDialogSelectImage"
+        android:name="com.example.homex.activity.home.addhome.BottomSheetDialogSelectImage"
         android:label="BottomSheetDialogSelectImage"
         tools:layout="@layout/fragment_bottom_sheet_dialog_select_image">
         <action
@@ -416,12 +405,12 @@
     </dialog>
     <fragment
         android:id="@+id/galleryFragment"
-        android:name="com.example.homex.activity.home.GalleryFragment"
+        android:name="com.example.homex.activity.home.addhome.GalleryFragment"
         android:label="GalleryFragment"
         tools:layout="@layout/fragment_gallery"/>
     <fragment
         android:id="@+id/requestFragment"
-        android:name="com.example.homex.RequestFragment"
+        android:name="com.example.homex.activity.home.RequestFragment"
         android:label="RequestFragment"
         tools:layout="@layout/fragment_request">
         <action
@@ -446,7 +435,7 @@
     </fragment>
     <dialog
         android:id="@+id/bottomSheetChangeDateFragment"
-        android:name="com.example.homex.extension.BottomSheetChangeDateFragment"
+        android:name="com.example.homex.activity.home.BottomSheetChangeDateFragment"
         android:label="BottomSheetChangeDateFragment"
         tools:layout="@layout/fragment_bottom_sheet_change_date">
         <argument

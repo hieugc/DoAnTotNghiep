@@ -29,7 +29,6 @@ class AddImageAdapter(var imgList: MutableList<Pair<Uri, Boolean>>? = arrayListO
             holder.binding.deleteImgBtn.setOnClickListener {
                 onClick.invoke(realPosition)
             }
-            Log.e("uri", "${item?.first}")
             Glide.with(holder.itemView.context)
                 .load(item?.first)
                 .error(R.drawable.ic_baseline_image_24)
@@ -42,7 +41,6 @@ class AddImageAdapter(var imgList: MutableList<Pair<Uri, Boolean>>? = arrayListO
                     removeItem.invoke(item)
                 }
             }
-            Log.e("url", "${item?.data}")
             Glide.with(holder.itemView.context)
                 .load(item?.data)
                 .error(R.drawable.ic_baseline_image_24)

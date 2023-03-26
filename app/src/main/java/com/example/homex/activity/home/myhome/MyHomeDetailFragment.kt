@@ -1,17 +1,16 @@
-package com.example.homex
+package com.example.homex.activity.home.myhome
 
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.core.text.HtmlCompat
-import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
+import com.example.homex.R
 import com.example.homex.activity.home.HomeActivity
 import com.example.homex.adapter.HomeRatingAdapter
 import com.example.homex.adapter.ImageSlideAdapter
@@ -24,9 +23,6 @@ import com.example.homex.utils.CenterZoomLayoutManager
 import com.example.homex.viewmodel.YourHomeViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayoutMediator
-import com.homex.core.model.Home
-import com.homex.core.model.ImageBase
-import com.homex.core.param.yourhome.IdParam
 import com.homex.core.util.AppEvent
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -75,7 +71,8 @@ class MyHomeDetailFragment : BaseFragment<FragmentMyHomeDetailBinding>() {
                         // Handle share icon press
                         editFinish = true
                         actionMode?.finish()
-                        findNavController().navigate(R.id.action_myHomeDetailFragment_to_addHomeFragment, bundleOf(
+                        findNavController().navigate(
+                            R.id.action_myHomeDetailFragment_to_addHomeFragment, bundleOf(
                             HOME to binding.home))
                         true
                     }

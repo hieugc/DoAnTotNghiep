@@ -9,6 +9,7 @@ import com.homex.core.model.response.RequestResponse
 import com.homex.core.model.general.ResultResponse
 import com.homex.core.param.request.CreateRequestParam
 import com.homex.core.param.request.EditRequestParam
+import com.homex.core.param.request.UpdateStatusParam
 import com.homex.core.repository.RequestRepository
 import kotlinx.coroutines.launch
 import okhttp3.RequestBody
@@ -131,6 +132,23 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
                     }
                     else -> {
                         Log.e("NotSuccessGetPending", "hello")
+                    }
+                }
+            }
+        }
+    }
+
+    fun updateStatus(param: UpdateStatusParam){
+        viewModelScope.launch {
+            messageLiveData.addSource(repository.updateStatus(param)){
+                Log.e("response", it.toString())
+                when (it) {
+                    is ResultResponse.Success -> {
+                        Log.e("SuccessUpdateStatus", "${it.data}")
+                        messageLiveData.value = it.data
+                    }
+                    else -> {
+                        Log.e("NotSuccessUpdateStatus", "hello")
                     }
                 }
             }

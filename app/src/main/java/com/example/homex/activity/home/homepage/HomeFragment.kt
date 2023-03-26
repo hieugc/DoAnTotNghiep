@@ -1,15 +1,14 @@
-package com.example.homex.activity.home
+package com.example.homex.activity.home.homepage
 
 import android.os.Bundle
 import android.view.View
-import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
 import com.example.homex.R
+import com.example.homex.activity.home.HomeActivity
 import com.example.homex.adapter.PopularHomeAdapter
 import com.example.homex.adapter.PopularLocationAdapter
-import com.example.homex.app.HOME
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentHomeBinding
 import com.example.homex.utils.CenterZoomLayoutManager
@@ -36,6 +35,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         )
         viewModel.getPopularHome()
         viewModel.getPopularLocation()
+        AppEvent.showLoading()
     }
 
     override fun setView() {
@@ -76,7 +76,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                     for(home in list){
                         homeAdapter.homeList?.add(home)
                     }
-                    homeAdapter.notifyDataSetChanged()
+                    homeAdapter.notifyItemRangeInserted(0, list.size)
                 }
             }
             AppEvent.hideLoading()
@@ -89,7 +89,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                     for(home in list){
                         adapter.list?.add(home)
                     }
-                    adapter.notifyDataSetChanged()
+                    adapter.notifyItemRangeInserted(0, list.size)
                 }
             }
             AppEvent.hideLoading()

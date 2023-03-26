@@ -10,6 +10,7 @@ import com.homex.core.model.general.ObjectResponse
 import com.homex.core.model.general.ResultResponse
 import com.homex.core.param.request.CreateRequestParam
 import com.homex.core.param.request.EditRequestParam
+import com.homex.core.param.request.UpdateStatusParam
 import com.homex.core.repository.RequestRepository
 import okhttp3.RequestBody
 import retrofit2.Response
@@ -61,6 +62,13 @@ class RequestRepositoryImpl(private val api: ApiService): RequestRepository {
         return object : NetworkBoundResource<ListResponse<RequestResponse>, ArrayList<RequestResponse>>(){
             override fun processResponse(response: ListResponse<RequestResponse>): ArrayList<RequestResponse>? = response.data
             override suspend fun createCall(): Response<ListResponse<RequestResponse>> = api.getPendingRequest()
+        }.build().asLiveData()
+    }
+
+    override suspend fun updateStatus(param: UpdateStatusParam): LiveData<ResultResponse<JsonObject>> {
+        return object : NetworkBoundResource<ObjectResponse<JsonObject>, JsonObject>(){
+            override fun processResponse(response: ObjectResponse<JsonObject>): JsonObject? = response.data
+            override suspend fun createCall(): Response<ObjectResponse<JsonObject>> = api.updateStatus(param)
         }.build().asLiveData()
     }
 }
