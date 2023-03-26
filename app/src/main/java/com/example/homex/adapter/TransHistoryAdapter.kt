@@ -1,17 +1,24 @@
 package com.example.homex.adapter
 
+import android.content.Context
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.homex.R
 import com.example.homex.databinding.ItemTransHistoryBinding
-import com.example.homex.extension.dpToPx
-import com.homex.core.model.TransHistory
+import com.example.homex.extension.RequestStatus
+import com.example.homex.extension.RequestType
+import com.example.homex.extension.formatIso8601ToFormat
+import com.homex.core.model.response.RequestResponse
 
 class TransHistoryAdapter(
-    val notificationList: ArrayList<TransHistory>?,
-    private val listener: EventListener
+    private val listener: EventListener,
+    private val mContext: Context
 ) : RecyclerView.Adapter<TransHistoryAdapter.TransHistoryViewHolder>() {
+
+    private val requestList: ArrayList<RequestResponse> = ArrayList()
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TransHistoryViewHolder {
         return TransHistoryViewHolder(
             ItemTransHistoryBinding.bind(
@@ -22,24 +29,63 @@ class TransHistoryAdapter(
         )
     }
 
+    public fun setRequestList(requestList: ArrayList<RequestResponse>) {
+        this.requestList.clear()
+        this.requestList.addAll(requestList)
+        notifyDataSetChanged()
+    }
+
     override fun onBindViewHolder(holder: TransHistoryViewHolder, position: Int) {
-        val item = notificationList?.get(position)
-        holder.binding.tvTitle.text = item?.title
+        val item = requestList?.get(position)
+        holder.binding.tvUserName.text =
+            (item?.house?.user?.lastName + " " + item?.house?.user?.firstName)
+        holder.binding.tvTitle.text = item?.house?.name
+        when (item?.request?.status) {
+            RequestStatus.WAITING.ordinal -> {
+                holder.binding.tvStatus.text = mContext.getString(R.string.status_waiting)
+                holder.binding.tvStatus.setTextColor(Color.YELLOW)
+            }
+            RequestStatus.ACCEPTED.ordinal -> {
+                holder.binding.tvStatus.text = mContext.getString(R.string.status_accepted)
+                holder.binding.tvStatus.setTextColor(Color.BLUE)
+            }
+            RequestStatus.REJECTED.ordinal -> {
+                holder.binding.tvStatus.text = mContext.getString(R.string.status_rejected)
+                holder.binding.tvStatus.setTextColor(Color.RED)
+            }
+            RequestStatus.REVIEWING.ordinal -> {
+                holder.binding.tvStatus.text = mContext.getString(R.string.status_reviewing)
+                holder.binding.tvStatus.setTextColor(Color.MAGENTA)
+            }
+            RequestStatus.DONE.ordinal -> {
+                holder.binding.tvStatus.text = mContext.getString(R.string.status_done)
+                holder.binding.tvStatus.setTextColor(Color.GREEN)
+            }
+        }
+        if (item?.request?.type == RequestType.BY_POINT.ordinal) {
+            holder.binding.tvType.text = mContext.getString(
+                R.string.request_type, mContext.getString(R.string.request_type_point)
+            )
+        } else {
+            holder.binding.tvType.text = mContext.getString(
+                R.string.request_type, mContext.getString(R.string.request_type_house)
+            )
+        }
+
+        holder.binding.tvFromDate.text =
+            item?.request?.startDate?.formatIso8601ToFormat("dd/MM/yyyy")
+        holder.binding.tvToDate.text = item?.request?.endDate?.formatIso8601ToFormat("dd/MM/yyyy")
+
         holder.itemView.setOnClickListener {
             listener.OnItemTransClicked()
         }
         holder.binding.btnRate.setOnClickListener {
             listener.onBtnRateClick()
         }
-        if(position == notificationList?.size!! - 1){
-            val lastParams = holder.itemView.layoutParams as ViewGroup.MarginLayoutParams
-            lastParams.bottomMargin = 16f.dpToPx(holder.itemView.context)
-            holder.itemView.requestLayout()
-        }
     }
 
     override fun getItemCount(): Int {
-        return notificationList?.size ?: 0
+        return requestList.size ?: 0
     }
 
     class TransHistoryViewHolder(val binding: ItemTransHistoryBinding) :

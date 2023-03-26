@@ -2,18 +2,20 @@ package com.example.homex.activity.home
 
 import android.os.Bundle
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.homex.R
 import com.example.homex.adapter.TransHistoryAdapter
+import com.example.homex.adapter.TransHistoryViewPager
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentTransHistoryBinding
-import com.homex.core.model.TransHistory
+import com.example.homex.viewmodel.RequestViewModel
+import com.google.android.material.tabs.TabLayoutMediator
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class TransHistoryFragment : BaseFragment<FragmentTransHistoryBinding>(),
     TransHistoryAdapter.EventListener {
     override val layoutId: Int = R.layout.fragment_trans_history
-
-    private lateinit var adapter: TransHistoryAdapter
+    private lateinit var viewPagerAdapter: TransHistoryViewPager
+    private val viewModel: RequestViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,25 +27,23 @@ class TransHistoryFragment : BaseFragment<FragmentTransHistoryBinding>(),
             showBottomNav = false,
             showBoxChatLayout = Pair(false, null),
         )
+
+        viewModel.getRequestHistory()
     }
 
     override fun setView() {
-        adapter = TransHistoryAdapter(
-            arrayListOf(
-                TransHistory("Nhà của Hiếu"),
-                TransHistory("Nhà của Nhật"),
-                TransHistory("Nhà của Thanh"),
-                TransHistory("Nhà của Nam"),
-                TransHistory("Nhà của Vũ"),
-                TransHistory("Nhà của Tiến"),
-                TransHistory("Nhà của Alo")
-            ),
-            this
-        )
-        binding.rvTransHis.adapter = adapter
-        val layoutManager =
-            LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-        binding.rvTransHis.layoutManager = layoutManager
+        viewPagerAdapter = TransHistoryViewPager(this)
+        binding.pager.adapter = viewPagerAdapter
+        TabLayoutMediator(binding.tabLayout, binding.pager) { tab, position ->
+            when (position) {
+                0 -> tab.text = getString(R.string.status_waiting)
+                1 -> tab.text = getString(R.string.status_accepted)
+                2 -> tab.text = getString(R.string.status_rejected)
+                3 -> tab.text = getString(R.string.status_reviewing)
+                4 -> tab.text = getString(R.string.status_done)
+            }
+
+        }.attach()
     }
 
     override fun onBtnRateClick() {

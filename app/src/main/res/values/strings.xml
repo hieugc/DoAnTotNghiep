@@ -134,6 +134,14 @@
     <string name="temp_image">temp_image.jpg</string>
     <string name="pending">Chờ xác nhận</string>
     <string name="detail">Chi tiết</string>
+    <string name="status_waiting">Chờ xác nhận</string>
+    <string name="status_accepted">Đã chấp nhận</string>
+    <string name="status_rejected">Đã từ chối</string>
+    <string name="status_reviewing">Chờ đánh giá</string>
+    <string name="status_done">Hoàn tất</string>
+    <string name="request_type">Phương thức: %s</string>
+    <string name="request_type_point">Trao đổi bằng điểm</string>
+    <string name="request_type_house">Trao đổi nhà</string>
     <string name="status_hidden">Đang ẩn</string>
     <string name="status_pending">Đang kiểm duyệt</string>
     <string name="status_active">Đang hoạt động</string>
