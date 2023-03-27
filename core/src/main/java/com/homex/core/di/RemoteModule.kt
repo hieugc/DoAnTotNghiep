@@ -27,9 +27,9 @@ fun createOkHttpClient(): OkHttpClient {
     val httpLoggingInterceptor = HttpLoggingInterceptor()
     httpLoggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
     return OkHttpClient.Builder()
-        .readTimeout(10, TimeUnit.SECONDS)
-        .connectTimeout(10, TimeUnit.SECONDS)
-        .writeTimeout(10, TimeUnit.SECONDS)
+        .writeTimeout(15 * 60 * 1000, TimeUnit.MILLISECONDS)
+        .readTimeout(60 * 1000, TimeUnit.MILLISECONDS)
+        .connectTimeout(20 * 1000, TimeUnit.MILLISECONDS)
 //        .addInterceptor(NoInternetInterceptor(CoreApplication.instance))
         .addNetworkInterceptor(Interceptor { chain ->
             var request = chain.request()

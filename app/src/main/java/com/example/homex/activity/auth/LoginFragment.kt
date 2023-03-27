@@ -1,6 +1,5 @@
 package com.example.homex.activity.auth
 
-import android.util.Log
 import androidx.core.widget.addTextChangedListener
 import androidx.navigation.fragment.findNavController
 import com.example.homex.R
@@ -28,12 +27,12 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
 
     override fun setViewModel() {
         viewModel.loginLiveData.observe(viewLifecycleOwner){ user->
-            CoreApplication.instance.saveToken(user?.token)
-            Log.e("token", "${user?.token}")
-            CoreApplication.instance.saveProfile(user?.userInfo)
-            Log.e("profile", "${user?.userInfo}")
-            activity?.finishAffinity()
-            startActivity(HomeActivity.open(requireContext()))
+            if (user != null){
+                CoreApplication.instance.saveToken(user.token)
+                CoreApplication.instance.saveProfile(user.userInfo)
+                activity?.finishAffinity()
+                startActivity(HomeActivity.open(requireContext()))
+            }
         }
     }
 

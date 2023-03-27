@@ -63,15 +63,13 @@ class HomeDetailFragment : BaseFragment<FragmentHomeDetailBinding>() {
             showBoxChatLayout = Pair(false, null),
         )
         viewModel.getHomeDetails(args.id)
-        AppEvent.showLoading()
 
         findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Pair<CalendarDate?, CalendarDate?>>("DATE")?.observe(viewLifecycleOwner){
                 dates->
             val startDate = dates.first?.time?.time?.longToDate()
             val endDate = dates.second?.time?.time?.longToDate()
-            binding.homeDateTV.text =  "$startDate - $endDate"
-            binding.dayCountTV.text = "${startDate.betweenDays(endDate)} ngày"
-            Log.e("betweenDate",  "${startDate.betweenDays(endDate)}")
+            binding.homeDateTV.text =  getString(R.string.start_end_date, startDate, endDate)
+            binding.dayCountTV.text = getString(R.string.between_dates, startDate.betweenDays(endDate))
             selection = dates
         }
     }
@@ -80,17 +78,23 @@ class HomeDetailFragment : BaseFragment<FragmentHomeDetailBinding>() {
         viewModel.homeDetailsLiveData.observe(this){
             if (it != null){
                 binding.home = it
+                val imgSize = adapter.imgList?.size?:0
+                adapter.notifyItemRangeRemoved(0, imgSize)
                 adapter.imgList = it.images
+                val utilSize = utilAdapter.itemList?.size?:0
+                utilAdapter.notifyItemRangeRemoved(0, utilSize)
                 utilAdapter.itemList = it.utilities
                 if(it.utilities != null){
                     if(it.utilities!!.size > 4){
                         binding.showAllUtil.visible()
                     }
                 }
+                val ruleSize = rulesAdapter.itemList?.size?:0
+                rulesAdapter.notifyItemRangeRemoved(0, ruleSize)
                 rulesAdapter.itemList = it.rules
-                adapter.notifyDataSetChanged()
-                utilAdapter.notifyDataSetChanged()
-                rulesAdapter.notifyDataSetChanged()
+                adapter.notifyItemRangeInserted(0, it.images?.size?:0)
+                utilAdapter.notifyItemRangeInserted(0, it.utilities?.size?:0)
+                rulesAdapter.notifyItemRangeInserted(0, it.rules?.size?:0)
 
                 if (binding.home?.userAccess == prefUtil.profile?.userAccess){
                     binding.pickDateLayout.gone()
@@ -100,7 +104,7 @@ class HomeDetailFragment : BaseFragment<FragmentHomeDetailBinding>() {
                     binding.userLayout.visible()
                 }
             }
-            AppEvent.hideLoading()
+            AppEvent.closePopup()
         }
 
         chatViewModel.connectToUser.observe(this){ messageRoom ->
@@ -169,8 +173,8 @@ class HomeDetailFragment : BaseFragment<FragmentHomeDetailBinding>() {
         )
         val from = first.time?.time?.longToDate()
         val to = second.time?.time?.longToDate()
-        binding.homeDateTV.text = "$from - $to"
-        binding.dayCountTV.text = "7 ngày"
+        binding.homeDateTV.text = getString(R.string.start_end_date, from, to)
+        binding.dayCountTV.text = getString(R.string.between_dates, 7)
     }
 
     private fun setupTabLayout(){
@@ -210,11 +214,12 @@ class HomeDetailFragment : BaseFragment<FragmentHomeDetailBinding>() {
             if(utilAdapter.showAll){
                 binding.showAllUtil.text = HtmlCompat.fromHtml(String.format(getString(R.string.see_more)), HtmlCompat.FROM_HTML_MODE_LEGACY)
                 utilAdapter.showAll = false
+                utilAdapter.notifyItemRangeRemoved(4, utilAdapter.itemList?.size?.minus(4) ?: 0)
             }else{
                 binding.showAllUtil.text = HtmlCompat.fromHtml(String.format(getString(R.string.see_less)), HtmlCompat.FROM_HTML_MODE_LEGACY)
                 utilAdapter.showAll = true
+                utilAdapter.notifyItemRangeInserted(4, utilAdapter.itemList?.size?.minus(4) ?: 0)
             }
-            utilAdapter.notifyDataSetChanged()
 
         }
         binding.contactBtn.setOnClickListener {

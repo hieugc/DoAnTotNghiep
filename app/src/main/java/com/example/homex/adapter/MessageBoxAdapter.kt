@@ -27,22 +27,26 @@ class MessageBoxAdapter(var messageBoxList: ArrayList<MessageRoom>?, private val
 
     override fun onBindViewHolder(holder: MessageBoxViewHolder, position: Int) {
         val item = messageBoxList?.get(position)
-        holder.binding.boxName.text = item?.userMessages?.get(0)?.userName
-        if (item?.messages?.get(0)?.idSend == userAccess){
-            holder.binding.lastMsg.text = "Bạn: ${item?.messages?.get(0)?.message}"
-        }else{
-            holder.binding.lastMsg.text = item?.messages?.get(0)?.message
+        if (item?.userMessages?.isNotEmpty() == true){
+            holder.binding.boxName.text = item.userMessages?.get(0)?.userName
+            Glide.with(holder.itemView.context)
+                .load(item.userMessages?.get(0)?.imageUrl)
+                .placeholder(R.drawable.ic_baseline_image_24)
+                .error(R.mipmap.avatar)
+                .into(holder.binding.appCompatImageView2)
         }
-        Glide.with(holder.itemView.context)
-            .load(item?.userMessages?.get(0)?.imageUrl)
-            .placeholder(R.drawable.ic_baseline_image_24)
-            .error(R.mipmap.avatar)
-            .into(holder.binding.appCompatImageView2)
-        holder.binding.msgTime.text = item?.messages?.get(0)?.createdDate.convertToRelativeDateTime()
-        if(item?.messages?.get(0)?.isSeen == true){
-            notificationWasRead(holder.binding, holder.itemView.context)
-        }else{
-            notificationWasNotRead(holder.binding, holder.itemView.context)
+        if (item?.messages?.isNotEmpty() == true){
+            if (item.messages?.get(0)?.idSend == userAccess){
+                holder.binding.lastMsg.text = "Bạn: ${item.messages?.get(0)?.message}"
+            }else{
+                holder.binding.lastMsg.text = item.messages?.get(0)?.message
+            }
+            holder.binding.msgTime.text = item.messages?.get(0)?.createdDate.convertToRelativeDateTime()
+            if(item.messages?.get(0)?.isSeen == true){
+                notificationWasRead(holder.binding, holder.itemView.context)
+            }else{
+                notificationWasNotRead(holder.binding, holder.itemView.context)
+            }
         }
         holder.binding.root.setOnClickListener {
             if (item != null) {

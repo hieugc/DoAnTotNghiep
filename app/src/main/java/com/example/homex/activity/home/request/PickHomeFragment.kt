@@ -14,7 +14,6 @@ import com.example.homex.databinding.FragmentPickHomeBinding
 import com.example.homex.extension.gone
 import com.example.homex.extension.visible
 import com.example.homex.viewmodel.YourHomeViewModel
-import com.homex.core.util.AppEvent
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -22,7 +21,7 @@ class PickHomeFragment : BaseFragment<FragmentPickHomeBinding>() {
     override val layoutId: Int = R.layout.fragment_pick_home
     private lateinit var adapter: SearchHomeAdapter
     private val yourHomeViewModel: YourHomeViewModel by viewModel()
-    private var page = 0
+    private var isShimmer = true
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -34,9 +33,13 @@ class PickHomeFragment : BaseFragment<FragmentPickHomeBinding>() {
             showTitleApp = Pair(true, "Chọn nhà"),
             showBoxChatLayout = Pair(false, null),
         )
+        binding.homeShimmer.gone()
+        if (isShimmer){
+            binding.homeShimmer.startShimmer()
+            binding.homeShimmer.visible()
+        }
         arguments?.getString(USER_ACCESS)?.let {
             yourHomeViewModel.getHomeByUser(it)
-            AppEvent.showLoading()
         }
     }
 
@@ -56,10 +59,23 @@ class PickHomeFragment : BaseFragment<FragmentPickHomeBinding>() {
         yourHomeViewModel.listHomeLiveData.observe(this){
             if (it != null){
                 Log.e("homes", "$it")
-                adapter.searchList?.clear()
+                val size = adapter.searchList?.size
+                if (size != null){
+                    if (size > 0){
+                        adapter.searchList?.clear()
+                        adapter.notifyItemRangeRemoved(0, size)
+                    }
+                }
                 if(it.size > 0){
                     adapter.searchList?.addAll(it)
-                    adapter.notifyDataSetChanged()
+                    adapter.notifyItemRangeInserted(0, it.size)
+                    binding.homeShimmer.stopShimmer()
+                    binding.homeShimmer.gone()
+                    isShimmer = false
+                }else{
+                    binding.homeShimmer.stopShimmer()
+                    binding.homeShimmer.gone()
+                    isShimmer = false
                 }
                 if(adapter.searchList.isNullOrEmpty()){
                     binding.pickHomeRecView.gone()
@@ -70,8 +86,11 @@ class PickHomeFragment : BaseFragment<FragmentPickHomeBinding>() {
                     binding.noHomeTxt.gone()
                     binding.appCompatTextView28.visible()
                 }
+            }else{
+                binding.homeShimmer.stopShimmer()
+                binding.homeShimmer.gone()
+                isShimmer = false
             }
-            AppEvent.hideLoading()
         }
     }
 }

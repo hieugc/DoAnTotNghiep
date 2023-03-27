@@ -11,6 +11,7 @@ import com.homex.core.model.general.ResultResponse
 import com.homex.core.model.response.UserResponse
 import com.homex.core.param.auth.*
 import com.homex.core.repository.AuthRepository
+import com.homex.core.util.AppEvent
 import kotlinx.coroutines.launch
 
 class AuthViewModel(private val repository: AuthRepository): ViewModel() {
@@ -23,6 +24,7 @@ class AuthViewModel(private val repository: AuthRepository): ViewModel() {
     val passwordLiveData = MediatorLiveData<JsonObject?>()
 
     fun login(param: LoginParam){
+        AppEvent.showPopUp()
         viewModelScope.launch {
             loginLiveData.addSource(repository.login(param)){
                 Log.e("response", it.toString())
@@ -31,8 +33,11 @@ class AuthViewModel(private val repository: AuthRepository): ViewModel() {
                         Log.e("SuccessLogin", "${it.data}")
                         loginLiveData.value = it.data
                     }
+                    is ResultResponse.Error ->{
+                        AppEvent.showPopUpError(it.message)
+                    }
                     else -> {
-                        Log.e("NotSuccessLogin", "hello")
+                        Log.e("Loading", "hello")
                     }
                 }
             }
@@ -48,8 +53,11 @@ class AuthViewModel(private val repository: AuthRepository): ViewModel() {
                         Log.e("SuccessSignup", "${it.data}")
                         signupLiveData.value = it.data
                     }
+                    is ResultResponse.Error ->{
+                        AppEvent.showPopUpError(it.message)
+                    }
                     else -> {
-                        Log.e("NotSuccessSignup", "hello")
+                        Log.e("Loading", "hello")
                     }
                 }
             }
@@ -65,8 +73,11 @@ class AuthViewModel(private val repository: AuthRepository): ViewModel() {
                         Log.e("SuccessCheckEmail", "${it.data}")
                         checkEmailLiveData.value = it.data
                     }
+                    is ResultResponse.Error ->{
+                        AppEvent.showPopUpError(it.message)
+                    }
                     else -> {
-                        Log.e("NotSuccessCheckEmail", "hello")
+                        Log.e("Loading", "hello")
                     }
                 }
             }
@@ -82,8 +93,11 @@ class AuthViewModel(private val repository: AuthRepository): ViewModel() {
                         Log.e("SuccessCheckOTP", "${it.data}")
                         otpLiveData.value = it.data
                     }
+                    is ResultResponse.Error ->{
+                        AppEvent.showPopUpError(it.message)
+                    }
                     else -> {
-                        Log.e("NotSuccessCheckOTP", "hello")
+                        Log.e("Loading", "hello")
                     }
                 }
             }
@@ -91,6 +105,7 @@ class AuthViewModel(private val repository: AuthRepository): ViewModel() {
     }
 
     fun updateInformation(param: UpdateInfoParam){
+        AppEvent.showPopUp()
         viewModelScope.launch {
             userInfoLiveData.addSource(repository.updateInformation(param)){
                 Log.e("response", it.toString())
@@ -99,8 +114,11 @@ class AuthViewModel(private val repository: AuthRepository): ViewModel() {
                         Log.e("SuccessUpdateInfo", "${it.data}")
                         userInfoLiveData.value = it.data
                     }
+                    is ResultResponse.Error ->{
+                        AppEvent.showPopUpError(it.message)
+                    }
                     else -> {
-                        Log.e("NotSuccessUpdateInfo", "hello")
+                        Log.e("Loading", "hello")
                     }
                 }
             }
@@ -116,8 +134,11 @@ class AuthViewModel(private val repository: AuthRepository): ViewModel() {
                         Log.e("SuccessForgot", "${it.data}")
                         forgotLiveData.value = it.data
                     }
+                    is ResultResponse.Error ->{
+                        AppEvent.showPopUpError(it.message)
+                    }
                     else -> {
-                        Log.e("NotSuccessForgot", "hello")
+                        Log.e("Loading", "hello")
                     }
                 }
             }
@@ -133,8 +154,11 @@ class AuthViewModel(private val repository: AuthRepository): ViewModel() {
                         Log.e("SuccessOTPForgot", "${it.data}")
                         otpLiveData.value = it.data
                     }
+                    is ResultResponse.Error ->{
+                        AppEvent.showPopUpError(it.message)
+                    }
                     else -> {
-                        Log.e("NotSuccessOTPForgot", "hello")
+                        Log.e("Loading", "hello")
                     }
                 }
             }
@@ -150,8 +174,11 @@ class AuthViewModel(private val repository: AuthRepository): ViewModel() {
                         Log.e("SuccessPassword", "${it.data}")
                         passwordLiveData.value = it.data
                     }
+                    is ResultResponse.Error ->{
+                        AppEvent.showPopUpError(it.message)
+                    }
                     else -> {
-                        Log.e("NotSuccessPassword", "hello")
+                        Log.e("Loading", "hello")
                     }
                 }
             }

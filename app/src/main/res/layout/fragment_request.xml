@@ -9,9 +9,37 @@
         android:layout_height="match_parent"
         android:background="@color/background_gray">
 
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/requestShimmer"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <include layout="@layout/request_shimmer"/>
+
+                <include layout="@layout/request_shimmer"/>
+
+                <include layout="@layout/request_shimmer"/>
+
+
+
+            </LinearLayout>
+
+        </com.facebook.shimmer.ShimmerFrameLayout>
+
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:nestedScrollingEnabled="true"
+            android:overScrollMode="never"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/request_item"
+            tools:itemCount="3"
             android:id="@+id/requestRecView"
             app:layout_constraintTop_toTopOf="parent"/>
 

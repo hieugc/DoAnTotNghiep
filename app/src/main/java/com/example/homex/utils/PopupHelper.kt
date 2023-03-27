@@ -32,11 +32,6 @@ class PopupHelper {
         }
     }
 
-    fun showLoading(){
-        val popup = PopUp(false, R.layout.dialog_loading, null)
-        AppEvent.showPopUp(popup)
-    }
-
     private fun updateContent(message: String?): (view: View?, dialog: Dialog?) -> Unit = { view, _ ->
         view?.findViewById<AppCompatTextView>(R.id.tvDetailError)?.text = message
     }

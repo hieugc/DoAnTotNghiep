@@ -21,6 +21,7 @@ class RequestFragment : BaseFragment<FragmentRequestBinding>() {
     private val viewModel: RequestViewModel by viewModel()
     private val requestList = arrayListOf<RequestResponse>()
     private lateinit var adapter: RequestItemAdapter
+    private var isShimmer = true
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -33,8 +34,12 @@ class RequestFragment : BaseFragment<FragmentRequestBinding>() {
             showSearchLayout = false,
             showTitleApp = Pair(true, "Yêu cầu trao đổi")
         )
+        binding.requestShimmer.gone()
+        if (isShimmer){
+            binding.requestShimmer.startShimmer()
+            binding.requestShimmer.visible()
+        }
         viewModel.getPendingRequest()
-        AppEvent.showLoading()
     }
 
     override fun setView() {
@@ -52,16 +57,26 @@ class RequestFragment : BaseFragment<FragmentRequestBinding>() {
     override fun setViewModel() {
         viewModel.requestResponseListLiveDate.observe(this){
             if (it != null){
-                requestList.clear()
+                val size = requestList.size
+                if (size > 0){
+                    requestList.clear()
+                    adapter.notifyItemRangeRemoved(0, size)
+                }
                 requestList.addAll(it)
-                adapter.notifyDataSetChanged()
+                adapter.notifyItemRangeInserted(0, it.size)
                 if (requestList.isEmpty()){
                     binding.noHomeTxt.visible()
                 }else{
                     binding.noHomeTxt.gone()
                 }
+                binding.requestShimmer.stopShimmer()
+                binding.requestShimmer.gone()
+                isShimmer = false
+            }else{
+                binding.requestShimmer.stopShimmer()
+                binding.requestShimmer.gone()
+                isShimmer = false
             }
-            AppEvent.hideLoading()
         }
     }
 }

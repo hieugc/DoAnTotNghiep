@@ -1,11 +1,7 @@
 package com.example.homex.activity.home
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.homex.R
 import com.example.homex.base.BaseFragment
@@ -14,7 +10,6 @@ import com.example.homex.extension.RequestStatus
 import com.example.homex.viewmodel.RequestViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.homex.core.param.request.UpdateStatusParam
-import com.homex.core.util.AppEvent
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -37,19 +32,18 @@ class PendingRequestDetailFragment : BaseFragment<FragmentPendingRequestDetailBi
 
         if (args.id != 0){
             viewModel.getRequestDetail(args.id)
-            AppEvent.showLoading()
         }
     }
 
     override fun setEvent() {
         binding.rejectBtn.setOnClickListener {
             MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Từ chối yêu cầu")
-                .setMessage("Bạn có muốn từ chối yêu cầu trao đổi này ?")
-                .setNegativeButton(resources.getString(R.string.cancel)) { dialog, which ->
+                .setTitle(getString(R.string.reject_request))
+                .setMessage(getString(R.string.reject_request_message))
+                .setNegativeButton(resources.getString(R.string.cancel)) { _, _ ->
                     // Respond to negative button press
                 }
-                .setPositiveButton(resources.getString(R.string.confirm)) { dialog, which ->
+                .setPositiveButton(resources.getString(R.string.confirm)) { dialog, _ ->
                     // Respond to positive button press
                     dialog.dismiss()
                     if (args.id != 0){
@@ -65,12 +59,12 @@ class PendingRequestDetailFragment : BaseFragment<FragmentPendingRequestDetailBi
 
         binding.acceptBtn.setOnClickListener {
             MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Chấp nhận yêu cầu")
-                .setMessage("Bạn có muốn chấp nhận yêu cầu trao đổi này ?")
-                .setNegativeButton(resources.getString(R.string.cancel)) { dialog, which ->
+                .setTitle(getString(R.string.accept_request))
+                .setMessage(getString(R.string.accept_request_message))
+                .setNegativeButton(resources.getString(R.string.cancel)) { _, _ ->
                     // Respond to negative button press
                 }
-                .setPositiveButton(resources.getString(R.string.confirm)) { dialog, which ->
+                .setPositiveButton(resources.getString(R.string.confirm)) { dialog, _ ->
                     // Respond to positive button press
                     dialog.dismiss()
                     if (args.id != 0){
@@ -90,7 +84,6 @@ class PendingRequestDetailFragment : BaseFragment<FragmentPendingRequestDetailBi
             if (it != null){
                 binding.request = it
             }
-            AppEvent.hideLoading()
         }
     }
 }

@@ -6,7 +6,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 class UserResponse(
-    val token: String,
+    val token: String? = null,
     var userInfo: Profile? = null,
     val expire: String? = null
 ): Parcelable

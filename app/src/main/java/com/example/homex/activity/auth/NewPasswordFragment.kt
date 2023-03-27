@@ -42,7 +42,7 @@ class NewPasswordFragment : BaseFragment<FragmentNewPasswordBinding>() {
 
     override fun setViewModel() {
         viewModel.passwordLiveData.observe(viewLifecycleOwner){
-            Toast.makeText(requireContext(), "Đổi mật khẩu thành công", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.change_password_success), Toast.LENGTH_SHORT).show()
             (activity as AuthActivity).redirectToLoginAfterUpdatePassword(arguments?.getString(EMAIL))
         }
     }

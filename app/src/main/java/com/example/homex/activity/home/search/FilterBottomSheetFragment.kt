@@ -30,7 +30,7 @@ class FilterBottomSheetFragment : BottomSheetDialogFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         dialog?.window?.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
         dialog?.window?.navigationBarColor = ContextCompat.getColor(requireContext(), R.color.white)
 
@@ -153,11 +153,11 @@ class FilterBottomSheetFragment : BottomSheetDialogFragment() {
             }
         })
 
-        binding.priceRangeSlider.addOnChangeListener { rangeSlider, value, fromUser ->
+        binding.priceRangeSlider.addOnChangeListener { rangeSlider, _, _ ->
             // Responds to when slider's value is changed
             Log.e("value", "${rangeSlider.values}")
-            binding.minPriceTV.text = "${rangeSlider.values[0].toInt()} Points"
-            binding.maxPriceTV.text = "${rangeSlider.values[1].toInt()} Points"
+            binding.minPriceTV.text = getString(R.string.points, rangeSlider.values[0].toInt())
+            binding.maxPriceTV.text = getString(R.string.points, rangeSlider.values[1].toInt())
         }
 
         binding.deleteFilterTxt.setOnClickListener {
@@ -168,7 +168,7 @@ class FilterBottomSheetFragment : BottomSheetDialogFragment() {
     private fun deleteFilter(){
         binding.closestRB.isChecked = true
         binding.priceRangeSlider.values = listOf(100f, 1000f)
-        var tmp = arrayListOf<AppCompatCheckBox>()
+        val tmp = arrayListOf<AppCompatCheckBox>()
         tmp.addAll(utilList)
         utilList.clear()
         val iterator: MutableIterator<AppCompatCheckBox> = tmp.iterator()

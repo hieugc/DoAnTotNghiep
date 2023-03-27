@@ -59,13 +59,45 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/messageShimmer"
+            app:layout_constraintTop_toBottomOf="@id/cardView"
+            >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingVertical="16dp">
+                <include layout="@layout/message_box_shimmer"/>
+                <include layout="@layout/message_box_shimmer"/>
+                <include layout="@layout/message_box_shimmer"/>
+                <include layout="@layout/message_box_shimmer"/>
+                <include layout="@layout/message_box_shimmer"/>
+                <include layout="@layout/message_box_shimmer"/>
+                <include layout="@layout/message_box_shimmer"/>
+                <include layout="@layout/message_box_shimmer"/>
+                <include layout="@layout/message_box_shimmer"/>
+            </LinearLayout>
+
+        </com.facebook.shimmer.ShimmerFrameLayout>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/messageBoxRecView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:nestedScrollingEnabled="false"
+            android:orientation="vertical"
+            android:overScrollMode="never"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintTop_toBottomOf="@+id/cardView"
-            android:layout_marginTop="16dp"
-            tools:listitem="@layout/message_box_item" />
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            tools:listitem="@layout/message_box_item"
+            tools:itemCount="8"/>
 
 
         <androidx.appcompat.widget.AppCompatTextView

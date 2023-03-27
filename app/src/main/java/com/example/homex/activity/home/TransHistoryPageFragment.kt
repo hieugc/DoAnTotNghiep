@@ -12,7 +12,6 @@ import com.example.homex.databinding.FragmentTransHistoryPageBinding
 import com.example.homex.extension.RequestStatus
 import com.example.homex.viewmodel.RequestViewModel
 import com.homex.core.model.response.RequestResponse
-import com.homex.core.util.AppEvent
 
 class TransHistoryPageFragment : BaseFragment<FragmentTransHistoryPageBinding>(),
     TransHistoryAdapter.EventListener {
@@ -56,7 +55,6 @@ class TransHistoryPageFragment : BaseFragment<FragmentTransHistoryPageBinding>()
                 }
                 adapter.setRequestList(listRequest)
             }
-            AppEvent.hideLoading()
         }
     }
 

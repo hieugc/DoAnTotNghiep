@@ -129,6 +129,7 @@
     <string name="no_smoking">Không hút thuốc</string>
     <string name="no_pet">Không thú cưng</string>
     <string name="upload_image">Thêm hình ảnh</string>
+    <string name="upload_image_2">Thêm hình ảnh %1$d/5</string>
     <string name="select_from_gallery">Chọn từ thư viện</string>
     <string name="temp_images_dir">temp_image_file</string>
     <string name="temp_image">temp_image.jpg</string>
@@ -149,4 +150,18 @@
     <string name="see_more">&lt;u>Xem thêm&lt;/u></string>
     <string name="see_less">&lt;u>Ẩn bớt&lt;/u></string>
     <string name="see_more_html"><u>Xem thêm</u></string>
+    <string name="please_fill_up_inputs">Hãy điền các thông tin trước khi qua màn hình tiếp theo</string>
+    <string name="int_input_string">%d</string>
+    <string name="start_end_date">%s - %s</string>
+    <string name="between_dates">%d ngày</string>
+    <string name="change_password_success">Đổi mật khẩu thành công</string>
+    <string name="please_fill_in_correctly">Hãy điền thông tin chính xác</string>
+    <string name="create_home_success">Tạo nhà thành công</string>
+    <string name="edit_home_success">Sửa thông tin nhà thành công</string>
+    <string name="point_you_have">Bạn hiện đang có %d Points</string>
+    <string name="points">%d Points</string>
+    <string name="accept_request">Chấp nhận yêu cầu</string>
+    <string name="accept_request_message">Bạn có muốn chấp nhận yêu cầu trao đổi này ?</string>
+    <string name="reject_request">Từ chối yêu cầu</string>
+    <string name="reject_request_message">Bạn có muốn từ chối yêu cầu trao đổi này ?</string>
 </resources>

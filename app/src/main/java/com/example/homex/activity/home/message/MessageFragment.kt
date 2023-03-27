@@ -13,9 +13,10 @@ import com.example.homex.adapter.MessageBoxAdapter
 import com.example.homex.app.ID
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentMessageBinding
+import com.example.homex.extension.gone
+import com.example.homex.extension.visible
 import com.example.homex.viewmodel.ChatViewModel
 import com.homex.core.model.MessageRoom
-import com.homex.core.util.AppEvent
 import com.homex.core.util.PrefUtil
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
@@ -28,6 +29,7 @@ class MessageFragment : BaseFragment<FragmentMessageBinding>() {
     private val boxChatList = arrayListOf<MessageRoom>()
     private lateinit var adapter: MessageBoxAdapter
     private var page = 0
+    private var isShimmer = true
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -39,6 +41,11 @@ class MessageFragment : BaseFragment<FragmentMessageBinding>() {
             showBottomNav = false,
             showBoxChatLayout = Pair(false, null),
         )
+        binding.messageShimmer.gone()
+        if (isShimmer){
+            binding.messageShimmer.startShimmer()
+            binding.messageShimmer.visible()
+        }
         viewModel.getChatRoom(page)
 
         arguments?.getInt(ID)?.let {
@@ -70,15 +77,30 @@ class MessageFragment : BaseFragment<FragmentMessageBinding>() {
         viewModel.chatRoom.observe(this){
             if (it != null){
                 if(page == 0){
-                    boxChatList.clear()
+                    val size = boxChatList.size
+                    if (size > 0){
+                        boxChatList.clear()
+                        adapter.notifyItemRangeRemoved(0, size)
+                    }
                 }
                 val rooms = it.rooms
+                val pos = boxChatList.size
                 if(rooms != null){
                     boxChatList.addAll(rooms)
+                    binding.messageShimmer.stopShimmer()
+                    binding.messageShimmer.gone()
+                    isShimmer = false
+                    adapter.notifyItemRangeInserted(pos, rooms.size)
+                }else{
+                    binding.messageShimmer.stopShimmer()
+                    binding.messageShimmer.gone()
+                    isShimmer = false
                 }
-                adapter.notifyDataSetChanged()
+            }else{
+                binding.messageShimmer.stopShimmer()
+                binding.messageShimmer.gone()
+                isShimmer = false
             }
-            AppEvent.hideLoading()
         }
 
         viewModel.newMessage.observe(this){
@@ -87,11 +109,12 @@ class MessageFragment : BaseFragment<FragmentMessageBinding>() {
                 for ((index, chat) in boxChatList.withIndex()){
                     if (chat.idRoom == it.idRoom){
                         boxChatList.removeAt(index)
+                        adapter.notifyItemRemoved(index)
                         break
                     }
                 }
                 boxChatList.add(0, it)
-                adapter.notifyDataSetChanged()
+                adapter.notifyItemInserted(0)
                 viewModel.newMessage.postValue(null)
             }
         }

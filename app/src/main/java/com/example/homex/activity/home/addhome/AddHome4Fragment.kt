@@ -30,17 +30,19 @@ class AddHome4Fragment : BaseFragment<FragmentAddHome4Binding>() {
     override fun setView() {
         adapter = AddImageAdapter(
             mutableListOf(),
-            {
-                imgList.removeAt(it)
+            { realPos, pos->
+                imgList.removeAt(realPos)
+                adapter.notifyItemRemoved(pos)
                 val list = mutableListOf<Pair<Uri, Boolean>>()
                 list.addAll(imgList)
                 fileViewModel.file.postValue(list)
             }, mutableListOf(),
-            {
+            { it, pos->
                 if (!idRemove.contains(it.id)){
                     it.id?.let { it1 -> idRemove.add(it1) }
                 }
                 fileList.remove(it)
+                adapter.notifyItemRemoved(pos)
                 viewModel.idRemove.postValue(idRemove)
                 val list = mutableListOf<ImageBase>()
                 list.addAll(fileList)
@@ -65,7 +67,10 @@ class AddHome4Fragment : BaseFragment<FragmentAddHome4Binding>() {
     override fun setViewModel() {
         fileViewModel.file.observe(viewLifecycleOwner){
             if (it != null) {
+                val pos = fileList.size
+                val size = imgList.size
                 imgList.clear()
+                adapter.notifyItemRangeRemoved(pos, size)
                 Log.e("viewModelList", "$it")
                 if (it.isNotEmpty()){
                     binding.homeImageRecView.visible()
@@ -84,17 +89,19 @@ class AddHome4Fragment : BaseFragment<FragmentAddHome4Binding>() {
                         }
                         else->{
                             binding.btnAddImage.visible()
-                            binding.btnAddImage.text = "Thêm Hình Ảnh ${imgList.size + fileList.size}/5"
+                            binding.btnAddImage.text = getString(R.string.upload_image_2, (imgList.size + fileList.size))
                         }
                     }
                 }
-                adapter.notifyDataSetChanged()
+                adapter.notifyItemRangeInserted(pos, it.size)
             }
         }
 
         viewModel.images.observe(viewLifecycleOwner){
             if (it != null){
+                val size = fileList.size
                 fileList.clear()
+                adapter.notifyItemRangeRemoved(0, size)
                 if(it.isNotEmpty()){
                     binding.homeImageRecView.visible()
                     binding.finishBtn.enable()
@@ -113,11 +120,11 @@ class AddHome4Fragment : BaseFragment<FragmentAddHome4Binding>() {
                         }
                         else->{
                             binding.btnAddImage.visible()
-                            binding.btnAddImage.text = "Thêm Hình Ảnh ${imgList.size + fileList.size}/5"
+                            binding.btnAddImage.text = getString(R.string.upload_image_2, (imgList.size + fileList.size))
                         }
                     }
                 }
-                adapter.notifyDataSetChanged()
+                adapter.notifyItemRangeInserted(0, it.size)
             }
         }
     }

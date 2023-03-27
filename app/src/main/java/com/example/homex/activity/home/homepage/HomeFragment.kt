@@ -11,20 +11,35 @@ import com.example.homex.adapter.PopularHomeAdapter
 import com.example.homex.adapter.PopularLocationAdapter
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentHomeBinding
+import com.example.homex.extension.gone
+import com.example.homex.extension.visible
 import com.example.homex.utils.CenterZoomLayoutManager
 import com.example.homex.viewmodel.HomeViewModel
-import com.homex.core.util.AppEvent
-import org.koin.android.ext.android.inject
+import com.homex.core.model.Home
+import com.homex.core.model.Location
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class HomeFragment : BaseFragment<FragmentHomeBinding>() {
     override val layoutId: Int = R.layout.fragment_home
     private lateinit var adapter: PopularLocationAdapter
     private lateinit var homeAdapter: PopularHomeAdapter
-    private val viewModel: HomeViewModel by inject()
+    private val homeList = arrayListOf<Home>()
+    private val locationList = arrayListOf<Location>()
+    private val viewModel: HomeViewModel by viewModel()
+    private var isHomeShimmer = true
+    private var isLocationShimmer = true
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.homeShimmer.gone()
+        binding.locationShimmer.gone()
+        if (isHomeShimmer && isLocationShimmer){
+            binding.homeShimmer.startShimmer()
+            binding.homeShimmer.visible()
+            binding.locationShimmer.startShimmer()
+            binding.locationShimmer.visible()
+        }
         (activity as HomeActivity).setPropertiesScreen(
             showLogo = true,
             showMenu = false,
@@ -35,18 +50,19 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         )
         viewModel.getPopularHome()
         viewModel.getPopularLocation()
-        AppEvent.showLoading()
     }
 
     override fun setView() {
         adapter =
-            PopularLocationAdapter(arrayListOf())
+            PopularLocationAdapter(
+                locationList
+            )
         binding.popularLocationRecView.adapter = adapter
         binding.popularLocationRecView.layoutManager = CenterZoomLayoutManager(context, LinearLayoutManager.HORIZONTAL, false, mShrinkAmount = 0f, mShrinkDistance = 1f)
 
         homeAdapter =
             PopularHomeAdapter(
-                arrayListOf(),
+                homeList,
                 onClick = {
                     val action = HomeFragmentDirections.actionGlobalHomeDetailFragment(id = it)
                     findNavController().navigate(action)
@@ -71,28 +87,40 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
     override fun setViewModel() {
         viewModel.popularHome.observe(viewLifecycleOwner){ list->
             if(list != null){
-                if(list.size > 0){
-                    homeAdapter.homeList?.clear()
-                    for(home in list){
-                        homeAdapter.homeList?.add(home)
-                    }
-                    homeAdapter.notifyItemRangeInserted(0, list.size)
+                val size = homeList.size
+                if (size > 0){
+                    homeList.clear()
+                    homeAdapter.notifyItemRangeRemoved(0, size)
                 }
+                homeList.addAll(list)
+                homeAdapter.notifyItemRangeInserted(0, list.size)
+                binding.homeShimmer.stopShimmer()
+                binding.homeShimmer.gone()
+                isHomeShimmer = false
+            }else{
+                binding.homeShimmer.stopShimmer()
+                binding.homeShimmer.gone()
+                isHomeShimmer = false
             }
-            AppEvent.hideLoading()
         }
 
         viewModel.popularLocation.observe(viewLifecycleOwner){ list->
             if(list != null){
-                if(list.size > 0){
-                    adapter.list?.clear()
-                    for(home in list){
-                        adapter.list?.add(home)
-                    }
-                    adapter.notifyItemRangeInserted(0, list.size)
+                val size = locationList.size
+                if (size > 0){
+                    locationList.clear()
+                    adapter.notifyItemRangeRemoved(0, size)
                 }
+                locationList.addAll(list)
+                adapter.notifyItemRangeInserted(0, list.size)
+                binding.locationShimmer.stopShimmer()
+                binding.locationShimmer.gone()
+                isLocationShimmer = false
+            }else{
+                binding.locationShimmer.stopShimmer()
+                binding.locationShimmer.gone()
+                isLocationShimmer = false
             }
-            AppEvent.hideLoading()
         }
     }
 }

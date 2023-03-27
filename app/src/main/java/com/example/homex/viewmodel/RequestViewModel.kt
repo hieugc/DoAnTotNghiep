@@ -11,6 +11,7 @@ import com.homex.core.param.request.CreateRequestParam
 import com.homex.core.param.request.EditRequestParam
 import com.homex.core.param.request.UpdateStatusParam
 import com.homex.core.repository.RequestRepository
+import com.homex.core.util.AppEvent
 import kotlinx.coroutines.launch
 import okhttp3.RequestBody
 
@@ -20,6 +21,7 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
     val requestResponseListLiveDate = MediatorLiveData<ArrayList<RequestResponse>?>()
 
     fun createNewRequest(param: CreateRequestParam){
+        AppEvent.showPopUp()
         viewModelScope.launch {
             messageLiveData.addSource(repository.createNewRequest(param)){
                 Log.e("response", it.toString())
@@ -28,8 +30,11 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
                         Log.e("SuccessCreateRequest", "${it.data}")
                         messageLiveData.value = it.data
                     }
+                    is ResultResponse.Error ->{
+                        AppEvent.showPopUpError(it.message)
+                    }
                     else -> {
-                        Log.e("NotSuccessCreateRequest", "hello")
+                        Log.e("Loading", "hello")
                     }
                 }
             }
@@ -45,8 +50,11 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
                         Log.e("SuccessEditRequest", "${it.data}")
                         messageLiveData.value = it.data
                     }
+                    is ResultResponse.Error ->{
+                        AppEvent.showPopUpError(it.message)
+                    }
                     else -> {
-                        Log.e("NotSuccessEditRequest", "hello")
+                        Log.e("Loading", "hello")
                     }
                 }
             }
@@ -62,8 +70,11 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
                         Log.e("SuccessDeleteRequest", "${it.data}")
                         messageLiveData.value = it.data
                     }
+                    is ResultResponse.Error ->{
+                        AppEvent.showPopUpError(it.message)
+                    }
                     else -> {
-                        Log.e("NotSuccessDeleteRequest", "hello")
+                        Log.e("Loading", "hello")
                     }
                 }
             }
@@ -79,8 +90,11 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
                         Log.e("SuccessGetRequest", "${it.data}")
                         requestResponseLiveData.value = it.data
                     }
+                    is ResultResponse.Error ->{
+                        AppEvent.showPopUpError(it.message)
+                    }
                     else -> {
-                        Log.e("NotSuccessGetRequest", "hello")
+                        Log.e("Loading", "hello")
                     }
                 }
             }
@@ -96,8 +110,11 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
                         Log.e("SuccessGetHistory", "${it.data}")
                         requestResponseListLiveDate.value = it.data
                     }
+                    is ResultResponse.Error ->{
+                        AppEvent.showPopUpError(it.message)
+                    }
                     else -> {
-                        Log.e("NotSuccessGetHistory", "hello")
+                        Log.e("Loading", "hello")
                     }
                 }
             }
@@ -113,8 +130,11 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
                         Log.e("SuccessGetByHouse", "${it.data}")
                         requestResponseListLiveDate.value = it.data
                     }
+                    is ResultResponse.Error ->{
+                        AppEvent.showPopUpError(it.message)
+                    }
                     else -> {
-                        Log.e("NotSuccessGetByHouse", "hello")
+                        Log.e("Loading", "hello")
                     }
                 }
             }
@@ -130,8 +150,11 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
                         Log.e("SuccessGetPending", "${it.data}")
                         requestResponseListLiveDate.value = it.data
                     }
+                    is ResultResponse.Error ->{
+                        AppEvent.showPopUpError(it.message)
+                    }
                     else -> {
-                        Log.e("NotSuccessGetPending", "hello")
+                        Log.e("Loading", "hello")
                     }
                 }
             }
@@ -147,8 +170,11 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
                         Log.e("SuccessUpdateStatus", "${it.data}")
                         messageLiveData.value = it.data
                     }
+                    is ResultResponse.Error ->{
+                        AppEvent.showPopUpError(it.message)
+                    }
                     else -> {
-                        Log.e("NotSuccessUpdateStatus", "hello")
+                        Log.e("Loading", "hello")
                     }
                 }
             }

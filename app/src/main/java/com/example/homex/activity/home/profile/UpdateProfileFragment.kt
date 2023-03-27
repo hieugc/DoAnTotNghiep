@@ -26,7 +26,7 @@ class UpdateProfileFragment : BaseFragment<FragmentUpdateProfileBinding>() {
         showBottomNav = false,
         showBoxChatLayout = Pair(false, null),
         )
-        val navController = findNavController();
+        val navController = findNavController()
         // After a configuration change or process death, the currentBackStackEntry
         // points to the dialog destination, so you must use getBackStackEntry()
         // with the specific ID of your destination to ensure we always
@@ -37,7 +37,7 @@ class UpdateProfileFragment : BaseFragment<FragmentUpdateProfileBinding>() {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME
                 && navBackStackEntry.savedStateHandle.contains(IMAGE)) {
-                val result = navBackStackEntry.savedStateHandle.get<Uri>(IMAGE);
+                val result = navBackStackEntry.savedStateHandle.get<Uri>(IMAGE)
                 // Do something with the result
                 Glide.with(requireContext())
                     .load(result)

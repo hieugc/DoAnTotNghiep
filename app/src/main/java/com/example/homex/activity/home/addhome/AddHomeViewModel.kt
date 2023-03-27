@@ -2,11 +2,8 @@ package com.example.homex.activity.home.addhome
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.homex.core.model.HomeStatus
 import com.homex.core.model.ImageBase
-import kotlinx.coroutines.launch
-import okhttp3.MultipartBody
 import java.io.File
 
 class AddHomeViewModel: ViewModel() {
@@ -33,11 +30,4 @@ class AddHomeViewModel: ViewModel() {
     val images = MutableLiveData<List<ImageBase>>()
     val idRemove = MutableLiveData<MutableList<Int>>()
 
-//    fun addFile(file: File){
-//        viewModelScope.launch {
-//            val tmp = files.value
-//            tmp?.add(file)
-//            files.postValue(tmp)
-//        }
-//    }
 }

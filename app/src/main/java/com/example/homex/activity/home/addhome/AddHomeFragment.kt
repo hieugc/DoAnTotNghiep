@@ -1,21 +1,14 @@
 package com.example.homex.activity.home.addhome
 
-import android.content.ContentResolver
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.ImageDecoder
-import android.net.Uri
-import android.os.*
-import android.provider.MediaStore
+import android.os.Bundle
+import android.os.Environment
 import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.navGraphViewModels
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
@@ -28,8 +21,6 @@ import com.example.homex.adapter.AddHomeViewPager
 import com.example.homex.app.HOME
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentAddHomeBinding
-import com.example.homex.extension.disable
-import com.example.homex.extension.enable
 import com.example.homex.extension.gone
 import com.example.homex.extension.visible
 import com.example.homex.utils.RealPathUtil
@@ -41,11 +32,9 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
-import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 import java.io.FileOutputStream
-import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -67,7 +56,6 @@ class AddHomeFragment : BaseFragment<FragmentAddHomeBinding>() {
             showBoxChatLayout = Pair(false, null),
         )
         super.onViewCreated(view, savedInstanceState)
-        Log.e("viewCreated", "Hello")
         arguments?.getParcelable<Home>(HOME)?.let {
             (activity as HomeActivity).setPropertiesScreen(
                 showLogo = false,
@@ -77,7 +65,6 @@ class AddHomeFragment : BaseFragment<FragmentAddHomeBinding>() {
                 showTitleApp = Pair(true, "Sửa thông tin nhà"),
                 showBoxChatLayout = Pair(false, null),
             )
-            Log.e("setView", "Hello")
 
             viewModel.option.postValue(it.option)
             viewModel.name.postValue(it.name)
@@ -148,11 +135,8 @@ class AddHomeFragment : BaseFragment<FragmentAddHomeBinding>() {
         }
 
         binding.nextSlideBtn.setOnClickListener {
-            Log.e("pos", binding.addHomeViewPager.currentItem.toString())
-            Log.e("checkUI", checkInput(binding.addHomeViewPager.currentItem).toString())
-
             if(!checkInput(binding.addHomeViewPager.currentItem)){
-                AppEvent.showPopUpError("Hãy điền các thông tin trước khi qua màn hình mơi")
+                AppEvent.showPopUpError(getString(R.string.please_fill_up_inputs))
                 return@setOnClickListener
             }
             binding.addHomeViewPager.currentItem = binding.addHomeViewPager.currentItem + 1
@@ -204,9 +188,17 @@ class AddHomeFragment : BaseFragment<FragmentAddHomeBinding>() {
         homeViewModel.messageLiveData.observe(viewLifecycleOwner){
             if(it != null){
                 findNavController().popBackStack()
-                Toast.makeText(requireContext(), "Tạo nhà thành công", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), getString(R.string.create_home_success), Toast.LENGTH_LONG).show()
             }
-            AppEvent.hideLoading()
+            AppEvent.closePopup()
+        }
+
+        homeViewModel.editMessageLiveData.observe(viewLifecycleOwner){
+            if(it != null){
+                findNavController().popBackStack()
+                Toast.makeText(requireContext(), getString(R.string.edit_home_success), Toast.LENGTH_LONG).show()
+            }
+            AppEvent.closePopup()
         }
 
         fileViewModel.file.observe(viewLifecycleOwner){ list ->
@@ -256,7 +248,6 @@ class AddHomeFragment : BaseFragment<FragmentAddHomeBinding>() {
                             if(path != ""){
                                 val file = File(path)
                                 tmp.add(file)
-                                Log.e("tmp", "$tmp")
                                 viewModel.files.postValue(tmp)
                             }
                         }
@@ -315,7 +306,6 @@ class AddHomeFragment : BaseFragment<FragmentAddHomeBinding>() {
     }
 
     fun createHome(){
-        AppEvent.showLoading()
         if(!checkInput(-1))
             return
         val builder : MultipartBody.Builder = MultipartBody.Builder().setType(MultipartBody.FORM)
@@ -387,50 +377,6 @@ class AddHomeFragment : BaseFragment<FragmentAddHomeBinding>() {
         fileViewModel.tmpFiles.postValue(mutableListOf())
         super.onDestroy()
         Log.e("destroy", "$tmpFiles")
-    }
-
-    private fun createTempFile(uri: Uri?) : File?{
-        val file = File(uri?.path ?: "")
-        val bitmap: Bitmap?
-        val contentResolver: ContentResolver = requireContext().contentResolver
-        try {
-            bitmap = if (Build.VERSION.SDK_INT < 28) {
-                MediaStore.Images.Media.getBitmap(contentResolver, uri)
-            } else {
-                uri?.let{
-                    val source = ImageDecoder.createSource(contentResolver, it)
-                    ImageDecoder.decodeBitmap(source)
-                }
-                null
-            }
-            Log.e("file", "${file.exists()}")
-            val outputStream = FileOutputStream(file)
-            bitmap?.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
-            outputStream.flush()
-            outputStream.close()
-            return file
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        return null
-    }
-
-    private fun convertUriToBitmap(uri: Uri?): Bitmap?{
-        val contentResolver: ContentResolver = requireContext().contentResolver
-        try {
-            return if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
-                MediaStore.Images.Media.getBitmap(contentResolver, uri)
-            } else {
-                uri?.let{
-                    val source = ImageDecoder.createSource(contentResolver, it)
-                    ImageDecoder.decodeBitmap(source)
-                }
-                null
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        return null
     }
 
 

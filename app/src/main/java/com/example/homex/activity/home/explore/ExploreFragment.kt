@@ -17,7 +17,7 @@ class ExploreFragment : BaseFragment<FragmentExploreBinding>() {
             showLogo = true,
             showMenu = false,
             showMessage = true,
-            showTitleApp = Pair(false, ""),
+            showTitleApp = Pair(false, "Khám phá"),
             showBottomNav = true,
             showBoxChatLayout = Pair(false, null),
         )

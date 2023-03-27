@@ -40,6 +40,7 @@ class MessageBoxFragment : BaseFragment<FragmentMessageBoxBinding>() {
     private var page = 0
     private val limit = 20
     private val prefUtil : PrefUtil by inject()
+    private var isShimmer = true
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -51,6 +52,11 @@ class MessageBoxFragment : BaseFragment<FragmentMessageBoxBinding>() {
             showMenu = true,
             showBoxChatLayout = Pair(false, null),
         )
+        binding.messageShimmer.gone()
+        if (isShimmer){
+            binding.messageShimmer.startShimmer()
+            binding.messageShimmer.visible()
+        }
         val param = Pagination(page++, limit)
         if (args.id != 0){
             viewModel.getMessagesInChatRoom(param = GetMessagesParam(idRoom = args.id, param))
@@ -161,35 +167,6 @@ class MessageBoxFragment : BaseFragment<FragmentMessageBoxBinding>() {
             if(it != null){
                 Log.e("messagesList", "${it.messages}")
                 userMessages.clear()
-                if(page == 1){
-                    messageList.clear()
-                }
-                val messages = it.messages
-                if (messages != null){
-                    val tmpList = arrayListOf<Message>()
-                    var date = messages[0].createdDate
-                    for((index, msg) in messages.withIndex()){
-                        if(date?.formatIso8601ToFormat("dd/MM/yyyy") != msg.createdDate?.formatIso8601ToFormat("dd/MM/yyyy")){
-                            tmpList.add(
-                                Message(
-                                    createdDate = date,
-                                    isDateItem = true
-                                )
-                            )
-                            date = msg.createdDate
-                        }
-                        tmpList.add(msg)
-                        if(index == messages.size - 1){
-                            tmpList.add(
-                                Message(
-                                    createdDate = date,
-                                    isDateItem = true
-                                )
-                            )
-                        }
-                    }
-                    messageList.addAll(tmpList)
-                }
                 val users = it.userMessages
                 if(users != null){
                     userMessages.addAll(users)
@@ -204,7 +181,48 @@ class MessageBoxFragment : BaseFragment<FragmentMessageBoxBinding>() {
                         )
                     }
                 }
-                adapter.notifyDataSetChanged()
+                if(page == 1){
+                    val size = messageList.size
+                    messageList.clear()
+                    adapter.notifyItemRangeRemoved(0, size)
+                }
+                val messages = it.messages
+                val tmpList = arrayListOf<Message>()
+                val pos = messageList.size
+                if (messages != null){
+                    if (messages.size > 0){
+                        var date = messages[0].createdDate
+                        for((index, msg) in messages.withIndex()){
+                            if(date?.formatIso8601ToFormat("dd/MM/yyyy") != msg.createdDate?.formatIso8601ToFormat("dd/MM/yyyy")){
+                                tmpList.add(
+                                    Message(
+                                        createdDate = date,
+                                        isDateItem = true
+                                    )
+                                )
+                                date = msg.createdDate
+                            }
+                            tmpList.add(msg)
+                            if(index == messages.size - 1){
+                                tmpList.add(
+                                    Message(
+                                        createdDate = date,
+                                        isDateItem = true
+                                    )
+                                )
+                            }
+                        }
+                    }
+                }
+                messageList.addAll(tmpList)
+                adapter.notifyItemRangeInserted(pos, tmpList.size)
+                binding.messageShimmer.stopShimmer()
+                binding.messageShimmer.gone()
+                isShimmer = false
+            }else{
+                binding.messageShimmer.stopShimmer()
+                binding.messageShimmer.gone()
+                isShimmer = false
             }
         }
 
@@ -220,7 +238,7 @@ class MessageBoxFragment : BaseFragment<FragmentMessageBoxBinding>() {
                 val messages = it.messages
                 if (messages != null){
                     messageList.addAll(0, messages)
-                    adapter.notifyDataSetChanged()
+                    adapter.notifyItemInserted(0)
                     viewModel.seenAll(body)
                 }
                 viewModel.newMessage.postValue(null)

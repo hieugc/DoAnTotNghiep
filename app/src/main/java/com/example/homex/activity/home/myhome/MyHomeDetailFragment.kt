@@ -50,7 +50,6 @@ class MyHomeDetailFragment : BaseFragment<FragmentMyHomeDetailBinding>() {
         )
 
         viewModel.getHomeDetails(args.id)
-        AppEvent.showLoading()
     }
 
     override fun setView() {
@@ -81,10 +80,10 @@ class MyHomeDetailFragment : BaseFragment<FragmentMyHomeDetailBinding>() {
                         MaterialAlertDialogBuilder(requireContext())
                             .setTitle("Xóa nhà")
                             .setMessage("Bạn có thật sự muốn xóa nhà này?")
-                            .setNegativeButton(resources.getString(R.string.cancel)) { dialog, which ->
+                            .setNegativeButton(resources.getString(R.string.cancel)) { _, _ ->
                                 // Respond to negative button press
                             }
-                            .setPositiveButton(resources.getString(R.string.confirm)) { dialog, which ->
+                            .setPositiveButton(resources.getString(R.string.confirm)) { dialog, _ ->
                                 // Respond to positive button press
                                 dialog.dismiss()
                                 binding.home?.id?.apply {
@@ -156,25 +155,31 @@ class MyHomeDetailFragment : BaseFragment<FragmentMyHomeDetailBinding>() {
         viewModel.messageLiveData.observe(viewLifecycleOwner){
             actionMode?.finish()
             Toast.makeText(requireContext(), "Xóa nhà thành công", Toast.LENGTH_LONG).show()
-            AppEvent.hideLoading()
+            AppEvent.closePopup()
         }
 
         viewModel.homeDetailsLiveData.observe(this){
             if (it != null){
                 binding.home = it
+                val imgSize = adapter.imgList?.size?:0
+                adapter.notifyItemRangeRemoved(0, imgSize)
                 adapter.imgList = it.images
+                val utilSize = utilAdapter.itemList?.size?:0
+                utilAdapter.notifyItemRangeRemoved(0, utilSize)
                 utilAdapter.itemList = it.utilities
                 if(it.utilities != null){
                     if(it.utilities!!.size > 4){
                         binding.showAllUtil.visible()
                     }
                 }
+                val ruleSize = rulesAdapter.itemList?.size?:0
+                rulesAdapter.notifyItemRangeRemoved(0, ruleSize)
                 rulesAdapter.itemList = it.rules
-                adapter.notifyDataSetChanged()
-                utilAdapter.notifyDataSetChanged()
-                rulesAdapter.notifyDataSetChanged()
+                adapter.notifyItemRangeInserted(0, it.images?.size?:0)
+                utilAdapter.notifyItemRangeInserted(0, it.utilities?.size?:0)
+                rulesAdapter.notifyItemRangeInserted(0, it.rules?.size?:0)
             }
-            AppEvent.hideLoading()
+            AppEvent.closePopup()
         }
     }
 
@@ -183,11 +188,12 @@ class MyHomeDetailFragment : BaseFragment<FragmentMyHomeDetailBinding>() {
             if(utilAdapter.showAll){
                 binding.showAllUtil.text = HtmlCompat.fromHtml(String.format(getString(R.string.see_more)), HtmlCompat.FROM_HTML_MODE_LEGACY)
                 utilAdapter.showAll = false
+                utilAdapter.notifyItemRangeRemoved(4, utilAdapter.itemList?.size?.minus(4) ?: 0)
             }else{
                 binding.showAllUtil.text = HtmlCompat.fromHtml(String.format(getString(R.string.see_less)), HtmlCompat.FROM_HTML_MODE_LEGACY)
                 utilAdapter.showAll = true
+                utilAdapter.notifyItemRangeInserted(4, utilAdapter.itemList?.size?.minus(4) ?: 0)
             }
-            utilAdapter.notifyDataSetChanged()
         }
     }
 }

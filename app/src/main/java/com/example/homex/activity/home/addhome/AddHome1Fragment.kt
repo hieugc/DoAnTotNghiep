@@ -15,7 +15,7 @@ class AddHome1Fragment : BaseFragment<FragmentAddHome1Binding>() {
     }
 
     override fun setEvent() {
-        binding.homeTypeRadioGroup.setOnCheckedChangeListener { group, id ->
+        binding.homeTypeRadioGroup.setOnCheckedChangeListener { _, id ->
             when(id){
                 R.id.homeRB->{
                     viewModel.option.postValue(1)

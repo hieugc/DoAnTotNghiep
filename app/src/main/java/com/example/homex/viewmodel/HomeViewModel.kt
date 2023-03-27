@@ -8,6 +8,7 @@ import com.homex.core.model.Home
 import com.homex.core.model.Location
 import com.homex.core.model.general.ResultResponse
 import com.homex.core.repository.HomeRepository
+import com.homex.core.util.AppEvent
 import kotlinx.coroutines.launch
 
 class HomeViewModel(private val repository: HomeRepository): ViewModel() {
@@ -23,8 +24,11 @@ class HomeViewModel(private val repository: HomeRepository): ViewModel() {
                         Log.e("SuccessGetLocation", "${it.data}")
                         popularHome.value = it.data
                     }
+                    is ResultResponse.Error ->{
+                        AppEvent.showPopUpError(it.message)
+                    }
                     else -> {
-                        Log.e("NotSuccessGetLocation", "hello")
+                        Log.e("Loading", "hello")
                     }
                 }
             }
@@ -40,8 +44,11 @@ class HomeViewModel(private val repository: HomeRepository): ViewModel() {
                         Log.e("SuccessGetHome", "${it.data}")
                         popularLocation.value = it.data
                     }
+                    is ResultResponse.Error ->{
+                        AppEvent.showPopUpError(it.message)
+                    }
                     else -> {
-                        Log.e("NotSuccessGetHome", "hello")
+                        Log.e("Loading", "hello")
                     }
                 }
             }

@@ -14,6 +14,7 @@ import com.homex.core.param.chat.ContactUserParam
 import com.homex.core.param.chat.GetMessagesParam
 import com.homex.core.param.chat.SendMessageParam
 import com.homex.core.repository.ChatRepository
+import com.homex.core.util.AppEvent
 import kotlinx.coroutines.launch
 import okhttp3.RequestBody
 
@@ -37,8 +38,11 @@ class ChatViewModel(private val repository: ChatRepository): ViewModel() {
                         Log.e("SuccessConnectChat", "${it.data}")
                         connectChat.value = it.data
                     }
+                    is ResultResponse.Error ->{
+                        AppEvent.showPopUpError(it.message)
+                    }
                     else -> {
-                        Log.e("NotSuccessConnectChat", "hello")
+                        Log.e("Loading", "hello")
                     }
                 }
             }
@@ -54,8 +58,11 @@ class ChatViewModel(private val repository: ChatRepository): ViewModel() {
                         Log.e("SuccessGetChat", "${it.data}")
                         chatRoom.value = it.data
                     }
+                    is ResultResponse.Error ->{
+                        AppEvent.showPopUpError(it.message)
+                    }
                     else -> {
-                        Log.e("NotSuccessGetChat", "hello")
+                        Log.e("Loading", "hello")
                     }
                 }
             }
@@ -71,8 +78,11 @@ class ChatViewModel(private val repository: ChatRepository): ViewModel() {
                         Log.e("SuccessGetMessages", "${it.data}")
                         messages.value = it.data
                     }
+                    is ResultResponse.Error ->{
+                        AppEvent.showPopUpError(it.message)
+                    }
                     else -> {
-                        Log.e("NotSuccessGetMessages", "hello")
+                        Log.e("Loading", "hello")
                     }
                 }
             }
@@ -88,8 +98,11 @@ class ChatViewModel(private val repository: ChatRepository): ViewModel() {
                         Log.e("SuccessSendMessages", "${it.data}")
                         sendMessage.value = it.data
                     }
+                    is ResultResponse.Error ->{
+                        AppEvent.showPopUpError(it.message)
+                    }
                     else -> {
-                        Log.e("NotSuccessSendMessages", "hello")
+                        Log.e("Loading", "hello")
                     }
                 }
             }
@@ -105,8 +118,11 @@ class ChatViewModel(private val repository: ChatRepository): ViewModel() {
                         Log.e("SuccessSeenAll", "${it.data}")
                         seenAll.value = it.data
                     }
+                    is ResultResponse.Error ->{
+                        AppEvent.showPopUpError(it.message)
+                    }
                     else -> {
-                        Log.e("NotSuccessSeenAll", "hello")
+                        Log.e("Loading", "hello")
                     }
                 }
             }
@@ -122,8 +138,11 @@ class ChatViewModel(private val repository: ChatRepository): ViewModel() {
                         Log.e("SuccessContactUser", "${it.data}")
                         connectToUser.value = it.data
                     }
+                    is ResultResponse.Error ->{
+                        AppEvent.showPopUpError(it.message)
+                    }
                     else -> {
-                        Log.e("NotSuccessContactUser", "hello")
+                        Log.e("Loading", "hello")
                     }
                 }
             }

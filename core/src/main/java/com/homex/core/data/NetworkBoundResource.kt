@@ -8,7 +8,6 @@ import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.homex.core.model.general.ObjectResponse
 import com.homex.core.model.general.ResultResponse
-import com.homex.core.util.AppEvent
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -51,7 +50,6 @@ constructor(private val dispatcher: CoroutineDispatcher = Dispatchers.IO) {
                 } catch (e: java.lang.Exception) {
                     Log.e(TAG, "An error happened: $e")
                     setValue(ResultResponse.Error(e.message ?: "", 404))
-                    AppEvent.showPopUpError(e.message)
                 }
             } else {
                 Log.d(TAG, "Return data from local database")
@@ -105,7 +103,6 @@ constructor(private val dispatcher: CoroutineDispatcher = Dispatchers.IO) {
                     else -> {
                         Log.e("apiError", body.toString())
                         setValue(ResultResponse.Error(apiResponse.message(), apiResponse.code()))
-                        AppEvent.showPopUpError(message = apiResponse.message().toString())
                     }
                 }
             } else {
@@ -113,7 +110,6 @@ constructor(private val dispatcher: CoroutineDispatcher = Dispatchers.IO) {
                 {
                     val errorMsg = "502 Bad Gateway"
                     setValue(ResultResponse.Error(errorMsg, apiResponse.code()))
-                    AppEvent.showPopUpError(errorMsg)
                 }else {
                     val response =
                         Gson().fromJson(
@@ -122,13 +118,10 @@ constructor(private val dispatcher: CoroutineDispatcher = Dispatchers.IO) {
                         )
                     val errorMsg = response?.detail ?: ""
                     setValue(ResultResponse.Error(errorMsg, apiResponse.code()))
-                    if (response.detail != "Invalid email or password") {
-                        AppEvent.showPopUpError(errorMsg)
-                    }
                 }
             }
         }catch (e: Exception){
-            AppEvent.showPopUpError(message = e.localizedMessage)
+            setValue(ResultResponse.Error(e.message.toString(), 0))
         }
 
     }

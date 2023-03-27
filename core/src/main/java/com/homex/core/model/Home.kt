@@ -29,6 +29,11 @@ data class Home(
     val userAccess: String? = null,
     val user: Profile? = null,
     val numberRating: Int? = null,
+    val bed: Int? = null,
+    val ratings: ArrayList<Rating>? = null,
+    val cityName: String? = null,
+    val districtName: String? = null,
+
 
 ): Parcelable{
     fun getHomeType(): String{

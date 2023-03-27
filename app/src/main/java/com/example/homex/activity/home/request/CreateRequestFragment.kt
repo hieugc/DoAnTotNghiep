@@ -13,12 +13,9 @@ import com.example.homex.activity.home.HomeActivity
 import com.example.homex.app.USER_ACCESS
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentCreateRequestBinding
-import com.example.homex.extension.*
+import com.example.homex.extension.betweenDays
+import com.example.homex.extension.longToFormat
 import com.example.homex.viewmodel.RequestViewModel
-import com.example.homex.viewmodel.YourHomeViewModel
-import com.google.android.material.datepicker.CalendarConstraints
-import com.google.android.material.datepicker.DateValidatorPointForward
-import com.google.android.material.datepicker.MaterialDatePicker
 import com.homex.core.model.CalendarDate
 import com.homex.core.model.Home
 import com.homex.core.param.request.CreateRequestParam
@@ -72,7 +69,7 @@ class CreateRequestFragment : BaseFragment<FragmentCreateRequestBinding>() {
 
     override fun setView() {
         if (prefUtil.profile != null){
-            binding.yourPointTV.text = "Bạn hiện đang có ${prefUtil.profile?.point} Point"
+            binding.yourPointTV.text = getString(R.string.point_you_have, prefUtil.profile?.point)
         }
 
         if(args.startDate != null && args.endDate != null){
@@ -134,10 +131,8 @@ class CreateRequestFragment : BaseFragment<FragmentCreateRequestBinding>() {
         }
 
         binding.createRequestBtn.setOnClickListener {
-            AppEvent.showLoading()
             if (viewModel.type.value == 2){
                 if (viewModel.house.value == null || viewModel.houseSwap.value == null){
-                    AppEvent.hideLoading()
                     AppEvent.showPopUpError("Hãy chọn các căn nhà để tạo yêu cầu")
                     return@setOnClickListener
                 }
@@ -160,11 +155,9 @@ class CreateRequestFragment : BaseFragment<FragmentCreateRequestBinding>() {
                     requestViewModel.createNewRequest(param)
                     return@setOnClickListener
                 }
-                AppEvent.hideLoading()
                 AppEvent.showPopUpError("Hệ thống không tạo được yêu cầu\nVui lòng thử lại sau.")
             }else{
                 if (viewModel.house.value == null){
-                    AppEvent.hideLoading()
                     AppEvent.showPopUpError("Hãy chọn căn nhà muốn trao đổi để tạo yêu cầu")
                     return@setOnClickListener
                 }
@@ -190,7 +183,6 @@ class CreateRequestFragment : BaseFragment<FragmentCreateRequestBinding>() {
                     requestViewModel.createNewRequest(param)
                     return@setOnClickListener
                 }
-                AppEvent.hideLoading()
                 AppEvent.showPopUpError("Hệ thống không tạo được yêu cầu\nVui lòng thử lại sau.")
             }
         }
@@ -202,7 +194,7 @@ class CreateRequestFragment : BaseFragment<FragmentCreateRequestBinding>() {
                 Toast.makeText(requireContext(), "Tạo yêu cầu thành công", Toast.LENGTH_LONG).show()
                 findNavController().popBackStack()
             }
-            AppEvent.hideLoading()
+            AppEvent.closePopup()
         }
     }
 }

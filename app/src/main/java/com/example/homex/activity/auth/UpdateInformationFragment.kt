@@ -7,6 +7,7 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import com.example.homex.R
 import com.example.homex.activity.home.HomeActivity
+import com.example.homex.app.DATE_TIME_FORMAT
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentUpdateInformationBinding
 import com.example.homex.viewmodel.AuthViewModel
@@ -32,7 +33,7 @@ class UpdateInformationFragment : BaseFragment<FragmentUpdateInformationBinding>
     }
 
     override fun setEvent() {
-        binding.autoCompleteTV.setOnItemClickListener { _, view, position, _ ->
+        binding.autoCompleteTV.setOnItemClickListener { _, _, position, _ ->
             pos = position
         }
         binding.btnContinue.setOnClickListener {
@@ -40,17 +41,15 @@ class UpdateInformationFragment : BaseFragment<FragmentUpdateInformationBinding>
             val lastname = binding.lastnameInputEdtTxt.text.toString().trim()
             val sex = pos != 0
             val phoneNumber = binding.phoneInputEdtTxt.text.toString().trim()
-            val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
-//            format.timeZone = TimeZone.getTimeZone("UTC")
+            val format = SimpleDateFormat(DATE_TIME_FORMAT, Locale.getDefault())
             val userFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-//            userFormat.timeZone = TimeZone.getTimeZone("Asia/Vietnam")
             try {
                 val res = userFormat.parse(binding.dobInputEdtTxt.text.toString())
 
                 val dob = res?.let { it1->format.format(it1) } ?:""
 
                 if(firstname.isEmpty() || lastname.isEmpty() || pos == -1 || dob.isEmpty() || !validTime){
-                    AppEvent.showPopUpError(message = "Hãy điền thông tin chính xác")
+                    AppEvent.showPopUpError(message = getString(R.string.please_fill_in_correctly))
                     return@setOnClickListener
                 }
 
@@ -193,10 +192,12 @@ class UpdateInformationFragment : BaseFragment<FragmentUpdateInformationBinding>
 
     override fun setViewModel() {
         viewModel.userInfoLiveData.observe(viewLifecycleOwner){ user->
-            CoreApplication.instance.saveToken(user?.token)
-            CoreApplication.instance.saveProfile(user?.userInfo)
-            activity?.finishAffinity()
-            startActivity(HomeActivity.open(requireContext()))
+            if (user != null){
+                CoreApplication.instance.saveToken(user.token)
+                CoreApplication.instance.saveProfile(user.userInfo)
+                activity?.finishAffinity()
+                startActivity(HomeActivity.open(requireContext()))
+            }
         }
     }
 }

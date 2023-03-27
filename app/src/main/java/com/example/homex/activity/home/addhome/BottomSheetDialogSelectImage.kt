@@ -45,7 +45,7 @@ class BottomSheetDialogSelectImage : BottomSheetDialogFragment(){
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         dialog?.window?.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
         dialog?.window?.navigationBarColor = ContextCompat.getColor(requireContext(), R.color.white)
 
@@ -119,7 +119,7 @@ class BottomSheetDialogSelectImage : BottomSheetDialogFragment(){
     }
 
     private fun clearFile(){
-        uri?.let { context?.contentResolver?.delete(it, null, null) };
+        uri?.let { context?.contentResolver?.delete(it, null, null) }
     }
 
 }

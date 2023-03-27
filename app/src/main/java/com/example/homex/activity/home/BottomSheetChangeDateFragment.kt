@@ -41,7 +41,7 @@ class BottomSheetChangeDateFragment : BottomSheetDialogFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         dialog?.window?.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
         dialog?.window?.navigationBarColor = ContextCompat.getColor(requireContext(), R.color.white)
 

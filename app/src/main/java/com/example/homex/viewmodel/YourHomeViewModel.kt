@@ -10,6 +10,7 @@ import com.homex.core.model.general.ResultResponse
 import com.homex.core.model.response.MyHomeResponse
 import com.homex.core.param.yourhome.IdParam
 import com.homex.core.repository.YourHomeRepository
+import com.homex.core.util.AppEvent
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -17,10 +18,12 @@ import okhttp3.RequestBody
 class YourHomeViewModel(private val repository: YourHomeRepository): ViewModel() {
     val myHomesLiveData = MediatorLiveData<MyHomeResponse?>()
     val messageLiveData =  MediatorLiveData<JsonObject?>()
+    val editMessageLiveData = MediatorLiveData<JsonObject?>()
     val homeDetailsLiveData = MediatorLiveData<Home?>()
     val listHomeLiveData = MediatorLiveData<ArrayList<Home>?>()
 
     fun createHome(body: RequestBody){
+        AppEvent.showPopUp()
         viewModelScope.launch {
             messageLiveData.addSource(repository.createHome(body)){
                 Log.e("response", it.toString())
@@ -29,8 +32,11 @@ class YourHomeViewModel(private val repository: YourHomeRepository): ViewModel()
                         Log.e("SuccessCreateHome", "${it.data}")
                         messageLiveData.value = it.data
                     }
+                    is ResultResponse.Error ->{
+                        AppEvent.showPopUpError(it.message)
+                    }
                     else -> {
-                        Log.e("NotSuccessCreateHome", "hello")
+                        Log.e("Loading", "hello")
                     }
                 }
             }
@@ -38,16 +44,20 @@ class YourHomeViewModel(private val repository: YourHomeRepository): ViewModel()
     }
 
     fun editHome(body: RequestBody){
+        AppEvent.showPopUp()
         viewModelScope.launch {
-            messageLiveData.addSource(repository.editHome(body)){
+            editMessageLiveData.addSource(repository.editHome(body)){
                 Log.e("response", it.toString())
                 when (it) {
                     is ResultResponse.Success -> {
                         Log.e("SuccessEditHome", "${it.data}")
-                        messageLiveData.value = it.data
+                        editMessageLiveData.value = it.data
+                    }
+                    is ResultResponse.Error ->{
+                        AppEvent.showPopUpError(it.message)
                     }
                     else -> {
-                        Log.e("NotSuccessEditHome", "hello")
+                        Log.e("Loading", "hello")
                     }
                 }
             }
@@ -55,6 +65,7 @@ class YourHomeViewModel(private val repository: YourHomeRepository): ViewModel()
     }
 
     fun deleteHome(id: Int){
+        AppEvent.showPopUp()
         viewModelScope.launch {
             messageLiveData.addSource(repository.deleteHome(id)){
                 Log.e("response", it.toString())
@@ -63,8 +74,11 @@ class YourHomeViewModel(private val repository: YourHomeRepository): ViewModel()
                         Log.e("SuccessDeleteHome", "${it.data}")
                         messageLiveData.value = it.data
                     }
+                    is ResultResponse.Error ->{
+                        AppEvent.showPopUpError(it.message)
+                    }
                     else -> {
-                        Log.e("NotSuccessDeleteHome", "hello")
+                        Log.e("Loading", "hello")
                     }
                 }
             }
@@ -80,8 +94,11 @@ class YourHomeViewModel(private val repository: YourHomeRepository): ViewModel()
                         Log.e("SuccessGetHome", "${it.data}")
                         myHomesLiveData.value = it.data
                     }
+                    is ResultResponse.Error ->{
+                        AppEvent.showPopUpError(it.message)
+                    }
                     else -> {
-                        Log.e("NotSuccessGetHome", "hello")
+                        Log.e("Loading", "hello")
                     }
                 }
             }
@@ -89,6 +106,7 @@ class YourHomeViewModel(private val repository: YourHomeRepository): ViewModel()
     }
 
     fun getHomeDetails(id: Int){
+        AppEvent.showPopUp()
         viewModelScope.launch {
             homeDetailsLiveData.addSource(repository.getHomeByDetails(id)){
                 Log.e("response", it.toString())
@@ -97,8 +115,11 @@ class YourHomeViewModel(private val repository: YourHomeRepository): ViewModel()
                         Log.e("SuccessGetHomeDetails", "${it.data}")
                         homeDetailsLiveData.value = it.data
                     }
+                    is ResultResponse.Error ->{
+                        AppEvent.showPopUpError(it.message)
+                    }
                     else -> {
-                        Log.e("FailedGetHomeDetails", "hello")
+                        Log.e("Loading", "hello")
                     }
                 }
             }
@@ -114,8 +135,11 @@ class YourHomeViewModel(private val repository: YourHomeRepository): ViewModel()
                         Log.e("SuccessGetHomeUser", "${it.data}")
                         listHomeLiveData.value = it.data
                     }
+                    is ResultResponse.Error ->{
+                        AppEvent.showPopUpError(it.message)
+                    }
                     else -> {
-                        Log.e("NotSuccessGetHomeUser", "hello")
+                        Log.e("Loading", "hello")
                     }
                 }
             }

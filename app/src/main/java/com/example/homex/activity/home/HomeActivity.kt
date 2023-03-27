@@ -69,7 +69,7 @@ class HomeActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_home)
 
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
         window.statusBarColor = ContextCompat.getColor(this, R.color.white)
         window.navigationBarColor = ContextCompat.getColor(this, R.color.white)
         val navHost =
@@ -97,7 +97,7 @@ class HomeActivity : BaseActivity() {
 
         setViewModel()
         setEvent()
-        navController.addOnDestinationChangedListener{ _, destination, _->
+        navController.addOnDestinationChangedListener{ _, _, _->
             supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_back_main)
         }
     }
@@ -251,7 +251,7 @@ class HomeActivity : BaseActivity() {
     override fun onPause() {
         super.onPause()
         // Unregister the listener when the application is paused
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(myReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(myReceiver)
         // or `unregisterReceiver(testReceiver)` for a normal broadcast
     }
 

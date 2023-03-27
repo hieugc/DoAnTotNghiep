@@ -1,7 +1,6 @@
 package com.example.homex.activity.home.myhome
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,7 +12,6 @@ import com.example.homex.databinding.FragmentMyHomeBinding
 import com.example.homex.extension.gone
 import com.example.homex.extension.visible
 import com.example.homex.viewmodel.YourHomeViewModel
-import com.homex.core.util.AppEvent
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -22,6 +20,7 @@ class MyHomeFragment : BaseFragment<FragmentMyHomeBinding>() {
     private lateinit var adapter: MyHomeAdapter
     private val viewModel: YourHomeViewModel by viewModel()
     private var page = 0
+    private var isShimmer = true
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -33,8 +32,12 @@ class MyHomeFragment : BaseFragment<FragmentMyHomeBinding>() {
             showMessage = false,
             showBoxChatLayout = Pair(false, null),
         )
+        binding.homeShimmer.gone()
+        if (isShimmer){
+            binding.homeShimmer.startShimmer()
+            binding.homeShimmer.visible()
+        }
         viewModel.getMyHomes(page)
-        AppEvent.showLoading()
     }
 
     override fun setView() {
@@ -60,13 +63,29 @@ class MyHomeFragment : BaseFragment<FragmentMyHomeBinding>() {
         viewModel.myHomesLiveData.observe(viewLifecycleOwner){
             if (it != null){
                 val homes = it.homes
-                Log.e("homes", "$homes")
-                adapter.homeList?.clear()
+                val size = adapter.homeList?.size
+                if (size != null) {
+                    if (size > 0){
+                        adapter.homeList?.clear()
+                        adapter.notifyItemRangeRemoved(0, size)
+                    }
+                }
                 if (homes != null){
                     if(homes.size > 0){
                         adapter.homeList?.addAll(homes)
-                        adapter.notifyDataSetChanged()
+                        adapter.notifyItemRangeInserted(0, homes.size)
+                        binding.homeShimmer.stopShimmer()
+                        binding.homeShimmer.gone()
+                        isShimmer = false
+                    }else{
+                        binding.homeShimmer.stopShimmer()
+                        binding.homeShimmer.gone()
+                        isShimmer = false
                     }
+                }else{
+                    binding.homeShimmer.stopShimmer()
+                    binding.homeShimmer.gone()
+                    isShimmer = false
                 }
                 if(adapter.homeList.isNullOrEmpty()){
                     binding.mainHomeRecView.gone()
@@ -75,8 +94,11 @@ class MyHomeFragment : BaseFragment<FragmentMyHomeBinding>() {
                     binding.mainHomeRecView.visible()
                     binding.noHomeTxt.gone()
                 }
+            }else{
+                binding.homeShimmer.stopShimmer()
+                binding.homeShimmer.gone()
+                isShimmer = false
             }
-            AppEvent.hideLoading()
         }
     }
 }

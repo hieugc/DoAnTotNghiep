@@ -11,7 +11,7 @@ import com.example.homex.R
 import com.example.homex.databinding.AddHomeImageItemBinding
 import com.homex.core.model.ImageBase
 
-class AddImageAdapter(var imgList: MutableList<Pair<Uri, Boolean>>? = arrayListOf(), val onClick: (Int)->Unit, var images: MutableList<ImageBase>? = mutableListOf(), val removeItem: (ImageBase)->Unit): RecyclerView.Adapter<AddImageAdapter.ImageViewHolder>() {
+class AddImageAdapter(var imgList: MutableList<Pair<Uri, Boolean>>? = arrayListOf(), val onClick: (Int, Int)->Unit, var images: MutableList<ImageBase>? = mutableListOf(), val removeItem: (ImageBase, Int)->Unit): RecyclerView.Adapter<AddImageAdapter.ImageViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
         return ImageViewHolder(
             AddHomeImageItemBinding.bind(
@@ -27,7 +27,7 @@ class AddImageAdapter(var imgList: MutableList<Pair<Uri, Boolean>>? = arrayListO
             val realPosition = position - images?.size!!
             val item = imgList?.get(realPosition)
             holder.binding.deleteImgBtn.setOnClickListener {
-                onClick.invoke(realPosition)
+                onClick.invoke(realPosition, position)
             }
             Glide.with(holder.itemView.context)
                 .load(item?.first)
@@ -38,7 +38,7 @@ class AddImageAdapter(var imgList: MutableList<Pair<Uri, Boolean>>? = arrayListO
             val item = images?.get(position)
             holder.binding.deleteImgBtn.setOnClickListener {
                 if (item != null) {
-                    removeItem.invoke(item)
+                    removeItem.invoke(item, position)
                 }
             }
             Glide.with(holder.itemView.context)

@@ -36,6 +36,10 @@ class MyHomeAdapter(val homeList: ArrayList<Home>?, val onClick: (Int)->Unit): R
             val lastParams = holder.itemView.layoutParams as ViewGroup.MarginLayoutParams
             lastParams.bottomMargin = 80f.dpToPx(holder.itemView.context)
             holder.itemView.requestLayout()
+        }else{
+            val lastParams = holder.itemView.layoutParams as ViewGroup.MarginLayoutParams
+            lastParams.bottomMargin = 16f.dpToPx(holder.itemView.context)
+            holder.itemView.requestLayout()
         }
     }
 

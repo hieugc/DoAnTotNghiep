@@ -35,4 +35,8 @@
     <color name="background_gray">#E5E5E5</color>
     <color name="isRead">#FAFAFA</color>
     <color name="gray60">#99999999</color>
+    <color name="grey_light">#cacaca</color>
+    <color name="gray_0">#393939</color>
+    <color name="gray7">#777777</color>
+    <color name="gray7_50">#50777777</color>
 </resources>

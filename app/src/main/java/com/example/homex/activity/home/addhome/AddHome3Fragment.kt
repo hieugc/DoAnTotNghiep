@@ -27,12 +27,12 @@ class AddHome3Fragment : BaseFragment<FragmentAddHome3Binding>() {
     override fun setEvent() {
         setEventAddMinus()
 
-        binding.chipGroup.setOnCheckedStateChangeListener { group, checkedIds ->
+        binding.chipGroup.setOnCheckedStateChangeListener { _, checkedIds ->
             utilsList = checkedIds
             updateUtilsList()
         }
 
-        binding.rulesGroup.setOnCheckedStateChangeListener { group, checkedIds ->
+        binding.rulesGroup.setOnCheckedStateChangeListener { _, checkedIds ->
             rulesList = checkedIds
             updateRulesList()
         }
@@ -93,34 +93,34 @@ class AddHome3Fragment : BaseFragment<FragmentAddHome3Binding>() {
     private fun setEventAddMinus() {
         binding.addBed.setOnClickListener {
             val num = binding.edtBed.text.toString().toInt()
-            binding.edtBed.setText((num + 1).toString())
+            binding.edtBed.setText(getString(R.string.int_input_string, num + 1))
         }
         binding.minusBed.setOnClickListener {
             val num = binding.edtBed.text.toString().toInt()
             if(num == 0) return@setOnClickListener
-            binding.edtBed.setText((num - 1).toString())
+            binding.edtBed.setText(getString(R.string.int_input_string, num - 1))
         }
         binding.addPeople.setOnClickListener {
             val num = binding.edtPeople.text.toString().toInt()
-            binding.edtPeople.setText((num + 1).toString())
+            binding.edtPeople.setText(getString(R.string.int_input_string, num + 1))
         }
         binding.minusPeople.setOnClickListener {
             val num = binding.edtPeople.text.toString().toInt()
             if(num == 0) return@setOnClickListener
-            binding.edtPeople.setText((num - 1).toString())
+            binding.edtPeople.setText(getString(R.string.int_input_string, num - 1))
         }
         binding.addBathRoom.setOnClickListener {
             val num = binding.edtBathRoom.text.toString().toInt()
-            binding.edtBathRoom.setText((num + 1).toString())
+            binding.edtBathRoom.setText(getString(R.string.int_input_string, num + 1))
         }
         binding.minusBathRoom.setOnClickListener {
             val num = binding.edtBathRoom.text.toString().toInt()
             if(num == 0) return@setOnClickListener
-            binding.edtBathRoom.setText((num - 1).toString())
+            binding.edtBathRoom.setText(getString(R.string.int_input_string, num - 1))
         }
         binding.addBedRoom.setOnClickListener {
             val num = binding.edtBedRoom.text.toString().toInt()
-            binding.edtBedRoom.setText((num + 1).toString())
+            binding.edtBedRoom.setText(getString(R.string.int_input_string, num + 1))
         }
         binding.minusBedRoom.setOnClickListener {
             val num = binding.edtBedRoom.text.toString().toInt()

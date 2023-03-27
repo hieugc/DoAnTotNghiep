@@ -17,12 +17,13 @@ open class BaseActivity: PopupEventListener , AppCompatActivity() {
     private var listDialogFragment: ArrayList<PopupDialogFragment?>? = arrayListOf()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        AppEvent.registerListener(this)
         instance = this
+        AppEvent.registerListener(this)
     }
 
     override fun onBackPressed() {
         moveTaskToBack(true)
+        AppEvent.closePopup()
     }
 
     override fun onRequestPermissionsResult(
@@ -35,6 +36,11 @@ open class BaseActivity: PopupEventListener , AppCompatActivity() {
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
+    override fun onResume() {
+        super.onResume()
+        AppEvent.registerListener(this)
+    }
+
     override fun onStop() {
         super.onStop()
         AppEvent.unRegisterListener(this)
@@ -43,14 +49,6 @@ open class BaseActivity: PopupEventListener , AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         AppEvent.unRegisterListener(this)
-    }
-
-    override fun onShowLoading() {
-        PopupHelper().showLoading()
-    }
-
-    override fun onHideLoading() {
-        closePopup()
     }
 
     override fun onClosePopup() {

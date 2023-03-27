@@ -29,7 +29,7 @@ class NotificationDialogFragment : DialogFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentNotificationDialogBinding.bind(inflater.inflate(R.layout.fragment_notification_dialog, container))
 
         return binding.root
