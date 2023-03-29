@@ -51,6 +51,7 @@
 
         <activity
             android:name=".activity.auth.AuthActivity"
+            android:windowSoftInputMode="stateHidden"
             android:exported="false" />
     </application>
 

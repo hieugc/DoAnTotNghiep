@@ -45,9 +45,10 @@ class MessageFragment : BaseFragment<FragmentMessageBinding>() {
         if (isShimmer){
             binding.messageShimmer.startShimmer()
             binding.messageShimmer.visible()
+            binding.messageBoxRecView.visibility = View.INVISIBLE
         }
-        viewModel.getChatRoom(page)
-
+        page = 0
+        viewModel.getChatRoom(page++)
         arguments?.getInt(ID)?.let {
             if (it == 0)
                 return@let
@@ -76,30 +77,37 @@ class MessageFragment : BaseFragment<FragmentMessageBinding>() {
     override fun setViewModel() {
         viewModel.chatRoom.observe(this){
             if (it != null){
-                if(page == 0){
-                    val size = boxChatList.size
-                    if (size > 0){
-                        boxChatList.clear()
-                        adapter.notifyItemRangeRemoved(0, size)
-                    }
+                Log.e("page", "$page")
+                if(page == 1){
+                    boxChatList.clear()
                 }
                 val rooms = it.rooms
-                val pos = boxChatList.size
                 if(rooms != null){
                     boxChatList.addAll(rooms)
-                    binding.messageShimmer.stopShimmer()
-                    binding.messageShimmer.gone()
-                    isShimmer = false
-                    adapter.notifyItemRangeInserted(pos, rooms.size)
+                    adapter.notifyDataSetChanged()
+                    if (boxChatList.isEmpty()){
+                        binding.messageShimmer.stopShimmer()
+                        binding.messageShimmer.gone()
+                        isShimmer = false
+                    }else{
+                        if (isShimmer){
+                            binding.messageShimmer.stopShimmer()
+                            binding.messageShimmer.gone()
+                            isShimmer = false
+                        }
+                        binding.messageBoxRecView.visible()
+                    }
                 }else{
                     binding.messageShimmer.stopShimmer()
                     binding.messageShimmer.gone()
                     isShimmer = false
+                    binding.messageBoxRecView.gone()
                 }
             }else{
                 binding.messageShimmer.stopShimmer()
                 binding.messageShimmer.gone()
                 isShimmer = false
+                binding.messageBoxRecView.gone()
             }
         }
 

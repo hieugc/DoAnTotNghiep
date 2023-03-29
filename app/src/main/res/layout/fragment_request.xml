@@ -18,14 +18,13 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                >
                 <include layout="@layout/request_shimmer"/>
 
                 <include layout="@layout/request_shimmer"/>
 
                 <include layout="@layout/request_shimmer"/>
-
-
 
             </LinearLayout>
 
@@ -35,8 +34,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:visibility="gone"
             android:nestedScrollingEnabled="true"
             android:overScrollMode="never"
+            android:clipToPadding="false"
+            android:paddingBottom="16dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:listitem="@layout/request_item"
             tools:itemCount="3"
@@ -52,7 +54,7 @@
             android:layout_marginBottom="25dp"
             android:textStyle="bold"
             android:gravity="center"
-            android:text="Hệ thống sẽ thông báo cho bạn\n khi có yêu cầu mới"
+            android:text="@string/system_will_notify_you_when_new_request_come"
             android:textColor="@color/gray"
             android:textSize="16sp"
             android:visibility="gone"

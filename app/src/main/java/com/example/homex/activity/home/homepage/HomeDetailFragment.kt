@@ -78,23 +78,17 @@ class HomeDetailFragment : BaseFragment<FragmentHomeDetailBinding>() {
         viewModel.homeDetailsLiveData.observe(this){
             if (it != null){
                 binding.home = it
-                val imgSize = adapter.imgList?.size?:0
-                adapter.notifyItemRangeRemoved(0, imgSize)
                 adapter.imgList = it.images
-                val utilSize = utilAdapter.itemList?.size?:0
-                utilAdapter.notifyItemRangeRemoved(0, utilSize)
                 utilAdapter.itemList = it.utilities
                 if(it.utilities != null){
                     if(it.utilities!!.size > 4){
                         binding.showAllUtil.visible()
                     }
                 }
-                val ruleSize = rulesAdapter.itemList?.size?:0
-                rulesAdapter.notifyItemRangeRemoved(0, ruleSize)
                 rulesAdapter.itemList = it.rules
-                adapter.notifyItemRangeInserted(0, it.images?.size?:0)
-                utilAdapter.notifyItemRangeInserted(0, it.utilities?.size?:0)
-                rulesAdapter.notifyItemRangeInserted(0, it.rules?.size?:0)
+                adapter.notifyDataSetChanged()
+                utilAdapter.notifyDataSetChanged()
+                rulesAdapter.notifyDataSetChanged()
 
                 if (binding.home?.userAccess == prefUtil.profile?.userAccess){
                     binding.pickDateLayout.gone()

@@ -38,6 +38,7 @@ class RequestFragment : BaseFragment<FragmentRequestBinding>() {
         if (isShimmer){
             binding.requestShimmer.startShimmer()
             binding.requestShimmer.visible()
+            binding.requestRecView.visibility = View.INVISIBLE
         }
         viewModel.getPendingRequest()
     }
@@ -57,25 +58,26 @@ class RequestFragment : BaseFragment<FragmentRequestBinding>() {
     override fun setViewModel() {
         viewModel.requestResponseListLiveDate.observe(this){
             if (it != null){
-                val size = requestList.size
-                if (size > 0){
-                    requestList.clear()
-                    adapter.notifyItemRangeRemoved(0, size)
-                }
+                requestList.clear()
                 requestList.addAll(it)
-                adapter.notifyItemRangeInserted(0, it.size)
+                adapter.notifyDataSetChanged()
                 if (requestList.isEmpty()){
-                    binding.noHomeTxt.visible()
+                    binding.requestShimmer.stopShimmer()
+                    binding.requestShimmer.gone()
+                    isShimmer = false
                 }else{
-                    binding.noHomeTxt.gone()
+                    if (isShimmer){
+                        binding.requestShimmer.stopShimmer()
+                        binding.requestShimmer.gone()
+                        isShimmer = false
+                    }
+                    binding.requestRecView.visible()
                 }
-                binding.requestShimmer.stopShimmer()
-                binding.requestShimmer.gone()
-                isShimmer = false
             }else{
                 binding.requestShimmer.stopShimmer()
                 binding.requestShimmer.gone()
                 isShimmer = false
+                binding.requestRecView.gone()
             }
         }
     }

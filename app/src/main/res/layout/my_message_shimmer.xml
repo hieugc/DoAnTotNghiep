@@ -20,9 +20,9 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/textMsg"
-            android:layout_width="wrap_content"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:padding="10dp"
+            android:padding="12dp"
             tools:text="bạn ơi, nhà của bạn có"
             app:layout_constraintHorizontal_bias="1"
             android:background="@color/grey_light"

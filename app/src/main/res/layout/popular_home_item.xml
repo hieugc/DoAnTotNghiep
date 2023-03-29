@@ -1,24 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
     <data>
         <variable
             name="home"
             type="com.homex.core.model.Home" />
     </data>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/shadow_layout"
     android:layout_marginHorizontal="7dp"
-    app:cardCornerRadius="8dp"
-    app:cardElevation="10dp"
-    android:layout_marginBottom="16dp">
+    android:layout_marginBottom="16dp"
+    >
+<androidx.cardview.widget.CardView android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardElevation="0dp"
+    app:cardCornerRadius="5dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="16dp">
 
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/homeBackground"
+            android:layout_width="match_parent"
+            android:layout_height="170dp"
+            android:alpha="0.3"
+            android:scaleType="centerCrop"
+            loadImage="@{ !home.images.empty ? home.images.get(0).data : null}"
+            app:layout_constraintTop_toTopOf="parent"
+            android:src="@mipmap/location"/>
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/homeImg"
@@ -119,7 +134,7 @@
             style="@style/HomePrice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{home.people + ` point/ngày`}"
+            android:text="@{home.price + ` point/ngày`}"
             android:layout_marginEnd="8dp"
             app:layout_constraintStart_toStartOf="@id/homeName"
             app:layout_constraintBottom_toBottomOf="parent"/>
@@ -128,5 +143,6 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.cardview.widget.CardView>
+    </LinearLayout>
 
 </layout>

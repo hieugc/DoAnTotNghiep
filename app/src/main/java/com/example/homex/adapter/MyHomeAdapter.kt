@@ -13,7 +13,7 @@ import com.example.homex.extension.setHomeStatus
 import com.homex.core.model.Home
 import com.homex.core.model.HomeStatus
 
-class MyHomeAdapter(val homeList: ArrayList<Home>?, val onClick: (Int)->Unit): RecyclerView.Adapter<MyHomeAdapter.MyHomeViewHolder>() {
+class MyHomeAdapter(var homeList: ArrayList<Home>?, val onClick: (Int)->Unit): RecyclerView.Adapter<MyHomeAdapter.MyHomeViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyHomeViewHolder {
         return MyHomeViewHolder(
@@ -31,16 +31,16 @@ class MyHomeAdapter(val homeList: ArrayList<Home>?, val onClick: (Int)->Unit): R
         holder.binding.root.setOnClickListener {
             item?.id?.let { onClick.invoke(it) }
         }
-        if(position == homeList?.size!! - 1 )
-        {
-            val lastParams = holder.itemView.layoutParams as ViewGroup.MarginLayoutParams
-            lastParams.bottomMargin = 80f.dpToPx(holder.itemView.context)
-            holder.itemView.requestLayout()
-        }else{
-            val lastParams = holder.itemView.layoutParams as ViewGroup.MarginLayoutParams
-            lastParams.bottomMargin = 16f.dpToPx(holder.itemView.context)
-            holder.itemView.requestLayout()
-        }
+//        if(position == homeList?.size!! - 1 )
+//        {
+//            val lastParams = holder.itemView.layoutParams as ViewGroup.MarginLayoutParams
+//            lastParams.bottomMargin = 80f.dpToPx(holder.itemView.context)
+//            holder.itemView.requestLayout()
+//        }else{
+//            val lastParams = holder.itemView.layoutParams as ViewGroup.MarginLayoutParams
+//            lastParams.bottomMargin = 16f.dpToPx(holder.itemView.context)
+//            holder.itemView.requestLayout()
+//        }
     }
 
     override fun getItemCount(): Int {

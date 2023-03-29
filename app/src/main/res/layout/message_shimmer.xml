@@ -28,10 +28,10 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/textMsg"
-            android:layout_width="wrap_content"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:background="@color/grey_light"
-            android:padding="10dp"
+            android:padding="12dp"
             tools:text="bạn ơi, nhà của bạn có"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintEnd_toEndOf="parent"

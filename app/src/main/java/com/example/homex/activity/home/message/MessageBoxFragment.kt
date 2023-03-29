@@ -56,6 +56,7 @@ class MessageBoxFragment : BaseFragment<FragmentMessageBoxBinding>() {
         if (isShimmer){
             binding.messageShimmer.startShimmer()
             binding.messageShimmer.visible()
+            binding.messageRecView.visibility = View.INVISIBLE
         }
         val param = Pagination(page++, limit)
         if (args.id != 0){
@@ -188,7 +189,6 @@ class MessageBoxFragment : BaseFragment<FragmentMessageBoxBinding>() {
                 }
                 val messages = it.messages
                 val tmpList = arrayListOf<Message>()
-                val pos = messageList.size
                 if (messages != null){
                     if (messages.size > 0){
                         var date = messages[0].createdDate
@@ -213,16 +213,32 @@ class MessageBoxFragment : BaseFragment<FragmentMessageBoxBinding>() {
                             }
                         }
                     }
+                    val pos = messageList.size
+                    messageList.addAll(tmpList)
+                    adapter.notifyItemRangeInserted(pos, tmpList.size)
+                    if (messageList.isEmpty()){
+                        binding.messageShimmer.stopShimmer()
+                        binding.messageShimmer.gone()
+                        isShimmer = false
+                    }else{
+                        if (isShimmer){
+                            binding.messageShimmer.stopShimmer()
+                            binding.messageShimmer.gone()
+                            isShimmer = false
+                        }
+                        binding.messageRecView.visible()
+                    }
+                }else{
+                    binding.messageShimmer.stopShimmer()
+                    binding.messageShimmer.gone()
+                    isShimmer = false
+                    binding.messageRecView.gone()
                 }
-                messageList.addAll(tmpList)
-                adapter.notifyItemRangeInserted(pos, tmpList.size)
-                binding.messageShimmer.stopShimmer()
-                binding.messageShimmer.gone()
-                isShimmer = false
             }else{
                 binding.messageShimmer.stopShimmer()
                 binding.messageShimmer.gone()
                 isShimmer = false
+                binding.messageRecView.gone()
             }
         }
 
@@ -239,7 +255,9 @@ class MessageBoxFragment : BaseFragment<FragmentMessageBoxBinding>() {
                 if (messages != null){
                     messageList.addAll(0, messages)
                     adapter.notifyItemInserted(0)
+                    adapter.notifyItemRangeChanged(0, 2)
                     viewModel.seenAll(body)
+                    binding.messageRecView.smoothScrollToPosition(0)
                 }
                 viewModel.newMessage.postValue(null)
             }

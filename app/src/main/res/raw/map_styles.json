@@ -1,35 +1,31 @@
 {
   "version": "1.0",
   "settings": {
-    "landColor": "#e7e6e5",
-    "shadedReliefVisible": false
+    "landColor": "#F2EFE9",
+    "fillColor": "#ECEAE3",
+    "waterColor": "#D6EAF8",
+    "strokeColor": "#BDBDBD",
+    "labelColor": "#757575"
   },
   "elements": {
-    "vegetation": {
-      "fillColor": "#c5dea2"
-    },
-    "naturalPoint": {
-      "visible": false,
-      "labelVisible": false
-    },
-    "transportation": {
-      "labelOutlineColor": "#ffffff",
-      "fillColor": "#ffffff",
-      "strokeColor": "#d7d6d5"
-    },
     "water": {
-      "fillColor": "#b1bdd6",
-      "labelColor": "#ffffff",
-      "labelOutlineColor": "#9aa9ca"
+      "fillColor": "#D6EAF8"
     },
-    "structure": {
-      "fillColor": "#d7d6d5"
+    "area": {
+      "fillColor": "#ECEAE3"
     },
-    "indigenousPeoplesReserve": {
-      "visible": false
+    "road": {
+      "strokeColor": "#BDBDBD",
+      "labelColor": "#757575"
     },
-    "military": {
-      "visible": false
+    "poi": {
+      "iconColor": "#757575",
+      "labelColor": "#757575"
+    },
+    "transit": {
+      "fillColor": "#ECEAE3",
+      "strokeColor": "#BDBDBD",
+      "labelColor": "#757575"
     }
   }
 }

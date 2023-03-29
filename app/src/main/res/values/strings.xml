@@ -37,6 +37,7 @@
     <string name="lorem_long">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
     <string name="ok">OK</string>
     <string name="me">Tôi</string>
+    <string name="location_rationale">Chúng tôi sử dụng vị trí của bạn để gợi ý điểm đến cho bạn</string>
     <string name="notification">Thông báo</string>
     <string name="explore">Khám phá</string>
     <string name="home">Trang chủ</string>
@@ -164,4 +165,5 @@
     <string name="accept_request_message">Bạn có muốn chấp nhận yêu cầu trao đổi này ?</string>
     <string name="reject_request">Từ chối yêu cầu</string>
     <string name="reject_request_message">Bạn có muốn từ chối yêu cầu trao đổi này ?</string>
+    <string name="system_will_notify_you_when_new_request_come">Hệ thống sẽ thông báo cho bạn\n khi có yêu cầu mới</string>
 </resources>

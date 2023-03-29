@@ -36,9 +36,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         binding.locationShimmer.gone()
         if (isHomeShimmer && isLocationShimmer){
             binding.homeShimmer.startShimmer()
-            binding.homeShimmer.visible()
             binding.locationShimmer.startShimmer()
+            binding.homeShimmer.visible()
             binding.locationShimmer.visible()
+            binding.popularHomeRecView.visibility = View.INVISIBLE
+            binding.popularLocationRecView.visibility = View.INVISIBLE
         }
         (activity as HomeActivity).setPropertiesScreen(
             showLogo = true,
@@ -57,8 +59,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
             PopularLocationAdapter(
                 locationList
             )
+        binding.popularLocationRecView.setHasFixedSize(true)
         binding.popularLocationRecView.adapter = adapter
-        binding.popularLocationRecView.layoutManager = CenterZoomLayoutManager(context, LinearLayoutManager.HORIZONTAL, false, mShrinkAmount = 0f, mShrinkDistance = 1f)
+        binding.popularLocationRecView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        val snapHelper2 = LinearSnapHelper()
+        snapHelper2.attachToRecyclerView(binding.popularLocationRecView)
 
         homeAdapter =
             PopularHomeAdapter(
@@ -68,14 +73,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                     findNavController().navigate(action)
                 }
             )
-
+        binding.popularHomeRecView.setHasFixedSize(true)
         binding.popularHomeRecView.adapter = homeAdapter
-        binding.popularHomeRecView.layoutManager = CenterZoomLayoutManager(context, LinearLayoutManager.HORIZONTAL, false, mShrinkAmount = 0f, mShrinkDistance = 1f)
+        binding.popularHomeRecView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         //Add snap helper to recyclerview to make it focus at 1 item
         val snapHelper = LinearSnapHelper()
         snapHelper.attachToRecyclerView(binding.popularHomeRecView)
-        val snapHelper2 = LinearSnapHelper()
-        snapHelper2.attachToRecyclerView(binding.popularLocationRecView)
+
     }
 
     override fun setEvent() {
@@ -87,39 +91,51 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
     override fun setViewModel() {
         viewModel.popularHome.observe(viewLifecycleOwner){ list->
             if(list != null){
-                val size = homeList.size
-                if (size > 0){
-                    homeList.clear()
-                    homeAdapter.notifyItemRangeRemoved(0, size)
-                }
+                homeList.clear()
                 homeList.addAll(list)
-                homeAdapter.notifyItemRangeInserted(0, list.size)
-                binding.homeShimmer.stopShimmer()
-                binding.homeShimmer.gone()
-                isHomeShimmer = false
+                homeAdapter.notifyDataSetChanged()
+                if (homeList.isEmpty()){
+                    binding.homeShimmer.stopShimmer()
+                    binding.homeShimmer.gone()
+                    isHomeShimmer = false
+                }else{
+                    if (isHomeShimmer){
+                        binding.homeShimmer.stopShimmer()
+                        binding.homeShimmer.gone()
+                        isHomeShimmer = false
+                    }
+                    binding.popularHomeRecView.visible()
+                }
             }else{
                 binding.homeShimmer.stopShimmer()
                 binding.homeShimmer.gone()
                 isHomeShimmer = false
+                binding.popularHomeRecView.gone()
             }
         }
 
         viewModel.popularLocation.observe(viewLifecycleOwner){ list->
             if(list != null){
-                val size = locationList.size
-                if (size > 0){
-                    locationList.clear()
-                    adapter.notifyItemRangeRemoved(0, size)
-                }
+                locationList.clear()
                 locationList.addAll(list)
-                adapter.notifyItemRangeInserted(0, list.size)
-                binding.locationShimmer.stopShimmer()
-                binding.locationShimmer.gone()
-                isLocationShimmer = false
+                adapter.notifyDataSetChanged()
+                if (locationList.isEmpty()){
+                    binding.locationShimmer.stopShimmer()
+                    binding.locationShimmer.gone()
+                    isLocationShimmer = false
+                }else{
+                    if (isLocationShimmer){
+                        binding.locationShimmer.stopShimmer()
+                        binding.locationShimmer.gone()
+                        isLocationShimmer = false
+                    }
+                    binding.popularLocationRecView.visible()
+                }
             }else{
                 binding.locationShimmer.stopShimmer()
                 binding.locationShimmer.gone()
                 isLocationShimmer = false
+                binding.popularLocationRecView.gone()
             }
         }
     }

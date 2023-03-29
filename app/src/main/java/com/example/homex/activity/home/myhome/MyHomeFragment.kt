@@ -12,6 +12,7 @@ import com.example.homex.databinding.FragmentMyHomeBinding
 import com.example.homex.extension.gone
 import com.example.homex.extension.visible
 import com.example.homex.viewmodel.YourHomeViewModel
+import com.homex.core.model.Home
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -19,6 +20,7 @@ class MyHomeFragment : BaseFragment<FragmentMyHomeBinding>() {
     override val layoutId: Int = R.layout.fragment_my_home
     private lateinit var adapter: MyHomeAdapter
     private val viewModel: YourHomeViewModel by viewModel()
+    private val homeList = arrayListOf<Home>()
     private var page = 0
     private var isShimmer = true
 
@@ -36,6 +38,7 @@ class MyHomeFragment : BaseFragment<FragmentMyHomeBinding>() {
         if (isShimmer){
             binding.homeShimmer.startShimmer()
             binding.homeShimmer.visible()
+            binding.mainHomeRecView.visibility = View.INVISIBLE
         }
         viewModel.getMyHomes(page)
     }
@@ -48,6 +51,7 @@ class MyHomeFragment : BaseFragment<FragmentMyHomeBinding>() {
                 findNavController().navigate(action)
             }
         )
+        adapter.homeList = homeList
         binding.mainHomeRecView.adapter = adapter
         val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         binding.mainHomeRecView.layoutManager = layoutManager
@@ -62,42 +66,40 @@ class MyHomeFragment : BaseFragment<FragmentMyHomeBinding>() {
     override fun setViewModel() {
         viewModel.myHomesLiveData.observe(viewLifecycleOwner){
             if (it != null){
-                val homes = it.homes
-                val size = adapter.homeList?.size
-                if (size != null) {
-                    if (size > 0){
-                        adapter.homeList?.clear()
-                        adapter.notifyItemRangeRemoved(0, size)
-                    }
+                if(page == 1){
+                    homeList.clear()
                 }
+                val homes = it.homes
                 if (homes != null){
-                    if(homes.size > 0){
-                        adapter.homeList?.addAll(homes)
-                        adapter.notifyItemRangeInserted(0, homes.size)
+                    homeList.addAll(homes)
+                    adapter.notifyDataSetChanged()
+                    if (homeList.isEmpty()){
                         binding.homeShimmer.stopShimmer()
                         binding.homeShimmer.gone()
+                        binding.noHomeTxt.visible()
                         isShimmer = false
                     }else{
-                        binding.homeShimmer.stopShimmer()
-                        binding.homeShimmer.gone()
-                        isShimmer = false
+                        if (isShimmer){
+                            binding.homeShimmer.stopShimmer()
+                            binding.homeShimmer.gone()
+                            isShimmer = false
+                        }
+                        binding.mainHomeRecView.visible()
+                        binding.noHomeTxt.gone()
                     }
                 }else{
                     binding.homeShimmer.stopShimmer()
                     binding.homeShimmer.gone()
                     isShimmer = false
-                }
-                if(adapter.homeList.isNullOrEmpty()){
                     binding.mainHomeRecView.gone()
                     binding.noHomeTxt.visible()
-                }else{
-                    binding.mainHomeRecView.visible()
-                    binding.noHomeTxt.gone()
                 }
             }else{
                 binding.homeShimmer.stopShimmer()
                 binding.homeShimmer.gone()
                 isShimmer = false
+                binding.mainHomeRecView.gone()
+                binding.noHomeTxt.visible()
             }
         }
     }

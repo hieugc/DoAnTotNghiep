@@ -67,15 +67,12 @@ class AddHome4Fragment : BaseFragment<FragmentAddHome4Binding>() {
     override fun setViewModel() {
         fileViewModel.file.observe(viewLifecycleOwner){
             if (it != null) {
-                val pos = fileList.size
-                val size = imgList.size
                 imgList.clear()
-                adapter.notifyItemRangeRemoved(pos, size)
-                Log.e("viewModelList", "$it")
-                if (it.isNotEmpty()){
+                imgList.addAll(it)
+                adapter.notifyDataSetChanged()
+                if (imgList.isNotEmpty()){
                     binding.homeImageRecView.visible()
                     binding.finishBtn.enable()
-                    imgList.addAll(it)
                 }
                 Handler(Looper.getMainLooper()).post {
                     when(imgList.size + fileList.size){
@@ -93,21 +90,18 @@ class AddHome4Fragment : BaseFragment<FragmentAddHome4Binding>() {
                         }
                     }
                 }
-                adapter.notifyItemRangeInserted(pos, it.size)
             }
         }
 
         viewModel.images.observe(viewLifecycleOwner){
             if (it != null){
-                val size = fileList.size
                 fileList.clear()
-                adapter.notifyItemRangeRemoved(0, size)
+                fileList.addAll(it)
+                adapter.notifyDataSetChanged()
                 if(it.isNotEmpty()){
                     binding.homeImageRecView.visible()
                     binding.finishBtn.enable()
-                    fileList.addAll(it)
                 }
-                Log.e("viewModelList", "$fileList")
                 Handler(Looper.getMainLooper()).post {
                     when(imgList.size + fileList.size){
                         5->{
@@ -124,7 +118,6 @@ class AddHome4Fragment : BaseFragment<FragmentAddHome4Binding>() {
                         }
                     }
                 }
-                adapter.notifyItemRangeInserted(0, it.size)
             }
         }
     }

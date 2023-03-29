@@ -50,13 +50,14 @@
             android:id="@+id/mainHomeRecView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:clipToPadding="true"
+            android:clipToPadding="false"
+            android:paddingTop="16dp"
+            android:paddingBottom="80dp"
             android:overScrollMode="never"
             android:nestedScrollingEnabled="true"
             android:orientation="vertical"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:itemCount="3"
-            android:layout_marginTop="16dp"
             tools:listitem="@layout/my_home_item"
             app:layout_constraintTop_toTopOf="parent" />
 

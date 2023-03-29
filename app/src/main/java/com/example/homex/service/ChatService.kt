@@ -21,6 +21,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import okhttp3.Interceptor
 import okhttp3.logging.HttpLoggingInterceptor
+import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
 
 
@@ -99,10 +100,20 @@ class ChatService: Service() {
         Log.e("token", "$token")
         if (token != null) {
             hubConnection = HubConnectionBuilder.create(CHAT_HUB_URL)
+                .setHttpClientBuilderCallback {
+                    it.writeTimeout(15 * 60 * 1000, TimeUnit.MILLISECONDS)
+                    it.readTimeout(60 * 1000, TimeUnit.MILLISECONDS)
+                    it.connectTimeout(20 * 1000, TimeUnit.MILLISECONDS)
+                }
                 .withHeader("Authorization", "Bearer $token")
                 .build()
         }else{
             hubConnection = HubConnectionBuilder.create(CHAT_HUB_URL)
+                .setHttpClientBuilderCallback {
+                    it.writeTimeout(15 * 60 * 1000, TimeUnit.MILLISECONDS)
+                    it.readTimeout(60 * 1000, TimeUnit.MILLISECONDS)
+                    it.connectTimeout(20 * 1000, TimeUnit.MILLISECONDS)
+                }
                 .build()
         }
 
@@ -118,27 +129,44 @@ class ChatService: Service() {
         )
 
         hubConnection.onClosed {
+            Log.e(TAG, "${it.message}. Reconnecting...")
             if (it != null){
-                hubConnection.start()
-                    .doOnError { throwable->
-                        Log.e(TAG, "error: ${throwable.message}")
+                try {
+                    hubConnection.start()
+                        .doOnError { throwable->
+                            Log.e(TAG, "error: ${throwable.message}")
+                        }
+                        .doOnComplete {
+                            Log.i(TAG, "started")
+                        }
+                        .blockingAwait()
+                    }catch (e: InterruptedException){
+                        e.printStackTrace()
+                        return@onClosed
+                    }catch (e: ExecutionException){
+                        e.printStackTrace()
+                        return@onClosed
                     }
-                    .doOnComplete {
-                        Log.i(TAG, "started")
-                    }
-                    .blockingAwait()
             }
         }
 
-        hubConnection.start()
-            .doOnError { throwable->
-                Log.e(TAG, "error: ${throwable.message}")
-            }
-            .doOnComplete {
-                Log.i(TAG, "started")
-            }
-            .blockingAwait()
 
+        try {
+            hubConnection.start()
+                .doOnError { throwable->
+                    Log.e(TAG, "error: ${throwable.message}")
+                }
+                .doOnComplete {
+                    Log.i(TAG, "started")
+                }
+                .blockingAwait()
+        }catch (e: InterruptedException){
+            e.printStackTrace()
+            return
+        }catch (e: ExecutionException){
+            e.printStackTrace()
+            return
+        }
     }
 }
 

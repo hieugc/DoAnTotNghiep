@@ -39,6 +39,7 @@ class PickYourHomeFragment : BaseFragment<FragmentPickYourHomeBinding>() {
         if (isShimmer){
             binding.homeShimmer.startShimmer()
             binding.homeShimmer.visible()
+            binding.pickYourHomeRecView.visibility = View.INVISIBLE
         }
         yourHomeViewModel.getMyHomes(page)
     }
@@ -65,46 +66,41 @@ class PickYourHomeFragment : BaseFragment<FragmentPickYourHomeBinding>() {
         yourHomeViewModel.myHomesLiveData.observe(this){
             if (it != null){
                 val homes = it.homes
-                Log.e("homes", "$homes")
-                val size = adapter.searchList?.size
-                if (size != null){
-                    if (size > 0){
-                        adapter.searchList?.clear()
-                        adapter.notifyItemRangeRemoved(0, size)
-                    }
-                }
+                myHomeList.clear()
                 if (homes != null){
-                    if(homes.size > 0){
-                        adapter.searchList?.addAll(homes)
-                        adapter.notifyItemRangeInserted(0, homes.size)
+                    myHomeList.addAll(homes)
+                    adapter.notifyDataSetChanged()
+                    if (myHomeList.isEmpty()){
                         binding.homeShimmer.stopShimmer()
                         binding.homeShimmer.gone()
                         isShimmer = false
+                        binding.appCompatTextView28.visible()
+                        binding.addHomeBtn.visible()
                     }else{
-                        binding.homeShimmer.stopShimmer()
-                        binding.homeShimmer.gone()
-                        isShimmer = false
+                        if (isShimmer){
+                            binding.homeShimmer.stopShimmer()
+                            binding.homeShimmer.gone()
+                            isShimmer = false
+                        }
+                        binding.pickYourHomeRecView.visible()
+                        binding.appCompatTextView28.gone()
+                        binding.addHomeBtn.gone()
                     }
                 }else{
                     binding.homeShimmer.stopShimmer()
                     binding.homeShimmer.gone()
                     isShimmer = false
-                }
-                if(adapter.searchList.isNullOrEmpty()){
                     binding.pickYourHomeRecView.gone()
-                    binding.noHomeTxt.visible()
-                    binding.addHomeBtn.visible()
-                    binding.appCompatTextView28.gone()
-                }else{
-                    binding.pickYourHomeRecView.visible()
-                    binding.noHomeTxt.gone()
-                    binding.addHomeBtn.gone()
                     binding.appCompatTextView28.visible()
+                    binding.addHomeBtn.visible()
                 }
             }else{
                 binding.homeShimmer.stopShimmer()
                 binding.homeShimmer.gone()
                 isShimmer = false
+                binding.pickYourHomeRecView.gone()
+                binding.addHomeBtn.visible()
+                binding.appCompatTextView28.visible()
             }
         }
     }

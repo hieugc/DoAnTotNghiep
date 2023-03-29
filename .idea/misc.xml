@@ -79,6 +79,7 @@
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/drawable/search_bg.xml" value="0.2075" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/drawable/search_bg_ripple.xml" value="0.2075" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/drawable/selected_date_bg.xml" value="0.2235" />
+        <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/drawable/shadow_layout.xml" value="0.2805" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/drawable/start_date_bg.xml" value="0.1805" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/drawable/tab_bg.xml" value="0.309" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/drawable/test.xml" value="0.1805" />
@@ -87,7 +88,7 @@
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/activity_home.xml" value="0.33" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/activity_main.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/activity_splash.xml" value="0.16197916666666667" />
-        <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/add_home_image_item.xml" value="0.5" />
+        <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/add_home_image_item.xml" value="0.176" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/date_cell_item.xml" value="0.5" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/dialog_error.xml" value="0.264" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/dialog_loading.xml" value="0.25416666666666665" />
@@ -96,7 +97,7 @@
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/fragment_add_home2.xml" value="0.2805071315372425" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/fragment_add_home3.xml" value="0.264" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/fragment_add_home4.xml" value="0.2796208530805687" />
-        <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/fragment_bottom_sheet_change_date.xml" value="0.33" />
+        <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/fragment_bottom_sheet_change_date.xml" value="0.2" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/fragment_bottom_sheet_dialog_select_image.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/fragment_change_password.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/fragment_create_request.xml" value="0.33" />
@@ -126,7 +127,7 @@
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/fragment_request.xml" value="0.22" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/fragment_request_detail.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/fragment_search.xml" value="0.25416666666666665" />
-        <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/fragment_search_result.xml" value="0.4153191489361702" />
+        <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/fragment_search_result.xml" value="0.25" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/fragment_sign_in.xml" value="0.264" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/fragment_sign_in_verification.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/fragment_trans_history.xml" value="0.36666666666666664" />
@@ -156,7 +157,7 @@
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/notifcation_item.xml" value="0.264" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/notification_item.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/pick_date_bg.xml" value="0.253125" />
-        <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/popular_home_item.xml" value="0.264" />
+        <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/popular_home_item.xml" value="0.40754039497307004" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/popular_location_item.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/recent_search_home_item.xml" value="0.253125" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/recent_search_location_item.xml" value="0.253125" />

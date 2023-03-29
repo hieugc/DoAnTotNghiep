@@ -68,7 +68,7 @@
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvTitle"
                 style="@style/HomeTitle"
-                android:layout_width="wrap_content"
+                android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 tools:text="Home name"
                 android:background="@color/grey_light"
@@ -76,7 +76,7 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                 style="@style/MediumText"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:background="@color/grey_light"
@@ -97,14 +97,14 @@
 
                     <androidx.appcompat.widget.AppCompatTextView
                         style="@style/MediumText"
-                        android:layout_width="wrap_content"
+                        android:layout_width="70dp"
                         android:layout_height="wrap_content"
                         android:background="@color/grey_light"
                         tools:text="@string/from_date" />
 
                     <androidx.appcompat.widget.AppCompatTextView
                         style="@style/MediumText"
-                        android:layout_width="wrap_content"
+                        android:layout_width="100dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:drawableStart="@drawable/ic_from_date"
@@ -129,14 +129,14 @@
 
                     <androidx.appcompat.widget.AppCompatTextView
                         style="@style/MediumText"
-                        android:layout_width="wrap_content"
+                        android:layout_width="70dp"
                         android:layout_height="wrap_content"
                         android:background="@color/grey_light"
                         tools:text="@string/to_date" />
 
                     <androidx.appcompat.widget.AppCompatTextView
                         style="@style/MediumText"
-                        android:layout_width="wrap_content"
+                        android:layout_width="100dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:drawableStart="@drawable/ic_to_date"

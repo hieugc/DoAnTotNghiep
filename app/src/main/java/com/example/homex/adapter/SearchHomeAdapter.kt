@@ -10,7 +10,7 @@ import com.example.homex.databinding.SearchHomeItemBinding
 import com.example.homex.extension.dpToPx
 import com.homex.core.model.Home
 
-class SearchHomeAdapter(val searchList: ArrayList<Home>?, private val onClick: (Home)->Unit): RecyclerView.Adapter<SearchHomeAdapter.SearchHomeViewHolder>() {
+class SearchHomeAdapter(var searchList: ArrayList<Home>?, private val onClick: (Home)->Unit): RecyclerView.Adapter<SearchHomeAdapter.SearchHomeViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchHomeViewHolder {
         return SearchHomeViewHolder(
             SearchHomeItemBinding.bind(LayoutInflater.from(parent.context).inflate(
