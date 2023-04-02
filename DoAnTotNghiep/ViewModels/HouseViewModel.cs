@@ -33,6 +33,7 @@ namespace DoAnTotNghiep.ViewModels
         public int IdCity { get; set; } = 0;
         public int IdDistrict { get; set; } = 0;
         public int IdWard { get; set; } = 0;
+        public int? Bed { get; set; } = 0;
 
         [Required(ErrorMessage = "Hãy điền giá căn nhà")]
         public int Price { get; set; } = 0;
@@ -74,8 +75,8 @@ namespace DoAnTotNghiep.ViewModels
             this.BedRoom = house.BedRoom;//int
             this.Square = (int)house.Area; // tạm thời int   check này lại
             this.Location = house.StreetAddress; //địa chỉ full
-            this.Lat = house.Lat; //mobile có parse => user // viết API lấy BingMapKey
-            this.Lng = house.Lng;// thuộc tính không vấn đề double
+            this.Lat = house.Lat;
+            this.Lng = house.Lng;
             this.IdCity = house.IdCity == null ? 0 : house.IdCity.Value; //id bắt buộc => tạo yêu cầu xoay vòng
             this.IdDistrict = house.IdDistrict == null ? 0 : house.IdDistrict.Value;//idDistrict 
             this.IdWard = house.IdWard == null ? 0 : house.IdWard.Value;// có thể không có
@@ -85,6 +86,7 @@ namespace DoAnTotNghiep.ViewModels
             this.Images = new List<ImageBase?>();
             this.Status = house.Status;//int
             this.Rating = house.Rating;//double :)) quên
+            this.Bed = house.Bed;
             this.Request = house.Requests == null ? 0 : house.Requests.Count();
             this.UserAccess = Crypto.EncodeKey(house.IdUser.ToString(), salt);
             this.NumberRating = house.FeedBacks == null ? 0 : house.FeedBacks.Count();
@@ -99,18 +101,21 @@ namespace DoAnTotNghiep.ViewModels
         public int NumberRating { get; set; } = 0;
         public int Request { get; set; } = 0;
         public string UserAccess { get; set; } = string.Empty;
+        public string? CityName { get; set; } = string.Empty;
+        public string? DistrictName { get; set; } = string.Empty;
         public UserInfo? User { get; set; }//đã trả lúc login // thông tin là của nó :))
         //list Url
+        public List<DetailRatingWithUser> Ratings { get; set; } = new List<DetailRatingWithUser>();
     }
-
     public class PackageDetailHouse: DetailHouseViewModel
     {
-        public PackageDetailHouse(House house, byte[] salt, User? user = null, string? host = null) : base(house, salt, user, host) {
-
+        public PackageDetailHouse(House house, byte[] salt, 
+            User? user = null, string? host = null) 
+            : base(house, salt, user, host) 
+        {
         }
         public List<Utilities> AllUtilities { get; set; } = new List<Utilities>();
         public List<Rules> AllRules { get; set; } = new List<Rules>();
-
     }
     public class MobileCreateHouseViewModel
     {
@@ -135,6 +140,9 @@ namespace DoAnTotNghiep.ViewModels
         public string Location { get; set; } = string.Empty; //địa chỉ
         public double Lat { get; set; } = 0;// :))
         public double Lng { get; set; } = 0;//
+        public int? Bed { get; set; } = 0;
+        //public string? CityName { get; set; } = string.Empty;
+        //public string? DistrictName { get; set; } = string.Empty;
         public int IdCity { get; set; } = 0;//sửa lại
         public int IdDistrict { get; set; } = 0; //sửa lại
         public int IdWard { get; set; } = 0; //sửa lại
@@ -215,6 +223,7 @@ namespace DoAnTotNghiep.ViewModels
         public int? IdDistrict { get; set; } = 0;
         public int? IdWard { get; set; } = 0;
         public int Price { get; set; } = 0;
+        public int? Bed { get; set; } = 0;
         public List<int> Utilities { get; set; } = new List<int>();
         public List<int> Rules { get; set; } = new List<int>();
         public List<ImageBase?> Images { get; set; } = new List<ImageBase?>();
@@ -255,11 +264,22 @@ namespace DoAnTotNghiep.ViewModels
         public string Data { get; set; } = string.Empty; //image url :)) t còn base64
     }
 
+    public class ListDetailHouses
+    {
+        public List<DetailHouseViewModel> Houses { get; set; } = new List<DetailHouseViewModel>();
+        public Pagination Pagination { get; set; } = new Pagination();
+    }
+
     public class Pagination
     {
+        //page => 1 -> total
+        //page = ceil(total/limit)
+        //  100 => 10 trang
+        //  101 => 11 trang
+        //  109 => 11 trang
         public Pagination()
         {
-            Page = 0;
+            Page = 1;
             Limit = 10;
         }
         public Pagination(int page, int limit)
@@ -268,7 +288,8 @@ namespace DoAnTotNghiep.ViewModels
             Limit = limit;
         }
 
-        public int Page { get; set; } = 0;
+        public int Page { get; set; } = 1;
         public int Limit { get; set; } = 10;
+        public int Total { get; set; } = 0;
     }
 }

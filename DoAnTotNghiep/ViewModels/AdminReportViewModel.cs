@@ -9,7 +9,6 @@ namespace DoAnTotNghiep.ViewModels
     {
         public int IdHouse { get; set; } = 0;
         public string Content { get; set; } = string.Empty;
-        public string Title { get; set; } = string.Empty;
         public DateTime Deadline { get; set; } = DateTime.Now;
         public List<ImageBase> Images { get; set; } = new List<ImageBase>();
     }
@@ -17,7 +16,6 @@ namespace DoAnTotNghiep.ViewModels
     public class DetailAdminReportViewModel
     {
         public string Content { get; set; } = string.Empty;
-        public string Title { get; set; } = string.Empty;
         public List<ImageBase> Images { get; set; } = new List<ImageBase>();
     }
 }

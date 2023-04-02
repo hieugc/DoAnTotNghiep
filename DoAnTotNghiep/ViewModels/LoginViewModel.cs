@@ -67,7 +67,7 @@ namespace DoAnTotNghiep.ViewModels
         public bool? Gender { get; set; } = false;
         public string? UrlImage { get; set; } = string.Empty;
         public int Point { get; set; } = 0;
-        public int UserRating { get; set; } = 0;
+        public double UserRating { get; set; } = 0;
         public int NumberOfHouses { get; set; } = 0;
     }
 }

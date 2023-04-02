@@ -393,11 +393,12 @@ namespace DoAnTotNghiep.Controllers
         private List<RoomChatViewModel> ChatRoom(Pagination pagination)
         {
             int IdUser = this.GetIdUser();
+            int skip = pagination.Page - 1 < 0 ? 0 : pagination.Page - 1;
             var allRooms = this._context.UsersInChatRooms
                                         .Include(m => m.ChatRooms)
                                         .Where(m => m.IdUser == IdUser && m.ChatRooms != null)
-                                        .Skip((pagination.Page))
-                                        .Take((pagination.Limit))
+                                        .Skip(skip)
+                                        .Take(pagination.Limit)
                                         .Select(m => m.ChatRooms).ToList();
             DoAnTotNghiepContext Context = this._context;
             byte[] salt = Crypto.Salt(this._configuration);

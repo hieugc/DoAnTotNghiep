@@ -22,7 +22,7 @@ namespace DoAnTotNghiep.Entity
         public int Status { get; set; } = 0;
 
         [Column("id_user")]
-        public virtual int? IdUser { get; set; }
+        public virtual int IdUser { get; set; }
 
         [ForeignKey(nameof(IdUser))]
         public virtual User? Users { get; set; }
@@ -33,5 +33,8 @@ namespace DoAnTotNghiep.Entity
 
         [ForeignKey(name: nameof(IdHouse))]
         public virtual House? Houses { get; set; }
+
+        [ForeignKey(name: nameof(IdHouse))]
+        public virtual ICollection<FileInAdminReport>? Files { get; set; }
     }
 }

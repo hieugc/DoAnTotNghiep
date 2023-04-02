@@ -4,7 +4,7 @@ namespace DoAnTotNghiep.ViewModels
 {
     public class AuthHouseViewModel
     {
-        public List<DetailHouseViewModel> Houses { get; set; } = new List<DetailHouseViewModel>();
+        public ListDetailHouses Houses { get; set; } = new ListDetailHouses();
         public OptionHouseViewModel OptionHouses { get; set; } = new OptionHouseViewModel();
     }
     public class OptionHouseViewModel

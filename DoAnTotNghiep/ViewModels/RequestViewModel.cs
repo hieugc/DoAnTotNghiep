@@ -1,4 +1,5 @@
 ﻿using DoAnTotNghiep.Entity;
+using DoAnTotNghiep.Enum;
 using DoAnTotNghiep.Modules;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
@@ -49,7 +50,14 @@ namespace DoAnTotNghiep.ViewModels
             {
                 this.User = new UserMessageViewModel(user, salt, host);
             }
-            this.Status = request.Status;
+            if(request.CheckOuts != null)
+            {
+                this.Status = (int)StatusRequest.CHECK_OUT;
+            }
+            else
+            {
+                this.Status = request.Status;
+            }
             //this.IsCanCancel = (this.Status == (int)Enum.StatusRequest.WAIT_FOR_SWAP);
         }
         public DetailRequestViewModel() { }
@@ -69,6 +77,7 @@ namespace DoAnTotNghiep.ViewModels
         public DetailHouseViewModel House { get; set; } = new DetailHouseViewModel();
         public DetailRequestViewModel Request { get; set; } = new DetailRequestViewModel();
         public DetailHouseViewModel? SwapHouse { get; set; } = null;
+        public DetailRatingViewModel? Rating { get; set; } = null;
     }
 
     public class NotifyRequest

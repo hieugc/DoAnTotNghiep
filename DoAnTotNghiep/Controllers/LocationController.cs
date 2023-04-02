@@ -100,7 +100,7 @@ namespace DoAnTotNghiep.Controllers
         }
 
 
-        [HttpGet]
+        [HttpGet("/api/Location/City")]
         public JsonResult GetCity()
         {
             var cityList = this._context.Cities.Select(m => new
@@ -113,16 +113,16 @@ namespace DoAnTotNghiep.Controllers
             return Json(
                 new
                 {
-                    City = cityList
+                    Data = cityList
                 }
             );
         }
 
 
-        [HttpGet]
-        public JsonResult GetDistrict(int Id)
+        [HttpGet("/api/Location/District")]
+        public JsonResult GetDistrict(int IdCity)
         {
-            var districtList = this._context.Districts.Where(m => m.IdCity == Id).Select(m => new
+            var districtList = this._context.Districts.Where(m => m.IdCity == IdCity).Select(m => new
             {
                 Name = m.Name,
                 Id = m.Id,
@@ -132,15 +132,15 @@ namespace DoAnTotNghiep.Controllers
             return Json(
                 new
                 {
-                    District = districtList
+                    Data = districtList
                 }
             );
         }
 
-        [HttpGet]
-        public JsonResult GetWard(int Id)
+        [HttpGet("/api/Location/Ward")]
+        public JsonResult GetWard(int IdDistrict)
         {
-            var wardList = this._context.Wards.Where(m => m.IdDistrict == Id).Select(m => new
+            var wardList = this._context.Wards.Where(m => m.IdDistrict == IdDistrict).Select(m => new
             {
                 Name = m.Name,
                 Id = m.Id,
@@ -150,7 +150,7 @@ namespace DoAnTotNghiep.Controllers
             return Json(
                 new
                 {
-                    Ward = wardList
+                    Data = wardList
                 }
             );
         }

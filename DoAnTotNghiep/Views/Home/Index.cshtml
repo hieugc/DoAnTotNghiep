@@ -149,57 +149,5 @@
 </div>
 
 @section Scripts{
-    <script src='https://www.bing.com/api/maps/mapcontrol?callback=getSuggest&key=@key' type='text/javascript' async defer></script>
-
-    <script type="text/javascript">
-        var suggest = null;
-        function getSuggest() {
-            Microsoft.Maps.loadModule('Microsoft.Maps.AutoSuggest', {
-                callback: onLoad,
-                errorCallback: onError
-            });
-        }
-        function onLoad() {
-            var options = { maxResults: 5 };
-            var manager = new Microsoft.Maps.AutosuggestManager(options);
-            manager.attachAutosuggest('#explore-input', '#container-explore', selectedSuggestion);
-        }
-        function onError(message) {
-            suggest = null;
-        }
-        function selectedSuggestion(suggestionResult) {
-            suggest = suggestionResult;
-        }
-        function stringToSlug(str) {
-            // remove accents
-            var from = "àáãảạăằắẳẵặâầấẩẫậèéẻẽẹêềếểễệđùúủũụưừứửữựòóỏõọôồốổỗộơờớởỡợìíỉĩịäëïîöüûñçýỳỹỵỷ",
-                to = "aaaaaaaaaaaaaaaaaeeeeeeeeeeeduuuuuuuuuuuoooooooooooooooooiiiiiaeiiouuncyyyyy";
-            for (var i = 0, l = from.length; i < l; i++) {
-                str = str.replace(RegExp(from[i], "gi"), to[i]);
-            }
-
-            str = str.toLowerCase()
-                .trim()
-                .replace(/[^a-z0-9\-]/g, '-')
-                .replace(/-+/g, '-');
-
-            return str;
-        }
-        function includeIdCity() {
-            for (e in dataLocation) {
-                if (stringToSlug(suggest.address.adminDistrict).indexOf(stringToSlug(dataLocation[e].name)) != -1) {
-                    return e;
-                }
-            }
-        }
-    </script>
-
-    <script src="~/js/Bingmap/GetLocation.js" type="text/javascript"></script>
-    <script type="text/javascript">
-        getDataCity();
-        function explore() {
-            window.location.href = "@Url.Action("Index", "Explore")?IdCity=" + includeIdCity();
-        }
-    </script>
     <script src="~/js/Location/updateLocation.js" type="text/javascript"></script>
 }

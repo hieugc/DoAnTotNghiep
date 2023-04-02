@@ -32,6 +32,7 @@ namespace DoAnTotNghiep.Data
             modelBuilder.Entity<RulesInHouse>().HasKey(m => new { m.IdRules, m.IdHouse });
             modelBuilder.Entity<UtilitiesInHouse>().HasKey(m => new { m.IdHouse, m.IdUtilities });
             modelBuilder.Entity<UsersInChatRoom>().HasKey(m => new { m.IdChatRoom, m.IdUser });
+            modelBuilder.Entity<CheckOut>().HasKey(m => new { m.IdRequest, m.IdUser });
         }
 
 
@@ -61,5 +62,7 @@ namespace DoAnTotNghiep.Data
         public DbSet<Utilities> Utilities { get; set; }
         public DbSet<UtilitiesInHouse> UtilitiesInHouse { get; set; }
         public DbSet<WaitingRequest> WaitingRequests { get; set; }
+        public DbSet<CheckOut> CheckOuts { get; set; }
+        public DbSet<Notification> Notifications { get; set; }  
     }
 }

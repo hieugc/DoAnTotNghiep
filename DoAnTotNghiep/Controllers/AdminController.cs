@@ -41,12 +41,15 @@ namespace DoAnTotNghiep.Controllers
         }
 
         //Dash board
-        //Danh sách report người dùng //hiển thị số người báo cáo thôi => xem chi tiết load thêm
+        //Danh sách report người dùng 
+        //hiển thị số người báo cáo thôi => xem chi tiết load thêm
+        [HttpGet("/Admin")]    
         public IActionResult UserReport()
         {
             var houses = this._context.Houses
                                         .Include(m => m.UserReports)
-                                        .Where(m => m.UserReports != null && m.Status != (int) StatusHouse.PENDING)
+                                        .Where(m => m.UserReports != null 
+                                            && m.UserReports.Any(rp => rp.IsResponsed == false))
                                         .ToList();
             List<ReportItem> reportList = new List<ReportItem>();
 
@@ -84,6 +87,7 @@ namespace DoAnTotNghiep.Controllers
 
         //Danh sách người dùng
         //Danh sách report đang chờ phản hồi
+
         //Danh sách nhà chờ duyệt
         //Danh sách tiện ích
         //Danh sách rule

@@ -1,0 +1,223 @@
+﻿
+
+#houseModalToggle .modal-body.sighide {
+    width: 0;
+    height: 0;
+    padding: 0;
+}
+
+#houseModalToggle .modal-body.sigshow {
+    padding: 50px 1rem 1rem 1rem;
+    width: 100%;
+    height: 100%;
+}
+
+#houseModalToggle .my-modal-title {
+    width: 100%;
+}
+
+#houseModalToggle .house-title {
+    text-align: center;
+}
+
+#houseModalToggle .progress {
+    margin-left: 28px;
+    margin-top: 24px;
+    position: relative;
+}
+
+#houseModalToggle .progress-bar {
+    width: 20%;
+    border-radius: 12px;
+}
+
+#houseModalToggle .time-line-step {
+    font-size: 14px;
+    font-weight: 500;
+    border: 1px solid #1b6ec2;
+    background: white;
+    height: 2rem;
+    width: 2rem;
+    border-radius: 50%;
+    color: #1b6ec2;
+    position: absolute;
+    left: calc(20% - 1rem);
+    top: -0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    #houseModalToggle .time-line-step.active {
+        background: #1b6ec2;
+        color: white;
+        animation-name: changeColor;
+        animation-duration: 1s;
+    }
+
+@keyframes changeColor {
+    from {
+        background: white;
+        color: #1b6ec2;
+    }
+
+    to {
+        background: #1b6ec2;
+        color: white;
+    }
+}
+
+#houseModalToggle .time-line-step:nth-child(3) {
+    left: calc(40% - 1rem);
+}
+
+#houseModalToggle .time-line-step:nth-child(4) {
+    left: calc(60% - 1rem);
+}
+
+#houseModalToggle .time-line-step:nth-child(5) {
+    left: calc(80% - 1rem);
+}
+
+#houseModalToggle .progress {
+    overflow: unset;
+    border-radius: 12px;
+}
+
+#houseModalToggle .modal-header .btn-close {
+    margin-top: -56px;
+}
+
+
+.modal .modal-header {
+    border-bottom: unset;
+}
+
+.modal .modal-body {
+    overflow: hidden;
+}
+.modal .modal-body.sighide{
+    padding: 0;
+}
+
+.modal .btn-close {
+    background-color: #fff;
+    border-radius: 0.5rem;
+    opacity: 1;
+    padding: 0.635rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(161, 172, 184, 0.4);
+    transition: all 0.23s ease 0.1s;
+    transform: translate(23px, -25px);
+}
+
+    .modal .btn-close:hover, .modal .btn-close:focus, .modal .btn-close:active {
+        opacity: 1;
+        outline: none;
+        transform: translate(20px, -20px);
+    }
+
+.modal .modal-header .btn-close {
+    margin-top: -32px;
+}
+
+.modal .modal-body button {
+    width: 100%;
+    margin-top: 12px;
+}
+
+.modal .option-frame{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+.modal .option-frame > .option {
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+    background-color: rgba(var(--bs-primary-rgb), 0.6);
+    margin: 24px;
+    border-radius: 12px;
+    box-shadow: 0 0.125rem 0.25rem rgba(var(--bs-primary-rgb), 0.2);
+    font-size: 24px;
+    color: white;
+}
+.modal .option-frame > .option:hover,
+.modal .option-frame > .option.option-selected {
+    background-color: rgba(var(--bs-primary-rgb), 0.9);
+    cursor: pointer;
+}
+
+.modal .option-frame > .option i{
+    font-size: 48px;
+    margin-bottom: 12px;
+}
+.modal .rules .list-option,
+.modal .utilities .list-option {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.modal .rules .list-option .option,
+.modal .utilities .list-option .option{
+    display: flex;
+    gap: 12px;
+    padding: 6px;
+    border-radius: 6px;
+    align-items: center;
+    background: rgba(var(--bs-primary-rgb), 0.2);
+}
+.modal .rules .list-option .option:hover,
+.modal .utilities .list-option .option:hover,
+.modal .rules .list-option .option.option-selected,
+.modal .utilities .list-option .option.option-selected {
+    background: rgba(var(--bs-primary-rgb), 0.9);
+    cursor: pointer;
+    color: white;
+}
+.handle-step {
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    gap: 12px;
+}
+
+.modal .modal-body .handle-step button {
+    width: unset;
+}
+.input-picture {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 24px 0;
+}
+.input-picture label {
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: rgba(var(--bs-primary-rgb), 0.6);
+    border: 2px inset rgba(var(--bs-primary-rgb), 0.2);
+    padding: 24px;
+    max-width: 350px;
+    color: white;
+}
+.input-picture label i{
+    font-size: 56px;
+    margin-bottom: 24px;
+}
+.input-picture label:hover,
+.input-picture label:focus{
+    background: rgba(var(--bs-primary-rgb), 0.9);
+    cursor: pointer;
+}
+
+.btn-no-drop {
+    cursor: no-drop;
+    background-color: rgb(128, 128, 128);
+    border-color: rgb(128, 128, 128);
+}

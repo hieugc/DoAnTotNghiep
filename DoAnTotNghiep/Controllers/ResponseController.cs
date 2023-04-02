@@ -27,12 +27,12 @@ using Microsoft.Extensions.Hosting;
 namespace DoAnTotNghiep.Controllers
 {
     [Authorize(Roles = Role.Member)]
-    public class ReportController: BaseController
+    public class ResponseController: BaseController
     {
         private readonly DoAnTotNghiepContext _context;
         private readonly IConfiguration _configuration;
 
-        public ReportController(DoAnTotNghiepContext context, IConfiguration configuration, IHostEnvironment environment) : base(environment)
+        public ResponseController(DoAnTotNghiepContext context, IConfiguration configuration, IHostEnvironment environment) : base(environment)
         {
             _context = context;
             _configuration = configuration;
@@ -40,13 +40,13 @@ namespace DoAnTotNghiep.Controllers
 
         //create
         //HINH ANH + TIEU DE + ID NHA + NOI DUNG
-        [HttpPost("/Report/Create")]
-        public IActionResult CreateReport([FromBody] ReportViewModel model)
+        [HttpPost("/Response/Create")]
+        public IActionResult CreateResponse([FromBody] ReportViewModel model)
         {
             return this.Create(model);
         }
-        [HttpPost("/api/Report/Create")]
-        public IActionResult ApiCreateReport([FromBody] ReportViewModel model)
+        [HttpPost("/api/Response/Create")]
+        public IActionResult ApiCreateResponse([FromBody] ReportViewModel model)
         {
             return this.Create(model);
         }
@@ -66,8 +66,7 @@ namespace DoAnTotNghiep.Controllers
                                 Content = model.Content,
                                 CreatedDate = DateTime.Now,
                                 IdHouse = model.IdHouse,
-                                IdUser = IdUser,
-                                IsResponsed = false
+                                IdUser = IdUser
                             };
                             context.UserReports.Add(user);
                             context.SaveChanges();
@@ -123,7 +122,7 @@ namespace DoAnTotNghiep.Controllers
 
 
         //Get report by houseId
-        [HttpGet("/Report/GetByHouse")]
+        [HttpGet("/Response/GetByAdminReport")]
         [Authorize(Roles = Role.Admin)]
         public IActionResult GetReportByHouse(int houseId)
         {

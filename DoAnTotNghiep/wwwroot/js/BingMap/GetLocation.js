@@ -9,14 +9,14 @@
             $("#ward-select").prop("disabled", true);
         }
         $.ajax({
-            url: "/Location/GetCity",
+            url: "/api/Location/City",
             type: "GET",
             dataType: "json",
             success: function (data) {
                 let str = "{";
-                for (e in data.city) {
-                    let omodel = JSON.stringify(data.city[e]);
-                    let model = "\"" + data.city[e]["id"] + "\":" + omodel.slice(0, omodel.length - 1) + ", \"district\": null}";
+                for (e in data.data) {
+                    let omodel = JSON.stringify(data.data[e]);
+                    let model = "\"" + data.data[e]["id"] + "\":" + omodel.slice(0, omodel.length - 1) + ", \"district\": null}";
                     str += model + ", ";
                 }
                 str = str.trim();
@@ -25,9 +25,9 @@
                 dataLocation = JSON.parse(str);
 
                 let bingStr = "{";
-                for (e in data.city) {
-                    let omodel = JSON.stringify(data.city[e]);
-                    let model = "\"" + data.city[e]["bingName"] + "\":" + omodel.slice(0, omodel.length - 1) + ", \"district\": null}";
+                for (e in data.data) {
+                    let omodel = JSON.stringify(data.data[e]);
+                    let model = "\"" + data.data[e]["bingName"] + "\":" + omodel.slice(0, omodel.length - 1) + ", \"district\": null}";
                     bingStr += model + ", ";
                 }
                 bingStr = bingStr.trim();
@@ -35,7 +35,7 @@
                 bingStr += "}";
                 dataBingLocation = JSON.parse(bingStr);
 
-                let model = JSON.stringify(data.city).replaceAll("name", "text");
+                let model = JSON.stringify(data.data).replaceAll("name", "text");
 
                 if ($("#city-select").length > 0) {
                     changeDataForSelect2("#city-select", [{ "id": -1, "text": "Thành phố / Tỉnh" }].concat(JSON.parse(model)));
@@ -75,9 +75,9 @@ function getDataDistrict() {
                     dataType: "json",
                     success: function (data) {
                         var str = "{";
-                        for (e in data.district) {
-                            let omodel = JSON.stringify(data.district[e]);
-                            let model = "\"" + data.district[e]["id"] + "\":" + omodel.slice(0, omodel.length - 1) + ", \"ward\": null}";
+                        for (e in data.data) {
+                            let omodel = JSON.stringify(data.data[e]);
+                            let model = "\"" + data.data[e]["id"] + "\":" + omodel.slice(0, omodel.length - 1) + ", \"ward\": null}";
                             str += model + ", ";
                         }
                         str = str.trim();
@@ -86,9 +86,9 @@ function getDataDistrict() {
                         dataLocation[id].district = JSON.parse(str);
 
                         let bingStr = "{";
-                        for (e in data.district) {
-                            let omodel = JSON.stringify(data.district[e]);
-                            let model = "\"" + data.district[e]["bingName"] + "\":" + omodel.slice(0, omodel.length - 1) + ", \"ward\": null}";
+                        for (e in data.data) {
+                            let omodel = JSON.stringify(data.data[e]);
+                            let model = "\"" + data.data[e]["bingName"] + "\":" + omodel.slice(0, omodel.length - 1) + ", \"ward\": null}";
                             bingStr += model + ", ";
                         }
                         bingStr = bingStr.trim();
@@ -96,7 +96,7 @@ function getDataDistrict() {
                         bingStr += "}";
                         dataBingLocation[dataLocation[id].bingName].district = JSON.parse(bingStr);
 
-                        let model = JSON.stringify(data.district).replaceAll("name", "text");
+                        let model = JSON.stringify(data.data).replaceAll("name", "text");
                         
                         if ($("#district-select").length > 0) {
                             changeDataForSelect2("#district-select", [{ "id": -1, "text": "Quận / Huyện" }].concat(JSON.parse(model)));
@@ -108,7 +108,9 @@ function getDataDistrict() {
                 });
             }
             else {
-                changeDataForSelect2("#district-select", getDataFormat(dataLocation[id].district, "Quận / Huyện"));
+                if ($("#district-select").length > 0) {
+                    changeDataForSelect2("#district-select", getDataFormat(dataLocation[id].district, "Quận / Huyện"));
+                }
             }
         }
     }
@@ -152,8 +154,8 @@ function getDataWard() {
                     dataType: "json",
                     success: function (data) {
                         let str = "{";
-                        for (e in data.ward) {
-                            let model = "\"" + data.ward[e]["id"] + "\":" + JSON.stringify(data.ward[e]);
+                        for (e in data.data) {
+                            let model = "\"" + data.data[e]["id"] + "\":" + JSON.stringify(data.data[e]);
                             str += model + ", ";
                         }
                         str = str.trim();
@@ -162,8 +164,8 @@ function getDataWard() {
                         dataLocation[id_city].district[id].ward = JSON.parse(str);
 
                         let bingStr = "{";
-                        for (e in data.ward) {
-                            let model = "\"" + data.ward[e]["id"] + "\":" + JSON.stringify(data.ward[e]);
+                        for (e in data.data) {
+                            let model = "\"" + data.data[e]["id"] + "\":" + JSON.stringify(data.data[e]);
                             bingStr += model + ", ";
                         }
                         bingStr = bingStr.trim();
@@ -171,7 +173,7 @@ function getDataWard() {
                         bingStr += "}";
                         dataBingLocation[dataLocation[id_city].bingName].district[dataLocation[id_city].district[id].bingName].ward = JSON.parse(bingStr);
 
-                        let model = JSON.stringify(data.ward).replaceAll("name", "text");
+                        let model = JSON.stringify(data.data).replaceAll("name", "text");
 
 
                         if ($("#ward-select").length > 0) {
@@ -185,7 +187,9 @@ function getDataWard() {
                 });
             }
             else {
-                changeDataForSelect2("#ward-select", getDataFormat(dataLocation[id].district, "Phường / Xã"));
+                if ($("#ward-select").length > 0) {
+                    changeDataForSelect2("#ward-select", getDataFormat(dataLocation[id].district, "Phường / Xã"));
+                }
             }
         }
     }
@@ -249,55 +253,6 @@ function showMainForm() {
         }
     }
     $("#houseModalToggle").show();
-}
-function GetMap() {
-    map = new Microsoft.Maps.Map('#myMap', {
-        zoom: 15
-    });
-    //Microsoft.Maps.Events.addHandler(map, 'click', function (e) {
-    //    if (e.target === map) {
-    //        loc = e.location;
-    //        data.lat = loc.latitude;
-    //        data.lng = loc.longitude;
-
-    //        var url = 'https://dev.virtualearth.net/REST/v1/Locations/'
-    //            + loc.latitude
-    //            + ','
-    //            + loc.longitude
-    //            + '?key=' + key;
-
-    //        $.ajax({
-    //            url: url,
-    //            dataType: "jsonp",
-    //            jsonp: "jsonp",
-    //            success: function (data) {
-    //                console.log(data);
-    //                if (data.statusCode == 200) {
-    //                    var result = data.resourceSets[0].resources[0];
-    //                    address = result.address.formattedAddress;
-
-    //                    //câp nhật address => id
-    //                    //nếu không có idCity thì sao?
-    //                    //nếu không có idDistrict thì sao?
-    //                    //nếu không có idWard thì sao?
-    //                    //if (dataBingLocation != null) {
-    //                    //    if ($("#city-select").val() == -1) {
-    //                    //        $("#city-select").val(dataBingLocation[result.])
-    //                    //    }
-    //                    //}
-    //                    getIdCity(result.address.adminDistrict);
-    //                    reloadMap(address);
-    //                }
-    //                else {
-    //                    alert("Bạn hãy thử lại");
-    //                }
-    //            },
-    //            error: function (e) {
-    //                console.log(e);
-    //            }
-    //        });
-    //    }
-    //});
 }
 function reloadMap(address) {
     if (pin != null) {
@@ -384,9 +339,9 @@ function getIdCity(cityBingName) {
     });
 }
 
+
 var pin = null;
 var infobox = null;
-var map;
 var loc = null;
 var address = null;
 var dataLocation = null; //data chính

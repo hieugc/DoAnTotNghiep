@@ -49,6 +49,10 @@ namespace DoAnTotNghiep.Entity
 
         [Column("rating")]
         public double Rating { get; set; } = 0;
+
+        [Column("bed")]
+        public int? Bed { get; set; } = 0;
+
         [Column("lat")]
         public double Lat { get; set; } = 0;
         [Column("lng")]

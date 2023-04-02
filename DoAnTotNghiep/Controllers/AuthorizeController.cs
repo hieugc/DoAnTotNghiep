@@ -42,8 +42,18 @@ namespace DoAnTotNghiep.Controllers
         public async Task<IActionResult> SignIn()
         {
             var role = this.GetRole();
-            if (role != Role.Member) await this.SignOutCookie();
-            if (role == Role.Member) return RedirectToAction("Index", "Home");
+            if (role == Role.Member)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            else if (role == Role.Admin)
+            {
+                return RedirectToAction("", "Admin");
+            }
+            else
+            {
+                await this.SignOutCookie();
+            }
             return View();
         }
 
@@ -62,17 +72,33 @@ namespace DoAnTotNghiep.Controllers
                     {
                         var claims = new List<Claim>() {
                             new Claim(ClaimTypes.Name, checkUser.Id.ToString()),
-                            new Claim(ClaimTypes.Role, Role.Member),
                             new Claim(ClaimTypes.Email, checkUser.Email),
                         };
 
+                        if (checkUser.Role == Role.MemberCode)
+                        {
+                            claims.Add(new Claim(ClaimTypes.Role, Role.Member));
+                        }
+                        else
+                        {
+                            claims.Add(new Claim(ClaimTypes.Role, Role.Admin));
+                        }
+
                         await this.SignClaim(claims, Scheme.AuthenticationCookie(), DateTime.UtcNow.AddHours(24));
-                        SetCookie(Enum.Cookie.RoleAccess(), Role.Member, 24);
+                        if (checkUser.Role == Role.MemberCode)
+                        {
+                            SetCookie(Enum.Cookie.RoleAccess(), Role.Member, 24);
+                        }
+                        else
+                        {
+                            SetCookie(Enum.Cookie.RoleAccess(), Role.Admin, 24);
+                        }
 
                         this._context.Entry(checkUser).Reference(m => m.Files).Load();
 
                         byte[] RSA = Crypto.Salt(this._configuration);
                         this._context.Entry(checkUser).Collection(m => m.Houses).Query().Load();
+                        this._context.Entry(checkUser).Reference(m => m.Files).Query().Load();
 
                         string userInfo = JsonConvert.SerializeObject(new UserInfo(checkUser, RSA, this.GetWebsitePath()));
 
@@ -119,12 +145,24 @@ namespace DoAnTotNghiep.Controllers
                     var checkUser = user.First();
                     if (Crypto.IsPass(loginViewModel.Password, checkUser.Password, checkUser.Salt))
                     {
-                        var token = new JwtHelper(this._configuration).GenerateToken(new List<Claim>() {
+                        List<Claim> claims = new List<Claim>() {
                             new Claim(ClaimTypes.Name, checkUser.Id.ToString()),
-                            new Claim(ClaimTypes.Role, Role.Member),
                             new Claim(ClaimTypes.Email, checkUser.Email),
-                        });
+                        };
+
+                        if (checkUser.Role == Role.MemberCode)
+                        {
+                            claims.Add(new Claim(ClaimTypes.Role, Role.Member));
+                        }
+                        else
+                        {
+                            claims.Add(new Claim(ClaimTypes.Role, Role.Admin));
+                        }
+
+                        var token = new JwtHelper(this._configuration).GenerateToken(claims);
+
                         this._context.Entry(checkUser).Collection(m => m.Houses).Query().Load();
+                        this._context.Entry(checkUser).Reference(m => m.Files).Query().Load();
                         return Json(new
                         {
                             Status = 200,
@@ -158,13 +196,13 @@ namespace DoAnTotNghiep.Controllers
         {
             string role = this.GetRole();
             if(role == Role.UnAuthorize) return View(new RegisterCheckMailViewModel());
-            else if(role == Role.Member)
+            else if (role == Role.Member)
             {
                 return RedirectToAction("Index", "Home");
             }
             else if (role == Role.Admin)
             {
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("", "Admin");
             }
             return RedirectToAction(nameof(SignUpPassword), new {Email = this.GetEmail() });
         }
@@ -225,7 +263,7 @@ namespace DoAnTotNghiep.Controllers
             }
             else if (role == Role.Admin)
             {
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("", "Admin");
             }
             return RedirectToAction(nameof(SignUpOTP));
         }
@@ -497,12 +535,13 @@ namespace DoAnTotNghiep.Controllers
                             PhoneNumber = string.Empty,
                             FirstName = string.Empty,
                             LastName = string.Empty,
-                            Point = 0,
-                            BonusPoint = 0,
+                            Point = 10000,
+                            BonusPoint = 10000,
                             IdFile = null,
                             BirthDay = DateTime.UtcNow,
                             Gender = false,
-                            UserRating = 0
+                            UserRating = 0,
+                            Role = Role.MemberCode
                         };
 
                         this._context.Add(userModel);
@@ -1040,10 +1079,11 @@ namespace DoAnTotNghiep.Controllers
                 Password = Crypto.HashPass("Vinova123", salt1),
                 Salt = Crypto.SaltStr(salt1),
                 PhoneNumber = "0973409127",
-                Point = 0,
-                BonusPoint = 0,
+                Point = 10000,
+                BonusPoint = 10000,
                 IdFile = null,
-                UserRating = 0
+                UserRating = 0,
+                Role = Role.MemberCode
             };
 
             byte[] salt2 = Crypto.Salt();
@@ -1057,10 +1097,11 @@ namespace DoAnTotNghiep.Controllers
                 Password = Crypto.HashPass("Vinova123", salt2),
                 Salt = Crypto.SaltStr(salt2),
                 PhoneNumber = "0973409127",
-                Point = 0,
-                BonusPoint = 0,
+                Point = 10000,
+                BonusPoint = 10000,
                 IdFile = null,
-                UserRating = 0
+                UserRating = 0,
+                Role = Role.MemberCode
             };
 
             byte[] salt3 = Crypto.Salt();
@@ -1074,15 +1115,34 @@ namespace DoAnTotNghiep.Controllers
                 Password = Crypto.HashPass("Vinova123", salt2),
                 Salt = Crypto.SaltStr(salt2),
                 PhoneNumber = "0973409127",
-                Point = 0,
-                BonusPoint = 0,
+                Point = 10000,
+                BonusPoint = 10000,
                 IdFile = null,
-                UserRating = 0
+                UserRating = 0,
+                Role = Role.MemberCode
+            };
+
+            byte[] salt4 = Crypto.Salt();
+            User user4 = new User()
+            {
+                FirstName = "Phạm Minh",
+                LastName = "Hiếu",
+                Gender = true,
+                BirthDay = DateTime.Now,
+                Email = "admin@gmail.com",
+                Password = Crypto.HashPass("Vinova123", salt2),
+                Salt = Crypto.SaltStr(salt2),
+                PhoneNumber = "0973409127",
+                Point = 10000,
+                BonusPoint = 10000,
+                IdFile = null,
+                UserRating = 0,
+                Role = Role.AdminCode
             };
 
             this._context.AddRange(new List<User>()
             {
-                user, user2, user3
+                user, user2, user3, user4
             }); ;
             this._context.SaveChanges();
 

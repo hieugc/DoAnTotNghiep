@@ -10,6 +10,7 @@
         if(!string.IsNullOrEmpty(info))
             userInfo = JsonConvert.DeserializeObject<UserInfo>(info);
     };
+    string key = "Asf_PRzBpUJVcb9lcAg48BLOuAuaBItg4ZzCqaNQaSIFReqieYA02KBcovVD08Jk";
 }
 
 
@@ -49,10 +50,7 @@
                                         <i class="fa-sharp fa-solid fa-chevron-right"></i>
                                     </div>
                                 </div>
-                                <form name="search" class="d-flex" id="container-explore" onload="getSuggest();">
-                                    <input type="text" class="rounded-start rounded-0 form-control" placeholder="Bạn muốn đi đâu?" name="explore" id="explore-input" />
-                                    <label class="btn btn-sm btn-primary rounded-0 rounded-end" onclick="explore()"><i class="fa-sharp fa-solid fa-magnifying-glass"></i></label>
-                                </form>
+                                @Html.Partial("~/Views/PartialView/_Search.cshtml")
                                 <div class="control">
                                     <a href="@Url.Action("SignUpCheckMail", "Authorize")" class="btn btn-primary">Đăng ký</a>
                                     <a href="@Url.Action("SignIn", "Authorize")" class="btn btn-outline-primary">Đăng nhập</a>
@@ -72,10 +70,7 @@
                                         <i class="fa-sharp fa-solid fa-chevron-right"></i>
                                     </div>
                                 </div>
-                                <form name="search" class="d-flex" id="container-explore" onload="getSuggest();">
-                                    <input type="text" class="rounded-start rounded-0 form-control" placeholder="Bạn muốn đi đâu?" name="explore" id="explore-input" />
-                                    <label class="btn btn-sm btn-primary rounded-0 rounded-end" onclick="explore()"><i class="fa-sharp fa-solid fa-magnifying-glass"></i></label>
-                                </form>
+                                @Html.Partial("~/Views/PartialView/_Search.cshtml")
                             </div>
                         </div>
                         <div class="sm-device">
@@ -236,6 +231,7 @@
         @(Html.Partial("~/Views/PartialView/_Authorized.cshtml", userInfo))
     }
     <script src="https://cdn.jsdelivr.net/npm/litepicker/dist/litepicker.js"></script>
+    <script src='https://www.bing.com/api/maps/mapcontrol?callback=getSuggest&key=@key' type='text/javascript' async defer></script>
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }

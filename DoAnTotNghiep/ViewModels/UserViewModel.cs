@@ -18,7 +18,7 @@ namespace DoAnTotNghiep.ViewModels
             this.Email = user.Email;
             if(user.Files != null)
             {
-                this.image = new ImageBase(user.Files, host);
+                this.Image = new ImageBase(user.Files, host);
             }
         }
 
@@ -34,6 +34,7 @@ namespace DoAnTotNghiep.ViewModels
         [DataType(DataType.PhoneNumber, ErrorMessage = "Số điện thoại 10 số")]
         [MaxLength(10, ErrorMessage = "Số điện thoại 10 số")]
         [MinLength(10, ErrorMessage = "Số điện thoại 10 số")]
+        [Phone(ErrorMessage = "Số điện thoại 10 số")]
         public string? PhoneNumber { get; set; } = string.Empty;
 
 
@@ -46,6 +47,7 @@ namespace DoAnTotNghiep.ViewModels
         [DataType(DataType.Date)]
         public DateTime? BirthDay { get; set; } = DateTime.Now;
         public bool? Gender { get; set; } = false;
-        public ImageBase? image { get; set; }
+        public ImageBase? Image { get; set; }
+        public IFormFile? File { get; set; }
     }
 }

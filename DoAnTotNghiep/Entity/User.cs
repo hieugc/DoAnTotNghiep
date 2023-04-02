@@ -55,14 +55,22 @@ namespace DoAnTotNghiep.Entity
         [Column("point")]
         public int Point { get; set; } = 0;
 
+        [Column("role")]
+        public int Role { get; set; } = 0;
+
         [Column("gender")]
         public bool? Gender { get; set; } = false;
         [Column("birth_day")]
         public DateTime? BirthDay { get; set; } = DateTime.Now;
 
         [Column("user_rating")]
-        public int UserRating { get; set; } = 0;
+        public double UserRating { get; set; } = 0;
 
+        [Column("point_using")]
+        public int PointUsing { get; set; } = 0;
+
+        [Column("number_user_rating")]
+        public int NumberUserRating { get; set; } = 0;
 
         [Column("id_file")]
         public virtual int? IdFile { get; set; }

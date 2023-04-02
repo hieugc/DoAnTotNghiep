@@ -45,12 +45,8 @@ namespace DoAnTotNghiep.Controllers
 
         private List<DetailHouseViewModel> GetPopularHouse(int number = 10)
         {
-            var listHouse = this._context.Houses
-                                                .Take(number)
-                                                .OrderByDescending(m => m.Rating)
-                                                .Where(m => m.Status == (int)StatusHouse.VALID)
-                                                .ToList();
-                byte[] salt = Crypto.Salt(this._configuration);
+            var listHouse = this.GetContextHouses(number);
+            byte[] salt = Crypto.Salt(this._configuration);
                 string host = this.GetWebsitePath();
                 List<DetailHouseViewModel> res = new List<DetailHouseViewModel>();
                 foreach (var item in listHouse)
@@ -58,8 +54,8 @@ namespace DoAnTotNghiep.Controllers
                     //this._context.Entry(item).Collection(m => m.RulesInHouses).Query().Load();
                     //this._context.Entry(item).Collection(m => m.UtilitiesInHouses).Query().Load();
                     //this._context.Entry(item).Reference(m => m.Users).Query().Load();
-                    //this._context.Entry(item).Reference(m => m.Citys).Query().Load();
-                    //this._context.Entry(item).Reference(m => m.Districts).Query().Load();
+                    this._context.Entry(item).Reference(m => m.Citys).Query().Load();
+                    this._context.Entry(item).Reference(m => m.Districts).Query().Load();
                     //this._context.Entry(item).Reference(m => m.Wards).Query().Load();
                     this._context.Entry(item).Collection(m => m.Requests).Query().Load();
                     this._context.Entry(item).Collection(m => m.FileOfHouses).Query().Load();
@@ -81,6 +77,23 @@ namespace DoAnTotNghiep.Controllers
                     res.Add(model);
                 }
                 return res;
+        }
+
+        private List<House> GetContextHouses(int number = 10)
+        {
+            DateTime start = DateTime.Now;
+            DateTime end = DateTime.Now;
+            return this._context.Houses
+                                .Include(m => m.Requests)
+                                .Take(number)
+                                .OrderByDescending(m => m.Rating)
+                                .Where(m => m.Status == (int)StatusHouse.VALID
+                                            && (m.Requests == null ||
+                                                (m.Requests != null
+                                                    && !m.Requests.Any(m =>
+                                                            StatusRequestStr.IsUnValidHouse(m.Status)
+                                                            && !(m.StartDate >= end || m.EndDate <= start)))))
+                                .ToList();
         }
         private List<PopularCityViewModel> GetPopularCity(int number = 10)
         {
@@ -109,10 +122,9 @@ namespace DoAnTotNghiep.Controllers
         }
         private int NumberCity()
         {
-            var cities = from c in this._context.Cities
-                         join h in this._context.Houses on c.Id equals h.IdCity
-                         where h.Status == (int)StatusHouse.VALID
-                         select h;
+            var cities = this._context.Cities.Include(m => m.houses)
+                                        .Where(m => m.houses != null 
+                                            && m.houses.Any(h => h.Status == (int) StatusHouse.VALID));
 
             return cities == null? 0: cities.ToList().Count();
         }

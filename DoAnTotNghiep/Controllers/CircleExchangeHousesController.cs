@@ -29,7 +29,8 @@ namespace DoAnTotNghiep.Controllers
             //lấy tất cả circle exchange
             var cities = this._context.Cities
                                         .Include(m => m.houses)
-                                        .Where(m => m.Id == IdCity).FirstOrDefault();
+                                        .Where(m => m.Id == IdCity && m.houses != null)
+                                        .FirstOrDefault();
             if (cities == null) return BadRequest(new
             {
                 Status = 400,
@@ -37,8 +38,9 @@ namespace DoAnTotNghiep.Controllers
             });
             int IdUser = this.GetIdUser();
 
-            if (cities.houses != null && cities.houses.Any())
+            if (cities.houses != null && cities.houses.Any(m => m.Status == (int) StatusHouse.VALID))
             {
+
                 var waitingRequest = this._context.WaitingRequests;
             }
             else
@@ -106,9 +108,18 @@ namespace DoAnTotNghiep.Controllers
             });
         }
 
-        //Delete tự động
         //Get Suggestion
+        private IActionResult GetSuggest()
+        {
+            int IdUser = this.GetIdUser();
 
+
+
+            return Json(new
+            {
+
+            });
+        }
 
     }
 }

@@ -85,11 +85,7 @@ namespace DoAnTotNghiep.ViewModels
         public int IdRoom { get; set; } = 0;
         public Pagination Pagination { get; set; } = new Pagination();
     }
-    public class RangeRoom
-    {
-        public int Start { get; set; } = 0;
-        public int Length { get; set; } = 10;
-    }
+    
     public class RoomConnectViewModel
     {
         public int? IdRoom { get; set; } = 0;

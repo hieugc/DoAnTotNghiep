@@ -19,10 +19,15 @@ namespace DoAnTotNghiep.Entity
         public DateTime CreatedDate { get; set; }
 
         [Column("id_user")]
-        public virtual int? IdUser { get; set; }
+        public virtual int IdUser { get; set; }
 
         [ForeignKey(nameof(IdUser))]
         public virtual User? Users { get; set; }
+
+
+        [Column("is_responsed")]
+        public bool IsResponsed { get; set; } = false;
+
 
         [Column("id_house")]
         [Required]

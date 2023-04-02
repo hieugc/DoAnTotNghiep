@@ -84,8 +84,6 @@ namespace DoAnTotNghiep.Controllers
                     {
                         try
                         {
-                            //Lat == 0
-                            //Lng == 0
                             if(data.Lat == 0 || data.Lng == 0)
                             {
                                 List<double> doubles = await this.GetLocation(data.Location);
@@ -111,7 +109,8 @@ namespace DoAnTotNghiep.Controllers
                                 Rating = 0,
                                 IdUser = this.GetIdUser(),
                                 Status = (int) Enum.StatusHouse.VALID,
-                                StreetAddress = data.Location
+                                StreetAddress = data.Location,
+                                Bed = data.Bed
                             };
 
                             Context.Houses.Add(house);
@@ -720,6 +719,7 @@ namespace DoAnTotNghiep.Controllers
                 this._context.Entry(house.Users).Collection(m => m.Houses).Query().Load();
             }
             DetailHouseViewModel model = new DetailHouseViewModel(house, salt, house.Users, host);
+            model.Ratings = this.GetRatingByHouse(house, host, salt);
             DoAnTotNghiepContext Context = this._context;
             if (house.FileOfHouses != null)
             {
@@ -729,6 +729,30 @@ namespace DoAnTotNghiep.Controllers
                     if (f.Files != null)
                     {
                         model.Images.Add(new ImageBase(f.Files, host));
+                    }
+                }
+            }
+            return model;
+        }
+        //Detail
+        private List<DetailRatingWithUser> GetRatingByHouse(House house, string host, byte[] salt)
+        {
+            List<DetailRatingWithUser> model = new List<DetailRatingWithUser>();
+            this._context.Entry(house)
+                        .Collection(m => m.FeedBacks)
+                        .Query()
+                        .Load();
+            if (house.FeedBacks != null)
+            {
+                List<FeedBack> feedBacks = house.FeedBacks.ToList();
+                foreach (var item in feedBacks)
+                {
+                    this._context.Entry(item).Reference(m => m.Users).Load();
+                    if (item.Users != null)
+                    {
+                        DetailRatingViewModel rating = new DetailRatingViewModel(item);
+                        UserInfo user = new UserInfo(item.Users, salt, host);
+                        model.Add(new DetailRatingWithUser() { User = user, FeedBack = rating });
                     }
                 }
             }
@@ -755,10 +779,14 @@ namespace DoAnTotNghiep.Controllers
             int IdUser = this.GetIdUser();
             ViewData["isAuthorize"] = IdUser == 0? "false": "true";
             ViewData["isOwner"] = IdUser == house.Users.Id? "true": "false";
-            PackageDetailHouse model = new PackageDetailHouse(house, Crypto.Salt(this._configuration), house.Users, this.GetWebsitePath());
+            byte[] salt = Crypto.Salt(this._configuration);
+            string host = this.GetWebsitePath();
+            PackageDetailHouse model = new PackageDetailHouse(house, salt, house.Users, host);
             ViewData["key"] = "Asf_PRzBpUJVcb9lcAg48BLOuAuaBItg4ZzCqaNQaSIFReqieYA02KBcovVD08Jk";
+
             model.AllUtilities = this._context.Utilities.ToList();
             model.AllRules = this._context.Rules.ToList();
+            model.Ratings = this.GetRatingByHouse(house, host, salt);
             return View(model);
         }
         [AllowAnonymous]
@@ -778,6 +806,8 @@ namespace DoAnTotNghiep.Controllers
             });
         }
         //ownerView
+
+        [Authorize(Roles = Role.Member)]
         public IActionResult HouseOverView(int Id)
         {
             int IdUser = this.GetIdUser();
@@ -785,10 +815,16 @@ namespace DoAnTotNghiep.Controllers
                                             .Where(m => m.Id == Id && m.Users != null && m.IdUser == IdUser)
                                             .FirstOrDefault();
             if (house == null) return NotFound();
-            PackageDetailHouse model = new PackageDetailHouse(house, Crypto.Salt(this._configuration), house.Users, this.GetWebsitePath());
+            ViewData["isAuthorize"] = "true";
+            ViewData["isOwner"] = "true";
+            byte[] salt = Crypto.Salt(this._configuration);
+            string host = this.GetWebsitePath();
+            PackageDetailHouse model = new PackageDetailHouse(house, salt, house.Users, host);
             ViewData["key"] = "Asf_PRzBpUJVcb9lcAg48BLOuAuaBItg4ZzCqaNQaSIFReqieYA02KBcovVD08Jk";
+
             model.AllUtilities = this._context.Utilities.ToList();
             model.AllRules = this._context.Rules.ToList();
+            model.Ratings = this.GetRatingByHouse(house, host, salt);
             return View("./Views/Houses/Details.cshtml", model);
         }
 
@@ -849,7 +885,13 @@ namespace DoAnTotNghiep.Controllers
             DoAnTotNghiepContext Context = this._context;
             foreach (var item in listHouse)
             {
-                DetailHouseViewModel model = new DetailHouseViewModel(item, salt);
+                Context.Entry(item).Reference(m => m.Citys).Query().Load();
+                Context.Entry(item).Reference(m => m.Districts).Query().Load();
+                Context.Entry(item).Collection(m => m.FileOfHouses).Query().Load();
+                Context.Entry(item).Collection(m => m.RulesInHouses).Query().Load();
+                Context.Entry(item).Collection(m => m.UtilitiesInHouses).Query().Load();
+                Context.Entry(item).Reference(m => m.Users).Query().Load();
+                DetailHouseViewModel model = new DetailHouseViewModel(item, salt, item.Users, host);
                 if (item.FileOfHouses != null)
                 {
                     foreach (var f in item.FileOfHouses)

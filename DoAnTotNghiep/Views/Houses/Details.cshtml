@@ -268,14 +268,11 @@
                 </div>
             </div>
         </div>
-        @if (isAuthorize)
+        @if (isAuthorize && !isOwner)
         {
             <div class="bot">
                 <div><a href="@Url.Action("Messages", "Member", new {connection = Model.User?.UserAccess})" class="btn btn-primary" style="display: block;">Liên hệ</a></div>
-                @if (!isOwner)
-                {
-                     <div><button class="btn btn-success" onclick="getRequestFormByHouseId(@Model.Id)">Yêu cầu trao đổi</button></div>
-                }
+                <div><button class="btn btn-success" onclick="getRequestFormByHouseId(@Model.Id)">Yêu cầu trao đổi</button></div>
                 <div><button class="btn btn-danger" type="button" data-bs-toggle="modal" data-bs-target="#reportModal">Báo cáo</button></div>
             </div>
         }
@@ -345,7 +342,6 @@
         $(".material-symbols-outlined")[3].innerHTML = "mic";
     </script>
     <script src="~/js/House/detail.js" type="text/javascript" async defer></script>
-
     <script src="~/js/Request/create.js" type="text/javascript"></script>
     <script src="~/js/Request/getFormByHouseId.js" type="text/javascript"></script>
 }

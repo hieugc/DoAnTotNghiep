@@ -18,6 +18,12 @@ namespace DoAnTotNghiep.Hubs
             await this._context.Clients.Group(group).SendAsync(target, message);
         }
 
+        public async Task SendNotification(string group, string target, NotificationViewModel model)
+        {
+            await this._context.Clients.Group(group).SendAsync(target, model);
+        }
+
+
         public async Task ConnectToGroup(string target, string IdRoom, string userAccess)
         {
             await this._context.Clients.Group(userAccess).SendAsync(target, IdRoom);

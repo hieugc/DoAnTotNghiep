@@ -1,4 +1,6 @@
 ﻿using DoAnTotNghiep.ViewModels;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.VisualBasic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -74,5 +76,7 @@ namespace DoAnTotNghiep.Entity
 
         [ForeignKey(nameof(IdSwapHouse))]
         public virtual House? SwapHouses { get; set; }
+        public ICollection<FeedBack>? FeedBacks { get; set; }
+        public ICollection<CheckOut>? CheckOuts { get; set; }
     }
 }

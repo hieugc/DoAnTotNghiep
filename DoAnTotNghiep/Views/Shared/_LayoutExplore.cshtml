@@ -10,6 +10,7 @@
         if (!string.IsNullOrEmpty(info))
             userInfo = JsonConvert.DeserializeObject<UserInfo>(info);
     }
+    string key = "Asf_PRzBpUJVcb9lcAg48BLOuAuaBItg4ZzCqaNQaSIFReqieYA02KBcovVD08Jk";
 }
 
 
@@ -211,6 +212,25 @@
         @(Html.Partial("~/Views/PartialView/_Authorized.cshtml", userInfo))
     }
     <script src="https://cdn.jsdelivr.net/npm/litepicker/dist/litepicker.js"></script>
+
+    <script type="text/javascript">
+        var map;
+        function GetMap() {
+            Microsoft.Maps.loadModule('Microsoft.Maps.AutoSuggest', {
+                callback: onLoad,
+                errorCallback: onError
+            });
+            if ($("#myMap").length > 0) {
+                map = new Microsoft.Maps.Map('#myMap', {
+                    zoom: 15
+                });
+            }
+        }
+    </script>
+
+    <script type='text/javascript'
+            src='https://www.bing.com/api/maps/mapcontrol?callback=GetMap&key=@key'
+            async defer></script>
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }

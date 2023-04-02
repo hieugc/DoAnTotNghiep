@@ -5,6 +5,8 @@
         string? info = Context.Request.Cookies[Cookie.UserInfo()];
         if (!string.IsNullOrEmpty(info))
             userInfo = JsonConvert.DeserializeObject<UserInfo>(info);
+
+    string key = "Asf_PRzBpUJVcb9lcAg48BLOuAuaBItg4ZzCqaNQaSIFReqieYA02KBcovVD08Jk";
 }
 
 
@@ -42,10 +44,7 @@
                                     <i class="fa-sharp fa-solid fa-chevron-right"></i>
                                 </div>
                             </div>
-                            <form name="search" class="d-flex">
-                                <input type="search" class="rounded-start rounded-0 form-control" placeholder="Bạn muốn đi đâu?" name="explore" id="explore-1" />
-                                <button class="btn btn-sm btn-primary rounded-0 rounded-end"><i class="fa-sharp fa-solid fa-magnifying-glass"></i></button>
-                            </form>
+                            @Html.Partial("~/Views/PartialView/_Search.cshtml")
                         </div>
                     </div>
                     <div class="sm-device">
@@ -273,6 +272,7 @@
         });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/litepicker/dist/litepicker.js"></script>
+    <script src='https://www.bing.com/api/maps/mapcontrol?callback=getSuggest&key=@key' type='text/javascript' async defer></script>
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }

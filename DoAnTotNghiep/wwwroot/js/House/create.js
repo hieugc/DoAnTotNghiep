@@ -447,7 +447,6 @@ function houseItem(data) {
             </div>
     `;
 }
-
 function reloadPage() {
     $("#list-house").html(null);
     for (let e in listHouse) {
@@ -458,6 +457,9 @@ function reloadPage() {
 
 //lấy bước hiện tại
 //thêm thông tin từng bước
+//Làm cái form mới => khi yêu cầu thì show lại
 function getStep() {
+}
+function runBackStep(step) {
 
 }
