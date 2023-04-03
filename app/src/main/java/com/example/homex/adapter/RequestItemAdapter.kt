@@ -6,9 +6,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.homex.R
 import com.example.homex.databinding.RequestItemBinding
 import com.example.homex.extension.dpToPx
+import com.homex.core.model.Request
 import com.homex.core.model.response.RequestResponse
 
-class RequestItemAdapter(val requestList: ArrayList<RequestResponse>? = arrayListOf(), val onClick: (Int)->Unit): RecyclerView.Adapter<RequestItemAdapter.RequestItemViewHolder>() {
+class RequestItemAdapter(val requestList: ArrayList<RequestResponse>? = arrayListOf(), val onClick: (Int)->Unit, val btnClick: (RequestResponse)->Unit): RecyclerView.Adapter<RequestItemAdapter.RequestItemViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RequestItemViewHolder {
         return RequestItemViewHolder(
             RequestItemBinding.bind(
@@ -31,7 +32,7 @@ class RequestItemAdapter(val requestList: ArrayList<RequestResponse>? = arrayLis
             item?.request?.id?.let(onClick)
         }
         holder.binding.btnRate.setOnClickListener {
-            item?.request?.id?.let(onClick)
+            item?.let(btnClick)
         }
     }
 

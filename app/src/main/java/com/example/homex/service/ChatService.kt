@@ -3,24 +3,22 @@ package com.example.homex.service
 import android.app.Service
 import android.content.Intent
 import android.os.Binder
-import android.os.Handler
 import android.os.IBinder
-import android.os.Looper
 import android.util.Log
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.example.homex.app.CHAT_HUB_URL
+import com.example.homex.app.CONNECT_CHAT
 import com.example.homex.app.RECEIVE_MESSAGE
-import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.homex.core.CoreApplication
 import com.homex.core.model.MessageRoom
 import com.microsoft.signalr.HubConnection
 import com.microsoft.signalr.HubConnectionBuilder
+import io.reactivex.rxjava3.core.CompletableObserver
+import io.reactivex.rxjava3.disposables.Disposable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import okhttp3.Interceptor
-import okhttp3.logging.HttpLoggingInterceptor
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
 
@@ -28,7 +26,6 @@ import java.util.concurrent.TimeUnit
 class ChatService: Service() {
 
     lateinit var hubConnection: HubConnection
-    private lateinit var mHandler: Handler
     private val mBinder: IBinder = LocalBinder()
     private lateinit var localBroadcastManager : LocalBroadcastManager
     private var job: Job = Job()
@@ -38,7 +35,7 @@ class ChatService: Service() {
         const val TAG = "ChatService"
     }
 
-    override fun onBind(p0: Intent?): IBinder?{
+    override fun onBind(p0: Intent?): IBinder {
         Log.d( TAG, "Service is bound")
         // Return the communication channel to the service.
         startSignalR()
@@ -48,7 +45,6 @@ class ChatService: Service() {
     override fun onCreate() {
         super.onCreate()
         // Fires when a service is first initialized
-        mHandler = Handler(Looper.getMainLooper())
         localBroadcastManager =  LocalBroadcastManager.getInstance(this)
     }
 
@@ -87,10 +83,17 @@ class ChatService: Service() {
         hubConnection.invoke("Send", message)
     }
 
-    fun sendMessageToActivity(messageRoom: MessageRoom){
+    private fun sendMessageToActivity(messageRoom: MessageRoom){
         scope.launch(Dispatchers.IO){
             val intent = Intent(TAG)
             intent.putExtra(RECEIVE_MESSAGE, messageRoom)
+            localBroadcastManager.sendBroadcast(intent)
+        }
+    }
+    private fun connectToChat(){
+        scope.launch(Dispatchers.IO){
+            val intent = Intent(TAG)
+            intent.putExtra(CONNECT_CHAT, true)
             localBroadcastManager.sendBroadcast(intent)
         }
     }
@@ -100,20 +103,20 @@ class ChatService: Service() {
         Log.e("token", "$token")
         if (token != null) {
             hubConnection = HubConnectionBuilder.create(CHAT_HUB_URL)
-                .setHttpClientBuilderCallback {
-                    it.writeTimeout(15 * 60 * 1000, TimeUnit.MILLISECONDS)
-                    it.readTimeout(60 * 1000, TimeUnit.MILLISECONDS)
-                    it.connectTimeout(20 * 1000, TimeUnit.MILLISECONDS)
-                }
+//                .setHttpClientBuilderCallback {
+//                    it.writeTimeout(15 * 60 * 1000, TimeUnit.MILLISECONDS)
+//                    it.readTimeout(60 * 1000, TimeUnit.MILLISECONDS)
+//                    it.connectTimeout(20 * 1000, TimeUnit.MILLISECONDS)
+//                }
                 .withHeader("Authorization", "Bearer $token")
                 .build()
         }else{
             hubConnection = HubConnectionBuilder.create(CHAT_HUB_URL)
-                .setHttpClientBuilderCallback {
-                    it.writeTimeout(15 * 60 * 1000, TimeUnit.MILLISECONDS)
-                    it.readTimeout(60 * 1000, TimeUnit.MILLISECONDS)
-                    it.connectTimeout(20 * 1000, TimeUnit.MILLISECONDS)
-                }
+//                .setHttpClientBuilderCallback {
+//                    it.writeTimeout(15 * 60 * 1000, TimeUnit.MILLISECONDS)
+//                    it.readTimeout(60 * 1000, TimeUnit.MILLISECONDS)
+//                    it.connectTimeout(20 * 1000, TimeUnit.MILLISECONDS)
+//                }
                 .build()
         }
 
@@ -129,37 +132,47 @@ class ChatService: Service() {
         )
 
         hubConnection.onClosed {
-            Log.e(TAG, "${it.message}. Reconnecting...")
             if (it != null){
+                Log.e(TAG, "${it.message}. Reconnecting...")
                 try {
-                    hubConnection.start()
-                        .doOnError { throwable->
-                            Log.e(TAG, "error: ${throwable.message}")
+                    Thread{
+                        kotlin.run {
+                            hubConnection.start().cache()
+                                .doOnComplete {
+                                    Log.e("complete", "hello")
+                                    connectToChat()
+                                }
+                                .doOnError {
+                                    Log.e("error", "${it.message}")
+                                }
+                                .blockingAwait()
                         }
-                        .doOnComplete {
-                            Log.i(TAG, "started")
-                        }
-                        .blockingAwait()
-                    }catch (e: InterruptedException){
-                        e.printStackTrace()
-                        return@onClosed
-                    }catch (e: ExecutionException){
-                        e.printStackTrace()
-                        return@onClosed
-                    }
+                    }.start()
+                }catch (e: InterruptedException){
+                    e.printStackTrace()
+                    return@onClosed
+                }catch (e: ExecutionException){
+                    e.printStackTrace()
+                    return@onClosed
+                }
             }
         }
 
 
         try {
-            hubConnection.start()
-                .doOnError { throwable->
-                    Log.e(TAG, "error: ${throwable.message}")
+            Thread{
+                kotlin.run {
+                    hubConnection.start().cache()
+                        .doOnComplete {
+                            Log.e("complete", "hello")
+                            connectToChat()
+                        }
+                        .doOnError {
+                            Log.e("error", "${it.message}")
+                        }
+                        .blockingAwait()
                 }
-                .doOnComplete {
-                    Log.i(TAG, "started")
-                }
-                .blockingAwait()
+            }.start()
         }catch (e: InterruptedException){
             e.printStackTrace()
             return

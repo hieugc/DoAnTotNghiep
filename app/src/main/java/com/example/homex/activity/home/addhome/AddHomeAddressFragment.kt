@@ -1,38 +1,43 @@
-package com.example.homex.activity.home.search
+package com.example.homex.activity.home.addhome
 
 import android.Manifest
-import android.graphics.BitmapFactory
-import android.graphics.Color
 import android.location.LocationManager
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.view.View
-import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
+import android.widget.ArrayAdapter
+import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.viewModels
 import com.example.homex.BuildConfig
 import com.example.homex.R
-import com.example.homex.activity.home.HomeActivity
-import com.example.homex.adapter.SearchHomeAdapter
+import com.example.homex.adapter.LocationAdapter
 import com.example.homex.base.BaseFragment
-import com.example.homex.databinding.FragmentSearchResultBinding
+import com.example.homex.databinding.FragmentAddHomeAddressBinding
+import com.example.homex.viewmodel.YourHomeViewModel
+import com.homex.core.model.BingLocation
 import com.microsoft.maps.*
-import com.microsoft.maps.search.MapLocationFinder
-import com.microsoft.maps.search.MapLocationFinderStatus
-import com.microsoft.maps.search.MapLocationOptions
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import pub.devrel.easypermissions.EasyPermissions
 import pub.devrel.easypermissions.PermissionRequest
-import java.net.URL
-import java.util.*
+import java.util.ArrayList
 import java.util.concurrent.TimeUnit
 
 
-class SearchResultFragment : BaseFragment<FragmentSearchResultBinding>(), EasyPermissions.PermissionCallbacks {
-    override val layoutId: Int = R.layout.fragment_search_result
+class AddHomeAddressFragment : BaseFragment<FragmentAddHomeAddressBinding>(), EasyPermissions.PermissionCallbacks{
+    override val layoutId: Int
+        get() = R.layout.fragment_add_home_address
 
-    private lateinit var adapter: SearchHomeAdapter
+    private val viewModel: AddHomeViewModel by viewModels({requireParentFragment()})
+    private val homeViewModel: YourHomeViewModel by viewModel()
+    private val cityList = arrayListOf<BingLocation>()
+    private val districtList = arrayListOf<BingLocation>()
+    private val wardList = arrayListOf<BingLocation>()
+
+    private lateinit var cityAdapter: ArrayAdapter<BingLocation>
+    private lateinit var districtAdapter: ArrayAdapter<BingLocation>
+    private lateinit var wardAdapter: ArrayAdapter<BingLocation>
+
+    //Map
     private lateinit var mapView: MapView
     private lateinit var mPinLayer: MapElementLayer
     private var requestingLocationPermission = false
@@ -42,16 +47,7 @@ class SearchResultFragment : BaseFragment<FragmentSearchResultBinding>(), EasyPe
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (activity as HomeActivity).setPropertiesScreen(
-            showLogo = false,
-            showMessage = false,
-            showBottomNav = false,
-            showMenu = false,
-            showTitleApp = Pair(false, ""),
-            showBoxChatLayout = Pair(false, null),
-            showSearchLayout = true
-        )
-
+        homeViewModel.getCity()
         //Setup Map
         mapView = MapView(requireContext(), MapRenderMode.VECTOR)
         mapView.setCredentialsKey(BuildConfig.CREDENTIALS_KEY)
@@ -134,67 +130,90 @@ class SearchResultFragment : BaseFragment<FragmentSearchResultBinding>(), EasyPe
             true
         }
         mapView.onCreate(savedInstanceState)
+
+    }
+
+    override fun setView() {
+        cityAdapter = LocationAdapter(requireContext(), R.layout.sex_item, cityList)
+        binding.cityTV.setAdapter(cityAdapter)
+
+        districtAdapter = LocationAdapter(requireContext(), R.layout.sex_item, districtList)
+        binding.districtTV.setAdapter(districtAdapter)
+
+        wardAdapter = LocationAdapter(requireContext(), R.layout.sex_item, wardList)
+        binding.wardTV.setAdapter(wardAdapter)
+
+        viewModel.apply {
+            binding.homeAddressEdtTxt.setText(this.location.value)
+        }
     }
 
     override fun setEvent() {
-        binding.iconFilter.setOnClickListener {
-            findNavController().navigate(R.id.action_searchResultFragment_to_filterBottomSheetFragment)
+        binding.homeAddressEdtTxt.addTextChangedListener {
+            viewModel.location.postValue(it?.toString()?:"")
+        }
+
+        binding.cityTV.setOnItemClickListener { parent, view, position, id ->
+            val item = cityList[position]
+            binding.cityTV.setText(item.name, false)
+            binding.districtTV.text.clear()
+            binding.wardTV.text.clear()
+            districtList.clear()
+            wardList.clear()
+            districtAdapter.notifyDataSetChanged()
+            wardAdapter.notifyDataSetChanged()
+            item.id?.let {
+                homeViewModel.getDistrict(id = it)
+            }
+        }
+
+        binding.districtTV.setOnItemClickListener { parent, view, position, id ->
+            val item = districtList[position]
+            binding.districtTV.setText(item.name, false)
+            binding.wardTV.text.clear()
+            wardList.clear()
+            wardAdapter.notifyDataSetChanged()
+            item.id?.let {
+                homeViewModel.getWard(id = it)
+            }
+        }
+
+        binding.wardTV.setOnItemClickListener { paren, view, position, id ->
+            val item = wardList[position]
+            binding.wardTV.setText(item.name, false)
+        }
+
+    }
+
+    override fun setViewModel() {
+        homeViewModel.cityLiveData.observe(this){
+            if (it != null){
+                cityList.clear()
+                cityList.addAll(it)
+                cityAdapter.notifyDataSetChanged()
+            }
+        }
+
+        homeViewModel.districtLiveData.observe(this){
+            if (it != null){
+                districtList.clear()
+                districtList.addAll(it)
+                districtAdapter.notifyDataSetChanged()
+            }
+        }
+
+        homeViewModel.wardLiveData.observe(this){
+            if (it != null){
+                wardList.clear()
+                wardList.addAll(it)
+                wardAdapter.notifyDataSetChanged()
+            }
         }
     }
 
     override fun onStart() {
         super.onStart()
         mapView.onStart()
-//        mapView.setScene(
-//            MapScene.createFromLocationAndZoomLevel(Geopoint(51.50632, -0.12714), 10.0),
-//            MapAnimationKind.LINEAR
-//        )
-
-//        val location = Geopoint(47.599025, -122.339901)
-//        val pushpin =  MapIcon()
-//        pushpin.location = location
-//        pushpin.title = "Seattle"
-//        pushpin.image = MapImage(
-//            BitmapFactory.decodeResource(resources, R.mipmap.location_pin)
-//        )
-//        pushpin.normalizedAnchorPoint = PointF(0.5f, 1.0f)
-//
-//        val flyout = MapFlyout()
-//        flyout.title = "Test"
-//        flyout.description = "Sample description"
-//        pushpin.flyout = flyout
-//
-//        mPinLayer.elements.add(pushpin)
-//        val seattle =
-//            GeoboundingBox(Geoposition(47.599025, -122.339901), Geoposition(47.589908, -122.313251))
-//        mapView.setScene(MapScene.createFromBoundingBox(seattle), MapAnimationKind.LINEAR)
-//
-//        val url = URL("https://bingmapsisdk.blob.core.windows.net/isdksamples/us_counties.png")
-//        val boundingBox = GeoboundingBox(Geoposition(50.0,  -126.0),
-//        Geoposition(25.0, -66.0))
-//
-//        try{
-//            Thread().run {
-//                val image = Glide.with(requireContext())
-//                    .asBitmap()
-//                    .load(url.toString())
-//                    .submit()
-//                    .get()
-//                val groundOverlayLayer = GroundOverlayMapLayer(
-//                    image,
-//                    boundingBox)
-//
-//                val scene = MapScene.createFromLocationAndZoomLevel(Geopoint(40.0, -98.0), 4.0)
-//                mapView.setScene(scene, MapAnimationKind.NONE)
-//                mapView.layers.add(groundOverlayLayer)
-//            }
-//
-//        }
-//        catch (e: Exception){
-//            Log.e("exception", e.message.toString())
-//        }
-        //highlightArea()
-        //trackingUserLocation()
     }
 
     override fun onResume() {
@@ -226,18 +245,6 @@ class SearchResultFragment : BaseFragment<FragmentSearchResultBinding>(), EasyPe
         super.onLowMemory()
         mapView.onLowMemory()
     }
-
-    override fun setView() {
-        adapter =
-            SearchHomeAdapter(
-                arrayListOf()
-            ){}
-
-        binding.searchHomeRecView.adapter = adapter
-        val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-        binding.searchHomeRecView.layoutManager = layoutManager
-    }
-
     private fun requestLocationPermission(){
         if (EasyPermissions.hasPermissions(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)) {
             trackingUserLocation()
@@ -307,39 +314,4 @@ class SearchResultFragment : BaseFragment<FragmentSearchResultBinding>(), EasyPe
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
     }
 
-    fun drawLineOnMap() {
-        val center = mapView.center.position
-        val geopoints = ArrayList<Geoposition>()
-        geopoints.add(Geoposition(center.latitude - 0.0005, center.longitude - 0.001))
-        geopoints.add(Geoposition(center.latitude + 0.0005, center.longitude + 0.001))
-        val mapPolyline = MapPolyline()
-        mapPolyline.path = Geopath(geopoints)
-        mapPolyline.strokeColor = Color.BLACK
-        mapPolyline.strokeWidth = 3
-        mapPolyline.isStrokeDashed = true
-
-        // Add Polyline to a layer on the map control.
-        val linesLayer = MapElementLayer()
-        linesLayer.zIndex = 1.0f
-        linesLayer.elements.add(mapPolyline)
-        mapView.layers.add(linesLayer)
-    }
-
-    fun highlightArea() {
-        val center = mapView.center.position
-        val geopoints = ArrayList<Geoposition>()
-        geopoints.add(Geoposition(center.latitude + 0.0005, center.longitude - 0.001))
-        geopoints.add(Geoposition(center.latitude - 0.0005, center.longitude - 0.001))
-        geopoints.add(Geoposition(center.latitude - 0.0005, center.longitude + 0.001))
-        val mapPolygon = MapPolygon()
-        mapPolygon.paths = listOf(Geopath(geopoints))
-        mapPolygon.fillColor = Color.RED
-        mapPolygon.strokeColor = Color.BLUE
-        mapPolygon.strokeWidth = 3
-        mapPolygon.isStrokeDashed = false
-        val highlightsLayer = MapElementLayer()
-        highlightsLayer.zIndex = 1.0f
-        highlightsLayer.elements.add(mapPolygon)
-        mapView.layers.add(highlightsLayer)
-    }
 }

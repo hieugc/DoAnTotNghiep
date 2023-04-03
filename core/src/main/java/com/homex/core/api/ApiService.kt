@@ -91,6 +91,19 @@ interface ApiService {
         @Query("UserAccess") userAccess: String
     ): Response<ListResponse<Home>>
 
+    @GET("api/Location/City")
+    suspend fun getCity(): Response<ListResponse<BingLocation>>
+
+    @GET("api/Location/District")
+    suspend fun getDistrict(
+        @Query("IdCity") id: Int
+    ): Response<ListResponse<BingLocation>>
+
+    @GET("api/Location/Ward")
+    suspend fun getWard(
+        @Query("IdDistrict") id: Int
+    ): Response<ListResponse<BingLocation>>
+
     //--------------------MESSAGE-----------------------------
 
     @POST("api/Message/Send")

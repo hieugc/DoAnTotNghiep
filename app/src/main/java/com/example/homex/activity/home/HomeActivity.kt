@@ -22,6 +22,7 @@ import androidx.navigation.ui.NavigationUI.setupWithNavController
 import com.bumptech.glide.Glide
 import com.example.homex.R
 import com.example.homex.activity.home.addhome.FileViewModel
+import com.example.homex.app.CONNECT_CHAT
 import com.example.homex.app.RECEIVE_MESSAGE
 import com.example.homex.base.BaseActivity
 import com.example.homex.databinding.ActivityHomeBinding
@@ -32,6 +33,7 @@ import com.example.homex.viewmodel.ChatViewModel
 import com.homex.core.model.MessageRoom
 import com.homex.core.model.UserMessage
 import com.homex.core.util.PrefUtil
+import com.microsoft.signalr.HubConnectionState
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -175,7 +177,6 @@ class HomeActivity : BaseActivity() {
                 Log.i("ConnectAllRoom", "Connect success")
             }
         }
-        chatViewModel
     }
     private fun setEvent(){
         binding.btnMessage.setOnClickListener {
@@ -193,10 +194,6 @@ class HomeActivity : BaseActivity() {
         return navigateUp(navController, appBarConfiguration)
     }
 
-    fun showSearchLayout(){
-        binding.searchLayout.visible()
-        binding.btnFilter.visible()
-    }
 
     fun showReadAllNotificationDialog(){
         val supportFragmentManager = supportFragmentManager
@@ -223,22 +220,27 @@ class HomeActivity : BaseActivity() {
     }
 
     override fun onStart() {
+        super.onStart()
         //Start ChatService
         if (prefUtil.token != null){
             val intent = Intent()
             intent.setClass(mContext, ChatService::class.java)
             bindService(intent, mConnection, Context.BIND_AUTO_CREATE)
         }
-        super.onStart()
+//        Timer().scheduleAtFixedRate(object : TimerTask(){
+//            override fun run() {
+//                Log.e("connectionStatus", "${mService?.hubConnection?.connectionState}")
+//            }
+//        }, 0, 5000)
     }
 
     override fun onStop() {
+        super.onStop()
         // Unbind from the service
         if (mBound) {
             unbindService(mConnection)
             mBound = false
         }
-        super.onStop()
     }
 
     override fun onResume() {
@@ -265,15 +267,17 @@ class HomeActivity : BaseActivity() {
             val binder = p1 as ChatService.LocalBinder
             mService = binder.service
             mBound = true
-            binder.service.hubConnection.connectionId?.let{
-                val mediaType = "application/json".toMediaType()
-                val body: RequestBody = "\"$it\"".toRequestBody(mediaType)
-                Log.e("connectionId", it)
-                chatViewModel.connectionId.postValue(it)
-                chatViewModel.connectAllRoom(body)
-            }
-            binder.service.hubConnection.connectionState?.let{
-                Log.e("connectionStatus", "$it")
+            binder.service.hubConnection.connectionState?.let{ state ->
+                Log.e("connectionStatus", "$state")
+                if (state == HubConnectionState.CONNECTED){
+                    binder.service.hubConnection.connectionId?.let {
+                        val mediaType = "application/json".toMediaType()
+                        val body: RequestBody = "\"$it\"".toRequestBody(mediaType)
+                        Log.e("connectionId", it)
+                        chatViewModel.connectionId.postValue(it)
+                        chatViewModel.connectAllRoom(body)
+                    }
+                }
             }
         }
 
@@ -286,7 +290,24 @@ class HomeActivity : BaseActivity() {
         override fun onReceive(p0: Context?, p1: Intent?) {
             val message = p1?.getParcelableExtra<MessageRoom>(RECEIVE_MESSAGE)
             if (message != null){
-                this@HomeActivity.chatViewModel.newMessage.postValue(message)
+                chatViewModel.newMessage.postValue(message)
+            }
+            val connect = p1?.getBooleanExtra(CONNECT_CHAT, false)
+            if (connect == true){
+                mService?.apply {
+                    hubConnection.connectionState?.let{ state ->
+                        Log.e("connectionStatus", "$state")
+                        if (state == HubConnectionState.CONNECTED){
+                            hubConnection.connectionId?.let {
+                                val mediaType = "application/json".toMediaType()
+                                val body: RequestBody = "\"$it\"".toRequestBody(mediaType)
+                                Log.e("connectionId", it)
+                                chatViewModel.connectionId.postValue(it)
+                                chatViewModel.connectAllRoom(body)
+                            }
+                        }
+                    }
+                }
             }
         }
     }

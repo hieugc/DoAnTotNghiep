@@ -13,16 +13,16 @@
         <action
             android:id="@+id/action_getStartedFragment_to_loginFragment"
             app:destination="@id/loginFragment"
-            app:exitAnim="@anim/fade_out"
+            app:exitAnim="@anim/slide_out_left"
             app:enterAnim="@anim/slide_in_left"
-            app:popEnterAnim="@anim/fade_in"
+            app:popEnterAnim="@anim/slide_out_right"
             app:popExitAnim="@anim/slide_in_right"/>
         <action
             android:id="@+id/action_getStartedFragment_to_signInFragment"
             app:destination="@id/signInFragment"
-            app:exitAnim="@anim/fade_out"
+            app:exitAnim="@anim/slide_out_left"
             app:enterAnim="@anim/slide_in_left"
-            app:popEnterAnim="@anim/fade_in"
+            app:popEnterAnim="@anim/slide_out_right"
             app:popExitAnim="@anim/slide_in_right"/>
     </fragment>
     <fragment
@@ -33,18 +33,18 @@
         <action
             android:id="@+id/action_loginFragment_to_forgotPasswordFragment"
             app:destination="@id/forgotPasswordFragment"
-            app:exitAnim="@anim/fade_out"
+            app:exitAnim="@anim/slide_out_left"
             app:enterAnim="@anim/slide_in_left"
-            app:popEnterAnim="@anim/fade_in"
+            app:popEnterAnim="@anim/slide_out_right"
             app:popExitAnim="@anim/slide_in_right"/>
         <action
             android:id="@+id/action_loginFragment_to_getStartedFragment"
             app:destination="@id/getStartedFragment"
             app:popUpTo="@id/nav_auth"
             app:popUpToInclusive="true"
-            app:exitAnim="@anim/fade_out"
+            app:exitAnim="@anim/slide_out_left"
             app:enterAnim="@anim/slide_in_left"
-            app:popEnterAnim="@anim/fade_in"
+            app:popEnterAnim="@anim/slide_out_right"
             app:popExitAnim="@anim/slide_in_right"/>
     </fragment>
     <fragment
@@ -55,18 +55,18 @@
         <action
             android:id="@+id/action_signInFragment_to_signInVerificationFragment"
             app:destination="@id/signInVerificationFragment"
-            app:exitAnim="@anim/fade_out"
+            app:exitAnim="@anim/slide_out_left"
             app:enterAnim="@anim/slide_in_left"
-            app:popEnterAnim="@anim/fade_in"
+            app:popEnterAnim="@anim/slide_out_right"
             app:popExitAnim="@anim/slide_in_right"/>
         <action
             android:id="@+id/action_signInFragment_to_getStartedFragment"
             app:destination="@id/getStartedFragment"
             app:popUpTo="@id/nav_auth"
             app:popUpToInclusive="true"
-            app:exitAnim="@anim/fade_out"
+            app:exitAnim="@anim/slide_out_left"
             app:enterAnim="@anim/slide_in_left"
-            app:popEnterAnim="@anim/fade_in"
+            app:popEnterAnim="@anim/slide_out_right"
             app:popExitAnim="@anim/slide_in_right"/>
     </fragment>
     <fragment
@@ -77,9 +77,9 @@
         <action
             android:id="@+id/action_signInVerificationFragment_to_updateInformationFragment"
             app:destination="@id/updateInformationFragment"
-            app:exitAnim="@anim/fade_out"
+            app:exitAnim="@anim/slide_out_left"
             app:enterAnim="@anim/slide_in_left"
-            app:popEnterAnim="@anim/fade_in"
+            app:popEnterAnim="@anim/slide_out_right"
             app:popExitAnim="@anim/slide_in_right"/>
     </fragment>
     <fragment
@@ -97,9 +97,9 @@
             app:destination="@id/loginFragment"
             app:popUpTo="@id/loginFragment"
             app:popUpToInclusive="true"
-            app:exitAnim="@anim/fade_out"
+            app:exitAnim="@anim/slide_out_left"
             app:enterAnim="@anim/slide_in_left"
-            app:popEnterAnim="@anim/fade_in"
+            app:popEnterAnim="@anim/slide_out_right"
             app:popExitAnim="@anim/slide_in_right"/>
     </fragment>
     <fragment
@@ -110,9 +110,9 @@
         <action
             android:id="@+id/action_forgotPasswordFragment_to_forgotPasswordVerificationFragment"
             app:destination="@id/forgotPasswordVerificationFragment"
-            app:exitAnim="@anim/fade_out"
+            app:exitAnim="@anim/slide_out_left"
             app:enterAnim="@anim/slide_in_left"
-            app:popEnterAnim="@anim/fade_in"
+            app:popEnterAnim="@anim/slide_out_right"
             app:popExitAnim="@anim/slide_in_right"/>
     </fragment>
     <fragment
@@ -123,9 +123,9 @@
         <action
             android:id="@+id/action_forgotPasswordVerificationFragment_to_newPasswordFragment"
             app:destination="@id/newPasswordFragment"
-            app:exitAnim="@anim/fade_out"
+            app:exitAnim="@anim/slide_out_left"
             app:enterAnim="@anim/slide_in_left"
-            app:popEnterAnim="@anim/fade_in"
+            app:popEnterAnim="@anim/slide_out_right"
             app:popExitAnim="@anim/slide_in_right"/>
     </fragment>
 </navigation>

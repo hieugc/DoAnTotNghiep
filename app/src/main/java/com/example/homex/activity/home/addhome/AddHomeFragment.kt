@@ -98,6 +98,7 @@ class AddHomeFragment : BaseFragment<FragmentAddHomeBinding>() {
             this,
             listOf(
                 AddHome1Fragment(),
+                AddHomeAddressFragment(),
                 AddHome2Fragment(),
                 AddHome3Fragment(),
                 AddHome4Fragment()
@@ -114,7 +115,7 @@ class AddHomeFragment : BaseFragment<FragmentAddHomeBinding>() {
                         binding.prevSlideBtn.gone()
                         binding.nextSlideBtn.visible()
                     }
-                    3->{
+                    4->{
                         binding.prevSlideBtn.visible()
                         binding.nextSlideBtn.gone()
                     }
@@ -264,22 +265,24 @@ class AddHomeFragment : BaseFragment<FragmentAddHomeBinding>() {
                     return false
             }
             1->{
+
+            }
+            2->{
                 if (viewModel.name.value == ""
                     || viewModel.square.value == 0
                     || viewModel.price.value == 0
                     || viewModel.description.value == ""
-                    || viewModel.location.value == ""
                 )
                     return false
             }
-            2->{
+            3->{
                 if (viewModel.bedroom.value == 0
                     || viewModel.bathroom.value == 0
                     || viewModel.people.value == 0
                 )
                     return false
             }
-            3->{
+            4->{
                 if (viewModel.files.value?.size == 0)
                     return false
             }

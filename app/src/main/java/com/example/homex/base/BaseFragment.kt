@@ -18,7 +18,7 @@ abstract class BaseFragment<ViewBinding: ViewDataBinding>: Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding =  DataBindingUtil.inflate(layoutInflater, layoutId, container, false)
-        binding.lifecycleOwner = this
+        binding.lifecycleOwner = viewLifecycleOwner
         return binding.root
     }
 

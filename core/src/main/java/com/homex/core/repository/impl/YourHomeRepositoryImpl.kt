@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import com.google.gson.JsonObject
 import com.homex.core.api.ApiService
 import com.homex.core.data.NetworkBoundResource
+import com.homex.core.model.BingLocation
 import com.homex.core.model.Home
 import com.homex.core.model.general.ListResponse
 import com.homex.core.model.general.ObjectResponse
@@ -57,6 +58,27 @@ class YourHomeRepositoryImpl(private val api: ApiService): YourHomeRepository {
         return object : NetworkBoundResource<ListResponse<Home>, ArrayList<Home>>(){
             override fun processResponse(response: ListResponse<Home>): ArrayList<Home>? = response.data
             override suspend fun createCall(): Response<ListResponse<Home>> = api.getHomeByUser(userAccess)
+        }.build().asLiveData()
+    }
+
+    override suspend fun getCity(): LiveData<ResultResponse<ArrayList<BingLocation>>> {
+        return object : NetworkBoundResource<ListResponse<BingLocation>, ArrayList<BingLocation>>(){
+            override fun processResponse(response: ListResponse<BingLocation>): ArrayList<BingLocation>? = response.data
+            override suspend fun createCall(): Response<ListResponse<BingLocation>> = api.getCity()
+        }.build().asLiveData()
+    }
+
+    override suspend fun getDistrict(id: Int): LiveData<ResultResponse<ArrayList<BingLocation>>> {
+        return object : NetworkBoundResource<ListResponse<BingLocation>, ArrayList<BingLocation>>(){
+            override fun processResponse(response: ListResponse<BingLocation>): ArrayList<BingLocation>? = response.data
+            override suspend fun createCall(): Response<ListResponse<BingLocation>> = api.getDistrict(id)
+        }.build().asLiveData()
+    }
+
+    override suspend fun getWard(id: Int): LiveData<ResultResponse<ArrayList<BingLocation>>> {
+        return object : NetworkBoundResource<ListResponse<BingLocation>, ArrayList<BingLocation>>(){
+            override fun processResponse(response: ListResponse<BingLocation>): ArrayList<BingLocation>? = response.data
+            override suspend fun createCall(): Response<ListResponse<BingLocation>> = api.getWard(id)
         }.build().asLiveData()
     }
 }

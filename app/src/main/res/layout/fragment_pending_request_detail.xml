@@ -7,24 +7,72 @@
         <variable
             name="request"
             type="com.homex.core.model.response.RequestResponse" />
+        <import type="com.example.homex.extension.RequestStatus"/>
     </data>
-
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:fillViewport="true"
-        android:layout_height="match_parent">
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:background="@color/background_gray"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingBottom="16dp">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            style="@style/Regular"
+            android:id="@+id/appCompatTextView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="16dp"
+            android:text="Trạng thái yêu cầu:"
+            android:textColor="@color/black_60" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvRequestStatus"
+            style="@style/Regular"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            requestStatus="@{request.request.status}"
+            android:textColor="@color/black_60"
+            app:layout_constraintBottom_toBottomOf="@id/appCompatTextView3"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/appCompatTextView3"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/requestTxt"
+            app:layout_constraintTop_toBottomOf="@id/tvRequestStatus"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="8dp"
+            android:textColor="@color/primary"
+            requestText="@{request.request.status}"/>
+
 
         <androidx.appcompat.widget.AppCompatTextView
             style="@style/Regular"
             android:id="@+id/appCompatTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/requestTxt"
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="24dp"
             android:layout_marginTop="16dp"
@@ -40,17 +88,31 @@
             android:background="@color/white"
             android:orientation="vertical">
 
-            <androidx.appcompat.widget.AppCompatTextView
-                style="@style/MediumText"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="3"
-                android:padding="8dp"
-                android:drawableStart="@drawable/ic_user"
-                android:drawablePadding="12dp"
-                android:gravity="center_vertical"
-                android:text="Bạn" />
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="8dp">
 
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:id="@+id/ivAvatar"
+                    android:src="@mipmap/avatar"
+                    android:layout_gravity="center_vertical"
+                    loadAvatar="@{request.house.user.urlImage}"
+                    />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvUserName"
+                    style="@style/MediumText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="12dp"
+                    android:layout_gravity="center_vertical"
+                    android:text="Bạn" />
+        </LinearLayout>
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
@@ -235,16 +297,30 @@
             setVisibilityGone="@{request.request.type == 2}"
             android:orientation="vertical">
 
-            <androidx.appcompat.widget.AppCompatTextView
-                style="@style/MediumText"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="3"
-                android:padding="8dp"
-                android:drawableStart="@drawable/ic_user"
-                android:drawablePadding="12dp"
-                android:gravity="center_vertical"
-                android:text="@{request.request.user.userName}" />
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="8dp">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/ivAvatar1"
+                    loadAvatar="@{request.request.user.imageUrl}"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center_vertical"
+                    android:src="@mipmap/avatar" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvUserName1"
+                    style="@style/MediumText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    android:text="@{request.request.user.userName}" />
+            </LinearLayout>
 
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"
@@ -349,7 +425,7 @@
             android:layout_marginStart="24dp"
             android:layout_marginTop="16dp"
             android:id="@+id/appCompatTextView2"
-            android:text="Bạn được yêu cầu"
+            android:text="Thời gian"
             android:textColor="@color/black_60" />
 
         <LinearLayout
@@ -413,31 +489,46 @@
                     formatDate="@{request.request.endDate}" />
             </LinearLayout>
         </LinearLayout>
+
         <androidx.appcompat.widget.AppCompatButton
-            style="@style/ButtonOutline"
-            android:text="Từ chối"
-            android:id="@+id/rejectBtn"
-            android:layout_width="match_parent"
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="24dp"
-            android:layout_gravity="bottom"
+            style="@style/FlexLongButtonSecondary"
+            android:text="Liên hệ"
+            android:id="@+id/contactBtn"
             app:layout_constraintTop_toBottomOf="@id/linearLayout3"
-            app:layout_constraintVertical_bias="1"
-            app:layout_constraintBottom_toTopOf="@id/acceptBtn"
-            />
-        <androidx.appcompat.widget.AppCompatButton
-            style="@style/ButtonPrimary"
-            android:text="Chấp nhận"
-            android:id="@+id/acceptBtn"
-            app:layout_constraintBottom_toBottomOf="parent"
             android:layout_gravity="bottom"
             android:layout_width="match_parent"
             android:layout_marginStart="24dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginTop="16dp"
             android:layout_marginEnd="24dp"/>
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:orientation="horizontal"
+            android:elevation="5dp"
+            >
+            <androidx.appcompat.widget.AppCompatButton
+                style="@style/ButtonOutline"
+                android:id="@+id/rejectBtn"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_margin="8dp"
+                requestSecondary="@{request.request.status}"
+                />
+            <androidx.appcompat.widget.AppCompatButton
+                style="@style/ButtonPrimary"
+                requestPrimary="@{request.request.status}"
+                android:id="@+id/acceptBtn"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_margin="8dp"/>
+
+        </LinearLayout>
+    </LinearLayout>
 
 </layout>

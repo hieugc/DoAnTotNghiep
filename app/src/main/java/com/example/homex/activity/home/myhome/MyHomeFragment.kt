@@ -66,9 +66,7 @@ class MyHomeFragment : BaseFragment<FragmentMyHomeBinding>() {
     override fun setViewModel() {
         viewModel.myHomesLiveData.observe(viewLifecycleOwner){
             if (it != null){
-                if(page == 1){
-                    homeList.clear()
-                }
+                homeList.clear()
                 val homes = it.homes
                 if (homes != null){
                     homeList.addAll(homes)

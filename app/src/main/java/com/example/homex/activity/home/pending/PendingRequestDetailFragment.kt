@@ -1,15 +1,23 @@
-package com.example.homex.activity.home
+package com.example.homex.activity.home.pending
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.os.bundleOf
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.homex.R
+import com.example.homex.activity.home.HomeActivity
+import com.example.homex.app.CONTACT_USER
+import com.example.homex.app.ID
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentPendingRequestDetailBinding
 import com.example.homex.extension.RequestStatus
+import com.example.homex.viewmodel.ChatViewModel
 import com.example.homex.viewmodel.RequestViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.homex.core.param.chat.ContactUserParam
 import com.homex.core.param.request.UpdateStatusParam
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -17,6 +25,7 @@ class PendingRequestDetailFragment : BaseFragment<FragmentPendingRequestDetailBi
     override val layoutId: Int = R.layout.fragment_pending_request_detail
     private val viewModel: RequestViewModel by viewModel()
     private val args: PendingRequestDetailFragmentArgs by navArgs()
+    private val chatViewModel: ChatViewModel by sharedViewModel()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -77,12 +86,40 @@ class PendingRequestDetailFragment : BaseFragment<FragmentPendingRequestDetailBi
                 }
                 .show()
         }
+
+        binding.contactBtn.setOnClickListener {
+            chatViewModel.connectionId.value?.let { it1->
+                binding.request?.request?.user?.userAccess?.let { it2->
+                    chatViewModel.contactToUser(
+                        ContactUserParam(
+                            connectionId =  it1,
+                            userAccess = it2
+                        )
+                    )
+                }
+            }
+
+        }
     }
 
     override fun setViewModel() {
         viewModel.requestResponseLiveData.observe(this){
             if (it != null){
                 binding.request = it
+            }
+        }
+
+        chatViewModel.connectToUser.observe(this){ messageRoom->
+            if (messageRoom != null){
+                messageRoom.idRoom?.let {
+                    findNavController().navigate(
+                        R.id.action_global_messageFragment, bundleOf(
+                            ID to it,
+                            CONTACT_USER to true
+                        )
+                    )
+                }
+                chatViewModel.connectToUser.postValue(null)
             }
         }
     }

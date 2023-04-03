@@ -14,6 +14,7 @@ import android.view.WindowManager
 import android.widget.ArrayAdapter
 import android.widget.FrameLayout
 import androidx.core.content.ContextCompat
+import androidx.core.widget.addTextChangedListener
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -35,6 +36,7 @@ class BottomSheetChangeDateFragment : BottomSheetDialogFragment() {
     private var loading = true
     private var end = false
     private var selectedDates: Pair<CalendarDate?, CalendarDate?> = Pair(null, null)
+    private var numberOfPeople = 1
     private val args: BottomSheetChangeDateFragmentArgs by navArgs()
 
     override fun onCreateView(
@@ -53,6 +55,39 @@ class BottomSheetChangeDateFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        if (args.numberOfPeople != 0){
+            binding.pickPeopleLayout.visible()
+            binding.edtPeople.setText(args.numberOfPeople.toString())
+            numberOfPeople = args.numberOfPeople
+        }else{
+            binding.pickPeopleLayout.gone()
+            numberOfPeople = 0
+        }
+
+
+        binding.edtPeople.addTextChangedListener {
+            if (it?.toString() == "")
+            {
+                binding.edtPeople.setText("1")
+                numberOfPeople = 1
+            }
+            else if(it?.toString()?.toInt() == 0){
+                binding.edtPeople.setText("1")
+                numberOfPeople = 1
+            }else{
+                numberOfPeople = it?.toString()?.toInt()?:1
+            }
+        }
+
+        binding.addPeople.setOnClickListener {
+            val num = binding.edtPeople.text.toString().toInt()
+            binding.edtPeople.setText(getString(R.string.int_input_string, num + 1))
+        }
+        binding.minusPeople.setOnClickListener {
+            val num = binding.edtPeople.text.toString().toInt()
+            if(num == 0) return@setOnClickListener
+            binding.edtPeople.setText(getString(R.string.int_input_string, num - 1))
+        }
 
         selectedDates = Pair(args.startDate, args.endDate)
         if (args.startDate != null && args.endDate != null){
@@ -179,6 +214,8 @@ class BottomSheetChangeDateFragment : BottomSheetDialogFragment() {
 
         binding.applyButton.setOnClickListener {
             findNavController().previousBackStackEntry?.savedStateHandle?.set("DATE", selectedDates)
+            if (numberOfPeople != 0)
+                findNavController().previousBackStackEntry?.savedStateHandle?.set("NOP", numberOfPeople)
             dialog?.dismiss()
         }
     }

@@ -71,7 +71,7 @@ class CreateRequestFragment : BaseFragment<FragmentCreateRequestBinding>() {
         if (prefUtil.profile != null){
             binding.yourPointTV.text = getString(R.string.point_you_have, prefUtil.profile?.point)
         }
-
+        viewModel.type.postValue(args.type)
         if(args.startDate != null && args.endDate != null){
             viewModel.startDate.postValue(args.startDate)
             viewModel.endDate.postValue(args.endDate)

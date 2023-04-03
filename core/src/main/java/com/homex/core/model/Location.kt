@@ -17,3 +17,10 @@ data class Point(
     val lat: Double? = null,
     val lng: Double? = null
 ): Parcelable
+
+@Parcelize
+data class BingLocation(
+    val id: Int? = null,
+    val name: String? = null,
+    val bingName: String? = null
+): Parcelable
