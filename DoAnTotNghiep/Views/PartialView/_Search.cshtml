@@ -1,51 +1,8 @@
-﻿<form name="search" class="d-flex" id="container-explore" onload="getSuggest();">
+﻿@{
+    string key = "Asf_PRzBpUJVcb9lcAg48BLOuAuaBItg4ZzCqaNQaSIFReqieYA02KBcovVD08Jk";
+}
+
+<form name="search" class="d-flex" id="container-explore" onload="getSuggest();">
     <input type="text" class="rounded-start rounded-0 form-control" placeholder="Bạn muốn đi đâu?" name="explore" id="explore-input" />
     <label class="btn btn-sm btn-primary rounded-0 rounded-end" onclick="explore()"><i class="fa-sharp fa-solid fa-magnifying-glass"></i></label>
 </form>
-
-
-<script type="text/javascript">
-    var suggest = null;
-    function onLoad() {
-        var options = { maxResults: 5 };
-        var manager = new Microsoft.Maps.AutosuggestManager(options);
-        manager.attachAutosuggest('#explore-input', '#container-explore', selectedSuggestion);
-    }
-    function onError(message) {
-        suggest = null;
-    }
-    function selectedSuggestion(suggestionResult) {
-        suggest = suggestionResult;
-    }
-    function stringToSlug(str) {
-        // remove accents
-        var from = "àáãảạăằắẳẵặâầấẩẫậèéẻẽẹêềếểễệđùúủũụưừứửữựòóỏõọôồốổỗộơờớởỡợìíỉĩịäëïîöüûñçýỳỹỵỷ",
-            to = "aaaaaaaaaaaaaaaaaeeeeeeeeeeeduuuuuuuuuuuoooooooooooooooooiiiiiaeiiouuncyyyyy";
-        for (var i = 0, l = from.length; i < l; i++) {
-            str = str.replace(RegExp(from[i], "gi"), to[i]);
-        }
-
-        str = str.toLowerCase()
-            .trim()
-            .replace(/[^a-z0-9\-]/g, '-')
-            .replace(/-+/g, '-');
-
-        return str;
-    }
-    function includeIdCity() {
-        for (e in dataLocation) {
-            if (stringToSlug(suggest.address.adminDistrict).indexOf(stringToSlug(dataLocation[e].name)) != -1) {
-                return e;
-            }
-        }
-    }
-</script>
-
-<script src="~/js/Bingmap/GetLocation.js" type="text/javascript"></script>
-<script type="text/javascript">
-    function explore() {
-        window.location.href = "@Url.Action("Index", "Explore")?IdCity=" + includeIdCity();
-    }
-    getDataCity();
-</script>
-

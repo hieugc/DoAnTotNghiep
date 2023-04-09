@@ -28,16 +28,46 @@ namespace DoAnTotNghiep.Modules
             return JsonConvert.DeserializeObject<T>(result);
         }
 
+        public static async Task<T?> Post<T>(Uri url, FormUrlEncodedContent content)
+        {
+            string result = string.Empty;
+            using (HttpClient client = new HttpClient())
+            {
+                var request = new HttpRequestMessage(HttpMethod.Post, url);
+                request.Content = content;
+                HttpResponseMessage response = await client.SendAsync(request);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    result = await response.Content.ReadAsStringAsync();
+                }
+            }
+            if (typeof(T) == typeof(string))
+                return (T)Convert.ChangeType(result, typeof(T));
+            return JsonConvert.DeserializeObject<T>(result);
+        }
+
         public static Uri GeoCodeRequest(string protocol, string city, string district, string ward, string address, string key)
         {
             string addressLine = address + ", " + ward;
             Uri geocodeRequest = new Uri(string.Format("{0}://dev.virtualearth.net/REST/v1/Locations?CountryRegion=VN&adminDistrict={1}&locality={2}&addressLine={3}&key={4}", protocol, city, district, addressLine, key));
             return geocodeRequest;
         }
-
         public static Uri GeoCodeRequest(string protocol, string query, string key)
         {
             Uri geocodeRequest = new Uri(string.Format("{0}://dev.virtualearth.net/REST/v1/Locations?q={1}&key={2}", protocol, query, key));
+            return geocodeRequest;
+        }
+
+        public static Uri CreateOrderZaloRequest()
+        {
+            Uri geocodeRequest = new Uri(string.Format("https://sandbox.zalopay.com.vn/v001/tpe/createorder"));
+            return geocodeRequest;
+        }
+
+        public static Uri CheckOrderZaloRequest()
+        {
+            Uri geocodeRequest = new Uri(string.Format("https://sandbox.zalopay.com.vn/v001/tpe/getstatusbyapptransid"));
             return geocodeRequest;
         }
     }

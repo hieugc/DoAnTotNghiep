@@ -84,14 +84,14 @@ namespace DoAnTotNghiep.Controllers
                             claims.Add(new Claim(ClaimTypes.Role, Role.Admin));
                         }
 
-                        await this.SignClaim(claims, Scheme.AuthenticationCookie(), DateTime.UtcNow.AddHours(24));
+                        await this.SignClaim(claims, Scheme.AuthenticationCookie(), DateTime.UtcNow.AddHours(Cookie.TimeExpireWeb));
                         if (checkUser.Role == Role.MemberCode)
                         {
-                            SetCookie(Enum.Cookie.RoleAccess(), Role.Member, 24);
+                            SetCookie(Enum.Cookie.RoleAccess(), Role.Member, Cookie.TimeExpireWeb);
                         }
                         else
                         {
-                            SetCookie(Enum.Cookie.RoleAccess(), Role.Admin, 24);
+                            SetCookie(Enum.Cookie.RoleAccess(), Role.Admin, Cookie.TimeExpireWeb);
                         }
 
                         this._context.Entry(checkUser).Reference(m => m.Files).Load();
@@ -99,10 +99,9 @@ namespace DoAnTotNghiep.Controllers
                         byte[] RSA = Crypto.Salt(this._configuration);
                         this._context.Entry(checkUser).Collection(m => m.Houses).Query().Load();
                         this._context.Entry(checkUser).Reference(m => m.Files).Query().Load();
-
                         string userInfo = JsonConvert.SerializeObject(new UserInfo(checkUser, RSA, this.GetWebsitePath()));
 
-                        SetCookie(Enum.Cookie.UserInfo(), userInfo, 24);
+                        SetCookie(Enum.Cookie.UserInfo(), userInfo, Cookie.TimeExpireWeb);
                         return RedirectToAction("Index", "Home");
                     }
                     else

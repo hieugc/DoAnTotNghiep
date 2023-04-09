@@ -1,0 +1,65 @@
+﻿@model DoAnTotNghiep.ViewModels.DetailHouseViewModel
+@using DoAnTotNghiep.Enum;
+@{
+    int count = 1;
+}
+
+<div class="card mb-3 status-@Model.Status">
+    <div class="row g-0">
+        <div class="col-md-8">
+            @if(Model.Images.Any())
+            {
+                foreach(var item in Model.Images)
+                {
+                    if(item != null && count ++ == 1){
+                        <img src="@item.Data" class="img-fluid rounded-start" alt="hình ảnh nhà">
+                    }
+                }
+            }
+            else
+            {
+                <img src="~/Image/logo.png" class="img-fluid rounded-start" alt="hình ảnh nhà">
+            }
+        </div>
+        <div class="col-md-4">
+            <div class="card-body">
+                <div class="body-head">
+                    <h5 class="card-title">@Model.Name</h5>
+                    <div>
+                        <div class="rating"><span>@Model.Rating (@Model.NumberRating)</span><i class="fa-solid fa-star"></i></div>
+                        <div class="point"><strong>@Model.Price p/ngày</strong></div>
+                    </div>
+                </div>
+                <div class="body-detail">
+                    <div class="house-attr">
+                        <div><i class="fa-solid fa-house"></i><span>@(HouseEnum.HouseType(Model.Option))</span></div>
+                        <div><i class="fa-solid fa-users"></i><span>@Model.People</span></div>
+                        <div><i class="fa-solid fa-bed"></i><span>@Model.BedRoom</span></div>
+                        <div><i class="fa-solid fa-bath"></i><span>@Model.BathRoom</span></div>
+                        <div><i class="fa-solid fa-maximize"></i><span>@Model.Square &#13217;</span></div>
+                    </div>
+                    <div class="alert-swap model-house-@Model.Id">
+                        @if (Model.Status == (int)StatusHouse.VALID)
+                        {
+                            <label class="position-relative" title="Người dùng yêu cầu" onclick="showRequest(@Model.Id)">
+                                <i class="fa-solid fa-bell"></i>
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger value-request">
+                                    @Model.Request
+                                </span>
+                            </label>
+                        }
+                    </div>
+                </div>
+                <p class="card-text">@Model.Location</p>
+                <p class="card-control">
+                    <a href="@Url.Action("HouseOverView", "Houses", new{Id = Model.Id})" class="btn btn-primary" title="Xem chi tiết">Chi tiết</a>
+                    @if (Model.Status != (int)StatusHouse.SWAPPING)
+                    {
+                        <button type="button" class="btn btn-warning" onclick="editHouse(@Model.Id)">Chỉnh sửa</button>
+                        <button type="button" class="btn btn-danger" confirm="Bạn chắc muốn xóa nhà này chứ?" onclick="deleteHouse(@Model.Id)">Xóa</button>
+                    }
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

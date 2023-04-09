@@ -12,15 +12,16 @@ namespace DoAnTotNghiep.ViewModels
         {
 
         }
-        public NotificationViewModel(Notification model)
+        public NotificationViewModel(Notification model, string host)
         {
-            this.ImageUrl = model.ImageUrl;
+            this.ImageUrl = host + model.ImageUrl;
             this.Title = model.Title;
             this.Content = model.Content;
             this.CreatedDate = model.CreatedDate;
             this.IsSeen = model.IsSeen;
             this.IdType = model.IdType;
             this.Type = model.Type;
+            this.Id = model.Id;
         }
 
         public string ImageUrl { get; set; } = string.Empty;
@@ -30,5 +31,6 @@ namespace DoAnTotNghiep.ViewModels
         public int Type { get; set; } = 0;
         public bool IsSeen { get; set; } = false;
         public int IdType { get; set; } = 0;
+        public int Id { get; set; } = 0;
     }
 }

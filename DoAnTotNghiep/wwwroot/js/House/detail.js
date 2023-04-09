@@ -1,5 +1,4 @@
 ﻿function LoadMap(lat, lng) {
-
     let loc = new Microsoft.Maps.Location(lat, lng);
     var map = new Microsoft.Maps.Map('#myMap', {
         zoom: 15,

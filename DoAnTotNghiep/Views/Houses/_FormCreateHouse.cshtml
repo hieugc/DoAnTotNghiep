@@ -186,9 +186,18 @@
     </div>
 </div>
 @Html.AntiForgeryToken()
-<script src='https://www.bing.com/api/maps/mapcontrol?callback=GetMap&key=@key' type='text/javascript' async defer></script>
-<script src="~/js/Bingmap/GetLocation.js" type="text/javascript"></script>
-<script src="~/js/House/create.js" type="text/javascript"></script>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script type="text/javascript">
     var key = "@key";
+</script>
+<script src="~/js/House/create.js" type="text/javascript"></script>
+<script type="text/javascript">
+    var map = null;
+    function GetMap() {
+        map = new Microsoft.Maps.Map('#myMap', {
+            zoom: 15,
+            customMapStyle: StyleMap()
+        });
+    }
 </script>

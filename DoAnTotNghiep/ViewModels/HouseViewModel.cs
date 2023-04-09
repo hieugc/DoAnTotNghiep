@@ -84,10 +84,31 @@ namespace DoAnTotNghiep.ViewModels
             this.Utilities = utilities;//list<int>
             this.Rules = rules;//list<int>
             this.Images = new List<ImageBase?>();
-            this.Status = house.Status;//int
             this.Rating = house.Rating;//double :)) quên
             this.Bed = house.Bed;
-            this.Request = house.Requests == null ? 0 : house.Requests.Count();
+            this.Status = house.Status;//int
+            if (house.Requests != null)
+            {
+                this.Request = house.Requests.Where(m => m.Status == (int) StatusRequest.WAIT_FOR_SWAP).Count();
+                DateTime now = DateTime.Now;
+                List<RangeDate> rangeDates = house.Requests.Where(r => (r.Status == (int)StatusRequest.ACCEPT
+                                                                        || r.Status == (int)StatusRequest.CHECK_IN
+                                                                        || r.Status == (int)StatusRequest.CHECK_OUT
+                                                                    )
+                                                                    && (DateTime.Compare(r.StartDate, now)  <= 0 && DateTime.Compare(now, r.EndDate) <= 0)
+                                                                )
+                                                        .Select(m => new RangeDate()
+                                                        {
+                                                            StartDate = m.StartDate,
+                                                            EndDate = m.EndDate
+                                                        })
+                                                        .ToList();
+                this.InValidRangeDates.AddRange(rangeDates);
+            }
+            else
+            {
+                this.Request = 0;
+            }
             this.UserAccess = Crypto.EncodeKey(house.IdUser.ToString(), salt);
             this.NumberRating = house.FeedBacks == null ? 0 : house.FeedBacks.Count();
             if (user != null && !string.IsNullOrEmpty(host))
@@ -104,6 +125,7 @@ namespace DoAnTotNghiep.ViewModels
         public string? CityName { get; set; } = string.Empty;
         public string? DistrictName { get; set; } = string.Empty;
         public UserInfo? User { get; set; }//đã trả lúc login // thông tin là của nó :))
+        public List<RangeDate> InValidRangeDates { get; set; } = new List<RangeDate>();
         //list Url
         public List<DetailRatingWithUser> Ratings { get; set; } = new List<DetailRatingWithUser>();
     }
@@ -269,7 +291,11 @@ namespace DoAnTotNghiep.ViewModels
         public List<DetailHouseViewModel> Houses { get; set; } = new List<DetailHouseViewModel>();
         public Pagination Pagination { get; set; } = new Pagination();
     }
-
+    public class RangeDate
+    {
+        public DateTime StartDate { get; set; } = DateTime.Now;
+        public DateTime EndDate { get; set; } = DateTime.Now;
+    }
     public class Pagination
     {
         //page => 1 -> total

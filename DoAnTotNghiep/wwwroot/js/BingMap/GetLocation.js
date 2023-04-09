@@ -70,7 +70,7 @@ function getDataDistrict() {
             }
             if (dataLocation[id].district == null) {
                 $.ajax({
-                    url: "/Location/GetDistrict?Id=" + id,
+                    url: "/api/Location/District?IdCity=" + id,
                     type: "GET",
                     dataType: "json",
                     success: function (data) {
@@ -149,7 +149,7 @@ function getDataWard() {
         else{
             if (dataLocation[id_city].district[id].ward == null) {
                 $.ajax({
-                    url: "/Location/GetWard?Id=" + id,
+                    url: "/api/Location/Ward?IdDistrict=" + id,
                     type: "GET",
                     dataType: "json",
                     success: function (data) {
@@ -199,12 +199,14 @@ function changeDataForSelect2(tag, data) {
         $(tag).prop("disabled", false);
     }
 
-    $(tag).select2('destroy');
-    $(tag).empty();
-    $(tag).select2({
-        data: data,
-        dropdownParent: $('#BingMapModal')
-    });
+    if ($(tag).length > 0) {
+        $(tag).select2('destroy');
+        $(tag).empty();
+        $(tag).select2({
+            data: data,
+            dropdownParent: $('#BingMapModal')
+        });
+    }
 }
 function initCitySelect2(elementTag, data, placeholder) {
     $(elementTag).select2({
@@ -213,15 +215,21 @@ function initCitySelect2(elementTag, data, placeholder) {
     });
 }
 function initSelect() {
-    $("#city-select").select2({
-        dropdownParent: $('#BingMapModal')
-    });
-    $("#district-select").select2({
-        dropdownParent: $('#BingMapModal')
-    });
-    $("#ward-select").select2({
-        dropdownParent: $('#BingMapModal')
-    });
+    if ($("#city-select").length > 0) {
+        $("#city-select").select2({
+            dropdownParent: $('#BingMapModal')
+        });
+    }
+    if ($("#district-select").length > 0) {
+        $("#district-select").select2({
+            dropdownParent: $('#BingMapModal')
+        });
+    }
+    if ($("#ward-select").length > 0) {
+        $("#ward-select").select2({
+            dropdownParent: $('#BingMapModal')
+        });
+    }
 }
 function showAddress(address) {
     if ($("#mapAddress").html().length == 0 || $("#map-location").val().length == 0) {
@@ -339,10 +347,239 @@ function getIdCity(cityBingName) {
     });
 }
 
-
 var pin = null;
 var infobox = null;
 var loc = null;
 var address = null;
 var dataLocation = null; //data chính
 var dataBingLocation = null; //data chính
+initSelect();
+getDataCity();
+
+
+function StyleMap() {
+
+    ////var myStyle = {
+    ////    "version": "1.0",
+    ////    "settings": {
+    ////        "landColor": "#FF0B334D"
+    ////    },
+    ////    "elements": {
+    ////        "mapElement": {
+    ////            "labelColor": "#FFFFFFFF",
+    ////            "labelOutlineColor": "#FF000000",
+    ////            "labelVisible": true,
+    ////            "visible": true
+    ////        },
+    ////        "area": {
+    ////            "fillColor": "#FF115166"
+    ////        },
+    ////        "neighborhood": {
+    ////            "labelVisible": false
+    ////        },
+    ////        "point": {
+    ////            "fillColor": "#FF000000",
+    ////            "iconColor": "#FF0C4152",
+    ////            "labelVisible": false,
+    ////            "strokeColor": "#FF0C4152",
+    ////            "visible": false
+    ////        },
+    ////        "naturalPoint": {
+    ////            "labelVisible": true,
+    ////            "visible": true
+    ////        },
+    ////        "pointOfInterest": {
+    ////            "labelVisible": true,
+    ////            "visible": true
+    ////        },
+    ////        "populatedPlace": {
+    ////            "labelVisible": false,
+    ////            "visible": false
+    ////        },
+    ////        "capital": {
+    ////            "labelVisible": true,
+    ////            "visible": true
+    ////        },
+    ////        "adminDistrictCapital": {
+    ////            "labelVisible": true,
+    ////            "visible": true
+    ////        },
+    ////        "countryRegionCapital": {
+    ////            "labelVisible": true,
+    ////            "visible": true
+    ////        },
+    ////        "roadExit": {
+    ////            "labelVisible": true,
+    ////            "visible": true
+    ////        },
+    ////        "transit": {
+    ////            "labelVisible": true,
+    ////            "visible": true
+    ////        },
+    ////        "political": {
+    ////            "borderOutlineColor": "#00000000",
+    ////            "borderStrokeColor": "#FF144B53",
+    ////            "labelVisible": true,
+    ////            "visible": true
+    ////        },
+    ////        "adminDistrict": {
+    ////            "borderVisible": true,
+    ////            "labelVisible": true,
+    ////            "visible": true
+    ////        },
+    ////        "countryRegion": {
+    ////            "borderVisible": false,
+    ////            "labelVisible": true,
+    ////            "visible": true
+    ////        },
+    ////        "district": {
+    ////            "borderVisible": true,
+    ////            "labelVisible": true,
+    ////            "visible": true
+    ////        },
+    ////        "structure": {
+    ////            "fillColor": "#FF115166",
+    ////            "labelVisible": true
+    ////        },
+    ////        "transportation": {
+    ////            "fillColor": "#FF000000",
+    ////            "labelVisible": true,
+    ////            "overwriteColor": false,
+    ////            "strokeColor": "#FF000000",
+    ////            "visible": true
+    ////        },
+    ////        "railway": {
+    ////            "fillColor": "#FF000000",
+    ////            "strokeColor": "#FF146474"
+    ////        },
+    ////        "arterialRoad": {
+    ////            "fillColor": "#FF000000",
+    ////            "strokeColor": "#FF157399"
+    ////        },
+    ////        "controlledAccessHighway": {
+    ////            "fillColor": "#FF000000",
+    ////            "strokeColor": "#FF158399"
+    ////        },
+    ////        "highway": {
+    ////            "fillColor": "#FF000000",
+    ////            "strokeColor": "#FF158399"
+    ////        },
+    ////        "majorRoad": {
+    ////            "fillColor": "#FF000000",
+    ////            "strokeColor": "#FF157399"
+    ////        },
+    ////        "ramp": {
+    ////            "overwriteColor": false,
+    ////            "visible": false
+    ////        },
+    ////        "unpavedStreet": {
+    ////            "labelVisible": false,
+    ////            "visible": false
+    ////        },
+    ////        "water": {
+    ////            "fillColor": "#FF021019",
+    ////            "labelVisible": false
+    ////        },
+    ////        "userPoint": {
+    ////            "labelVisible": true,
+    ////            "stemColor": "#FFFFFFFF",
+    ////            "visible": true
+    ////        }
+    ////    }
+    ////};
+
+    var myStyle= {
+        "version": "1.0",
+            "elements": {
+            "mapElement": {
+                "labelVisible": true,
+                    "visible": true
+            },
+            "neighborhood": {
+                "labelVisible": false
+            },
+            "point": {
+                "labelVisible": false,
+                    "visible": false
+            },
+            "naturalPoint": {
+                "labelVisible": true,
+                    "visible": true
+            },
+            "pointOfInterest": {
+                "labelVisible": true,
+                    "visible": true
+            },
+            "populatedPlace": {
+                "labelVisible": false,
+                    "visible": false
+            },
+            "capital": {
+                "labelVisible": true,
+                    "visible": true
+            },
+            "adminDistrictCapital": {
+                "labelVisible": true,
+                    "visible": true
+            },
+            "countryRegionCapital": {
+                "labelVisible": true,
+                    "visible": true
+            },
+            "roadExit": {
+                "labelVisible": true,
+                    "visible": true
+            },
+            "transit": {
+                "labelVisible": true,
+                    "visible": true
+            },
+            "political": {
+                "labelVisible": true,
+                    "visible": true
+            },
+            "adminDistrict": {
+                "borderVisible": true,
+                    "labelVisible": true,
+                        "visible": true
+            },
+            "countryRegion": {
+                "borderVisible": false,
+                    "labelVisible": true,
+                        "visible": true
+            },
+            "district": {
+                "borderVisible": true,
+                    "labelVisible": true,
+                        "visible": true
+            },
+            "structure": {
+                "labelVisible": true
+            },
+            "transportation": {
+                "labelVisible": true,
+                    "overwriteColor": false,
+                        "visible": true
+            },
+            "ramp": {
+                "overwriteColor": false,
+                    "visible": false
+            },
+            "unpavedStreet": {
+                "labelVisible": false,
+                    "visible": false
+            },
+            "water": {
+                "labelVisible": false
+            },
+            "userPoint": {
+                "labelVisible": true,
+                    "stemColor": "#FFFFFFFF",
+                        "visible": true
+            }
+        }
+    }
+
+
+    return myStyle;
+}

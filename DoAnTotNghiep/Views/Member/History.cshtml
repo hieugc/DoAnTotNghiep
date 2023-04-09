@@ -7,8 +7,6 @@
 
 
 @*
-    + button nạp tiền
-    + modal nạp tiền
     + modal lịch sử nạp tiền
             => lọc theo time
             => số tiền + mã giao dịch
@@ -21,3 +19,24 @@
                 => tiền vào
                 => có chi tiết => modal việc trao đổi
 *@
+
+
+<div class="house">
+    <div class="house-head">
+        <h2>Thống kê giao dịch</h2>
+        <button class="btn btn-primary" onclick="renderTransactionForm()">
+            Nạp thêm điểm
+        </button>
+    </div>
+    <div class="nav nav-tabs mb-2">
+        <div class="nav-link active">Thống kê tài khoản</div>
+        <div class="nav-link">Trao đổi</div>
+        <div class="nav-link">Xu hướng</div>
+    </div>
+    <div class="list-house" id="content-render">
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/js/Transaction/create.js" type="text/javascript"></script>
+}

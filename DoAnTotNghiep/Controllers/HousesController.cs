@@ -287,8 +287,6 @@ namespace DoAnTotNghiep.Controllers
             });
         }
 
-
-
         //update
         private async Task<IActionResult> EditHouse(EditHouse data)
         {
@@ -787,6 +785,24 @@ namespace DoAnTotNghiep.Controllers
             model.AllUtilities = this._context.Utilities.ToList();
             model.AllRules = this._context.Rules.ToList();
             model.Ratings = this.GetRatingByHouse(house, host, salt);
+
+            if (house.FileOfHouses == null || !this._context.Entry(house).Collection(m => m.FileOfHouses).IsLoaded)
+            {
+                this._context.Entry(house).Collection(m => m.FileOfHouses).Load();
+            }
+
+            if (house.FileOfHouses != null)
+            {
+                foreach (var f in house.FileOfHouses)
+                {
+                    this._context.Entry(f).Reference(m => m.Files).Load();
+                    if (f.Files != null)
+                    {
+                        model.Images.Add(new ImageBase(f.Files, host));
+                    }
+                }
+            }
+
             return View(model);
         }
         [AllowAnonymous]
@@ -825,6 +841,23 @@ namespace DoAnTotNghiep.Controllers
             model.AllUtilities = this._context.Utilities.ToList();
             model.AllRules = this._context.Rules.ToList();
             model.Ratings = this.GetRatingByHouse(house, host, salt);
+
+            if (house.FileOfHouses == null || !this._context.Entry(house).Collection(m => m.FileOfHouses).IsLoaded)
+            {
+                this._context.Entry(house).Collection(m => m.FileOfHouses).Load();
+            }
+
+            if (house.FileOfHouses != null)
+            {
+                foreach (var f in house.FileOfHouses)
+                {
+                    this._context.Entry(f).Reference(m => m.Files).Load();
+                    if (f.Files != null)
+                    {
+                        model.Images.Add(new ImageBase(f.Files, host));
+                    }
+                }
+            }
             return View("./Views/Houses/Details.cshtml", model);
         }
 

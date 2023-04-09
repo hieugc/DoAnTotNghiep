@@ -24,7 +24,7 @@
             <p><span>Kết quả tìm kiếm:</span><span><strong>---</strong></span></p>
 
             <div class="list-house">
-                @foreach (var item in Model.Houses)
+                @foreach (var item in Model.Houses.Houses)
                 {
                     <div class="house-card">
                         @if (item.Images.Count() > 0)
@@ -54,23 +54,25 @@
                 }
             </div>
 
-            @*<nav aria-label="Page navigation example">
-                <ul class="pagination justify-content-center">
-                    <li class="page-item">
-                        <a class="page-link" href="#" aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
-                        </a>
-                    </li>
-                    <li class="page-item"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item">
-                        <a class="page-link" href="#" aria-label="Next">
-                            <span aria-hidden="true">&raquo;</span>
-                        </a>
-                    </li>
-                </ul>
-            </nav>*@
+            @*
+            <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center">
+            <li class="page-item">
+            <a class="page-link" href="#" aria-label="Previous">
+            <span aria-hidden="true">&laquo;</span>
+            </a>
+            </li>
+            <li class="page-item"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item">
+            <a class="page-link" href="#" aria-label="Next">
+            <span aria-hidden="true">&raquo;</span>
+            </a>
+            </li>
+            </ul>
+            </nav>
+            *@
         </div>
     </div>
     <div class="frame-map">
@@ -161,7 +163,9 @@
 @section Scripts{
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/litepicker/dist/css/litepicker.css" />
     <script src="https://cdn.jsdelivr.net/npm/litepicker/dist/litepicker.js"></script>
-
+    @*<script type='text/javascript'
+            src='https://www.bing.com/api/maps/mapcontrol?callback=GetMap&key=@key'
+            async defer></script>*@
 
     <script type="text/javascript">
         var houseResult = @Html.Raw(Json.Serialize(Model.Houses));
@@ -180,15 +184,11 @@
     <script type='text/javascript'>
         var map = null;
         function GetMap() {
-            Microsoft.Maps.loadModule('Microsoft.Maps.AutoSuggest', {
-                callback: onLoad,
-                errorCallback: onError
-            });
-
             let loc = new Microsoft.Maps.Location(@Model.Center.Lat, @Model.Center.Lng);
             map = new Microsoft.Maps.Map('#myMap', {
                 zoom: 14,
-                center: loc
+                center: loc,
+                customMapStyle: StyleMap()
             });
             showItemMap();
         }
@@ -203,6 +203,6 @@
             tooltipNumber: (totalDays) => {
                 return totalDays - 1;
             }
-        })
+        });
     </script>
 }

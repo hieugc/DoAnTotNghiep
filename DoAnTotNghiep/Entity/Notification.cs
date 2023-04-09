@@ -1,4 +1,5 @@
-﻿using DoAnTotNghiep.ViewModels;
+﻿using DoAnTotNghiep.Enum;
+using DoAnTotNghiep.ViewModels;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.VisualBasic;
 using System.ComponentModel.DataAnnotations;
@@ -9,6 +10,38 @@ namespace DoAnTotNghiep.Entity
     [Table("Notification")]
     public class Notification
     {
+        public Notification() { }
+        public Notification DemoNotification(int IdUser)
+        {
+            Notification notification = new Notification()
+            {
+                Title = NotificationType.DemoTitle,
+                CreatedDate = DateTime.Now,
+                Type = NotificationType.DEMO,
+                IdUser = IdUser,
+                IdType = 0,
+                IsSeen = false,
+                ImageUrl = "/Image/house-demo.png"
+            };
+            return notification;
+        }
+
+        public Notification Request(Request request)
+        {
+            Notification notification = new Notification()
+            {
+                Title = NotificationType.RequestTitle,
+                CreatedDate = DateTime.Now,
+                Type = NotificationType.REQUEST,
+                IdUser = request.IdUser,
+                IdType = request.Id,
+                IsSeen = false,
+                ImageUrl ="/Image/house-demo.png"
+            };
+            return notification;
+        }
+
+
         [Key]
         [Column("id")]
         public int Id { get; set; }

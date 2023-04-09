@@ -16,6 +16,8 @@ namespace DoAnTotNghiep.Data
         {
             this._configuration = configuration;
         }
+        public IConfiguration GetConfig() => this._configuration;
+        
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer(_configuration.GetConnectionString("DataContext"));
@@ -33,6 +35,7 @@ namespace DoAnTotNghiep.Data
             modelBuilder.Entity<UtilitiesInHouse>().HasKey(m => new { m.IdHouse, m.IdUtilities });
             modelBuilder.Entity<UsersInChatRoom>().HasKey(m => new { m.IdChatRoom, m.IdUser });
             modelBuilder.Entity<CheckOut>().HasKey(m => new { m.IdRequest, m.IdUser });
+            modelBuilder.Entity<CheckIn>().HasKey(m => new { m.IdRequest, m.IdUser });
         }
 
 
@@ -43,7 +46,7 @@ namespace DoAnTotNghiep.Data
         public DbSet<User> Users { get; set; }
         public DbSet<House> Houses { get; set; }
         public DbSet<ChatRoom> ChatRooms { get; set; }
-        public DbSet<CircleExchangeHouse> CircleExchangeRooms { get; set; }
+        public DbSet<CircleExchangeHouse> CircleExchangeHouses { get; set; }
         public DbSet<CircleExchangeHouseOfUser> CircleExchangeHouseOfUsers { get;set; }
         public DbSet<FeedBack> FeedBacks { get; set; }
         public DbSet<Entity.File> Files { get; set; }
@@ -62,7 +65,9 @@ namespace DoAnTotNghiep.Data
         public DbSet<Utilities> Utilities { get; set; }
         public DbSet<UtilitiesInHouse> UtilitiesInHouse { get; set; }
         public DbSet<WaitingRequest> WaitingRequests { get; set; }
+        public DbSet<CheckIn> CheckIns { get; set; }
         public DbSet<CheckOut> CheckOuts { get; set; }
+        public DbSet<HistoryTransaction> HistoryTransactions { get; set; }
         public DbSet<Notification> Notifications { get; set; }  
     }
 }

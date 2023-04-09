@@ -78,5 +78,6 @@ namespace DoAnTotNghiep.Entity
         public virtual House? SwapHouses { get; set; }
         public ICollection<FeedBack>? FeedBacks { get; set; }
         public ICollection<CheckOut>? CheckOuts { get; set; }
+        public ICollection<CheckIn>? CheckIns { get; set; }
     }
 }

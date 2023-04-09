@@ -10,7 +10,6 @@
         if (!string.IsNullOrEmpty(info))
             userInfo = JsonConvert.DeserializeObject<UserInfo>(info);
     }
-    string key = "Asf_PRzBpUJVcb9lcAg48BLOuAuaBItg4ZzCqaNQaSIFReqieYA02KBcovVD08Jk";
 }
 
 
@@ -57,71 +56,15 @@
                             </div>
                         </div>
                         <div class="authorize">
-                            <div>
+                            <div id="tag_notification">
                                 <a class="position-relative" href="#" role="button" id="dropdownMenuNotification" data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="fa-solid fa-bell"></i>
-                                    <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle">
-                                        <span class="visually-hidden">New alerts</span>
-                                    </span>
+                                    <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"></span>
                                 </a>
 
                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuNotification">
                                     <div class="title"><h5>Thông báo</h5></div>
                                     <div class="alert-frame">
-                                        <div class="dropdown-item">
-                                            <div class="avt"><img src="~/Image/logo.png" alt="avt" /></div>
-                                            <div class="content">
-                                                <strong>Phạm Minh Hiếu</strong>
-                                                đã gửi yêu cầu trao đổi
-                                                <span class="time">17/02/2023</span>
-                                            </div>
-                                            <div class="status"><i class="fa-solid fa-circle"></i></div>
-                                        </div>
-                                        <div class="dropdown-item">
-                                            <div class="avt"><img src="~/Image/logo.png" alt="avt" /></div>
-                                            <div class="content">
-                                                <span class="user-info">Phạm Minh Hiếu</span>
-                                                <span> đã gửi yêu cầu trao đổi</span>
-                                                <span class="time">17/02/2023</span>
-                                            </div>
-                                            <div class="status seen"><i class="fa-solid fa-circle"></i></div>
-                                        </div>
-                                        <div class="dropdown-item">
-                                            <div class="avt"><img src="~/Image/logo.png" alt="avt" /></div>
-                                            <div class="content">
-                                                <span class="user-info">Phạm Minh Hiếu</span>
-                                                <span> đã gửi yêu cầu trao đổi</span>
-                                                <span class="time">17/02/2023</span>
-                                            </div>
-                                            <div class="status"><i class="fa-solid fa-circle"></i></div>
-                                        </div>
-                                        <div class="dropdown-item">
-                                            <div class="avt"><img src="~/Image/logo.png" alt="avt" /></div>
-                                            <div class="content">
-                                                <span class="user-info">Phạm Minh Hiếu</span>
-                                                <span> đã gửi yêu cầu trao đổi</span>
-                                                <span class="time">17/02/2023</span>
-                                            </div>
-                                            <div class="status seen"><i class="fa-solid fa-circle"></i></div>
-                                        </div>
-                                        <div class="dropdown-item">
-                                            <div class="avt"><img src="~/Image/logo.png" alt="avt" /></div>
-                                            <div class="content">
-                                                <span class="user-info">Phạm Minh Hiếu</span>
-                                                <span> đã gửi yêu cầu trao đổi</span>
-                                                <span class="time">17/02/2023</span>
-                                            </div>
-                                            <div class="status"><i class="fa-solid fa-circle"></i></div>
-                                        </div>
-                                        <div class="dropdown-item">
-                                            <div class="avt"><img src="~/Image/logo.png" alt="avt" /></div>
-                                            <div class="content">
-                                                <span class="user-info">Phạm Minh Hiếu</span>
-                                                <span> đã gửi yêu cầu trao đổi</span>
-                                                <span class="time">17/02/2023</span>
-                                            </div>
-                                            <div class="status seen"><i class="fa-solid fa-circle"></i></div>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -199,11 +142,12 @@
     <main role="main">
         @RenderBody()
     </main>
+    <div id="renderModal"></div>
 
     @(Html.Partial("~/Views/PartialView/_Footer.cshtml"))
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/Nav/nav.js" type="text/javascript"></script>
 
@@ -211,29 +155,11 @@
     {
         @(Html.Partial("~/Views/PartialView/_Authorized.cshtml", userInfo))
     }
-    <script src="https://cdn.jsdelivr.net/npm/litepicker/dist/litepicker.js"></script>
 
-    <script type="text/javascript">
-        var map;
-        function GetMap() {
-            Microsoft.Maps.loadModule('Microsoft.Maps.AutoSuggest', {
-                callback: onLoad,
-                errorCallback: onError
-            });
-            if ($("#myMap").length > 0) {
-                map = new Microsoft.Maps.Map('#myMap', {
-                    zoom: 15
-                });
-            }
-        }
-    </script>
-
-    <script type='text/javascript'
-            src='https://www.bing.com/api/maps/mapcontrol?callback=GetMap&key=@key'
-            async defer></script>
+    @await RenderSectionAsync("Scripts", required: false)
     @{
+        await Html.RenderPartialAsync("~/Views/PartialView/_BingMap.cshtml");
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-    @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

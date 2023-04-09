@@ -43,72 +43,126 @@ namespace DoAnTotNghiep.Controllers
         [HttpPost("/Report/Create")]
         public IActionResult CreateReport([FromBody] ReportViewModel model)
         {
-            return this.Create(model);
+            int IdUser = 0;
+            if(model.UserAccess != null)
+            {
+                try
+                {
+                    int.TryParse(Crypto.DecodeKey(model.UserAccess, Crypto.Salt(this._configuration)), out IdUser);
+                }
+                catch
+                {
+
+                }
+            }
+
+            return this.Create(new CreateReportViewModel() { 
+                Content = model.Content, 
+                IdHouse = model.IdHouse, 
+                IdUser = IdUser == 0? null: IdUser,
+                Images = model.Images, 
+                Files = null
+            });
         }
         [HttpPost("/api/Report/Create")]
-        public IActionResult ApiCreateReport([FromBody] ReportViewModel model)
+        public IActionResult ApiCreateReport(MobileReportViewModel model)
         {
-            return this.Create(model);
+            int IdUser = 0;
+            if (model.UserAccess != null)
+            {
+                try
+                {
+                    int.TryParse(Crypto.DecodeKey(model.UserAccess, Crypto.Salt(this._configuration)), out IdUser);
+                }
+                catch
+                {
+
+                }
+            }
+
+            return this.Create(new CreateReportViewModel()
+            {
+                Content = model.Content,
+                IdHouse = model.IdHouse,
+                IdUser = IdUser == 0 ? null : IdUser,
+                Images = new List<ImageBase>(),
+                Files = model.Files
+            });
         }
-        private IActionResult Create(ReportViewModel model)
+        private IActionResult Create(CreateReportViewModel model)
         {
             if (ModelState.IsValid)
             {
-                int IdUser = this.GetIdUser();
-                using (var context = _context)
+                if(model.IdHouse != null || model.IdUser != null)
                 {
-                    using (var transaction = context.Database.BeginTransaction())
+                    int IdUser = this.GetIdUser();
+                    using (var context = _context)
                     {
-                        try
+                        using (var transaction = context.Database.BeginTransaction())
                         {
-                            UserReport user = new UserReport()
+                            try
                             {
-                                Content = model.Content,
-                                CreatedDate = DateTime.Now,
-                                IdHouse = model.IdHouse,
-                                IdUser = IdUser,
-                                IsResponsed = false
-                            };
-                            context.UserReports.Add(user);
-                            context.SaveChanges();
-
-                            List<Entity.File> files = new List<Entity.File>();
-                            foreach (var item in model.Images)
-                            {
-                                Entity.File? file = this.SaveFile(item);
-                                if (file != null)
+                                UserReport user = new UserReport()
                                 {
-                                    files.Add(file);
-                                }
-                            }
-
-                            context.Files.AddRange(files);
-                            context.SaveChanges();
-
-                            List<FileInUserReport> reportFiles = new List<FileInUserReport>();
-
-                            foreach (var item in files)
-                            {
-                                FileInUserReport fileInUser = new FileInUserReport()
-                                {
-                                    IdFile = item.Id,
-                                    IdUserReport = user.Id
+                                    Content = model.Content,
+                                    CreatedDate = DateTime.Now,
+                                    IdHouse = model.IdHouse,
+                                    IdUser = IdUser,
+                                    IdUserReport = model.IdUser,
+                                    IsResponsed = false
                                 };
-                            }
-                            context.FileInUserReports.AddRange(reportFiles);
-                            context.SaveChanges();
-                            transaction.Commit();
+                                context.UserReports.Add(user);
+                                context.SaveChanges();
 
-                            return Json(new
+                                List<Entity.File> files = new List<Entity.File>();
+                                foreach (var item in model.Images)
+                                {
+                                    Entity.File? file = this.SaveFile(item);
+                                    if (file != null)
+                                    {
+                                        files.Add(file);
+                                    }
+                                }
+                                if (model.Files != null)
+                                {
+                                    foreach (var item in model.Files)
+                                    {
+                                        Entity.File? file = this.SaveFile(item);
+                                        if (file != null)
+                                        {
+                                            files.Add(file);
+                                        }
+                                    }
+                                }
+
+                                context.Files.AddRange(files);
+                                context.SaveChanges();
+
+                                List<FileInUserReport> reportFiles = new List<FileInUserReport>();
+
+                                foreach (var item in files)
+                                {
+                                    FileInUserReport fileInUser = new FileInUserReport()
+                                    {
+                                        IdFile = item.Id,
+                                        IdUserReport = user.Id
+                                    };
+                                }
+                                context.FileInUserReports.AddRange(reportFiles);
+                                context.SaveChanges();
+                                transaction.Commit();
+
+                                return Json(new
+                                {
+                                    Status = 200,
+                                    Message = "ok"
+                                });
+                            }
+                            catch (Exception ex)
                             {
-                                Status = 200,
-                                Message = "ok"
-                            });
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine(ex);
-                            transaction.Rollback();
+                                Console.WriteLine(ex);
+                                transaction.Rollback();
+                            }
                         }
                     }
                 }

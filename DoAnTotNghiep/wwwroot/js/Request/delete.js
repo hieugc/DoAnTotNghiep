@@ -1,10 +1,8 @@
 ﻿var IdRequestDelete = null;
-
-
 function deleteRequest(id) {
     if (IdRequestDelete == null) {
         IdRequestDelete = id;
-        $("#confirmContent").html("Bạn có muốn xóa căn nhà này chứ???");
+        $("#confirmContent").html("Bạn có muốn hủy yêu cầu này chứ???");
         $("#confirmClick").click();
     }
     else {

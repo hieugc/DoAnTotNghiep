@@ -43,55 +43,57 @@ else
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="">Chọn nhà muốn trao đổi</label>
-                        <div class="house-request">
-                            @if (Model.UserHouses.Count() == 1)
-                            {
-                            <div class="house-result">
-                                @foreach (var item in Model.UserHouses)
-                                {
-                                <div class="house-card house-card-@(index++)">
-                                    @if (item.Images.Count() == 0)
+                        @if (Model.UserHouses.Count() == 1)
+                        {
+                            <div class="house-request">
+                                <div class="house-result">
+                                    @foreach (var item in Model.UserHouses)
                                     {
-                                        <img src="~/Image/house-demo.png" alt="Mike" style="width:100%">
-                                    }
-                                    else
-                                    {
-                                        @foreach (var img in item.Images)
-                                        {
-                                            if (img != null)
+                                        <div class="house-card house-card-@(index++)">
+                                            @if (item.Images.Count() == 0)
                                             {
-                                                <img src="@img.Data" alt="Mike" style="width:100%">
-                                                break;
+                                                <img src="~/Image/house-demo.png" alt="Mike" style="width:100%">
                                             }
-                                        }
-                                    }
-                                    <div class="house-img-container">
-                                        <h2>@item.Name</h2>
-                                        <p class="attribute"><i class="fa-solid fa-map-location-dot"></i><span>@item.Location</span></p>
-                                        <div class="list-attribute">
-                                            <p class="attribute"><span>@item.Rating (@item.NumberRating)</span><i class="fa-solid fa-star"></i></p>
-                                            <p class="attribute"><i class="fa-solid fa-users"></i><span>@item.User</span></p>
-                                            <p class="attribute"><i class="fa-solid fa-bed"></i><span>@item.BedRoom</span></p>
+                                            else
+                                            {
+                                                @foreach (var img in item.Images)
+                                                {
+                                                    if (img != null)
+                                                    {
+                                                        <img src="@img.Data" alt="Mike" style="width:100%">
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                            <div class="house-img-container">
+                                                <h2>@item.Name</h2>
+                                                <p class="attribute"><i class="fa-solid fa-map-location-dot"></i><span>@item.Location</span></p>
+                                                <div class="list-attribute">
+                                                    <p class="attribute"><span>@item.Rating (@item.NumberRating)</span><i class="fa-solid fa-star"></i></p>
+                                                    <p class="attribute"><i class="fa-solid fa-users"></i><span>@item.User</span></p>
+                                                    <p class="attribute"><i class="fa-solid fa-bed"></i><span>@item.BedRoom</span></p>
+                                                </div>
+                                                <p>
+                                                    <button class="item-button">
+                                                        <span>@item.Price (point/ngày)</span>
+                                                    </button>
+                                                </p>
+                                            </div>
+                                            <a target="_blank" href='@Url.Action("Details", "Houses", new {Id = item.Id})' class="finding">
+                                                <i class="fa-sharp fa-solid fa-magnifying-glass"></i>
+                                            </a>
                                         </div>
-                                        <p>
-                                            <button class="item-button">
-                                                <span>@item.Price (point/ngày)</span>
-                                            </button>
-                                        </p>
-                                    </div>
-                                    <a target="_blank" href='@Url.Action("Details", "Houses", new {Id = item.Id})' class="finding">
-                                        <i class="fa-sharp fa-solid fa-magnifying-glass"></i>
-                                    </a>
+                                    }
                                 </div>
-                                }
                             </div>
-                            }
-                            else
-                            {
-                            <div class="frame-empty" onclick="showListHouseModal(0)">+</div>
-                            <div class="house-result"></div>
-                            }
-                        </div>
+                        }
+                        else
+                        {
+                            <div class="house-request">
+                                <div class="frame-empty" onclick="showListHouseModal(0)">+</div>
+                                <div class="house-result"></div>
+                            </div>
+                        }
                     </div>
                     <div class="mb-3">
                         <div class="mb-3">
@@ -121,7 +123,7 @@ else
                             </div>
                         </div>
                         <div>
-                            <label class="">Điểm trao đổi</label>
+                            <label class="mb-3">Điểm trao đổi</label>
                             <div class="contain-price">
                                 0 (Point/ngày)
                             </div>
@@ -131,12 +133,12 @@ else
                     {
                         <div class="mb-3 houseSwap">
                             <label class="">Chọn nhà của bạn để trao đổi</label>
-                            <div class="house-request">
-                                @if (Model.MyHouses.Count() == 1)
+                            @if (Model.MyHouses.Count() == 1)
+                            {
                                 {
-                                    {
-                                        index = 0;
-                                    }
+                                    index = 0;
+                                }
+                                <div class="house-request">
                                     <div class="house-result">
                                         @foreach (var item in Model.MyHouses)
                                         {
@@ -176,13 +178,15 @@ else
                                             </div>
                                         }
                                     </div>
-                                }
-                                else
-                                {
-                                    <div class="frame-empty" onclick="showListHouseModal(1)">+</div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="house-request" onclick="showListHouseModal(1)">
+                                    <div class="frame-empty">+</div>
                                     <div class="house-result"></div>
-                                }
-                            </div>
+                                </div>
+                            }
                         </div>
                     }
                 </div>
@@ -250,7 +254,7 @@ else
                         @{
                             index = 0;
                         }
-                        @foreach (var item in Model.UserHouses)
+                        @foreach (var item in Model.MyHouses)
                         {
                             <div class="house-card house-card-@(index)">
                                 @if (item.Images.Count() == 0)
@@ -294,34 +298,18 @@ else
             </div>
         </div>
     </div>
-
-    <script type='text/javascript'>
-        const picker = new Litepicker({
-            element: document.getElementById('requestdaterange'),
-            singleMode: false,
-            tooltipText: {
-                one: 'ngày',
-                other: 'ngày'
-            },
-            setup: (picker) => {
-                picker.on("selected", (date1, date2) => {
-                    getDateSwap();
-                })
-            },
-            minDate: new Date('@DateTime.Now.ToString("yyyy-MM-dd")'),
-            maxDate: new Date('@DateTime.Now.AddYears(2).ToString("yyyy-MM-dd")'),
-            tooltipNumber: (totalDays) => {
-                return totalDays;
-            }
-        })
-    </script>
     <script type="text/javascript">
         var listModel_1 = @Html.Raw(Json.Serialize(Model.UserHouses));
         var listModel_2 = @Html.Raw(Json.Serialize(Model.MyHouses));
         var model_1 = null;
         var model_2 = null;
+        var picker = null;
         if (listModel_1.length == 1) {
             model_1 = listModel_1[0];
+            picker = createRangeDate(model_1, '@DateTime.Now.ToString("yyyy-MM-dd")', '@DateTime.Now.AddYears(2).ToString("yyyy-MM-dd")');
+        }
+        else{
+            picker = createRangeDate(null, '@DateTime.Now.ToString("yyyy-MM-dd")', '@DateTime.Now.AddYears(2).ToString("yyyy-MM-dd")');
         }
         $(".contain-price").html(calPrice(model_1, model_2));
         $("#requestFormClick").click();

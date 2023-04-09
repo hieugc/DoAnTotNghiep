@@ -49,13 +49,19 @@ namespace DoAnTotNghiep.Controllers
             _configuration = configuration;
             _signalContext = signalContext;
         }
-        
+
+        [HttpGet("/Rating/Form")]
+        public IActionResult FormCreateRating()
+        {
+            return View();
+        }
+
         private async Task<IActionResult> CreateAsync(CreateRatingViewModel feedBack)
         {
             if (ModelState.IsValid)
             {
                 int IdUser = this.GetIdUser();
-                var request = this._context.Requests
+                    var request = this._context.Requests
                                             .Include(m => m.CheckOuts)
                                             .Where(m => m.Id == feedBack.IdRequest
                                                         && (m.Status == (int)StatusRequest.CHECK_OUT || 
@@ -88,7 +94,7 @@ namespace DoAnTotNghiep.Controllers
                                         try
                                         {
                                             //nhà người chủ
-                                            request.Houses.Rating = Math.Ceiling(((request.Houses.Rating * request.Houses.NumberOfRating) + feedBack.RatingHouse) / (request.Houses.NumberOfRating + 1));
+                                            request.Houses.Rating = Math.Ceiling(((request.Houses.Rating * request.Houses.NumberOfRating) + (feedBack.RatingHouse == null? 0: feedBack.RatingHouse.Value)) / (request.Houses.NumberOfRating + 1));
                                             request.Houses.NumberOfRating += 1;
                                             this._context.Houses.Update(request.Houses);
                                             this._context.SaveChanges();
@@ -102,7 +108,7 @@ namespace DoAnTotNghiep.Controllers
                                                 Content = request.Houses.Name + " có đánh giá mới",
                                                 CreatedDate = DateTime.Now,
                                                 IsSeen = false,
-                                                ImageUrl = this.GetWebsitePath() + "/Image/house-demo.png",
+                                                ImageUrl = "/Image/house-demo.png",
                                                 Type = NotificationType.RATING
                                             };
                                             this._context.Notifications.Add(notification);
@@ -112,7 +118,7 @@ namespace DoAnTotNghiep.Controllers
                                             await chatHub.SendNotification(
                                                 group: Crypto.EncodeKey(notification.IdUser.ToString(), Crypto.Salt(this._configuration)),
                                                 target: TargetSignalR.Notification(),
-                                                model: new NotificationViewModel(notification));
+                                                model: new NotificationViewModel(notification, this.GetWebsitePath()));
 
                                             //người chủ
                                             request.Houses.Users.UserRating = Math.Ceiling(((request.Houses.Users.UserRating * request.Houses.Users.NumberUserRating) + feedBack.RatingUser) / (request.Houses.Users.NumberUserRating + 1));
@@ -178,7 +184,7 @@ namespace DoAnTotNghiep.Controllers
                                         {
                                             if (request.SwapHouses != null)
                                             {
-                                                request.SwapHouses.Rating = Math.Ceiling(((request.SwapHouses.Rating * request.SwapHouses.NumberOfRating) + feedBack.RatingHouse) / (request.SwapHouses.NumberOfRating + 1));
+                                                request.SwapHouses.Rating = Math.Ceiling(((request.SwapHouses.Rating * request.SwapHouses.NumberOfRating) + (feedBack.RatingHouse == null? 0: feedBack.RatingHouse.Value)) / (request.SwapHouses.NumberOfRating + 1));
                                                 request.SwapHouses.NumberOfRating += 1;
                                                 this._context.Houses.Update(request.SwapHouses);
                                                 this._context.SaveChanges();
@@ -193,7 +199,7 @@ namespace DoAnTotNghiep.Controllers
                                                 Content = "Bạn có đánh giá mới",
                                                 CreatedDate = DateTime.Now,
                                                 IsSeen = false,
-                                                ImageUrl = this.GetWebsitePath() + "/Image/house-demo.png",
+                                                ImageUrl = "/Image/house-demo.png",
                                                 Type = NotificationType.RATING
                                             };
                                             this._context.Notifications.Add(notification);
@@ -203,7 +209,7 @@ namespace DoAnTotNghiep.Controllers
                                             await chatHub.SendNotification(
                                                 group: Crypto.EncodeKey(notification.IdUser.ToString(), Crypto.Salt(this._configuration)),
                                                 target: TargetSignalR.Notification(),
-                                                model: new NotificationViewModel(notification));
+                                                model: new NotificationViewModel(notification, this.GetWebsitePath()));
 
                                             request.Users.UserRating = Math.Ceiling(((request.Users.UserRating * request.Users.NumberUserRating) + feedBack.RatingUser) / (request.Users.NumberUserRating + 1));
                                             request.Users.NumberUserRating += 1;
@@ -297,7 +303,7 @@ namespace DoAnTotNghiep.Controllers
                                 if(model.Houses != null)
                                 {
                                     model.Houses.Rating = Math.Ceiling(
-                                                    ((model.Houses.Rating * model.Houses.NumberOfRating - model.Rating) + feedBack.RatingHouse)
+                                                    ((model.Houses.Rating * model.Houses.NumberOfRating - model.Rating) + (feedBack.RatingHouse == null ? 0 : feedBack.RatingHouse.Value))
                                                                 / (model.Houses.NumberOfRating)
                                                     );
                                     Context.Houses.Update(model.Houses);
@@ -363,38 +369,21 @@ namespace DoAnTotNghiep.Controllers
         }
 
 
-
         //Detail
-        private List<DetailRatingWithUser> GetRatingByHouse(int IdHouse)
+        private List<DetailRatingWithUser> GetRatingByHouse(List<FeedBack> feedBacks)
         {
             List<DetailRatingWithUser> model = new List<DetailRatingWithUser>();
 
-            var house = this._context.Houses
-                                    .Where(m => m.Id == IdHouse
-                                            && m.Status == (int)StatusHouse.VALID)
-                                    .FirstOrDefault();
-
-            if(house != null)
+            string host = this.GetWebsitePath();
+            byte[] salt = Crypto.Salt(this._configuration);
+            foreach(var item in feedBacks)
             {
-                this._context.Entry(house)
-                            .Collection(m => m.FeedBacks)
-                            .Query()
-                            .Load();
-                if(house.FeedBacks != null)
+                this._context.Entry(item).Reference(m => m.Users).Load();
+                if(item.Users != null)
                 {
-                    List<FeedBack> feedBacks = house.FeedBacks.ToList();
-                    string host = this.GetWebsitePath();
-                    byte[] salt = Crypto.Salt(this._configuration);
-                    foreach(var item in feedBacks)
-                    {
-                        this._context.Entry(item).Reference(m => m.Users).Load();
-                        if(item.Users != null)
-                        {
-                            DetailRatingViewModel rating = new DetailRatingViewModel(item);
-                            UserInfo user = new UserInfo(item.Users, salt, host);
-                            model.Add(new DetailRatingWithUser() { User = user, FeedBack = rating });
-                        }
-                    }
+                    DetailRatingViewModel rating = new DetailRatingViewModel(item);
+                    UserInfo user = new UserInfo(item.Users, salt, host);
+                    model.Add(new DetailRatingWithUser() { User = user, FeedBack = rating });
                 }
             }
 
@@ -403,11 +392,18 @@ namespace DoAnTotNghiep.Controllers
         [HttpGet("/Rating/GetByHouse")]        
         public IActionResult RatingByHouse(int Id)
         {
-            return Json(new
+            ListRating listRating = new ListRating();
+            List<FeedBack> model = this.GetFeedBack(Id);
+            listRating.OverView = new FrameRating()
             {
-                Status = 200,
-                Data = this.GetRatingByHouse(Id)
-            });
+                OneStar = model.Where(m => m.Rating == 1).ToList().Count(),
+                TwoStar = model.Where(m => m.Rating == 2).ToList().Count(),
+                ThreeStar = model.Where(m => m.Rating == 3).ToList().Count(),
+                FourStar = model.Where(m => m.Rating == 4).ToList().Count(),
+                FiveStar = model.Where(m => m.Rating == 5).ToList().Count()
+            };
+            listRating.Rating = this.GetRatingByHouse(model);
+            return PartialView("./Views/Rating/_ListRating.cshtml", listRating);
         }
         [HttpGet("/api/Rating/GetByHouse")]
         public IActionResult ApiRatingByHouse(int Id)
@@ -415,10 +411,51 @@ namespace DoAnTotNghiep.Controllers
             return Json(new
             {
                 Status = 200,
-                Data = this.GetRatingByHouse(Id)
+                Data = this.GetRatingByHouse(this.GetFeedBack(Id))
             });
         }
 
+
+        private List<FeedBack> GetFeedBack(int IdHouse)
+        {
+            List<FeedBack> model = new List<FeedBack>();
+
+            var house = this._context.Houses
+                                    .Where(m => m.Id == IdHouse
+                                            && m.Status == (int)StatusHouse.VALID)
+                                    .FirstOrDefault();
+
+            if (house != null)
+            {
+                this._context.Entry(house)
+                            .Collection(m => m.FeedBacks)
+                            .Query()
+                            .Load();
+                if(house.FeedBacks != null)
+                {
+                    model.AddRange(house.FeedBacks.ToList());
+                }
+            }
+
+            return model;
+        }
+        [HttpGet("/Rating/FrameRate")]
+        public IActionResult GetFrameRate(int IdHouse)
+        {
+            List<FeedBack> model = this.GetFeedBack(IdHouse);
+            return Json(new
+            {
+                Status = 200,
+                Data = new FrameRating()
+                {
+                    OneStar = model.Where(m => m.Rating == 1).ToList().Count(),
+                    TwoStar = model.Where(m => m.Rating == 2).ToList().Count(),
+                    ThreeStar = model.Where(m => m.Rating == 3).ToList().Count(),
+                    FourStar = model.Where(m => m.Rating == 4).ToList().Count(),
+                    FiveStar = model.Where(m => m.Rating == 5).ToList().Count()
+                }
+            });
+        }
 
         //private List<DetailRatingWithHouse> GetRatingByRequest(int IdRequest)
         //{

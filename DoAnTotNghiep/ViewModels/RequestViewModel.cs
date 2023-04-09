@@ -50,9 +50,13 @@ namespace DoAnTotNghiep.ViewModels
             {
                 this.User = new UserMessageViewModel(user, salt, host);
             }
-            if(request.CheckOuts != null)
+            if(request.CheckOuts != null && request.CheckOuts.Count() > 0)
             {
                 this.Status = (int)StatusRequest.CHECK_OUT;
+            }
+            else if (request.CheckIns != null && request.CheckIns.Count() > 0)
+            {
+                this.Status = (int)StatusRequest.CHECK_IN;
             }
             else
             {

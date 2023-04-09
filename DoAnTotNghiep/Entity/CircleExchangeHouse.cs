@@ -12,5 +12,8 @@ namespace DoAnTotNghiep.Entity
 
         [Column("status")]
         public int Status { get; set; } = 0;
+
+        public ICollection<RequestInCircleExchangeHouse>? RequestInCircles { get; set; }
+        public ICollection<CircleExchangeHouseOfUser>? UserInCircles { get; set; }
     }
 }

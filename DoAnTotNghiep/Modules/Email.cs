@@ -45,7 +45,7 @@ namespace DoAnTotNghiep.Modules
             }
         }
 
-        public void SenddMailInThread(string to, string Subject, string body, Stream? file, string filename)
+        public void SendMailInThread(string to, string Subject, string body, Stream? file, string filename)
         {
             Thread thread = new Thread(() => this.SendMail(to, Subject, body, file, filename));
             thread.IsBackground = true;

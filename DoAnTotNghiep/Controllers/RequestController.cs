@@ -31,6 +31,10 @@ using DoAnTotNghiep.Hubs;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Routing;
+using Hangfire;
+using static System.Net.Mime.MediaTypeNames;
+using Microsoft.Extensions.Hosting.Internal;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace DoAnTotNghiep.Controllers
 {
@@ -40,15 +44,19 @@ namespace DoAnTotNghiep.Controllers
         private readonly DoAnTotNghiepContext _context;
         private readonly IConfiguration _configuration;
         private readonly IHubContext<ChatHub> _signalContext;
+        private readonly ILogger<TimedHostedService> _timerLog;
 
         public RequestController(DoAnTotNghiepContext context, 
                                 IConfiguration configuration, 
                                 IHostEnvironment environment,
-                                IHubContext<ChatHub> signalContext) : base(environment)
+                                IHubContext<ChatHub> signalContext,
+                                ILogger<TimedHostedService> _timerLog,
+                                IServiceProvider service) : base(environment)
         {
             _context = context;
             _configuration = configuration;
             _signalContext = signalContext;
+            this._timerLog = _timerLog;
         }
 
         private DetailHouseViewModel CreateDetailsHouse(House house)
@@ -95,6 +103,7 @@ namespace DoAnTotNghiep.Controllers
                 {
                     this._context.Entry(item).Collection(m => m.FileOfHouses).Query().Load();
                     this._context.Entry(item).Collection(m => m.FeedBacks).Query().Load();
+                    this._context.Entry(item).Collection(m => m.Requests).Query().Load();
 
                     DetailHouseViewModel m = new DetailHouseViewModel(item, salt, item.Users, host);
                     if (item.FileOfHouses != null)
@@ -119,6 +128,7 @@ namespace DoAnTotNghiep.Controllers
                 {
                     this._context.Entry(item).Collection(m => m.FileOfHouses).Query().Load();
                     this._context.Entry(item).Collection(m => m.FeedBacks).Query().Load();
+                    this._context.Entry(item).Collection(m => m.Requests).Query().Load();
 
                     DetailHouseViewModel m = new DetailHouseViewModel(item, salt, item.Users, host);
                     if (item.FileOfHouses != null)
@@ -151,6 +161,7 @@ namespace DoAnTotNghiep.Controllers
             {
                 this._context.Entry(item).Collection(m => m.FileOfHouses).Query().Load();
                 this._context.Entry(item).Collection(m => m.FeedBacks).Query().Load();
+                this._context.Entry(item).Collection(m => m.Requests).Query().Load();
                 this._context.Entry(item).Reference(m => m.Citys).Query().Load();
                 this._context.Entry(item).Reference(m => m.Districts).Query().Load();
                 DetailHouseViewModel m = new DetailHouseViewModel(item, salt, item.Users, host);
@@ -176,6 +187,7 @@ namespace DoAnTotNghiep.Controllers
             {
                 this._context.Entry(item).Collection(m => m.FileOfHouses).Query().Load();
                 this._context.Entry(item).Collection(m => m.FeedBacks).Query().Load();
+                this._context.Entry(item).Collection(m => m.Requests).Query().Load();
                 this._context.Entry(item).Reference(m => m.Citys).Query().Load();
                 this._context.Entry(item).Reference(m => m.Districts).Query().Load();
                 DetailHouseViewModel m = new DetailHouseViewModel(item, salt, item.Users, host);
@@ -227,14 +239,6 @@ namespace DoAnTotNghiep.Controllers
                         Status = 400,
                         Message = "Yêu cầu không thể thực hiện"
                     });
-                if((user.Point + user.BonusPoint - user.PointUsing) < model.Price)
-                {
-                    return BadRequest(new
-                    {
-                        Status = 400,
-                        Message = "Yêu cầu không thể thực hiện vì thiếu tiền"
-                    });
-                }
                 //kiểm tra nhà tồn tại không?
                 var h = this._context.Houses
                                     .Include(m => m.Requests)
@@ -296,6 +300,14 @@ namespace DoAnTotNghiep.Controllers
                     }
                     else
                     {
+                        if ((user.Point + user.BonusPoint - user.PointUsing) < model.Price)
+                        {
+                            return BadRequest(new
+                            {
+                                Status = 400,
+                                Message = "Yêu cầu không thể thực hiện vì thiếu tiền"
+                            });
+                        }
                         Request? data = await this.CreateRequestModelAsync(model, house, user);
                         if (data != null)
                         {
@@ -363,7 +375,7 @@ namespace DoAnTotNghiep.Controllers
                     await chatHub.SendNotification(
                         group: Crypto.EncodeKey(user.Id.ToString(), Crypto.Salt(this._configuration)),
                         target: TargetSignalR.Notification(), 
-                        model: new NotificationViewModel(notification));
+                        model: new NotificationViewModel(notification, this.GetWebsitePath()));
                 }
 
                 return request;
@@ -482,15 +494,12 @@ namespace DoAnTotNghiep.Controllers
         private IActionResult Remove(int Id)
         {
             int IdUser = this.GetIdUser();
-            var rq = this._context.Requests.Where(m => m.Id == Id 
-                                                    && m.IdUser == IdUser
-                                                    && m.Status == (int)StatusRequest.WAIT_FOR_SWAP);
-            if (rq.Any())
+            var rq = this._context.Requests.Where(m => m.Id == Id && (m.Status < (int) StatusRequest.CHECK_IN)).FirstOrDefault();
+            if (rq != null)
             {
                 try
                 {
-                    Request request = rq.First();
-                    this._context.Requests.Remove(request);
+                    this._context.Requests.Remove(rq);
                     this._context.SaveChanges();
                     return Json(new
                     {
@@ -512,6 +521,21 @@ namespace DoAnTotNghiep.Controllers
 
 
         //lấy danh sách yêu cầu theo nhà
+        [HttpGet("/Request/NumberRequestInHouse")]
+        public IActionResult GetNumberRequestInHouse(int IdHouse)
+        {
+            int IdUser = this.GetIdUser();
+            var requests = this._context.Houses.Include(m => m.Requests)
+                                     .Where(m => m.Id == IdHouse && m.IdUser == IdUser)
+                                     .Select(m => m.Requests)
+                                     .ToList();
+            return Json(new
+            {
+                Status = 200,
+                Data = requests.Count()
+            });
+        }
+
         [HttpGet("/Request/GetByHouse")]
         public IActionResult GetListRequestWithHouse(int IdHouse) {
 
@@ -536,7 +560,8 @@ namespace DoAnTotNghiep.Controllers
             List<NotifyRequest> model = new List<NotifyRequest>();
             if (house != null)
             {
-                this._context.Entry(house).Collection(m => m.Requests).Query().Where(m => m.Status == (int)StatusRequest.WAIT_FOR_SWAP).Load();
+                this._context.Entry(house).Collection(m => m.Requests)
+                    .Query().Where(m => m.Status == (int)StatusRequest.WAIT_FOR_SWAP).Load();
                 if(house.Requests != null)
                 {
                     DoAnTotNghiepContext Context = this._context;
@@ -620,16 +645,8 @@ namespace DoAnTotNghiep.Controllers
         public IActionResult GetDetailRequest(int Id)
         {
             DetailRequest? model = this.GetDetailHouse(Id);
-            if (model == null) return BadRequest(new
-            {
-                Status = 400,
-                Message = "Không tìm thấy chi tiết yêu cầu"
-            });
-            return Json(new
-            {
-                Status = 200,
-                Data = model
-            });
+            if (model == null) return NotFound();
+            return PartialView("./Views/Request/_RequestDetail.cshtml", model);
         }
         [HttpGet("/api/Request/Detail")]
         public IActionResult ApiGetDetailRequest(int Id)
@@ -665,6 +682,7 @@ namespace DoAnTotNghiep.Controllers
             this._context.Entry(item).Reference(m => m.Houses).Query().Load();
             this._context.Entry(item).Collection(m => m.FeedBacks).Query().Where(m => m.IdUser == IdUser).Load();
             this._context.Entry(item).Collection(m => m.CheckOuts).Query().Where(m => m.IdUser == IdUser).Load();
+            this._context.Entry(item).Collection(m => m.CheckIns).Query().Where(m => m.IdUser == IdUser).Load();
             if (item.Houses != null)
             {
                 this._context.Entry(item.Houses).Reference(m => m.Users).Query().Load();
@@ -705,48 +723,6 @@ namespace DoAnTotNghiep.Controllers
                 }
             }
             return null;
-        }
-
-        [HttpGet("/api/Request/GetRequestReceived")]
-        public IActionResult ApiGetListRequestReceived()
-        {
-            return Json(new
-            {
-                Status = 200,
-                Data = this.GetAllRequestsReceived()
-            });
-        }
-        private List<DetailRequest> GetAllRequestsReceived()
-        {
-            int IdUser = this.GetIdUser();
-            var houses = this._context.Houses
-                                        .Where(m => m.IdUser == IdUser && m.Status == (int)StatusHouse.VALID)
-                                        .ToList();
-            List<DetailRequest> model = new List<DetailRequest>();
-            DoAnTotNghiepContext Context = this._context;
-
-            byte[] salt = Crypto.Salt(this._configuration);
-            string host = this.GetWebsitePath();
-
-            foreach(var item in houses)
-            {
-                this._context.Entry(item).Collection(m => m.Requests).Query().Load();
-                if (item.Requests != null)
-                {
-                    foreach (var itemRequest in item.Requests)
-                    {
-                        if (itemRequest != null)
-                        {
-                            DetailRequest? request = this.CreateDetailRequest(itemRequest);
-                            if (request != null)
-                            {
-                                model.Add(request);
-                            }
-                        }
-                    }
-                }
-            }
-            return model;
         }
 
         [HttpGet("/Request/GetRequestsByUserAccess")]//lấy danh sách yêu cầu mới
@@ -819,6 +795,41 @@ namespace DoAnTotNghiep.Controllers
         {
             return await this.UpdateRequestStatusAsync(model.Id, model.Status);
         }
+
+        [HttpPost("/api/Request/NhatUpdateStatus")]
+        public async Task<IActionResult> ApiNhatUpdateStatusAsync([FromBody] UpdateStatusViewModel model)
+        {
+            return await this.NhatUpdateRequestStatusAsync(model.Id, model.Status);
+        }
+        private async Task<IActionResult> NhatUpdateRequestStatusAsync(int Id, int Status)
+        {
+            switch (Status)
+            {
+                case (int)StatusRequest.REJECT://từ chối
+                    return await this.NhatUpdateStatusRequestAsync(Id, Status);
+                case (int)StatusRequest.ACCEPT://chấp nhận
+                    return await this.NhatUpdateStatusRequestAsync(Id, Status);
+                case (int)StatusRequest.CHECK_IN://checkIn
+                    return await this.NhatUpdateStatusRequestAsync(Id, Status);
+                case (int)StatusRequest.CHECK_OUT://Checkout
+                    return await this.NhatUpdateStatusRequestAsync(Id, Status);
+                    //case (int)StatusRequest.WAIT_FOR_RATE:
+                    //    return this.UpdateStatusRequest((int)StatusRequest.CHECK_OUT, Id, Status);
+            }
+            return await this.NhatUpdateStatusRequestAsync(Id, Status);
+        }
+
+        //chưa xong
+        //check In + check Out => 1 chiều
+        private async Task<IActionResult> NhatUpdateStatusRequestAsync(int Id, int Status)
+        {
+            var rq = this._context.Requests.Where(m => m.Id == Id)
+                                        .FirstOrDefault();
+            return await UpdateStatusRequestAsync(rq, Status);
+        }
+
+
+
         [HttpPost("/api/Request/UpdateStatus")]
         public async Task<IActionResult> ApiUpdateStatusAsync([FromBody] UpdateStatusViewModel model)
         {
@@ -829,128 +840,234 @@ namespace DoAnTotNghiep.Controllers
             switch (Status)
             {
                 case (int)StatusRequest.REJECT://từ chối
-                    return await this.UpdateStatusRequestAsync((int)StatusRequest.WAIT_FOR_SWAP, Id, Status);
+                    return await this.UpdateStatusAsync((int)StatusRequest.WAIT_FOR_SWAP, Id, Status);
                 case (int)StatusRequest.ACCEPT://chấp nhận
-                    return await this.UpdateStatusRequestAsync((int)StatusRequest.WAIT_FOR_SWAP, Id, Status);
+                    return await this.UpdateStatusAsync((int)StatusRequest.WAIT_FOR_SWAP, Id, Status);
                 case (int)StatusRequest.CHECK_IN://checkIn
-                    return await this.UpdateStatusRequestAsync((int)StatusRequest.ACCEPT, Id, Status);
+                    return await this.UpdateStatusAsync((int)StatusRequest.ACCEPT, Id, Status);
                 case (int)StatusRequest.CHECK_OUT://Checkout
-                    return await this.UpdateStatusRequestAsync((int)StatusRequest.CHECK_IN, Id, Status);
+                    return await this.UpdateStatusAsync((int)StatusRequest.CHECK_IN, Id, Status);
                 //case (int)StatusRequest.WAIT_FOR_RATE:
                 //    return this.UpdateStatusRequest((int)StatusRequest.CHECK_OUT, Id, Status);
             }
-            return await this.UpdateStatusRequestAsync((int)StatusRequest.CHECK_OUT, Id, Status);
+            return await this.UpdateStatusAsync((int)StatusRequest.CHECK_OUT, Id, Status);
         }
-
-        //chưa xong
-        //check In + check Out => 1 chiều
-        private async Task<IActionResult> UpdateStatusRequestAsync(int PreStatus, int Id, int Status)
+        private async Task<IActionResult> UpdateStatusAsync(int PreStatus, int Id, int Status)
         {
-            var rq = this._context.Requests.Where(m => m.Id == Id 
+            var rq = this._context.Requests.Where(m => m.Id == Id
                                                     && m.Status == PreStatus)
                                         .FirstOrDefault();
+            return await UpdateStatusRequestAsync(rq, Status);
+        }
+
+        private async Task<IActionResult> UpdateStatusRequestAsync(Request? rq, int Status)
+        {
             if (rq != null)
             {
                 int IdUser = this.GetIdUser();
-                if (!(Status == (int)StatusRequest.CHECK_OUT
-                    && rq.IdSwapHouse != null
-                    && rq.IdUser != IdUser))
+                try
                 {
-                    try
+                    this._context.Entry(rq).Reference(m => m.Houses).Query().Load();
+                    if (rq.Houses != null)
                     {
-                        this._context.Entry(rq).Reference(m => m.Houses).Query().Load();
-                        if (rq.Houses != null)
+                        ChatHub chatHub = new ChatHub(this._signalContext);
+
+                        Notification notification = new Notification()
                         {
-                            ChatHub chatHub = new ChatHub(this._signalContext);
+                            Title = NotificationType.RequestTitle,
+                            CreatedDate = DateTime.Now,
+                            Type = NotificationType.REQUEST,
+                            IdUser = rq.IdUser,
+                            IdType = rq.Id,
+                            IsSeen = false,
+                            ImageUrl = "/Image/house-demo.png"
+                        };
+                        var user = this._context.Users.Where(m => m.Id == IdUser).FirstOrDefault();
+                        switch (Status)
+                        {
+                            case (int)StatusRequest.REJECT://từ chối
+                                                            // gửi thông báo từ chối
+                                notification.Content = "Yêu cầu của bạn đến nhà "
+                                                        + rq.Houses.Name
+                                                        + " bị từ chối";
 
-                            Notification notification = new Notification()
-                            {
-                                Title = NotificationType.RequestTitle,
-                                CreatedDate = DateTime.Now,
-                                Type = NotificationType.REQUEST,
-                                IdUser = rq.IdUser,
-                                IdType = rq.Id,
-                                IsSeen = false,
-                                ImageUrl = this.GetWebsitePath() + "/Image/house-demo.png"
-                            };
-                            switch (Status)
-                            {
-                                case (int)StatusRequest.REJECT://từ chối
-                                                               // gửi thông báo từ chối
-                                    notification.Content = "Yêu cầu của bạn đến nhà "
+                                //chạy code trao đổi xoay vòng
+                                break;
+                            case (int)StatusRequest.ACCEPT://chấp nhận
+                                                            //gửi thông báo chấp nhận
+                                notification.Content = "Yêu cầu của bạn đến nhà "
                                                             + rq.Houses.Name
-                                                            + " bị từ chối";
-                                    break;
-                                case (int)StatusRequest.ACCEPT://chấp nhận
-                                                               //gửi thông báo chấp nhận
-                                    notification.Content = "Yêu cầu của bạn đến nhà "
-                                                             + rq.Houses.Name
-                                                             + " đã được chấp nhận";
-                                    //timer nhắc nhở checkIn => qua email
-                                    break;
-                                case (int)StatusRequest.CHECK_IN://checkIn
-                                                                 //trừ tiền user => hết tiền => bắt nạp
-                                                                 //gửi thông báo
-                                    notification.Content = "Bạn đã check-in "
-                                                            + rq.Houses.Name
-                                                            + " hệ thống đã gửi thông tin đến email của bạn";
-                                    notification.IdUser = IdUser;
+                                                            + " đã được chấp nhận";
+                                if (user != null)
+                                {
                                     //gửi bill qua email
-                                    break;
-                                case (int)StatusRequest.CHECK_OUT://Checkout
-                                    if (rq.IdSwapHouse != null)
+                                    string? moduleEmail = this._configuration.GetConnectionString(ConfigurationEmail.Email());
+                                    string? modulePassword = this._configuration.GetConnectionString(ConfigurationEmail.Password());
+                                    if (!string.IsNullOrEmpty(moduleEmail) && !string.IsNullOrEmpty(modulePassword))
                                     {
-                                        this._context.Entry(rq).Collection(m => m.CheckOuts).Load();
-                                        if (rq.CheckOuts == null)
-                                        {
-                                            Status = (int)StatusRequest.CHECK_IN;
-                                        }
-                                        //tạo checkOut
-                                        CheckOut checkOut = new CheckOut()
-                                        {
-                                            IdRequest = rq.Id,
-                                            IdUser = IdUser
-                                        };
-                                        this._context.CheckOuts.Add(checkOut);
-                                        this._context.SaveChanges();
+                                        Email sender = new Email(moduleEmail, modulePassword);
+                                        string body = notification.Content;//bill
+                                        sender.SendMail(user.Email, Subject.SendRequestDetail(), body, null, string.Empty);
                                     }
-                                    //kiểm tra time => trừ tiền
-                                    //không đủ tiền => bắt nạp
+                                }
+                                //timer nhắc nhở checkIn => qua email
+                                await this.TimerCheckInNotificationAsync(rq);
+                                break;
+                            case (int)StatusRequest.CHECK_IN://checkIn
+                                //mấy cái request còn lại thì sao?
+                                //trừ tiền user => hết tiền => bắt nạp
+                                if (rq.Type == 1 && rq.Point > 0)
+                                {
+                                    if (user != null)
+                                    {
+                                        if((user.BonusPoint + user.Point - user.PointUsing) < rq.Point)
+                                        {
+                                            return Json(new
+                                            {
+                                                Status = 200,
+                                                Message = "Thiếu tiền"
+                                            });
+                                        }
+                                        else
+                                        {
+                                            user.PointUsing = rq.Point;
+                                            this._context.Users.Update(user);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        return BadRequest(new
+                                        {
+                                            Status = 401,
+                                            Message = "Không tìm thấy người dùng"
+                                        });
+                                    }
+                                }
+                                //gửi thông báo
+                                notification.Content = "Bạn đã check-in "
+                                                        + rq.Houses.Name
+                                                        + " hệ thống đã gửi thông tin đến email của bạn";
+                                notification.IdUser = IdUser;
 
-                                    //gửi thông báo
-                                    //check lại
-                                    notification.Content = "Bạn đã check-out "
-                                                            + rq.Houses.Name
-                                                            + " hãy viết cảm nhận của mình sau chuyển đi và nhận thưởng từ hệ thống";
-                                    notification.IdUser = IdUser;
-                                    break;
-                            }
+                                //timer thông báo ngày checkOut
+                                await this.TimerCheckOutNotificationAsync(rq);
 
-                            //gửi notification
-                            this._context.Notifications.Add(notification);
-                            this._context.SaveChanges();
+                                //tạo checkIn
+                                if (rq.IdSwapHouse != null)
+                                {
+                                    this._context.Entry(rq).Collection(m => m.CheckIns).Load();
+                                    if (rq.CheckIns == null || rq.CheckIns.Count() == 0)
+                                    {
+                                        Status = (int)StatusRequest.ACCEPT;
+                                    }
+                                }
+                                //tạo checkIn
+                                CheckIn checkIn = new CheckIn()
+                                {
+                                    IdRequest = rq.Id,
+                                    IdUser = IdUser
+                                };
+                                this._context.CheckIns.Add(checkIn);
+                                this._context.SaveChanges();
 
-                            await chatHub.SendNotification(
-                                group: Crypto.EncodeKey(notification.IdUser.ToString(), Crypto.Salt(this._configuration)),
-                                target: TargetSignalR.Notification(),
-                                model: new NotificationViewModel(notification));
-                            //gửi notification
+                                break;
+                            case (int)StatusRequest.CHECK_OUT://Checkout
+                                //kiểm tra time => trừ tiền
+                                //không đủ tiền => bắt nạp
+                                if (rq.Type == 1 && rq.Point > 0)
+                                {
+                                    if (user != null)
+                                    {
+                                        if ((user.BonusPoint + user.Point - user.PointUsing) < rq.Point)
+                                        {
+                                            return Json(new
+                                            {
+                                                Status = 200,
+                                                Message = "Thiếu tiền"
+                                            });
+                                        }
+                                        else
+                                        {
+                                            user.BonusPoint -= rq.Point;
+                                            if (user.BonusPoint < 0)
+                                            {
+                                                user.Point += user.BonusPoint;
+                                                user.BonusPoint = 0;
+                                            }
+                                            user.PointUsing = 0;
+                                            this._context.Users.Update(user);
 
-                            rq.Status = Status;
-                            this._context.Requests.Update(rq);
-                            this._context.SaveChanges();
+                                            HistoryTransaction transaction = new HistoryTransaction()
+                                            {
+                                                Amount = rq.Point,
+                                                IdUser = IdUser,
+                                                CreatedDate = DateTime.Now,
+                                                Status = (int)StatusTransaction.USED,
+                                                Content = "Bạn thanh toán tiền trao đổi nhà " + rq.Houses.Name + " của " + user.FirstName + " " + user.LastName
+                                            };
+                                            this._context.HistoryTransactions.Add(transaction);
+                                            this._context.SaveChanges();
+                                        }
+                                    }
+                                    else
+                                    {
+                                        return BadRequest(new
+                                        {
+                                            Status = 401,
+                                            Message = "Không tìm thấy người dùng"
+                                        });
+                                    }
+                                }
 
-                            return Json(new
-                            {
-                                Status = 200,
-                                Message = "Cập nhật thành công"
-                            });
+                                if (rq.IdSwapHouse != null)
+                                {
+                                    this._context.Entry(rq).Collection(m => m.CheckOuts).Load();
+                                    if (rq.CheckOuts == null || rq.CheckOuts.Count() == 0)
+                                    {
+                                        Status = (int)StatusRequest.CHECK_IN;
+                                    }
+                                }
+                                //tạo checkOut
+                                CheckOut checkOut = new CheckOut()
+                                {
+                                    IdRequest = rq.Id,
+                                    IdUser = IdUser
+                                };
+                                this._context.CheckOuts.Add(checkOut);
+                                this._context.SaveChanges();
+
+                                //gửi thông báo
+                                notification.Content = "Bạn đã check-out "
+                                                        + rq.Houses.Name
+                                                        + " hãy viết cảm nhận của mình sau chuyển đi và nhận thưởng từ hệ thống";
+                                notification.IdUser = IdUser;
+                                break;
                         }
+
+                        //gửi notification
+                        this._context.Notifications.Add(notification);
+                        this._context.SaveChanges();
+
+                        await chatHub.SendNotification(
+                            group: Crypto.EncodeKey(notification.IdUser.ToString(), Crypto.Salt(this._configuration)),
+                            target: TargetSignalR.Notification(),
+                            model: new NotificationViewModel(notification, this.GetWebsitePath()));
+                        //gửi notification
+
+                        rq.Status = Status;
+                        this._context.Requests.Update(rq);
+                        this._context.SaveChanges();
+
+                        return Json(new
+                        {
+                            Status = 200,
+                            Message = "Cập nhật thành công"
+                        });
                     }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.Message);
-                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
                 }
             }
 
@@ -960,12 +1077,72 @@ namespace DoAnTotNghiep.Controllers
                 Message = "Yêu cầu không tồn tại"
             });
         }
+        private async Task TimerCheckInNotificationAsync(Request request)
+        {
+            //chỉnh time start => request.startDate - 1
+            await InitTimerAsync(request, TargetFunction.ExecuteCheckIn, TimeSpan.FromMinutes(1), 2);
+        }
+        private async Task TimerCheckOutNotificationAsync(Request request)
+        {
+            //chỉnh time start => request.endDate - 1
+            await InitTimerAsync(request, TargetFunction.ExecuteCheckOut, TimeSpan.FromMinutes(1), 1);
+        }
+        private async Task InitTimerAsync(Request request, string Function, TimeSpan timeStart, int limit)
+        {
+            CancellationTokenSource source = new CancellationTokenSource();
+            CancellationToken token = source.Token;
+            DoAnTotNghiepContext inputContext = new DoAnTotNghiepContext(this._context.GetConfig());
+            string host = this.GetWebsitePath();
+            RequestBackground Object = new RequestBackground(new ChatHub(this._signalContext), request, this._configuration);
+            TimedHostedService timer = new TimedHostedService(
+                                            inputContext,
+                                            host,
+                                            Function,
+                                            token,
+                                            limit,
+                                            timeStart,
+                                            Object);
 
+            await timer.StartAsync(token);
+        }
 
-        //timer trước ngày trao đổi 1 ngày thông báo checkin
-        //timer sau ngày trao đổi 1 ngày chưa checkin => hủy yêu cầu
-        //timer trước ngày checkout 1 ngày thông báo checkout lố ngày
+        //timer trước ngày trao đổi 1 ngày thông báo checkin//
+        //timer sau ngày trao đổi 1 ngày chưa checkin => hủy yêu cầu//
+        //timer trước ngày checkout 1 ngày thông báo checkout
         //      => tăng phí người chưa check out
         //update endDATE => TĂNG PHÍ NẾU NGƯỜI KIA ACCEPT
+
+        [HttpGet("Statistics/House")]
+        public IActionResult StatisticsHouse(InputRequestStatistic input)
+        {
+            int IdUser = this.GetIdUser();
+            var request = this._context.Requests
+                                        .Include(m => m.Houses)
+                                        .Where(m => m.IdHouse == input.IdHouse 
+                                                    && m.Houses != null && m.Houses.IdUser == IdUser
+                                                    && (m.Status == (int)StatusRequest.ENDED || m.Status == (int)StatusRequest.CHECK_OUT)
+                                                    && (m.StartDate.Year == input.Year || m.EndDate.Year == input.Year)
+                                        )
+                                        .Select(m => new RequestStatistics(m))
+                                        .ToList();
+
+            var houseUseForSwap = this._context.Requests
+                                        .Where(m => m.IdSwapHouse != null 
+                                                    &&  m.IdSwapHouse == input.IdHouse
+                                                    && m.IdUser == IdUser
+                                                    && (m.StartDate.Year == input.Year || m.EndDate.Year == input.Year)
+                                        )
+                                        .Select(m => new RequestStatistics(m))
+                                        .ToList();
+
+            return Json(new {
+                Status = 200,
+                Data = new HouseStatistics()
+                {
+                    Requests = request,
+                    UseForSwap = houseUseForSwap
+                }
+            });
+        }
     }
 }

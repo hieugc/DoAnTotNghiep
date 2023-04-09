@@ -147,8 +147,84 @@ namespace DoAnTotNghiep.Controllers
         public IActionResult Requested()
         {
             ViewData["active"] = 2;
-            return View(this.GetAllRequestsSent());
+            List<DetailRequest> model = this.GetAllRequestsSent();
+
+            return View(model);
         }
+
+        [HttpGet("/api/Request/GetRequestReceived")]
+        public IActionResult ApiGetListRequestReceived()
+        {
+            return Json(new
+            {
+                Status = 200,
+                Data = this.GetAllRequestsReceived()
+            });
+        }
+        private List<DetailRequest> GetAllRequestsReceived()
+        {
+            int IdUser = this.GetIdUser();
+            var houses = this._context.Houses
+                                        .Where(m => m.IdUser == IdUser && m.Status == (int)StatusHouse.VALID)
+                                        .ToList();
+            List<DetailRequest> model = new List<DetailRequest>();
+            DoAnTotNghiepContext Context = this._context;
+
+            byte[] salt = Crypto.Salt(this._configuration);
+            string host = this.GetWebsitePath();
+
+            foreach (var item in houses)
+            {
+                this._context.Entry(item).Collection(m => m.Requests).Query().Load();
+                if (item.Requests != null)
+                {
+                    foreach (var itemRequest in item.Requests)
+                    {
+                        if (itemRequest != null)
+                        {
+                            DetailRequest? request = this.CreateDetailRequest(itemRequest);
+                            if (request != null)
+                            {
+                                model.Add(request);
+                            }
+                        }
+                    }
+                }
+            }
+            return model;
+        }
+
+
+        public IActionResult RequestValidReceived()
+        {
+            ViewData["active"] = 3;
+            List<DetailRequest> model = new List<DetailRequest>();
+            int IdUser = this.GetIdUser();
+            var listRequest = this._context .Requests
+                                            .Include(m => m.Houses)
+                                            .Where(m => (       m.Status == (int)StatusRequest.ACCEPT
+                                                            ||  m.Status == (int)StatusRequest.CHECK_IN
+                                                            ||  m.Status == (int)StatusRequest.CHECK_OUT)
+                                                        && (m.IdUser == IdUser || m.Houses != null && m.Houses.IdUser == IdUser))
+                                            .ToList();
+
+            byte[] salt = Crypto.Salt(this._configuration);
+            string host = this.GetWebsitePath();
+
+            foreach (var itemRequest in listRequest)
+            {
+                if (itemRequest != null)
+                {
+                    DetailRequest? request = this.CreateDetailRequest(itemRequest);
+                    if (request != null)
+                    {
+                        model.Add(request);
+                    }
+                }
+            }
+            return View(model);
+        }
+
         private List<DetailRequest> GetAllRequestsSent()
         {
             int IdUser = this.GetIdUser();
@@ -156,9 +232,6 @@ namespace DoAnTotNghiep.Controllers
                                         .Where(m => m.IdUser == IdUser).ToList();
             List<DetailRequest> model = new List<DetailRequest>();
             DoAnTotNghiepContext Context = this._context;
-
-            byte[] salt = Crypto.Salt(this._configuration);
-            string host = this.GetWebsitePath();
             foreach (var item in requests)
             {
                 if (item != null)
@@ -178,12 +251,18 @@ namespace DoAnTotNghiep.Controllers
             DoAnTotNghiepContext Context = this._context;
             byte[] salt = Crypto.Salt(this._configuration);
             string host = this.GetWebsitePath();
-            Context.Entry(item).Reference(m => m.Houses).Query().Load();
+            if (item.Houses == null || !Context.Entry(item).Reference(m => m.Houses).IsLoaded)
+            {
+                Context.Entry(item).Reference(m => m.Houses).Query().Load();
+            }
             if (item.Houses != null)
             {
                 Context.Entry(item.Houses).Reference(m => m.Users).Query().Load();
                 Context.Entry(item.Houses).Collection(m => m.FileOfHouses).Query().Load();
                 Context.Entry(item).Collection(m => m.FeedBacks).Query().Where(m => m.IdUser == this.GetIdUser()).Load();
+
+                this._context.Entry(item).Collection(m => m.CheckOuts).Query().Where(m => m.IdUser == item.IdUser).Load();
+                this._context.Entry(item).Collection(m => m.CheckIns).Query().Where(m => m.IdUser == item.IdUser).Load();
                 if (item.Houses.Users != null)
                 {
                     DetailHouseViewModel house = this.CreateDetailsHouse(item.Houses);
@@ -210,7 +289,6 @@ namespace DoAnTotNghiep.Controllers
                         }
                     }
 
-
                     DetailRequestViewModel request = new DetailRequestViewModel(item, item.Users, salt, host);
                     return new DetailRequest()
                     {
@@ -223,7 +301,6 @@ namespace DoAnTotNghiep.Controllers
             }
             return null;
         }
-
         private DetailHouseViewModel CreateDetailsHouse(House house)
         {
             byte[] salt = Crypto.Salt(this._configuration);
@@ -252,17 +329,44 @@ namespace DoAnTotNghiep.Controllers
             return model;
         }
 
-
         public IActionResult WaitingRequest()
-        {
-            ViewData["active"] = 3;
-            return View();
-        }
-        public IActionResult History()
         {
             ViewData["active"] = 4;
             return View();
         }
+        public IActionResult History()
+        {
+            ViewData["active"] = 5;
+            return View();
+        }
+        //adminReport
+        [HttpGet("/api/User/Point")]
+        public IActionResult ApiGetPoint()
+        {
+            return this.Point();
+        }
+
+        [HttpGet("/User/Point")]
+        public IActionResult GetPoint()
+        {
+            return this.Point();
+        }
+
+        private IActionResult Point()
+        {
+            int IdUser = this.GetIdUser();
+            var user = this._context.Users.Where(m => m.Id == IdUser).FirstOrDefault();
+            int Point = 0;
+            if (user != null) Point += (user.Point + user.BonusPoint);
+
+            return Json(new
+            {
+                Status = 200,
+                Message = "Điểm người dùng",
+                Data = Point
+            });
+        }
+
         [HttpGet("/api/GetNumberOfHouse")]
         public IActionResult GetNumberOfHouse(Pagination pagination)
         {
@@ -406,7 +510,7 @@ namespace DoAnTotNghiep.Controllers
                     ViewData["userAccess"] = new UserMessageViewModel(mainUser, salt, this.GetWebsitePath());
                 }
             }
-            ViewData["active"] = 5;
+            ViewData["active"] = 6;
             return View(model);
         }
         private KeyValuePair<int, RoomChatViewModel> CreateDictionary(ChatRoom room, DoAnTotNghiepContext Context, int number, byte[] salt, int IdUser)

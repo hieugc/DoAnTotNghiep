@@ -87,12 +87,7 @@ namespace DoAnTotNghiep.Controllers
                                 .Include(m => m.Requests)
                                 .Take(number)
                                 .OrderByDescending(m => m.Rating)
-                                .Where(m => m.Status == (int)StatusHouse.VALID
-                                            && (m.Requests == null ||
-                                                (m.Requests != null
-                                                    && !m.Requests.Any(m =>
-                                                            StatusRequestStr.IsUnValidHouse(m.Status)
-                                                            && !(m.StartDate >= end || m.EndDate <= start)))))
+                                .Where(m => m.Status == (int)StatusHouse.VALID)
                                 .ToList();
         }
         private List<PopularCityViewModel> GetPopularCity(int number = 10)

@@ -138,7 +138,7 @@ namespace DoAnTotNghiep.Controllers
                                     Content = "Bạn nhận được phản ánh từ quản trị viên",
                                     CreatedDate = DateTime.Now,
                                     IsSeen = false,
-                                    ImageUrl = this.GetWebsitePath() + "/Image/house-demo.png",
+                                    ImageUrl = "/Image/house-demo.png",
                                     Type = NotificationType.ADMIN_REPORT
                                 };
                                 this._context.Notifications.Add(notification);
@@ -148,7 +148,7 @@ namespace DoAnTotNghiep.Controllers
                                 await chatHub.SendNotification(
                                     group: Crypto.EncodeKey(notification.IdUser.ToString(), Crypto.Salt(this._configuration)),
                                     target: TargetSignalR.Notification(),
-                                    model: new NotificationViewModel(notification));
+                                    model: new NotificationViewModel(notification, this.GetWebsitePath()));
 
                                 transaction.Commit();
 

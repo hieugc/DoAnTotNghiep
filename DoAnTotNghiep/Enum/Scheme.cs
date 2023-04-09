@@ -25,4 +25,11 @@
         public static string Base64() => "SystemBase64";
         public static string WebsiteKey() => "WebsiteKey";
     }
+
+    public static class ZaloPay
+    {
+        public const string ZaloId = "ZaloId";
+        public const string ZaloKey1 = "ZaloKey1";
+        public const string ZaloKey2 = "ZaloKey2";
+    }
 }

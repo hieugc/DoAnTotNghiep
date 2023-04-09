@@ -21,6 +21,8 @@ using NuGet.Packaging;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.AspNetCore.Routing;
 using System.Security.Cryptography.X509Certificates;
+using DoAnTotNghiep.Hubs;
+using Microsoft.AspNetCore.SignalR;
 
 namespace DoAnTotNghiep.Controllers
 {
@@ -29,13 +31,16 @@ namespace DoAnTotNghiep.Controllers
     {
         private readonly DoAnTotNghiepContext _context;
         private readonly IConfiguration _configuration;
+        private readonly IHubContext<ChatHub> _signalContext;
 
         public NotificationController(DoAnTotNghiepContext context, 
             IConfiguration configuration,
-            IHostEnvironment environment) : base(environment)
+            IHostEnvironment environment,
+            IHubContext<ChatHub> signalContext) : base(environment)
         {
             _context = context;
             _configuration = configuration;
+            _signalContext = signalContext;
         }
         [HttpGet("/Notification/Get")]
         public IActionResult GetNotifications(Pagination pagination)
@@ -51,11 +56,11 @@ namespace DoAnTotNghiep.Controllers
         {
             int IdUser = this.GetIdUser();
             int skip = (pagination.Page - 1 < 0 ? 0 : pagination.Page - 1) * pagination.Limit;
+            string host = this.GetWebsitePath();
             var model = this._context.Notifications
-                                        .OrderByDescending(m => m.IsSeen)
                                         .OrderByDescending(m => m.CreatedDate)
                                         .Where(m => m.IdUser == IdUser)
-                                        .Select(m => new NotificationViewModel(m))
+                                        .Select(m => new NotificationViewModel(m, host))
                                         .ToList();
             pagination.Page += 1;
             pagination.Total = (int) Math.Ceiling((double)(model.Count() / pagination.Limit));
@@ -118,5 +123,36 @@ namespace DoAnTotNghiep.Controllers
             });
         }
 
+        [HttpGet("/api/Notification/Demo")]
+        public async Task<IActionResult> ApiDemoNotificationsAsync(Pagination pagination)
+        {
+            int IdUser = this.GetIdUser();
+            var user = this._context.Users.Where(m => m.Id != IdUser).ToList();
+            List<Notification> list = new List<Notification>();
+            string host = this.GetWebsitePath();
+            for(int index = 0; index < user.Count(); index++)
+            {
+                Notification node = new Notification().DemoNotification(user[index].Id);
+                node.Content = "api/Notification/Demo";
+                list.Add(node);
+            }
+            this._context.Notifications.AddRange(list);
+            this._context.SaveChanges();
+
+            ChatHub chatHub = new ChatHub(this._signalContext);
+            foreach(var item in list)
+            {
+                await chatHub.SendNotification(
+                                group: Crypto.EncodeKey(item.IdUser.ToString(), Crypto.Salt(this._configuration)),
+                                target: TargetSignalR.Notification(),
+                                model: new NotificationViewModel(item, this.GetWebsitePath()));
+            }
+
+            return Json(new
+            {
+                Status = 200,
+                Data = list
+            });
+        }
     }
 }

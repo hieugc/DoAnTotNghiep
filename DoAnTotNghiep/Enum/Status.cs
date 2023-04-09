@@ -17,6 +17,14 @@
         REMOVED
     }
 
+    enum StatusTransaction
+    {
+        PENDING,
+        VALID,
+        REFUND,
+        USED
+    }
+
     enum StatusHouse
     {
         VALID,
@@ -58,11 +66,21 @@
                 (int) StatusRequest.WAIT_FOR_SWAP,
                 (int) StatusRequest.REJECT,
                 (int) StatusRequest.ACCEPT,
+                (int) StatusRequest.CHECK_IN,
                 (int) StatusRequest.CHECK_OUT,
                 (int) StatusRequest.ENDED
             };
         }
 
+        public static List<int> getStatusTransaction()
+        {
+            return new List<int>()
+            {
+                (int) StatusRequest.ACCEPT,
+                (int) StatusRequest.CHECK_IN,
+                (int) StatusRequest.CHECK_OUT
+            };
+        }
 
         /// <summary>
         /// Unvalid <=> request is accepted or checked In or wait payment

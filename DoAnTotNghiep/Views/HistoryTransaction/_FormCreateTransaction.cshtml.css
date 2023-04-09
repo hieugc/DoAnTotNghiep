@@ -1,0 +1,62 @@
+﻿.my-modal-title {
+    width: 100%;
+}
+
+.house-title {
+    text-align: center;
+}
+.modal-header .btn-close {
+    margin-top: -56px;
+}
+
+
+.modal .modal-header {
+    border-bottom: unset;
+}
+
+.modal .modal-body {
+    overflow: hidden;
+}
+.modal .modal-body.sighide{
+    padding: 0;
+}
+
+.modal .btn-close {
+    background-color: #fff;
+    border-radius: 0.5rem;
+    opacity: 1;
+    padding: 0.635rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(161, 172, 184, 0.4);
+    transition: all 0.23s ease 0.1s;
+    transform: translate(23px, -25px);
+}
+
+    .modal .btn-close:hover, .modal .btn-close:focus, .modal .btn-close:active {
+        opacity: 1;
+        outline: none;
+        transform: translate(20px, -20px);
+    }
+
+.modal .modal-header .btn-close {
+    margin-top: -32px;
+}
+
+.modal .modal-body button {
+    width: 100%;
+    margin-top: 12px;
+}
+.mb-3 .contain-option {
+    background-color: rgba(var(--bs-primary-rgb), 0.1);
+    padding: 12px;
+    border-radius: 12px;
+    display: flex;
+    flex-flow: column;
+    gap: 12px;
+}
+.mb-3 .contain-option .filter-option{
+    display: flex;
+    flex-flow: row-reverse;
+    justify-content:left;
+    gap: 12px;
+    width: 100%;
+}

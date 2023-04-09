@@ -29,24 +29,35 @@ namespace DoAnTotNghiep.Controllers
         /// => where Status == Valid || Status == Swapping && request.status == accepted && request.endDate < minRangeDATE && request.startDate > maxRangeDate</minRangeDATE>
         /// <returns></returns>
 
-        public IActionResult Index(int IdCity)
+        public IActionResult Index(Filter filter)
         {
             ExploreResult model = new ExploreResult();
-            model.Houses = this.GetHouses(12, IdCity, null, null);
-            model.Center = this.GetCenter(IdCity);
+            int IdCity = filter.IdCity == null ? 0 : filter.IdCity.Value;
 
+            model.Houses = this.GetHouses(filter.Page, filter.Limit, IdCity, filter.DateStart, filter.DateEnd, filter.OptionSort, filter.PriceStart, filter.PriceEnd, filter.Utilities);
+            model.Center = this.GetCenter(IdCity);
             return View(model);
         }
 
 
-        private List<DetailHouseViewModel> GetHouses(int number = 10, int IdCity = 0, DateTime? DateStart = null, DateTime? DateEnd = null)
+        private ListDetailHouses GetHouses(int page = 1,int number = 10, 
+                                    int IdCity = 0, 
+                                    DateTime? DateStart = null, DateTime? DateEnd = null,
+                                    int OptionSort = 0,
+                                    int? PriceStart = null, int? PriceEnd = null,
+                                    List<int>? Utilities = null)
         {
-            var listHouse = this.GetContextHouses(number, IdCity, DateStart, DateEnd);
+            
+            var listHouse = this.GetContextHouses(IdCity, DateStart, DateEnd, OptionSort, PriceStart, PriceEnd, Utilities);
+
+            int skip = (page - 1 < 0) ? 0 : page - 1;
+            Pagination pagination = new Pagination(page, number);
+            pagination.Total = (int)Math.Ceiling((double)listHouse.Count() / number);
 
             byte[] salt = Crypto.Salt(this._configuration);
             string host = this.GetWebsitePath();
             List<DetailHouseViewModel> res = new List<DetailHouseViewModel>();
-            foreach (var item in listHouse)
+            foreach (var item in listHouse.Skip(skip).Take(number))
             {
                 if (!this._context.Entry(item).Collection(m => m.Requests).IsLoaded)
                 {
@@ -72,34 +83,79 @@ namespace DoAnTotNghiep.Controllers
                 }
                 res.Add(model);
             }
-            return res;
-        }
-        private List<House> GetContextHouses(int number = 10, int IdCity = 0, DateTime? DateStart = null, DateTime? DateEnd = null)
-        {
-            DateTime start = DateTime.Now;
-            DateTime end = DateTime.Now;
 
-            if (DateStart != null)
+            if(res.Count() == 0)
             {
-                start = DateStart.Value;
+                //chạy code trao đổi xoay vòng
+                //lưu lại địa điểm không tìm thấy
             }
-            if(DateEnd != null)
+
+            return new ListDetailHouses()
             {
-                start = DateEnd.Value;
-            }
-            
-            return this._context.Houses
+                Houses = res,
+                Pagination = pagination
+            };
+        }
+        //chưa chạy thử
+        private List<House> GetContextHouses(int IdCity = 0, DateTime? DateStart = null, DateTime? DateEnd = null, int OptionSort = 0, int? PriceStart = null, int? PriceEnd = null, List<int>? Utilities = null)
+        {
+            List<House> model = new List<House>();
+            if (DateStart != null && DateEnd != null)
+            {
+                var res = this._context.Houses
                                 .Include(m => m.Requests)
-                                .Take(number)
-                                .OrderByDescending(m => m.Rating)
-                                .Where(m => m.Status == (int)StatusHouse.VALID 
+                                .Include(m => m.UtilitiesInHouses)
+                                .Where(m => m.Status == (int)StatusHouse.VALID
                                             && m.IdCity == IdCity
-                                            && (m.Requests == null ||
-                                                (m.Requests != null
-                                                    && !m.Requests.Any(m => 
-                                                            StatusRequestStr.IsUnValidHouse(m.Status)
-                                                            && !(m.StartDate >= end || m.EndDate <= start)))))
+                                            && (m.Requests == null || 
+                                                m.Requests != null 
+                                                && !m.Requests.Any(r => 
+                                                (r.Status == (int) StatusRequest.ACCEPT || r.Status == (int)StatusRequest.CHECK_IN || r.Status == (int)StatusRequest.CHECK_OUT)
+                                                && !(r.StartDate >= DateEnd || r.EndDate <= DateStart)
+                                        )))
                                 .ToList();
+                model.AddRange(res);
+            }
+            else
+            {
+                var res = this._context.Houses
+                                .Include(m => m.Requests)
+                                .Include(m => m.UtilitiesInHouses)
+                                .Where(m => m.Status == (int)StatusHouse.VALID
+                                            && m.IdCity == IdCity)
+                                .ToList();
+
+                model.AddRange(res);
+            }
+
+            if(PriceStart != null)
+            {
+                model = model.Where(m => m.Price >= PriceStart.Value).ToList();
+            }
+            if (PriceEnd != null)
+            {
+                model = model.Where(m => m.Price <= PriceEnd.Value).ToList();
+            }
+
+            if (Utilities != null && Utilities.Count() > 0)
+            {
+                model = model.Where(m => m.UtilitiesInHouses != null
+                                        && m.UtilitiesInHouses
+                                                    .Select(m => m.IdUtilities)
+                                                    .Intersect(Utilities).Any()).ToList();
+            }
+
+            switch (OptionSort)
+            {
+                case (int)SortResult.RATING:
+                    return model.OrderByDescending(m => m.Rating).ToList();
+                case (int)SortResult.MIN_PRICE:
+                    return model.OrderByDescending(m => m.Price).ToList();
+                case (int)SortResult.MAX_PRICE:
+                    return model.OrderBy(m => m.Price).ToList();
+            }
+            //chưa pk closest làm sao?
+            return model;
         }
 
         private Point GetCenter(int IdCity = 0)

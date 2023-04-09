@@ -1,0 +1,158 @@
+﻿@using DoAnTotNghiep.Enum;
+@model DoAnTotNghiep.ViewModels.DetailRequest
+
+<div class="card card-@Model.Request.Id mb-3 status status-request-@Model.Request.Status">
+    <div class="row g-0">
+        <div class="col-md-12">
+            <div class="user-info">
+                <div>Người bạn đã gửi yêu cầu: </div>
+                <div class="user">
+                    @if (Model.House.User != null)
+                    {
+                        @if (!string.IsNullOrEmpty(Model.House.User.UrlImage))
+                        {
+                            <img src="@Model.House.User.UrlImage" alt="avt" />
+                        }
+                        else
+                        {
+                            <img src="~/Image/user.svg" alt="avt" />
+                        }
+                        <div class="name">@Model.House.User.FirstName @Model.House.User.LastName</div>
+                    }
+                    else
+                    {
+                        <img src="~/Image/user.svg" alt="avt" />
+                    }
+                </div>
+            </div>
+            <span class="status-@Model.Request.Status text-success">@StatusRequestStr.getStatus(Model.Request.Status)</span>
+        </div>
+
+        <div class="d-flex col-12">
+            <div class="request-info">
+                <p>Nhà bạn đã yêu cầu trao đổi: </p>
+                <div class="house-result">
+                    <div class="house-card">
+                        @if (Model.House.Images.Count() == 0)
+                        {
+                            <img src="~/Image/house-demo.png" alt="Mike" style="width:100%">
+                        }
+                        else
+                        {
+                            @foreach (var img in Model.House.Images)
+                            {
+                                if (img != null)
+                                {
+                                    <img src="@img.Data" alt="Mike" style="width:100%">
+                                    break;
+                                }
+                            }
+                        }
+                        <div class="house-img-container">
+                            <h2>@Model.House.Name</h2>
+                            <p class="attribute"><i class="fa-solid fa-map-location-dot"></i><span>@Model.House.Location</span></p>
+                            <div class="list-attribute">
+                                <p class="attribute"><span>@Model.House.Rating (@Model.House.NumberRating)</span><i class="fa-solid fa-star"></i></p>
+                                <p class="attribute"><i class="fa-solid fa-users"></i><span>@Model.House.People</span></p>
+                                <p class="attribute"><i class="fa-solid fa-bed"></i><span>@Model.House.BedRoom</span></p>
+                            </div>
+                            <p>
+                                <button class="item-button">
+                                    <span>@Model.House.Price (point/ngày)</span>
+                                </button>
+                            </p>
+                        </div>
+                        <a target="_blank" href='@Url.Action("Details", "Houses", new {Id = Model.House.Id})' class="finding">
+                            <i class="fa-sharp fa-solid fa-magnifying-glass"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            @if (Model.SwapHouse != null)
+            {
+                <div class="request-info">
+                    <p>Nhà bạn dùng để trao đổi: </p>
+                    <div class="house-result">
+                        <div class="house-card">
+                            @if (Model.SwapHouse.Images.Count() == 0)
+                            {
+                                <img src="~/Image/house-demo.png" alt="Mike" style="width:100%">
+                            }
+                            else
+                            {
+                                @foreach (var img in Model.SwapHouse.Images)
+                                {
+                                    if (img != null)
+                                    {
+                                        <img src="@img.Data" alt="Mike" style="width:100%">
+                                        break;
+                                    }
+                                }
+                            }
+                            <div class="house-img-container">
+                                <h2>@Model.SwapHouse.Name</h2>
+                                <p class="attribute"><i class="fa-solid fa-map-location-dot"></i><span>@Model.SwapHouse.Location</span></p>
+                                <div class="list-attribute">
+                                    <p class="attribute"><span>@Model.SwapHouse.Rating (@Model.SwapHouse.NumberRating)</span><i class="fa-solid fa-star"></i></p>
+                                    <p class="attribute"><i class="fa-solid fa-users"></i><span>@Model.SwapHouse.People</span></p>
+                                    <p class="attribute"><i class="fa-solid fa-bed"></i><span>@Model.SwapHouse.BedRoom</span></p>
+                                </div>
+                                <p>
+                                    <button class="item-button">
+                                        <span>@Model.SwapHouse.Price (point/ngày)</span>
+                                    </button>
+                                </p>
+                            </div>
+                            <a target="_blank" href='@Url.Action("Details", "Houses", new {Id = Model.SwapHouse.Id})' class="finding">
+                                <i class="fa-sharp fa-solid fa-magnifying-glass"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+            <div class="request-info">
+                <p>Thông tin yêu cầu</p>
+                <div class="mb-3">
+                    <label class="">Thời gian:</label>
+                    <span class="value">@Model.Request.StartDate.ToString("dd/MM/yyyy") <span>-</span> @Model.Request.EndDate.ToString("dd/MM/yyyy")</span>
+                </div>
+                <div class="mb-3">
+                    <label class="">Phương thức trao đổi: </label>
+                    <span class="value">@(Model.Request.Type == 1 ? "Trao đổi bằng điểm" : "Trao đổi bằng nhà")</span>
+                </div>
+                <div class="mb-3">
+                    <label class="">Điểm trao đổi:</label>
+                    <span class="contain-price">
+                        @(Model.Request.Price < 0 ? "Bạn sẽ trả " + Model.Request.Price.ToString() :
+                            "Bạn sẽ nhận " + Model.Request.Price.ToString()) (Point/ngày)
+                    </span>
+                </div>
+
+                @if (Model.Request.Status == (int)StatusRequest.ACCEPT)
+                {
+                    <div class="control">
+                        <button class="btn btn-danger" onclick="deleteRequest(@Model.Request.Id)">Hủy yêu cầu</button>
+                        <button class="btn btn-primary" onclick="updateStatus(@Model.Request.Id, @((int)StatusRequest.CHECK_IN))">Check In</button>
+                    </div>
+                }
+                else if (Model.Request.Status == (int)StatusRequest.CHECK_IN)
+                {
+                    <div class="control" onclick="updateStatus(@Model.Request.Id, @((int)StatusRequest.CHECK_OUT))">
+                        <button class="btn btn-primary">Check Out</button>
+                    </div>
+                }
+                else if (Model.Request.Status == (int)StatusRequest.CHECK_OUT)
+                {
+                    <div class="control"><button class="btn btn-primary">Đánh giá ngay</button></div>
+                }
+                else
+                {
+                    //thêm đánh giá trong detail
+                    //thêm đánh giá trong request
+                    //thêm detail đánh giá
+                    //request trong
+                }
+            </div>
+        </div>
+    </div>
+</div>

@@ -884,3 +884,66 @@ i.fa-solid.fa-bell{
 .d-flex.col-12 > .request-info img{
     height: 250px;
 }
+
+.contain-issue {
+    padding: 6px;
+    border-radius: 12px;
+    color: white;
+}
+
+#tag_notification .dropdown-menu .alert-frame .content > div{
+    display: flex;
+    flex-flow: column;
+}
+#tag_notification .dropdown-menu .alert-frame .content > div > span:first-child{
+    font-weight: 700;
+}
+#tag_notification .dropdown-menu .alert-frame .content > div > span:last-child {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#transactionModalToggle #renderQRCode .data{
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+}
+    #transactionModalToggle #renderQRCode .data img{
+        width: 200px;
+        height: 200px;
+    }
+    #transactionModalToggle #renderQRCode .data div:last-child {
+        text-align: center;
+    }
+    #transactionModalToggle #renderQRCode .data div #qr-timer{
+        color: red;
+        font-size: large;
+        font-weight: 500;
+    }
+    #renderQRCode {
+        padding: 12px;
+    }
+#renderQRCode .instruction{
+    margin-top: 24px;
+}
+#renderQRCode .instruction .logo{
+    margin: 0 12px;
+}
+#transactionModalToggle .mb-3 > label {
+    font-weight: 700;
+}
+
+#transactionModalToggle .zaloPay-notification {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-flow: column;
+    gap: 24px;
+    padding: 24px;
+}
+#transactionModalToggle .zaloPay-notification div i {
+    font-size: 120px;
+    color: var(--bs-success);
+}

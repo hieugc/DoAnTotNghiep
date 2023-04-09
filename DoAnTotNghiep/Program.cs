@@ -10,11 +10,14 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Net.Http.Headers;
 using Microsoft.Extensions.Configuration;
 using DoAnTotNghiep.Hubs;
+using Hangfire;
+using DoAnTotNghiep.Modules;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<DoAnTotNghiepContext>(options => 
     options.UseSqlServer(builder.Configuration.GetConnectionString("DataContext")));
 builder.Services.AddSignalR();
+
 
 builder.Services.AddControllersWithViews();
 
@@ -68,6 +71,8 @@ builder.Services.AddAuthentication(Scheme.Authentication())
         };
     });
 
+//builder.Services.AddHostedService<TimedHostedService>();
+
 var app = builder.Build();
 
 
@@ -93,7 +98,6 @@ app.Use(async (context, next) =>
     }
     await next();
 });
-
 
 app.UseStaticFiles();
 

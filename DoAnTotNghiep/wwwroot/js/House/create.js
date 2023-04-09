@@ -25,17 +25,7 @@ function initData(id) {
     if (id != undefined) data.id = id;
 }
 function passStep(step) {
-    if (step == 2) {
-        if (data.name != null && data.option != null && data.description != null) return true;
-        return false;
-    }
-    if (step == 3) {
-        if (data.name != null && data.option != null && data.description != null && data.people != null && data.bedRoom != null
-            && data.bathRoom != null && data.square != null && data.location != null && data.price != null
-            && $("#mapAddress").text().replace("Địa chỉ nhà: ", "").length > 0) return true;
-        return false;
-    }
-    return true;
+    return step <= getStep();
 }
 function checkStep(step, element) {
     if (passStep(step)) {
@@ -60,6 +50,7 @@ function nextStep(step, element) {
         if (element.classList.value.indexOf("btn-no-drop") == -1) {
             element.classList.add("btn-no-drop");
         }
+        runBackStep(getStep());
     }
 }
 function prevStep(step) {
@@ -72,6 +63,7 @@ function prevStep(step) {
     houseModal.getElementsByClassName("modal-body")[step].classList.add("sighide");
     houseModal.getElementsByClassName("modal-body")[step - 1].classList.remove("sighide");
 }
+
 function isDataPass() {
     if (data.name != null
         && data.option != null
@@ -81,6 +73,7 @@ function isDataPass() {
         && data.bathRoom != null
         && data.square != null
         && data.lat != null
+        && data.idCity != 0
         && data.lng != null
         && data.location != null
         && data.price != null
@@ -103,9 +96,9 @@ function finish() {
                     //nếu đúng
                     console.log(result);
                     if (result.status == 200) {
-                        for (e in listHouse) {
-                            if (listHouse[e].id == result.data.id) {
-                                listHouse[e] = result.data;
+                        for (e in listHouse.houses) {
+                            if (listHouse.houses[e].id == result.data.id) {
+                                listHouse.houses[e] = result.data;
                                 break;
                             }
                         }
@@ -140,7 +133,7 @@ function finish() {
                     console.log(result);
                     if (result.status == 200) {
                         //thêm item
-                        listHouse.push(result.data);
+                        listHouse.houses.push(result.data);
                         reloadPage();
                         houseModal.getElementsByClassName("progress-bar")[0].style.width = "100%";
                         setTimeout(function () {
@@ -449,8 +442,8 @@ function houseItem(data) {
 }
 function reloadPage() {
     $("#list-house").html(null);
-    for (let e in listHouse) {
-        $("#list-house").append(houseItem(listHouse[e]));
+    for (let e in listHouse.houses) {
+        $("#list-house").append(houseItem(listHouse.houses[e]));
     }
 }
 
@@ -459,7 +452,20 @@ function reloadPage() {
 //thêm thông tin từng bước
 //Làm cái form mới => khi yêu cầu thì show lại
 function getStep() {
+    if (data.name == null || data.option == null || data.description == null) {
+        return 1;
+    }
+    if (data.people == null || data.bedRoom == null || data.bathRoom == null
+        || data.square == null || data.location == null || data.price == null
+        || data.idCity == 0) {
+        return 2;
+    }
+
+    if (data.images.join("").length > 1) {
+        return 5;
+    }
+    return 4;
 }
 function runBackStep(step) {
-
 }
+

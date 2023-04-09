@@ -66,12 +66,14 @@ namespace DoAnTotNghiep.Controllers
         }
 
         //Update
-        private IActionResult Update(int IdWaitingRequest, int Status)
+        private IActionResult Update(int IdWaitingRequest, int Circle, int Status)
         {
             int IdUser = this.GetIdUser();
-            var rq = this._context.WaitingRequests
-                                    .Include(m => m.Requests)
-                                    .Where(m => m.Id == IdWaitingRequest && m.IdUser == IdUser)
+            var rq = this._context.RequestsInCircleExchangeHouses
+                                    .Include(m => m.CircleExchangeHouse)
+                                    .Include(m => m.WaitingRequests)
+                                    .Where(m => m.IdWaitingRequest == IdWaitingRequest 
+                                            && m.IdCircleExchangeHouse == Circle)
                                     .FirstOrDefault();
 
             if(rq == null)
@@ -83,22 +85,51 @@ namespace DoAnTotNghiep.Controllers
                 });
             }
 
-            rq.Status = Status;
-            this._context.WaitingRequests.Update(rq);
-            this._context.SaveChanges();
-
             //nếu từ chối xóa => circle
             //nếu như accept full thì tiến hành trao đổi => 
-            if(rq.Requests != null)
-            {
-                foreach (var item in rq.Requests)
-                {
-                    this._context.Entry(item).Reference(m => m.CircleExchangeHouse).Load();
-                    if(item.CircleExchangeHouse != null)
-                    {
 
+            if (rq.CircleExchangeHouse != null)
+            {
+                this._context.Entry(rq.CircleExchangeHouse).Collection(m => m.RequestInCircles).Load();
+                if (Status == (int)StatusRequest.REJECT)
+                {
+                    this._context.Entry(rq.CircleExchangeHouse).Collection(m => m.RequestInCircles).Load();
+                    this._context.Entry(rq.CircleExchangeHouse).Collection(m => m.UserInCircles).Load();
+                    if (rq.CircleExchangeHouse.RequestInCircles != null)
+                    {
+                        this._context.RequestsInCircleExchangeHouses.RemoveRange(rq.CircleExchangeHouse.RequestInCircles);
+                        this._context.SaveChanges();
+                    }
+                    if (rq.CircleExchangeHouse.UserInCircles != null)
+                    {
+                        this._context.CircleExchangeHouseOfUsers.RemoveRange(rq.CircleExchangeHouse.UserInCircles);
+                        this._context.SaveChanges();
+                    }
+                    this._context.CircleExchangeHouses.Remove(rq.CircleExchangeHouse);
+                    this._context.SaveChanges();
+
+                    //xóa cái vòng người
+                }
+                else
+                {
+                    rq.Status = Status;
+                    this._context.RequestsInCircleExchangeHouses.Update(rq);
+                    this._context.SaveChanges();
+                    //nếu như accept full thì tiến hành trao đổi => 
+
+                    if (rq.CircleExchangeHouse.RequestInCircles != null)
+                    {
+                        if (!rq.CircleExchangeHouse.RequestInCircles.Any(m => m.Status == 0))
+                        {
+                            rq.CircleExchangeHouse.Status = Status;
+                            this._context.CircleExchangeHouses.Update(rq.CircleExchangeHouse);
+                            this._context.SaveChanges();
+
+                            //gửi thông báo yêu cầu
+                        }
                     }
                 }
+
             }
 
             return Json(new
@@ -112,9 +143,9 @@ namespace DoAnTotNghiep.Controllers
         private IActionResult GetSuggest()
         {
             int IdUser = this.GetIdUser();
-
-
-
+            //lấy nhà người 1
+            //lấy nhà người 2
+            //lấy nhà người 3
             return Json(new
             {
 

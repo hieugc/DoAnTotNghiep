@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DoAnTotNghiep.Entity
 {
-    [Table("UserReport")]
+    [Table("User_report")]
     public class UserReport
     {
         [Key]
@@ -18,20 +18,25 @@ namespace DoAnTotNghiep.Entity
         [Column("created_date")]
         public DateTime CreatedDate { get; set; }
 
+        [Required]
         [Column("id_user")]
         public virtual int IdUser { get; set; }
 
         [ForeignKey(nameof(IdUser))]
         public virtual User? Users { get; set; }
 
+        [Column("id_user_report")]
+        public virtual int? IdUserReport { get; set; }
+
+        [ForeignKey(nameof(IdUserReport))]
+        public virtual User? UsersReport { get; set; }
+
 
         [Column("is_responsed")]
         public bool IsResponsed { get; set; } = false;
 
-
         [Column("id_house")]
-        [Required]
-        public virtual int IdHouse { get; set; }
+        public virtual int? IdHouse { get; set; }
 
         [ForeignKey(name: nameof(IdHouse))]
         public virtual House? Houses { get; set; }

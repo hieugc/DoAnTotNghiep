@@ -22,6 +22,20 @@ namespace DoAnTotNghiep.Hubs
         {
             await this._context.Clients.Group(group).SendAsync(target, model);
         }
+        public async Task SendPaymentError(string group, string target, string message)
+        {
+            await this._context.Clients.Group(group).SendAsync(target, message);
+        }
+
+        public async Task SendPaymentAll(string target, string message)
+        {
+            await this._context.Clients.All.SendAsync(target, message);
+        }
+
+        public async Task SendNotificationInThread(string group, string target, NotificationViewModel model)
+        {
+            await this._context.Clients.Group(group).SendAsync(target, model);
+        }
 
 
         public async Task ConnectToGroup(string target, string IdRoom, string userAccess)

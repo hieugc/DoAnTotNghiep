@@ -11,5 +11,14 @@
         public static string Notification() => "Notification";
         public static string CircleRequest() => "CircleRequest";
         public static string AdminReport() => "AdminReport";
+        public static string Payment() => "Payment";
+    }
+
+
+    public static class TargetFunction
+    {
+        public const string ExecuteCheckIn = "ExecuteCheckIn";
+        public const string ExecuteCheckOut = "ExecuteCheckOut";
+        public const string ExecuteCheckTransaction = "ExecuteCheckTransaction";
     }
 }

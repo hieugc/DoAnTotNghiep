@@ -12,7 +12,7 @@ namespace DoAnTotNghiep.Entity
             this.UpdatedDate = DateTime.Now;
             this.CreatedDate = DateTime.Now;
             this.Content = model.Content;
-            this.Rating = model.RatingHouse;
+            this.Rating = model.RatingHouse == null? 0: model.RatingHouse.Value;
             this.RatingUser = model.RatingUser;
             this.IdHouse = IdHouse;
             this.IdRequest = model.IdRequest;
@@ -24,7 +24,7 @@ namespace DoAnTotNghiep.Entity
         {
             this.UpdatedDate = DateTime.Now;
             this.Content = model.Content;
-            this.Rating = model.RatingHouse;
+            this.Rating = model.RatingHouse == null ? 0 : model.RatingHouse.Value;
             this.RatingUser = model.RatingUser;
         }
 

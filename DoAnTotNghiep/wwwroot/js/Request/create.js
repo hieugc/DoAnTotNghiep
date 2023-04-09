@@ -59,7 +59,12 @@ function houseItem(index, model) {
                         </div>`;
 }
 function confirmSelection(index) {
-    $(".frame-empty")[index].classList.add("d-none");
+    if ($(".frame-empty").length > 1) {
+        $(".frame-empty")[index].classList.add("d-none");
+    }
+    else {
+        $(".frame-empty")[0].classList.add("d-none");
+    }
     if (index == 0) {
         model_1 = getModel(".list-house-1", listModel_1);
         $(".house-result")[index].innerHTML = houseItem(index, model_1);
@@ -131,6 +136,7 @@ function createRequest() {
         let option = $("input[name='swap-option']:checked").val();
         if (option == "swap-option-1") {
             //tiền
+            //check valid
             let data = {
                 idHouse: model_1.id,
                 idSwapHouse: null,
@@ -142,6 +148,7 @@ function createRequest() {
             create(data);
         }
         else if (option == "swap-option-2" && model_2 != null) {
+            //check valid
             let data = {
                 idHouse: model_1.id,
                 idSwapHouse: model_2.id,
@@ -167,11 +174,46 @@ function create(data) {
         },
         error: function (error) {
             console.log(error);
+            if (error.status == 400) {
+                $("#messageRequestModal .modal-body > .mb-3").last().append(`<div>
+                            <label class="">Lý do không thể tạo</label>
+                            <div class="contain-issue bg-danger">
+                                ${error.message}
+                            </div>
+                        </div>`);
+            }
         }
     });
 }
-
-
 function enDate(date) {
     return date.dateInstance.toISOString().split("T")[0];
 }
+function createRangeDate(model, minDate, maxDate) {
+    let option = {
+        element: document.getElementById('requestdaterange'),
+        singleMode: false,
+        tooltipText: {
+            one: 'ngày',
+            other: 'ngày'
+        },
+        setup: (picker) => {
+            picker.on("selected", (date1, date2) => {
+                getDateSwap();
+            })
+        },
+        minDate: new Date(minDate),
+        maxDate: new Date(maxDate),
+        tooltipNumber: (totalDays) => {
+            return totalDays;
+        }
+    };
+    if (!(model == undefined || model == null)) {
+        let arr = [];
+        for (let ele in model.inValidRangeDates) {
+            arr[arr.length] = [model.inValidRangeDates[ele].startDate, model.inValidRangeDates[ele].endDate];
+        }
+        option["lockDays"] = arr;
+    }
+    return new Litepicker(option);
+}
+
