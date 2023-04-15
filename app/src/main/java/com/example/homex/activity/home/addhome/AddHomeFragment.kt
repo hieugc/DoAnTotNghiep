@@ -74,6 +74,7 @@ class AddHomeFragment : BaseFragment<FragmentAddHomeBinding>() {
             viewModel.price.postValue(it.price)
             viewModel.bedroom.postValue(it.bedRoom)
             viewModel.bathroom.postValue(it.bathRoom)
+            viewModel.bed.postValue(it.bed)
             viewModel.people.postValue(it.people)
             viewModel.utilities.postValue(it.utilities)
             viewModel.rules.postValue(it.rules)
@@ -185,6 +186,16 @@ class AddHomeFragment : BaseFragment<FragmentAddHomeBinding>() {
         viewModel.idWard.observe(viewLifecycleOwner){
             Log.e("idWard", "$it")
         }
+        viewModel.showMap.observe(viewLifecycleOwner){
+            Log.e("showMap", "$it")
+            if (it == true){
+                binding.nextSlideBtn.gone()
+                binding.prevSlideBtn.gone()
+            }else{
+                binding.nextSlideBtn.visible()
+                binding.prevSlideBtn.visible()
+            }
+        }
 
         homeViewModel.messageLiveData.observe(viewLifecycleOwner){
             if(it != null){
@@ -265,7 +276,12 @@ class AddHomeFragment : BaseFragment<FragmentAddHomeBinding>() {
                     return false
             }
             1->{
-
+                if (viewModel.location.value == ""
+                    || viewModel.lat.value == 0.0
+                    || viewModel.lng.value == 0.0
+                    || viewModel.idCity.value == 0
+                )
+                    return false
             }
             2->{
                 if (viewModel.name.value == ""
@@ -279,6 +295,7 @@ class AddHomeFragment : BaseFragment<FragmentAddHomeBinding>() {
                 if (viewModel.bedroom.value == 0
                     || viewModel.bathroom.value == 0
                     || viewModel.people.value == 0
+                    || viewModel.bed.value == 0
                 )
                     return false
             }
@@ -293,15 +310,21 @@ class AddHomeFragment : BaseFragment<FragmentAddHomeBinding>() {
                     || viewModel.square.value == 0
                     || viewModel.price.value == 0
                     || viewModel.description.value == ""
-                    || viewModel.location.value == ""
                 )
                     return false
                 if (viewModel.bedroom.value == 0
                     || viewModel.bathroom.value == 0
                     || viewModel.people.value == 0
+                    || viewModel.bed.value == 0
                 )
                     return false
-                if (viewModel.files.value?.size == 0)
+                if (viewModel.files.value?.size == 0 && viewModel.images.value?.size == 0)
+                    return false
+                if (viewModel.location.value == ""
+                    || viewModel.lat.value == 0.0
+                    || viewModel.lng.value == 0.0
+                    || viewModel.idCity.value == 0
+                )
                     return false
             }
         }
@@ -318,6 +341,7 @@ class AddHomeFragment : BaseFragment<FragmentAddHomeBinding>() {
         builder.addFormDataPart("people", viewModel.people.value.toString())
         builder.addFormDataPart("bedroom", viewModel.bedroom.value.toString())
         builder.addFormDataPart("bathroom", viewModel.bathroom.value.toString())
+        builder.addFormDataPart("bed", viewModel.bed.value.toString())
         builder.addFormDataPart("square", viewModel.square.value.toString())
         builder.addFormDataPart("location", viewModel.location.value.toString())
         builder.addFormDataPart("idCity", viewModel.idCity.value.toString())

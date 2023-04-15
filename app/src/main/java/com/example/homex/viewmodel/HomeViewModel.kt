@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.homex.core.model.Home
 import com.homex.core.model.Location
 import com.homex.core.model.general.ResultResponse
+import com.homex.core.model.response.SearchHomeResponse
 import com.homex.core.repository.HomeRepository
 import com.homex.core.util.AppEvent
 import kotlinx.coroutines.launch
@@ -14,6 +15,7 @@ import kotlinx.coroutines.launch
 class HomeViewModel(private val repository: HomeRepository): ViewModel() {
     val popularHome = MediatorLiveData<ArrayList<Home>?>()
     val popularLocation = MediatorLiveData<ArrayList<Location>?>()
+    val searchList = MediatorLiveData<SearchHomeResponse?>()
 
     fun getPopularHome(){
         viewModelScope.launch {
@@ -43,6 +45,39 @@ class HomeViewModel(private val repository: HomeRepository): ViewModel() {
                     is ResultResponse.Success -> {
                         Log.e("SuccessGetHome", "${it.data}")
                         popularLocation.value = it.data
+                    }
+                    is ResultResponse.Error ->{
+                        AppEvent.showPopUpError(it.message)
+                    }
+                    else -> {
+                        Log.e("Loading", "hello")
+                    }
+                }
+            }
+        }
+    }
+
+    fun searchHome(
+        idCity: Int,
+        people: Int? = null,
+        idDistrict: Int? = null,
+        startDate: String? = null,
+        endDate: String? = null,
+        startPrice: Int? = null,
+        endPrice: Int? = null,
+        utilities: ArrayList<Int>? = null,
+        sortBy: Int,
+        page: Int,
+        limit: Int
+    ){
+        AppEvent.showPopUp()
+        viewModelScope.launch {
+            searchList.addSource(repository.searchHome(idCity, people, idDistrict, startDate, endDate, startPrice, endPrice, utilities, sortBy, page, limit)){
+                Log.e("response", it.toString())
+                when (it) {
+                    is ResultResponse.Success -> {
+                        Log.e("SuccessSearchHome", "${it.data}")
+                        searchList.value = it.data
                     }
                     is ResultResponse.Error ->{
                         AppEvent.showPopUpError(it.message)

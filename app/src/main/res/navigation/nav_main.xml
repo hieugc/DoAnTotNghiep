@@ -181,6 +181,11 @@
                 app:argType="com.homex.core.model.CalendarDate"
                 app:nullable="true"
                 android:defaultValue="@null" />
+            <argument
+                android:name="inValidRangeDates"
+                app:argType="com.homex.core.model.DateRange[]"
+                app:nullable="true"
+                android:defaultValue="@null" />
         </action>
         <action
             android:id="@+id/action_homeDetailFragment_to_createRequestFragment"
@@ -281,6 +286,11 @@
             <argument
                 android:name="endDate"
                 app:argType="com.homex.core.model.CalendarDate"
+                app:nullable="true"
+                android:defaultValue="@null" />
+            <argument
+                android:name="inValidRangeDates"
+                app:argType="com.homex.core.model.DateRange[]"
                 app:nullable="true"
                 android:defaultValue="@null" />
         </action>
@@ -499,6 +509,11 @@
         <argument android:name="numberOfPeople"
             app:argType="integer"
             android:defaultValue="0" />
+        <argument
+            android:name="inValidRangeDates"
+            app:argType="com.homex.core.model.DateRange[]"
+            app:nullable="true"
+            android:defaultValue="@null" />
     </dialog>
 
 </navigation>

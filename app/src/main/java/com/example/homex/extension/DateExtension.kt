@@ -78,3 +78,11 @@ fun String.formatIso8601ToFormat(format: String = "dd/MM/yyyy"): String{
     result1?.let { return df2.format(it) }
     return ""
 }
+
+fun String.convertIso8601ToLong(): Long?{
+    val df1: DateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+//    df1.timeZone = TimeZone.getTimeZone("UTC")
+    return this.let {
+        df1.parse(it)?.time
+    }
+}

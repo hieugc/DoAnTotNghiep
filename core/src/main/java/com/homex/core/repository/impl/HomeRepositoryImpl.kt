@@ -6,7 +6,9 @@ import com.homex.core.data.NetworkBoundResource
 import com.homex.core.model.Home
 import com.homex.core.model.Location
 import com.homex.core.model.general.ListResponse
+import com.homex.core.model.general.ObjectResponse
 import com.homex.core.model.general.ResultResponse
+import com.homex.core.model.response.SearchHomeResponse
 import com.homex.core.repository.HomeRepository
 import retrofit2.Response
 
@@ -24,6 +26,26 @@ class HomeRepositoryImpl(val api: ApiService): HomeRepository {
             override fun processResponse(response: ListResponse<Home>): ArrayList<Home>? = response.data
 
             override suspend fun createCall(): Response<ListResponse<Home>> = api.getPopularHome()
+        }.build().asLiveData()
+    }
+
+    override suspend fun searchHome(
+        idCity: Int,
+        people: Int?,
+        idDistrict: Int?,
+        startDate: String?,
+        endDate: String?,
+        startPrice: Int?,
+        endPrice: Int?,
+        utilities: ArrayList<Int>?,
+        sortBy: Int,
+        page: Int,
+        limit: Int
+    ): LiveData<ResultResponse<SearchHomeResponse>> {
+        return object : NetworkBoundResource<ObjectResponse<SearchHomeResponse>, SearchHomeResponse>(){
+            override fun processResponse(response: ObjectResponse<SearchHomeResponse>): SearchHomeResponse? = response.data
+
+            override suspend fun createCall(): Response<ObjectResponse<SearchHomeResponse>> = api.searchHome(idCity, people, idDistrict, startDate, endDate, startPrice, endPrice, utilities, sortBy, page, limit)
         }.build().asLiveData()
     }
 }

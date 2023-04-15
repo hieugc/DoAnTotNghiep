@@ -130,13 +130,16 @@ class BottomSheetChangeDateFragment : BottomSheetDialogFragment() {
         arrayList.add(calendar.time)
         Log.e("arraylist", "$arrayList")
 
+        val invalid = args.inValidRangeDates?.toMutableList()?: mutableListOf()
+
         adapter = CalendarAdapter(
             arrayList,
-            selectedDates
+            selectedDates,
+            invalid
         ){
             date->
             Log.e("selectedDatesBefore", "$selectedDates")
-            if(selectedDates.first == null ||  date.time!! < selectedDates.first?.time ){
+            if(selectedDates.first == null ||  date.time!! <= selectedDates.first?.time){
                 selectedDates = Pair(date, null)
                 binding.applyButton.disable()
                 val first = selectedDates.first?.time?.time?.longToDate()
@@ -144,6 +147,37 @@ class BottomSheetChangeDateFragment : BottomSheetDialogFragment() {
                 binding.toDateTV.text = ""
                 binding.numberOfDayTV.text = ""
             }else if(selectedDates.second == null){
+                var valid = false
+                for (day in invalid){
+                    val s = date.time?.time
+                    val f = selectedDates.first?.time?.time
+                    if (s != null && f != null){
+                        val start = day.startDate?.convertIso8601ToLong()
+                        val end = day.endDate?.convertIso8601ToLong()
+                        if (start != null && end != null && s > start && s < end){
+                            valid = true
+                        }
+                        if (start != null && end != null && f > start && f < end){
+                            valid = true
+                        }
+                        if (start != null && end != null && f <  start && s > end){
+                            valid = true
+                        }
+                        if (valid){
+                            selectedDates = Pair(date, null)
+                            binding.applyButton.disable()
+                            val first = selectedDates.first?.time?.time?.longToDate()
+                            binding.fromDateTV.text = first
+                            binding.toDateTV.text = ""
+                            binding.numberOfDayTV.text = ""
+                            adapter.selectedDates = selectedDates
+                            adapter.notifyDataSetChanged()
+                            Log.e("selectedDatesAfter", "$selectedDates")
+                            Log.e("date", "$date")
+                            return@CalendarAdapter
+                        }
+                    }
+                }
                 val f = selectedDates.first
                 selectedDates = Pair(f, date)
                 binding.applyButton.enable()

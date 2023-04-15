@@ -10,7 +10,7 @@ import com.example.homex.extension.RequestStatus
 
 class TransHistoryViewPager(private val parentFragment: Fragment) :
     FragmentStateAdapter(parentFragment) {
-    override fun getItemCount(): Int = 5
+    override fun getItemCount(): Int = 6
 
     override fun createFragment(position: Int): Fragment {
         val fragment = TransHistoryPageFragment()
@@ -19,8 +19,9 @@ class TransHistoryViewPager(private val parentFragment: Fragment) :
                 0 -> putInt(REQUEST_STATUS, RequestStatus.WAITING.ordinal)
                 1 -> putInt(REQUEST_STATUS, RequestStatus.ACCEPTED.ordinal)
                 2 -> putInt(REQUEST_STATUS, RequestStatus.REJECTED.ordinal)
-                3 -> putInt(REQUEST_STATUS, RequestStatus.REVIEWING.ordinal)
-                4 -> putInt(REQUEST_STATUS, RequestStatus.DONE.ordinal)
+                3 -> putInt(REQUEST_STATUS, RequestStatus.CHECK_IN.ordinal)
+                4 -> putInt(REQUEST_STATUS, RequestStatus.REVIEWING.ordinal)
+                5 -> putInt(REQUEST_STATUS, RequestStatus.DONE.ordinal)
             }
         }
 

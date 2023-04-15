@@ -35,8 +35,9 @@ class RequestFragment : BaseFragment<FragmentRequestBinding>() {
                 0 -> tab.text = getString(R.string.status_waiting)
                 1 -> tab.text = getString(R.string.status_accepted)
                 2 -> tab.text = getString(R.string.status_rejected)
-                3 -> tab.text = getString(R.string.status_reviewing)
-                4 -> tab.text = getString(R.string.status_done)
+                3 -> tab.text = getString(R.string.status_checkin)
+                4 -> tab.text = getString(R.string.status_reviewing)
+                5 -> tab.text = getString(R.string.status_done)
             }
 
         }.attach()

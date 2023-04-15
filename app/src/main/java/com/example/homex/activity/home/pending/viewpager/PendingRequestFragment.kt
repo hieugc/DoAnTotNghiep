@@ -40,7 +40,14 @@ class PendingRequestFragment : BaseFragmentViewPager<FragmentPendingRequestBindi
                 findNavController().navigate(action)
             },
             btnClick = {
-
+                val action = it.request?.id?.let { it1 ->
+                    RequestFragmentDirections.actionRequestFragmentToPendingRequestDetailFragment(
+                        it1
+                    )
+                }
+                if (action != null) {
+                    findNavController().navigate(action)
+                }
             }
         )
         binding.requestRecView.adapter = adapter

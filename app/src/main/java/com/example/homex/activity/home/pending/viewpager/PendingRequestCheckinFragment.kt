@@ -16,11 +16,11 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.homex.core.model.response.RequestResponse
 import com.homex.core.param.request.UpdateStatusParam
 
-class PendingRequestAcceptFragment: BaseFragmentViewPager<FragmentPendingRequestBinding>() {
+class PendingRequestCheckinFragment: BaseFragmentViewPager<FragmentPendingRequestBinding>() {
     override val layoutId: Int
         get() = R.layout.fragment_pending_request
     override val requestType: Int
-        get() = RequestStatus.ACCEPTED.ordinal
+        get() = RequestStatus.CHECK_IN.ordinal
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -42,8 +42,8 @@ class PendingRequestAcceptFragment: BaseFragmentViewPager<FragmentPendingRequest
             },
             btnClick = {
                 MaterialAlertDialogBuilder(requireContext())
-                    .setTitle(getString(R.string.check_in))
-                    .setMessage(getString(R.string.check_in_request_message))
+                    .setTitle(getString(R.string.check_out))
+                    .setMessage(getString(R.string.check_out_request_message))
                     .setNegativeButton(resources.getString(R.string.cancel)) { _, _ ->
                         // Respond to negative button press
                     }
@@ -54,7 +54,7 @@ class PendingRequestAcceptFragment: BaseFragmentViewPager<FragmentPendingRequest
                         if (id != null){
                             val param = UpdateStatusParam(
                                 id = id,
-                                status = RequestStatus.CHECK_IN.ordinal
+                                status = RequestStatus.REVIEWING.ordinal
                             )
                             viewModel.updateStatus(param)
                         }

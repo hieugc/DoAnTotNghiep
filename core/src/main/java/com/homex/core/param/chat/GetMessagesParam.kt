@@ -10,6 +10,7 @@ class GetMessagesParam(
 
 @Parcelize
 class Pagination(
-    val page: Int,
-    val limit: Int
+    val page: Int? = null,
+    val limit: Int? = null,
+    val total: Int? = null
 ): Parcelable

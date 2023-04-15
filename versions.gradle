@@ -1,6 +1,6 @@
 ext.deps = [:]
 def versions = [:]
-versions.lifecycle = "2.5.0"
+versions.lifecycle = "2.5.1"
 versions.ktx = "1.5.0"
 versions.lifecycle_extensions = "2.2.0"
 versions.retrofit = '2.9.0'
