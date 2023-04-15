@@ -7,9 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.gson.JsonObject
 import com.homex.core.model.response.RequestResponse
 import com.homex.core.model.general.ResultResponse
-import com.homex.core.param.request.CreateRequestParam
-import com.homex.core.param.request.EditRequestParam
-import com.homex.core.param.request.UpdateStatusParam
+import com.homex.core.param.request.*
 import com.homex.core.repository.RequestRepository
 import com.homex.core.util.AppEvent
 import kotlinx.coroutines.launch
@@ -181,5 +179,44 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
         }
     }
 
+    fun createRating(param: CreateRatingParam){
+        viewModelScope.launch {
+            messageLiveData.addSource(repository.createRating(param)){
+                Log.e("response", it.toString())
+                when (it) {
+                    is ResultResponse.Success -> {
+                        Log.e("SuccessUpdateStatus", "${it.data}")
+                        messageLiveData.value = it.data
+                    }
+                    is ResultResponse.Error ->{
+                        AppEvent.showPopUpError(it.message)
+                    }
+                    else -> {
+                        Log.e("Loading", "hello")
+                    }
+                }
+            }
+        }
+    }
+
+    fun updateRating(param: UpdateRatingParam){
+        viewModelScope.launch {
+            messageLiveData.addSource(repository.updateRating(param)){
+                Log.e("response", it.toString())
+                when (it) {
+                    is ResultResponse.Success -> {
+                        Log.e("SuccessUpdateStatus", "${it.data}")
+                        messageLiveData.value = it.data
+                    }
+                    is ResultResponse.Error ->{
+                        AppEvent.showPopUpError(it.message)
+                    }
+                    else -> {
+                        Log.e("Loading", "hello")
+                    }
+                }
+            }
+        }
+    }
 
 }

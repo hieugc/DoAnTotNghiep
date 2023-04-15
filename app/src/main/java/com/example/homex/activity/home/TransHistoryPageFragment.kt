@@ -1,6 +1,7 @@
 package com.example.homex.activity.home
 
 import android.os.Bundle
+import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -45,6 +46,14 @@ class TransHistoryPageFragment : BaseFragment<FragmentTransHistoryPageBinding>()
     }
 
     override fun setEvent() {
+
+    }
+
+    override fun setViewModel() {
+        viewModel.messageLiveData.observe(viewLifecycleOwner) {
+            viewModel.getRequestHistory()
+        }
+
         viewModel.requestResponseListLiveDate.observe(viewLifecycleOwner) {
             if (it != null) {
                 val listRequest = ArrayList<RequestResponse>()
@@ -58,8 +67,12 @@ class TransHistoryPageFragment : BaseFragment<FragmentTransHistoryPageBinding>()
         }
     }
 
-    override fun onBtnRateClick() {
-        findNavController().navigate(R.id.action_transHistoryFragment_to_rateBottomSheetFragment)
+    override fun onBtnRateClick(request: RequestResponse) {
+        val bundle = bundleOf("request" to request)
+        findNavController().navigate(
+            R.id.action_transHistoryFragment_to_rateBottomSheetFragment,
+            bundle
+        )
     }
 
     override fun OnItemTransClicked() {

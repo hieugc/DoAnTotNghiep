@@ -9,5 +9,8 @@ data class Notification(
     val title: String? = null,
     val content: String? = null,
     val type: String? = null,
-    val isRead: Boolean? = null
-): Parcelable
+    val isSeen: Boolean? = null,
+    val imageUrl: String? = null,
+    val idType: Int? = null,
+    val createdDate: String
+) : Parcelable

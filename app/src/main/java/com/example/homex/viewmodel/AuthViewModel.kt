@@ -13,6 +13,7 @@ import com.homex.core.param.auth.*
 import com.homex.core.repository.AuthRepository
 import com.homex.core.util.AppEvent
 import kotlinx.coroutines.launch
+import okhttp3.RequestBody
 
 class AuthViewModel(private val repository: AuthRepository): ViewModel() {
     val loginLiveData = MediatorLiveData<UserResponse?>()
@@ -22,6 +23,7 @@ class AuthViewModel(private val repository: AuthRepository): ViewModel() {
     val userInfoLiveData = MediatorLiveData<UserResponse?>()
     val forgotLiveData = MediatorLiveData<Token?>()
     val passwordLiveData = MediatorLiveData<JsonObject?>()
+    val updateProfileLiveData = MediatorLiveData<JsonObject?>()
 
     fun login(param: LoginParam){
         AppEvent.showPopUp()
@@ -173,6 +175,27 @@ class AuthViewModel(private val repository: AuthRepository): ViewModel() {
                     is ResultResponse.Success -> {
                         Log.e("SuccessPassword", "${it.data}")
                         passwordLiveData.value = it.data
+                    }
+                    is ResultResponse.Error ->{
+                        AppEvent.showPopUpError(it.message)
+                    }
+                    else -> {
+                        Log.e("Loading", "hello")
+                    }
+                }
+            }
+        }
+    }
+
+    fun updateProfile(body: RequestBody){
+        AppEvent.showPopUp()
+        viewModelScope.launch {
+            updateProfileLiveData.addSource(repository.updateProfile(body)){
+                Log.e("response", it.toString())
+                when (it) {
+                    is ResultResponse.Success -> {
+                        Log.e("SuccessEditProfile", "${it.data}")
+                        updateProfileLiveData.value = it.data
                     }
                     is ResultResponse.Error ->{
                         AppEvent.showPopUpError(it.message)

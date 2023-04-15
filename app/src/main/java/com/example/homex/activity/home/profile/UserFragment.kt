@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
 import com.example.homex.R
 import com.example.homex.activity.auth.AuthActivity
 import com.example.homex.activity.home.HomeActivity
@@ -40,6 +41,11 @@ class UserFragment : BaseFragment<FragmentUserBinding>() {
         }
         else if(prefUtil.profile != null){
             binding.user = prefUtil.profile
+            Glide.with(requireContext())
+                .load(prefUtil.profile!!.urlImage)
+                .placeholder(R.drawable.ic_baseline_image_24)
+                .error(R.mipmap.avatar)
+                .into(binding.ivAvatar)
         }
     }
 

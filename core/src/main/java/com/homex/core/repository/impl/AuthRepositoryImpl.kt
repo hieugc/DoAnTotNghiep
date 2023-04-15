@@ -11,6 +11,7 @@ import com.homex.core.model.general.ResultResponse
 import com.homex.core.model.response.UserResponse
 import com.homex.core.param.auth.*
 import com.homex.core.repository.AuthRepository
+import okhttp3.RequestBody
 import retrofit2.Response
 
 class AuthRepositoryImpl(private val api: ApiService): AuthRepository {
@@ -67,6 +68,13 @@ class AuthRepositoryImpl(private val api: ApiService): AuthRepository {
         return object : NetworkBoundResource<ObjectResponse<JsonObject>, JsonObject>(){
             override fun processResponse(response: ObjectResponse<JsonObject>): JsonObject? = response.data
             override suspend fun createCall(): Response<ObjectResponse<JsonObject>> = api.updateNewPassword(param)
+        }.build().asLiveData()
+    }
+
+    override suspend fun updateProfile(body: RequestBody): LiveData<ResultResponse<JsonObject>> {
+        return object : NetworkBoundResource<ObjectResponse<JsonObject>, JsonObject>(){
+            override fun processResponse(response: ObjectResponse<JsonObject>): JsonObject? = response.data
+            override suspend fun createCall(): Response<ObjectResponse<JsonObject>> = api.updateProfile(body)
         }.build().asLiveData()
     }
 }

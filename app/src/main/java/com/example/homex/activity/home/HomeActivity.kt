@@ -1,11 +1,15 @@
 package com.example.homex.activity.home
 
 import android.content.*
+import android.graphics.Color
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
+import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
+import android.widget.FrameLayout
+import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.annotation.MenuRes
 import androidx.appcompat.widget.PopupMenu
@@ -23,6 +27,7 @@ import com.bumptech.glide.Glide
 import com.example.homex.R
 import com.example.homex.activity.home.addhome.FileViewModel
 import com.example.homex.app.CONNECT_CHAT
+import com.example.homex.app.NOTIFICATIONS
 import com.example.homex.app.RECEIVE_MESSAGE
 import com.example.homex.base.BaseActivity
 import com.example.homex.databinding.ActivityHomeBinding
@@ -30,7 +35,10 @@ import com.example.homex.extension.gone
 import com.example.homex.extension.visible
 import com.example.homex.service.ChatService
 import com.example.homex.viewmodel.ChatViewModel
+import com.example.homex.viewmodel.NotificationViewModel
+import com.google.android.material.snackbar.Snackbar
 import com.homex.core.model.MessageRoom
+import com.homex.core.model.Notification
 import com.homex.core.model.UserMessage
 import com.homex.core.util.PrefUtil
 import com.microsoft.signalr.HubConnectionState
@@ -40,7 +48,6 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
-import java.util.*
 
 
 class HomeActivity : BaseActivity() {
@@ -63,6 +70,7 @@ class HomeActivity : BaseActivity() {
     private var mService: ChatService? = null
     private var mBound = false
     private val chatViewModel: ChatViewModel by viewModel()
+    private val notificationViewModel: NotificationViewModel by viewModel()
 
     companion object{
         fun open(context: Context) = Intent(context, HomeActivity::class.java)
@@ -309,6 +317,36 @@ class HomeActivity : BaseActivity() {
                     }
                 }
             }
+            val notification = p1?.getParcelableExtra<Notification>(NOTIFICATIONS)
+            handleNotification(notification)
+        }
+    }
+
+    private fun handleNotification(notification: Notification?) {
+        if(notification != null){
+            notificationViewModel.notificationLiveDate.postValue(notification)
+
+            val snackbar: Snackbar = Snackbar.make(findViewById(R.id.rootView), "", Snackbar.LENGTH_LONG)
+
+            val customSnackView: View = layoutInflater.inflate(R.layout.layout_snackbar_notification, null)
+            val tvTitle = customSnackView.findViewById<TextView>(R.id.tvTitle)
+            val tvContent = customSnackView.findViewById<TextView>(R.id.tvContent)
+            tvTitle.text = notification.title
+            tvContent.text = notification.content
+
+            snackbar.view.layoutParams = (snackbar.view.layoutParams as FrameLayout.LayoutParams).apply {
+                gravity = Gravity.TOP
+            }
+            snackbar.view.setBackgroundColor(Color.TRANSPARENT)
+
+            val snackbarLayout: Snackbar.SnackbarLayout =
+                snackbar.getView() as Snackbar.SnackbarLayout
+
+            snackbarLayout.setPadding(0, 0, 0, 0)
+
+            snackbarLayout.addView(customSnackView, 0)
+
+            snackbar.show()
         }
     }
 }

@@ -49,6 +49,9 @@
         <service android:name=".service.ChatService"
             android:exported="false"/>
 
+        <service android:name=".service.NotificationService"
+            android:exported="false"/>
+
         <activity
             android:name=".activity.auth.AuthActivity"
             android:windowSoftInputMode="stateHidden"

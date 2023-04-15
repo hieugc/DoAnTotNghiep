@@ -2,6 +2,12 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <data>
+        <variable
+            name="user"
+            type="com.homex.core.model.Profile" />
+    </data>
+
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -49,7 +55,7 @@
                         style="@style/TextItemProfile"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="hieu.phamgc@gmail.com"
+                        android:text="@{user.email}"
                         android:textAlignment="viewEnd"
                         android:textColor="@color/gray6" />
                 </LinearLayout>
@@ -78,7 +84,7 @@
                         style="@style/TextItemProfile"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Phạm Minh"
+                        android:text="@{user.firstName}"
                         android:textAlignment="viewEnd"
                         android:textColor="@color/gray6" />
                 </LinearLayout>
@@ -107,7 +113,7 @@
                         style="@style/TextItemProfile"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Hiếu"
+                        android:text="@{user.lastName}"
                         android:textAlignment="viewEnd"
                         android:textColor="@color/gray6" />
                 </LinearLayout>
@@ -136,7 +142,7 @@
                         style="@style/TextItemProfile"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="(+84) 0973409127"
+                        android:text="@{user.phoneNumber}"
                         android:textAlignment="viewEnd"
                         android:textColor="@color/gray6" />
                 </LinearLayout>

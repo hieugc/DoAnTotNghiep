@@ -4,9 +4,7 @@ import androidx.lifecycle.LiveData
 import com.google.gson.JsonObject
 import com.homex.core.model.response.RequestResponse
 import com.homex.core.model.general.ResultResponse
-import com.homex.core.param.request.CreateRequestParam
-import com.homex.core.param.request.EditRequestParam
-import com.homex.core.param.request.UpdateStatusParam
+import com.homex.core.param.request.*
 import okhttp3.RequestBody
 
 interface RequestRepository {
@@ -16,7 +14,7 @@ interface RequestRepository {
 
     suspend fun updateRequest(param: EditRequestParam): LiveData<ResultResponse<JsonObject>>
 
-    suspend fun getRequestById(id: Int): LiveData<ResultResponse<RequestResponse>>
+        suspend fun getRequestById(id: Int): LiveData<ResultResponse<RequestResponse>>
 
     suspend fun getRequestByHouse(id: Int): LiveData<ResultResponse<ArrayList<RequestResponse>>>
 
@@ -25,4 +23,8 @@ interface RequestRepository {
     suspend fun getPendingRequest(): LiveData<ResultResponse<ArrayList<RequestResponse>>>
 
     suspend fun updateStatus(param: UpdateStatusParam): LiveData<ResultResponse<JsonObject>>
+
+    suspend fun createRating(param: CreateRatingParam): LiveData<ResultResponse<JsonObject>>
+
+    suspend fun updateRating(param: UpdateRatingParam): LiveData<ResultResponse<JsonObject>>
 }

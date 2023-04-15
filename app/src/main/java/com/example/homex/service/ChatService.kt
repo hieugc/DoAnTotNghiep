@@ -6,11 +6,10 @@ import android.os.Binder
 import android.os.IBinder
 import android.util.Log
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.example.homex.app.CHAT_HUB_URL
-import com.example.homex.app.CONNECT_CHAT
-import com.example.homex.app.RECEIVE_MESSAGE
+import com.example.homex.app.*
 import com.homex.core.CoreApplication
 import com.homex.core.model.MessageRoom
+import com.homex.core.model.Notification
 import com.microsoft.signalr.HubConnection
 import com.microsoft.signalr.HubConnectionBuilder
 import io.reactivex.rxjava3.core.CompletableObserver
@@ -90,6 +89,14 @@ class ChatService: Service() {
             localBroadcastManager.sendBroadcast(intent)
         }
     }
+
+    private fun pushNotificationActivity(notification: Notification){
+        scope.launch(Dispatchers.IO){
+            val intent = Intent(TAG)
+            intent.putExtra(NOTIFICATIONS, notification)
+            localBroadcastManager.sendBroadcast(intent)
+        }
+    }
     private fun connectToChat(){
         scope.launch(Dispatchers.IO){
             val intent = Intent(TAG)
@@ -129,6 +136,17 @@ class ChatService: Service() {
                 sendMessageToActivity(message)
             },
             MessageRoom::class.java
+        )
+
+
+        hubConnection.on(
+            NOTIFICATIONS,
+            {
+                    notification: Notification ->
+                Log.d("New notification:", "${notification.title}")
+                pushNotificationActivity(notification)
+            },
+            Notification::class.java
         )
 
         hubConnection.onClosed {

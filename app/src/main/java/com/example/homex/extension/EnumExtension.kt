@@ -18,9 +18,10 @@ enum class Rules{
 }
 
 enum class RequestStatus{
+    REJECTED,
     WAITING,
     ACCEPTED,
-    REJECTED,
+    CHECKIN,
     REVIEWING,
     DONE
 }

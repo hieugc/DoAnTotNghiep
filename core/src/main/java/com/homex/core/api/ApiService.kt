@@ -4,18 +4,14 @@ import com.google.gson.JsonObject
 import com.homex.core.model.*
 import com.homex.core.model.general.ListResponse
 import com.homex.core.model.general.ObjectResponse
-import com.homex.core.model.response.MessageResponse
-import com.homex.core.model.response.MyHomeResponse
-import com.homex.core.model.response.RequestResponse
-import com.homex.core.model.response.UserResponse
+import com.homex.core.model.response.*
 import com.homex.core.param.auth.*
 import com.homex.core.param.chat.ConnectToRoomParam
 import com.homex.core.param.chat.ContactUserParam
 import com.homex.core.param.chat.GetMessagesParam
 import com.homex.core.param.chat.SendMessageParam
-import com.homex.core.param.request.CreateRequestParam
-import com.homex.core.param.request.EditRequestParam
-import com.homex.core.param.request.UpdateStatusParam
+import com.homex.core.param.notification.UpdateSeenNotificationParam
+import com.homex.core.param.request.*
 import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.*
@@ -162,4 +158,19 @@ interface ApiService {
 
     @POST("api/Request/UpdateStatus")
     suspend fun updateStatus(param: UpdateStatusParam): Response<ObjectResponse<JsonObject>>
+
+    @POST("api/Rating/Create")
+    suspend fun createRating(@Body param: CreateRatingParam): Response<ObjectResponse<JsonObject>>
+
+    @POST("api/Rating/Update")
+    suspend fun updateRating(@Body param: UpdateRatingParam): Response<ObjectResponse<JsonObject>>
+
+    @POST("api/User/UpdateInfo")
+    suspend fun updateProfile(@Body body: RequestBody) : Response<ObjectResponse<JsonObject>>
+
+    @GET("api/Notification/Get")
+    suspend fun getNotifications(@Query("page") page: Int, @Query("limit") limit: Int) : Response<ObjectResponse<GetNotificationResponse>>
+
+    @POST("api/Notification/Seen")
+    suspend fun updateSeenNotification(@Body param: UpdateSeenNotificationParam) : Response<ObjectResponse<JsonObject>>
 }

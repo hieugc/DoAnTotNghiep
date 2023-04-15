@@ -262,6 +262,20 @@ fun AppCompatTextView.getFormatDate(formatDate: String?){
     text = ""
 }
 
+@BindingAdapter(value = ["formatDate"])
+fun AppCompatTextView.getFormatDateTime(formatDate: String?){
+    val df1: DateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+    if (formatDate != null) {
+        val result1 = df1.parse(formatDate)
+        val df2: DateFormat = SimpleDateFormat("dd/MM - HH:mm", Locale.getDefault())
+        result1?.let {
+            text = df2.format(it)
+            return
+        }
+    }
+    text = ""
+}
+
 @BindingAdapter(value = ["price", "startDate", "endDate"])
 fun AppCompatTextView.getPrice(price: Int?, startDate: String?, endDate: String?){
     if (price != null && startDate != null && endDate != null){

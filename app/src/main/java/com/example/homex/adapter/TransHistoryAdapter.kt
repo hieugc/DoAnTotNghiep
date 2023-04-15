@@ -36,14 +36,15 @@ class TransHistoryAdapter(
     }
 
     override fun onBindViewHolder(holder: TransHistoryViewHolder, position: Int) {
-        val item = requestList?.get(position)
+        val item = requestList[position]
         holder.binding.tvUserName.text =
             (item?.house?.user?.lastName + " " + item?.house?.user?.firstName)
         holder.binding.tvTitle.text = item?.house?.name
-        when (item?.request?.status) {
+        when (item.request?.status) {
             RequestStatus.WAITING.ordinal -> {
                 holder.binding.tvStatus.text = mContext.getString(R.string.status_waiting)
-                holder.binding.tvStatus.setTextColor(Color.YELLOW)
+                holder.binding.tvStatus.setTextColor(Color.CYAN)
+                holder.binding.btnRate.text = mContext.getString(R.string.edit)
             }
             RequestStatus.ACCEPTED.ordinal -> {
                 holder.binding.tvStatus.text = mContext.getString(R.string.status_accepted)
@@ -60,9 +61,14 @@ class TransHistoryAdapter(
             RequestStatus.DONE.ordinal -> {
                 holder.binding.tvStatus.text = mContext.getString(R.string.status_done)
                 holder.binding.tvStatus.setTextColor(Color.GREEN)
+                holder.binding.btnRate.text = mContext.getString(R.string.edit)
+            }
+            RequestStatus.CHECKIN.ordinal -> {
+                holder.binding.tvStatus.text = mContext.getString(R.string.status_checkin)
+                holder.binding.tvStatus.setTextColor(Color.GREEN)
             }
         }
-        if (item?.request?.type == RequestType.BY_POINT.ordinal) {
+        if (item.request?.type == RequestType.BY_POINT.ordinal) {
             holder.binding.tvType.text = mContext.getString(
                 R.string.request_type, mContext.getString(R.string.request_type_point)
             )
@@ -73,14 +79,14 @@ class TransHistoryAdapter(
         }
 
         holder.binding.tvFromDate.text =
-            item?.request?.startDate?.formatIso8601ToFormat("dd/MM/yyyy")
-        holder.binding.tvToDate.text = item?.request?.endDate?.formatIso8601ToFormat("dd/MM/yyyy")
+            item.request?.startDate?.formatIso8601ToFormat("dd/MM/yyyy")
+        holder.binding.tvToDate.text = item.request?.endDate?.formatIso8601ToFormat("dd/MM/yyyy")
 
         holder.itemView.setOnClickListener {
             listener.OnItemTransClicked()
         }
         holder.binding.btnRate.setOnClickListener {
-            listener.onBtnRateClick()
+            listener.onBtnRateClick(item)
         }
     }
 
@@ -92,7 +98,7 @@ class TransHistoryAdapter(
         RecyclerView.ViewHolder(binding.root)
 
     interface EventListener {
-        fun onBtnRateClick()
+        fun onBtnRateClick(request: RequestResponse)
         fun OnItemTransClicked()
     }
 }

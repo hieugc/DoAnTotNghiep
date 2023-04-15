@@ -7,6 +7,7 @@ import com.homex.core.model.Token
 import com.homex.core.model.general.ResultResponse
 import com.homex.core.model.response.UserResponse
 import com.homex.core.param.auth.*
+import okhttp3.RequestBody
 
 interface AuthRepository {
     suspend fun login(param: LoginParam): LiveData<ResultResponse<UserResponse>>
@@ -24,4 +25,8 @@ interface AuthRepository {
     suspend fun checkOTPForgotPassword(param: OTPParam): LiveData<ResultResponse<Token>>
 
     suspend fun updatePassword(param: PasswordParam): LiveData<ResultResponse<JsonObject>>
+
+    suspend fun updateProfile(
+        body: RequestBody
+    ): LiveData<ResultResponse<JsonObject>>
 }

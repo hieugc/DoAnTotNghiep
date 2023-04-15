@@ -141,6 +141,7 @@
     <string name="status_waiting">Chờ xác nhận</string>
     <string name="status_accepted">Đã chấp nhận</string>
     <string name="status_rejected">Đã từ chối</string>
+    <string name="status_checkin">Đang Check-in</string>
     <string name="status_reviewing">Chờ đánh giá</string>
     <string name="status_done">Hoàn tất</string>
     <string name="request_type">Phương thức: %s</string>
@@ -171,4 +172,9 @@
     <string name="request_rejected">Bạn đã từ chối yêu cầu này của người dùng</string>
     <string name="request_accepted">Vui lòng nhấn "Xác nhận Check-in" khi bạn đã tới nhận nhà</string>
     <string name="request_reviewing">Bạn hãy đánh giá người dùng và trải nghiệm về căn nhà nhé</string>
+    <string name="error_invalid_name">Tên không hợp lệ</string>
+    <string name="error_invalid_email">Email không hợp lệ</string>
+    <string name="error_invalid_phone">Số điện thoại không hợp lệ</string>
+    <string name="error_invalid_dob">Ngày sinh không hợp lệ</string>
+    <string name="update_profile_success">Cập nhật thông tin thành công!</string>
 </resources>
