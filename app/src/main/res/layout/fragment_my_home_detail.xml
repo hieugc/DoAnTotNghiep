@@ -231,7 +231,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="2 giường"
+                        android:text="@{home.bed + ` giường`}"
                         app:layout_constraintEnd_toEndOf="@id/bedIcon"
                         app:layout_constraintStart_toStartOf="@id/bedIcon"
                         app:layout_constraintTop_toBottomOf="@id/bedIcon" />

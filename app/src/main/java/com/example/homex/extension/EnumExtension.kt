@@ -18,10 +18,10 @@ enum class Rules{
 }
 
 enum class RequestStatus{
-    REJECTED,
     WAITING,
     ACCEPTED,
-    CHECKIN,
+    REJECTED,
+    CHECK_IN,
     REVIEWING,
     DONE
 }
@@ -30,4 +30,11 @@ enum class RequestType{
     NONE,
     BY_POINT,
     BY_HOME
+}
+
+enum class SearchBy{
+    CLOSET,
+    RATING,
+    PRICE_LOW_TO_HIGH,
+    PRICE_HIGH_TO_LOW
 }

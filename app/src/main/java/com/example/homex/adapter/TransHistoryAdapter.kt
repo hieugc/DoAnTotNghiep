@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.homex.R
 import com.example.homex.databinding.ItemTransHistoryBinding
@@ -54,6 +55,10 @@ class TransHistoryAdapter(
                 holder.binding.tvStatus.text = mContext.getString(R.string.status_rejected)
                 holder.binding.tvStatus.setTextColor(Color.RED)
             }
+            RequestStatus.CHECK_IN.ordinal -> {
+                holder.binding.tvStatus.text = mContext.getString(R.string.status_checkin)
+                holder.binding.tvStatus.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.primary))
+            }
             RequestStatus.REVIEWING.ordinal -> {
                 holder.binding.tvStatus.text = mContext.getString(R.string.status_reviewing)
                 holder.binding.tvStatus.setTextColor(Color.MAGENTA)
@@ -63,7 +68,7 @@ class TransHistoryAdapter(
                 holder.binding.tvStatus.setTextColor(Color.GREEN)
                 holder.binding.btnRate.text = mContext.getString(R.string.edit)
             }
-            RequestStatus.CHECKIN.ordinal -> {
+            RequestStatus.CHECK_IN.ordinal -> {
                 holder.binding.tvStatus.text = mContext.getString(R.string.status_checkin)
                 holder.binding.tvStatus.setTextColor(Color.GREEN)
             }

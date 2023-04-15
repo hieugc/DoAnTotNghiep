@@ -1,6 +1,7 @@
 package com.example.homex.activity.home.pending.viewpager
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
@@ -18,14 +19,18 @@ import com.example.homex.extension.visible
 import com.example.homex.viewmodel.ChatViewModel
 import com.homex.core.model.response.RequestResponse
 import com.homex.core.param.chat.ContactUserParam
+import com.homex.core.util.PrefUtil
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PendingRequestRejectFragment: BaseFragmentViewPager<FragmentPendingRequestBinding>() {
     override val layoutId: Int
         get() = R.layout.fragment_pending_request
     override val requestType: Int
         get() = RequestStatus.REJECTED.ordinal
-    private val chatViewModel: ChatViewModel by sharedViewModel()
+    private val chatViewModel: ChatViewModel by viewModel()
+    private val prefUtil : PrefUtil by inject()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -47,7 +52,7 @@ class PendingRequestRejectFragment: BaseFragmentViewPager<FragmentPendingRequest
             },
             btnClick = { request ->
                 val userAccess = request.request?.user?.userAccess
-                chatViewModel.connectionId.value?.let { connectionId->
+                prefUtil.connectionId?.let { connectionId->
                     userAccess?.let {
                         chatViewModel.contactToUser(param = ContactUserParam(
                             connectionId = connectionId,
@@ -98,6 +103,7 @@ class PendingRequestRejectFragment: BaseFragmentViewPager<FragmentPendingRequest
         }
 
         chatViewModel.connectToUser.observe(this){ messageRoom ->
+            Log.e("messageRoom", "$messageRoom")
             if (messageRoom != null){
                 messageRoom.idRoom?.let {
                     findNavController().navigate(
@@ -107,7 +113,7 @@ class PendingRequestRejectFragment: BaseFragmentViewPager<FragmentPendingRequest
                         )
                     )
                 }
-                chatViewModel.connectToUser.postValue(null)
+                chatViewModel.clearContactUser()
             }
         }
     }

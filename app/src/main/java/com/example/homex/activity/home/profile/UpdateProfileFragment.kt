@@ -43,7 +43,7 @@ class UpdateProfileFragment : BaseFragment<FragmentUpdateProfileBinding>() {
     private val prefUtil: PrefUtil by inject()
     private var validTime = true
     private lateinit var file: File
-    private lateinit var updateProfileParamm: UpdateProfileParam
+    private lateinit var updateProfileParam: UpdateProfileParam
     private val viewModel: AuthViewModel by viewModel()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -284,11 +284,11 @@ class UpdateProfileFragment : BaseFragment<FragmentUpdateProfileBinding>() {
     private fun updateProfile() {
         if (validateInformation()) {
             val builder: MultipartBody.Builder = MultipartBody.Builder().setType(MultipartBody.FORM)
-            builder.addFormDataPart("lastName", updateProfileParamm.lastName)
-            builder.addFormDataPart("firstName", updateProfileParamm.firstName)
-            builder.addFormDataPart("phoneNumber", updateProfileParamm.phoneNumber)
-            builder.addFormDataPart("email", updateProfileParamm.email)
-            builder.addFormDataPart("birthDay", updateProfileParamm.birthDay)
+            builder.addFormDataPart("lastName", updateProfileParam.lastName)
+            builder.addFormDataPart("firstName", updateProfileParam.firstName)
+            builder.addFormDataPart("phoneNumber", updateProfileParam.phoneNumber)
+            builder.addFormDataPart("email", updateProfileParam.email)
+            builder.addFormDataPart("birthDay", updateProfileParam.birthDay)
             builder.addFormDataPart("gender", prefUtil.profile?.gender.toString())
             val mediaType: MediaType = "multipart/form-data".toMediaType()
             val requestBody = file.asRequestBody(mediaType)
@@ -333,7 +333,7 @@ class UpdateProfileFragment : BaseFragment<FragmentUpdateProfileBinding>() {
         } catch (e: Exception) {
             AppEvent.showPopUpError(e.message)
         }
-        updateProfileParamm = UpdateProfileParam(
+        updateProfileParam = UpdateProfileParam(
             lastname,
             firstname,
             phoneNumber,

@@ -33,9 +33,9 @@ class TransHistoryFragment : BaseFragment<FragmentTransHistoryBinding>() {
         binding.pager.adapter = viewPagerAdapter
         TabLayoutMediator(binding.tabLayout, binding.pager) { tab, position ->
             when (position) {
-                0 -> tab.text = getString(R.string.status_rejected)
-                1 -> tab.text = getString(R.string.status_waiting)
-                2 -> tab.text = getString(R.string.status_accepted)
+                0 -> tab.text = getString(R.string.status_waiting)
+                1 -> tab.text = getString(R.string.status_accepted)
+                2 -> tab.text = getString(R.string.status_rejected)
                 3 -> tab.text = getString(R.string.status_checkin)
                 4 -> tab.text = getString(R.string.status_reviewing)
                 5 -> tab.text = getString(R.string.status_done)

@@ -20,6 +20,7 @@ class AddHome3Fragment : BaseFragment<FragmentAddHome3Binding>() {
             binding.edtBedRoom.setText(this.bedroom.value.toString())
             binding.edtBathRoom.setText(this.bathroom.value.toString())
             binding.edtPeople.setText(this.people.value.toString())
+            binding.edtBed.setText(this.bed.value.toString())
             binding.viewModel = viewModel
         }
     }
@@ -41,9 +42,13 @@ class AddHome3Fragment : BaseFragment<FragmentAddHome3Binding>() {
             if (it?.toString() == "")
             {
                 binding.edtBed.setText("1")
+                viewModel.bed.postValue(1)
             }
             else if(it?.toString()?.toInt() == 0){
                 binding.edtBed.setText("1")
+                viewModel.bed.postValue(1)
+            }else{
+                viewModel.bed.postValue(it?.toString()?.toInt()?:1)
             }
         }
 

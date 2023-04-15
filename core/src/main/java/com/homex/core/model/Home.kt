@@ -33,6 +33,7 @@ data class Home(
     val ratings: ArrayList<Rating>? = null,
     val cityName: String? = null,
     val districtName: String? = null,
+    val inValidRangeDates: ArrayList<DateRange>? = null
 
 
 ): Parcelable{
@@ -49,6 +50,13 @@ data class Home(
         }
     }
 }
+
+@Parcelize
+data class DateRange(
+    val startDate: String? = null,
+    val endDate: String? = null
+): Parcelable
+
 enum class HomeStatus{
     VALID,
     PENDING,

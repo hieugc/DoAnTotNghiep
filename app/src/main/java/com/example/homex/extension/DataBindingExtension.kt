@@ -132,6 +132,10 @@ fun AppCompatTextView.setRequestStatus(requestStatus: Int?){
             this.text = context.getString(R.string.status_rejected)
             this.setTextColor(ContextCompat.getColor(context, R.color.red))
         }
+        RequestStatus.CHECK_IN.ordinal->{
+            this.text = context.getString(R.string.status_checkin)
+            this.setTextColor(ContextCompat.getColor(context, R.color.primary))
+        }
         RequestStatus.REVIEWING.ordinal->{
             this.text = context.getString(R.string.status_reviewing)
             this.setTextColor(ContextCompat.getColor(context, R.color.green))
@@ -143,17 +147,40 @@ fun AppCompatTextView.setRequestStatus(requestStatus: Int?){
     }
 }
 
-@BindingAdapter(value =["requestStatus"])
-fun AppCompatButton.setRequestStatus(requestStatus: Int?){
+@BindingAdapter(value =["requestStatus", "startDate", "endDate"])
+fun AppCompatButton.setRequestStatus(requestStatus: Int?, startDate: String?, endDate: String?){
     when(requestStatus){
         RequestStatus.WAITING.ordinal->{
             this.text = context.getString(R.string.detail)
         }
         RequestStatus.ACCEPTED.ordinal->{
             this.text = context.getString(R.string.check_in)
+            val date = Date()
+            if (date.time.longToDate() == startDate?.formatIso8601ToFormat("dd/MM/yyyy")){
+                this.text = ""
+                this.visibility = View.GONE
+            }
+            val start = startDate?.convertIso8601ToLong()
+            if (start != null && date.time <= start){
+                this.text = ""
+                this.visibility = View.GONE
+            }
         }
         RequestStatus.REJECTED.ordinal->{
             this.text = context.getString(R.string.contact)
+        }
+        RequestStatus.CHECK_IN.ordinal->{
+            this.text = context.getString(R.string.check_out)
+            val date = Date()
+            if (date.time.longToDate() == endDate?.formatIso8601ToFormat("dd/MM/yyyy")){
+                this.text = ""
+                this.visibility = View.GONE
+            }
+            val end = endDate?.convertIso8601ToLong()
+            if (end != null && date.time <= end){
+                this.text = ""
+                this.visibility = View.GONE
+            }
         }
         RequestStatus.REVIEWING.ordinal->{
             this.text = context.getString(R.string.rate)
@@ -164,18 +191,41 @@ fun AppCompatButton.setRequestStatus(requestStatus: Int?){
     }
 }
 
-@BindingAdapter(value =["requestPrimary"])
-fun AppCompatButton.setRequestPrimary(requestStatus: Int?){
+@BindingAdapter(value =["requestPrimary", "startDate", "endDate"])
+fun AppCompatButton.setRequestPrimary(requestStatus: Int?, startDate: String?, endDate: String?){
     when(requestStatus){
         RequestStatus.WAITING.ordinal->{
             this.text = context.getString(R.string.accept_request)
         }
         RequestStatus.ACCEPTED.ordinal->{
             this.text = context.getString(R.string.check_in)
+            val date = Date()
+            if (date.time.longToDate() == startDate?.formatIso8601ToFormat("dd/MM/yyyy")){
+                this.text = ""
+                this.visibility = View.GONE
+            }
+            val start = startDate?.convertIso8601ToLong()
+            if (start != null && date.time <= start){
+                this.text = ""
+                this.visibility = View.GONE
+            }
         }
         RequestStatus.REJECTED.ordinal->{
             this.visibility = View.GONE
             this.text = ""
+        }
+        RequestStatus.CHECK_IN.ordinal->{
+            this.text = context.getString(R.string.check_out)
+            val date = Date()
+            if (date.time.longToDate() == endDate?.formatIso8601ToFormat("dd/MM/yyyy")){
+                this.text = ""
+                this.visibility = View.GONE
+            }
+            val end = endDate?.convertIso8601ToLong()
+            if (end != null && date.time <= end){
+                this.text = ""
+                this.visibility = View.GONE
+            }
         }
         RequestStatus.REVIEWING.ordinal->{
             this.text = context.getString(R.string.rate)
@@ -198,6 +248,10 @@ fun AppCompatButton.setRequestSecondary(requestStatus: Int?){
             this.text = ""
         }
         RequestStatus.REJECTED.ordinal->{
+            this.visibility = View.GONE
+            this.text = ""
+        }
+        RequestStatus.CHECK_IN.ordinal->{
             this.visibility = View.GONE
             this.text = ""
         }
@@ -224,6 +278,9 @@ fun AppCompatTextView.setRequestText(requestStatus: Int?){
         }
         RequestStatus.REJECTED.ordinal->{
             this.text = context.getString(R.string.request_rejected)
+        }
+        RequestStatus.CHECK_IN.ordinal->{
+            this.text = context.getString(R.string.request_checkin)
         }
         RequestStatus.REVIEWING.ordinal->{
             this.text = context.getString(R.string.request_reviewing)

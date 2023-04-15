@@ -37,6 +37,7 @@ import com.example.homex.service.ChatService
 import com.example.homex.viewmodel.ChatViewModel
 import com.example.homex.viewmodel.NotificationViewModel
 import com.google.android.material.snackbar.Snackbar
+import com.homex.core.CoreApplication
 import com.homex.core.model.MessageRoom
 import com.homex.core.model.Notification
 import com.homex.core.model.UserMessage
@@ -173,6 +174,11 @@ class HomeActivity : BaseActivity() {
         }
     }
 
+    fun setSearchParam(location: String, startDate: String, endDate: String){
+        binding.locationTV.text = location
+        binding.dateTV.text = "$startDate - $endDate"
+    }
+
     private fun setViewModel(){
         fileViewModel.tmpFiles.observe(this){
             if(it != null){
@@ -282,7 +288,7 @@ class HomeActivity : BaseActivity() {
                         val mediaType = "application/json".toMediaType()
                         val body: RequestBody = "\"$it\"".toRequestBody(mediaType)
                         Log.e("connectionId", it)
-                        chatViewModel.connectionId.postValue(it)
+                        CoreApplication.instance.saveConnectionId(it)
                         chatViewModel.connectAllRoom(body)
                     }
                 }
@@ -310,7 +316,7 @@ class HomeActivity : BaseActivity() {
                                 val mediaType = "application/json".toMediaType()
                                 val body: RequestBody = "\"$it\"".toRequestBody(mediaType)
                                 Log.e("connectionId", it)
-                                chatViewModel.connectionId.postValue(it)
+                                CoreApplication.instance.saveConnectionId(it)
                                 chatViewModel.connectAllRoom(body)
                             }
                         }

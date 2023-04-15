@@ -11,6 +11,7 @@ class AddHomeViewModel: ViewModel() {
     val option = MutableLiveData(1)
     val description = MutableLiveData("")
     val people = MutableLiveData(1)
+    val bed = MutableLiveData(1)
     val bedroom = MutableLiveData(1)
     val bathroom = MutableLiveData(1)
     val square = MutableLiveData(0)
@@ -18,7 +19,7 @@ class AddHomeViewModel: ViewModel() {
     val lat = MutableLiveData(0.0)
     val lng = MutableLiveData(0.0)
     val price = MutableLiveData(0)
-    val idCity = MutableLiveData(1)
+    val idCity = MutableLiveData(0)
     val idDistrict = MutableLiveData(0)
     val idWard = MutableLiveData(0)
     val utilities = MutableLiveData<List<Int>>(listOf())
@@ -30,4 +31,5 @@ class AddHomeViewModel: ViewModel() {
     val images = MutableLiveData<List<ImageBase>>()
     val idRemove = MutableLiveData<MutableList<Int>>()
 
+    val showMap = MutableLiveData(false)
 }

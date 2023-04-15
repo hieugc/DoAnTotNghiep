@@ -42,7 +42,7 @@
             style="@style/MediumText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="2"
             android:gravity="right"
             android:padding="4dp"
             requestStatus="@{request.request.status}"/>
@@ -190,17 +190,13 @@
             android:id="@+id/btnRate"
             style="@style/FlexLongButtonPrimary"
             requestStatus="@{request.request.status}"
+            startDate="@{request.request.startDate}"
+            endDate="@{request.request.endDate}"
             android:layout_width="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline14"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.7"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

@@ -16,10 +16,10 @@ class TransHistoryViewPager(private val parentFragment: Fragment) :
         val fragment = TransHistoryPageFragment()
         fragment.arguments = Bundle().apply {
             when (position) {
-                0 -> putInt(REQUEST_STATUS, RequestStatus.REJECTED.ordinal)
-                1 -> putInt(REQUEST_STATUS, RequestStatus.WAITING.ordinal)
-                2 -> putInt(REQUEST_STATUS, RequestStatus.ACCEPTED.ordinal)
-                3 -> putInt(REQUEST_STATUS, RequestStatus.CHECKIN.ordinal)
+                0 -> putInt(REQUEST_STATUS, RequestStatus.WAITING.ordinal)
+                1 -> putInt(REQUEST_STATUS, RequestStatus.ACCEPTED.ordinal)
+                2 -> putInt(REQUEST_STATUS, RequestStatus.REJECTED.ordinal)
+                3 -> putInt(REQUEST_STATUS, RequestStatus.CHECK_IN.ordinal)
                 4 -> putInt(REQUEST_STATUS, RequestStatus.REVIEWING.ordinal)
                 5 -> putInt(REQUEST_STATUS, RequestStatus.DONE.ordinal)
             }

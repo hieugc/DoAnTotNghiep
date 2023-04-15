@@ -17,6 +17,23 @@ import retrofit2.Response
 import retrofit2.http.*
 
 interface ApiService {
+    //--------------------SEARCH-----------------------------
+
+    @GET("api/Explore")
+    suspend fun searchHome(
+        @Query("idCity") idCity: Int,
+        @Query("people") people: Int?,
+        @Query("idDistrict") idDistrict: Int?,
+        @Query("dateStart") startDate: String?,
+        @Query("dateEnd") endDate: String?,
+        @Query("priceStart") startPrice: Int?,
+        @Query("priceEnd") endPrice: Int?,
+        @Query("utilities") utilities: ArrayList<Int>?,
+        @Query("optionSort") sortBy: Int,
+        @Query("page") page: Int,
+        @Query("limit") limit: Int
+    ): Response<ObjectResponse<SearchHomeResponse>>
+
     //--------------------POPULAR-----------------------------
     @GET("api/GetPopularHouse")
     suspend fun getPopularHome(): Response<ListResponse<Home>>
@@ -157,7 +174,7 @@ interface ApiService {
     suspend fun getPendingRequest(): Response<ListResponse<RequestResponse>>
 
     @POST("api/Request/UpdateStatus")
-    suspend fun updateStatus(param: UpdateStatusParam): Response<ObjectResponse<JsonObject>>
+    suspend fun updateStatus(@Body param: UpdateStatusParam): Response<ObjectResponse<JsonObject>>
 
     @POST("api/Rating/Create")
     suspend fun createRating(@Body param: CreateRatingParam): Response<ObjectResponse<JsonObject>>

@@ -65,7 +65,7 @@ class PickYourHomeFragment : BaseFragment<FragmentPickYourHomeBinding>() {
     override fun setViewModel() {
         yourHomeViewModel.myHomesLiveData.observe(this){
             if (it != null){
-                val homes = it.homes
+                val homes = it.houses
                 myHomeList.clear()
                 if (homes != null){
                     myHomeList.addAll(homes)

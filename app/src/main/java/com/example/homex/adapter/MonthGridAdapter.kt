@@ -8,13 +8,17 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.homex.R
 import com.example.homex.databinding.DateCellItemBinding
+import com.example.homex.extension.convertIso8601ToLong
+import com.example.homex.extension.formatIso8601ToFormat
 import com.example.homex.extension.longToDate
 import com.homex.core.model.CalendarDate
+import com.homex.core.model.DateRange
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
 
-class MonthGridAdapter(val dayOfMonth: ArrayList<CalendarDate> = arrayListOf(), val selectedDates: Pair<CalendarDate?, CalendarDate?> = Pair(null, null), val onClick: (CalendarDate)->Unit): BaseAdapter(){
+class MonthGridAdapter(val dayOfMonth: ArrayList<CalendarDate> = arrayListOf(), val selectedDates: Pair<CalendarDate?, CalendarDate?> = Pair(null, null), val invalid: MutableList<DateRange>? = null, val onClick: (CalendarDate)->Unit): BaseAdapter(){
     private lateinit var viewHolder: DateItemViewHolder
     override fun getCount(): Int {
         return dayOfMonth.size
@@ -43,15 +47,57 @@ class MonthGridAdapter(val dayOfMonth: ArrayList<CalendarDate> = arrayListOf(), 
         }
 
         val item = dayOfMonth[position]
+
+        var isInvalid = false
+        if (invalid != null) {
+            for (day in invalid){
+                if (item.time?.time?.longToDate() == day.startDate?.formatIso8601ToFormat("dd/MM/yyyy")
+                    || item.time?.time?.longToDate() == day.endDate?.formatIso8601ToFormat("dd/MM/yyyy")
+                ){
+                    isInvalid = true
+                    break
+                }
+                val time = item.time
+                if (time != null){
+                    val start = day.startDate?.convertIso8601ToLong()
+                    val end = day.endDate?.convertIso8601ToLong()
+                    if (start != null && end != null && time.time > start && time.time < end){
+                        isInvalid = true
+                        break
+                    }
+                }
+            }
+        }
+
+        val date = Date()
         viewHolder.binding.root.text = item.dateOfMonth
         viewHolder.binding.root.setOnClickListener {
+            if (item.time?.time?.longToDate() != date.time.longToDate()){
+                item.time?.time?.let {
+                    if (it < date.time)
+                        return@setOnClickListener
+                }
+            }
+            if (isInvalid)
+                return@setOnClickListener
             if(item.dateOfMonth != "" && item.time != null)
                 onClick.invoke(item)
         }
 
         item.time?.apply {
-            val date = Date()
-            if(this.time.longToDate() == selectedDates.first?.time?.time?.longToDate() ){
+            if (isInvalid){
+                viewHolder.binding.root.setBackgroundColor(ContextCompat.getColor(
+                    viewHolder.itemView.context,
+                    R.color.grey_light
+                ))
+                viewHolder.binding.root.setTextColor(
+                    ContextCompat.getColorStateList(
+                        viewHolder.itemView.context,
+                        R.color.grey_ba
+                    )
+                )
+            }
+            else if(this.time.longToDate() == selectedDates.first?.time?.time?.longToDate() ){
                 if(selectedDates.second != null){
                     viewHolder.binding.root.background = ContextCompat.getDrawable(viewHolder.itemView.context, R.drawable.start_date_bg)
                     viewHolder.binding.root.setTextColor(
@@ -107,19 +153,31 @@ class MonthGridAdapter(val dayOfMonth: ArrayList<CalendarDate> = arrayListOf(), 
                     )
                 )
             }
-            else{
-                if (selectedDates.first?.time != null && selectedDates.second?.time != null){
-                    if(this.time < selectedDates.second?.time?.time!! && this.time > selectedDates.first?.time?.time!!){
-                        viewHolder.binding.root.background = ContextCompat.getDrawable(viewHolder.itemView.context, R.drawable.between_date_bg)
-                        viewHolder.binding.root.setTextColor(
-                            ContextCompat.getColorStateList(
-                                viewHolder.itemView.context,
-                                R.color.primary
-                            )
+            else if (selectedDates.first?.time != null && selectedDates.second?.time != null){
+                if(this.time < selectedDates.second?.time?.time!! && this.time > selectedDates.first?.time?.time!!){
+                    viewHolder.binding.root.background = ContextCompat.getDrawable(viewHolder.itemView.context, R.drawable.between_date_bg)
+                    viewHolder.binding.root.setTextColor(
+                        ContextCompat.getColorStateList(
+                            viewHolder.itemView.context,
+                            R.color.primary
                         )
-                    }
+                    )
                 }
             }
+
+            if (this.time.longToDate() != date.time.longToDate() && this.time < date.time){
+                viewHolder.binding.root.setBackgroundColor(ContextCompat.getColor(
+                    viewHolder.itemView.context,
+                    R.color.white
+                ))
+                viewHolder.binding.root.setTextColor(
+                    ContextCompat.getColorStateList(
+                        viewHolder.itemView.context,
+                        R.color.grey_ba
+                    )
+                )
+            }
+
         }
         return viewHolder.view
     }
