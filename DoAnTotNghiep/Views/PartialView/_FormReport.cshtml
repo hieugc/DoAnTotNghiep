@@ -1,15 +1,17 @@
-﻿<div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+﻿@model string
+
+<div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="text-danger fw-semibold branch">Báo cáo người dùng</h4>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="refreshLoginForm()"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form action="@Url.Action("Create", "Report")" method="post" id="form-create">
                     <div class="mb-3">
-                        <label for="userReport">Tên người dùng</label>
-                        <input type="text" class="form-control" name="userReport" id="userReport" placeholder="Phạm Minh Hiếu" disabled/>
+                        <label for="userReport"></label>
+                        <input type="text" class="form-control" name="userReport" id="userReport" placeholder="@ViewData["name"]" value="@ViewData["name"]" disabled />
                     </div>
                     @*<div class="mb-3">
                     <label for="houseReport">Căn nhà báo cáo</label>
@@ -20,31 +22,31 @@
                     </div>*@
                     <div class="mb-3">
                         <label for="contentReport">Lí do báo cáo</label>
-                        <textarea class="form-control" id="contentReport" name="contentReport" rows="5"></textarea>
-                        <span class="text-danger" id="contentReport-valid"></span>
+                        <textarea class="form-control" id="contentReport" name="contentReport" rows="5" onchange="checkReportValid()"></textarea>
+                        <div class="text-danger" id="contentReport-valid"></div>
                     </div>
                     <div class="mb-3">
-                        <label for="fileReport">Tệp đính kèm <i class="fa-solid fa-file"></i></label>
-                        <span class="text-danger" id="filesReport-valid"></span>
-                        <input type="file" name="fileReport" id="fileReport" style="display: none" onclick="return null;" onchange="showReportFile(this)"/>
+                        <label for="fileReport">Tệp đính kèm <i class="fa-solid fa-file" style="color: var(--bs-danger);"></i><span style="color: var(--bs-danger);">+</span></label>
+                        <div class="text-danger" id="filesReport-valid"></div>
+                        <input type="file" name="fileReport" id="fileReport" style="display: none" onclick="this.value = null;" onchange="showReportFile(this)" />
                     </div>
-                    <div id="file-result">
-                        
-                    </div>
+                    <div id="file-result"></div>
                 </form>
                 <button type="button" class="btn btn-danger" onclick="createReport()">Báo cáo</button>
             </div>
         </div>
     </div>
 </div>
+<button class="d-none" type="button" id="reportModalClick" data-bs-toggle="modal" data-bs-target="#reportModal"></button>
 
-<script src="~/js/Report/create.js" type="text/javascript"></script>
+
+
 <script type="text/javascript">
+    $("#reportModalClick").click();
     var reportData = {
-        userAccess: "",
+        userAccess: "@Model",
         content: "",
         images: []
     }
 </script>
-
-                        
+<script src="~/js/Report/create.js" type="text/javascript"></script>

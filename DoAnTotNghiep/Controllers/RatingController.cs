@@ -51,9 +51,23 @@ namespace DoAnTotNghiep.Controllers
         }
 
         [HttpGet("/Rating/Form")]
-        public IActionResult FormCreateRating()
+        public IActionResult FormCreateRating(int IdRequest, int? IdRating)
         {
-            return View();
+            var request = this._context.Requests.Where(m => m.Id == IdRequest).FirstOrDefault();
+            if (request == null) return NotFound();
+            bool isCan = ((request.IdUser == this.GetIdUser()) || (request.IdUser != this.GetIdUser()) && request.Type == 2);
+
+            ViewData["isCan"] = isCan ? "true" : "false";
+            if(IdRating != null)
+            {
+                var rating = this._context.FeedBacks.Where(m => m.Id == IdRating.Value).FirstOrDefault();
+                if(rating != null)
+                {
+                    EditRatingViewModel editRating = new EditRatingViewModel(rating);
+                    return PartialView("~/Views/Rating/_EditFormRating.cshtml", editRating);
+                }
+            }
+            return PartialView("~/Views/Rating/_FormRating.cshtml", IdRequest);
         }
 
         private async Task<IActionResult> CreateAsync(CreateRatingViewModel feedBack)
@@ -94,7 +108,7 @@ namespace DoAnTotNghiep.Controllers
                                         try
                                         {
                                             //nhà người chủ
-                                            request.Houses.Rating = Math.Ceiling(((request.Houses.Rating * request.Houses.NumberOfRating) + (feedBack.RatingHouse == null? 0: feedBack.RatingHouse.Value)) / (request.Houses.NumberOfRating + 1));
+                                            request.Houses.Rating = Math.Ceiling(((request.Houses.Rating * request.Houses.NumberOfRating) + (feedBack.RatingHouse == null ? 0 : feedBack.RatingHouse.Value)) / (request.Houses.NumberOfRating + 1) * 10) / 10;
                                             request.Houses.NumberOfRating += 1;
                                             this._context.Houses.Update(request.Houses);
                                             this._context.SaveChanges();
@@ -102,7 +116,7 @@ namespace DoAnTotNghiep.Controllers
                                             //gửi thông báo
                                             Notification notification = new Notification()
                                             {
-                                                IdType = request.Houses.Id,
+                                                IdType = request.Id,
                                                 IdUser = request.Houses.Users.Id,
                                                 Title = NotificationType.RatingTitle,
                                                 Content = request.Houses.Name + " có đánh giá mới",
@@ -121,7 +135,7 @@ namespace DoAnTotNghiep.Controllers
                                                 model: new NotificationViewModel(notification, this.GetWebsitePath()));
 
                                             //người chủ
-                                            request.Houses.Users.UserRating = Math.Ceiling(((request.Houses.Users.UserRating * request.Houses.Users.NumberUserRating) + feedBack.RatingUser) / (request.Houses.Users.NumberUserRating + 1));
+                                            request.Houses.Users.UserRating = Math.Ceiling(((request.Houses.Users.UserRating * request.Houses.Users.NumberUserRating) + feedBack.RatingUser) / (request.Houses.Users.NumberUserRating + 1) * 10) / 10;
                                             request.Houses.Users.NumberUserRating += 1;
                                             this._context.Users.Update(request.Houses.Users);
                                             this._context.SaveChanges();
@@ -184,7 +198,7 @@ namespace DoAnTotNghiep.Controllers
                                         {
                                             if (request.SwapHouses != null)
                                             {
-                                                request.SwapHouses.Rating = Math.Ceiling(((request.SwapHouses.Rating * request.SwapHouses.NumberOfRating) + (feedBack.RatingHouse == null? 0: feedBack.RatingHouse.Value)) / (request.SwapHouses.NumberOfRating + 1));
+                                                request.SwapHouses.Rating = Math.Ceiling(((request.SwapHouses.Rating * request.SwapHouses.NumberOfRating) + (feedBack.RatingHouse == null ? 0 : feedBack.RatingHouse.Value)) / (request.SwapHouses.NumberOfRating + 1) * 10) / 10;
                                                 request.SwapHouses.NumberOfRating += 1;
                                                 this._context.Houses.Update(request.SwapHouses);
                                                 this._context.SaveChanges();
@@ -211,7 +225,7 @@ namespace DoAnTotNghiep.Controllers
                                                 target: TargetSignalR.Notification(),
                                                 model: new NotificationViewModel(notification, this.GetWebsitePath()));
 
-                                            request.Users.UserRating = Math.Ceiling(((request.Users.UserRating * request.Users.NumberUserRating) + feedBack.RatingUser) / (request.Users.NumberUserRating + 1));
+                                            request.Users.UserRating = Math.Ceiling(((request.Users.UserRating * request.Users.NumberUserRating) + feedBack.RatingUser) / (request.Users.NumberUserRating + 1) * 10) / 10;
                                             request.Users.NumberUserRating += 1;
                                             this._context.Users.Update(request.Users);
                                             this._context.SaveChanges();
@@ -283,13 +297,13 @@ namespace DoAnTotNghiep.Controllers
             return await this.CreateAsync(feedBack);
         }
 
-
         //Update -> status + message
         private IActionResult Edit(EditRatingViewModel feedBack)
         {
             if (ModelState.IsValid)
             {
-                var model = this._context.FeedBacks.Where(m => m.Id == feedBack.Id).FirstOrDefault();
+                int IdUser = this.GetIdUser();
+                var model = this._context.FeedBacks.Where(m => m.Id == feedBack.Id && m.IdUser == IdUser).FirstOrDefault();
                 if(model != null)
                 {
                     this._context.Entry(model).Reference(m => m.Houses).Load();
@@ -304,8 +318,8 @@ namespace DoAnTotNghiep.Controllers
                                 {
                                     model.Houses.Rating = Math.Ceiling(
                                                     ((model.Houses.Rating * model.Houses.NumberOfRating - model.Rating) + (feedBack.RatingHouse == null ? 0 : feedBack.RatingHouse.Value))
-                                                                / (model.Houses.NumberOfRating)
-                                                    );
+                                                                / (model.Houses.NumberOfRating) * 10
+                                                    ) / 10;
                                     Context.Houses.Update(model.Houses);
                                     Context.SaveChanges();
                                 }
@@ -314,8 +328,8 @@ namespace DoAnTotNghiep.Controllers
                                 {
                                     model.UserRated.UserRating = Math.Ceiling(
                                                     ((model.UserRated.UserRating * model.UserRated.NumberUserRating - model.RatingUser) + feedBack.RatingUser)
-                                                        / (model.UserRated.NumberUserRating)
-                                                    );
+                                                        / (model.UserRated.NumberUserRating) * 10
+                                                    ) / 10;
                                     Context.Users.Update(model.UserRated);
                                     Context.SaveChanges();
                                 }

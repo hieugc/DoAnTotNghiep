@@ -88,7 +88,6 @@ function renderTransactionForm() {
         }
     )
 }
-
 function hideTransaction() {
     $("#transactionModalToggle #form-create .modal-body").hide();
     $("#transactionModalToggle #form-create .my-modal-title").hide();

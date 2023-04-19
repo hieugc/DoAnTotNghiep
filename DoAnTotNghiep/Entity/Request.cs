@@ -1,4 +1,5 @@
-﻿using DoAnTotNghiep.ViewModels;
+﻿using DoAnTotNghiep.Enum;
+using DoAnTotNghiep.ViewModels;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.VisualBasic;
 using System.ComponentModel.DataAnnotations;
@@ -18,6 +19,23 @@ namespace DoAnTotNghiep.Entity
             this.IdSwapHouse = model.IdSwapHouse;
             this.StartDate = model.StartDate;
             this.EndDate = model.EndDate;
+        }
+
+        public void CheckStatus(Request request)
+        {
+
+            if (request.CheckOuts != null && request.CheckOuts.Count() > 0 && request.Status == (int)StatusRequest.CHECK_IN)
+            {
+                this.Status = (int)StatusRequest.CHECK_OUT;
+            }
+            else if (request.CheckIns != null && request.CheckIns.Count() > 0 && request.Status == (int)StatusRequest.ACCEPT)
+            {
+                this.Status = (int)StatusRequest.CHECK_IN;
+            }
+            else if (request.FeedBacks != null && request.FeedBacks.Count() > 0 && request.Status == (int)StatusRequest.CHECK_OUT)
+            {
+                this.Status = (int)StatusRequest.ENDED;
+            }
         }
 
 

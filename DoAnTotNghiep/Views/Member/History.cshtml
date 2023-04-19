@@ -1,4 +1,4 @@
-﻿@model DoAnTotNghiep.Entity.AdminReport
+﻿@model List<HouseSelector>
 
 @{
     ViewData["Title"] = "Lịch sử giao dịch";
@@ -29,14 +29,63 @@
         </button>
     </div>
     <div class="nav nav-tabs mb-2">
-        <div class="nav-link active">Thống kê tài khoản</div>
-        <div class="nav-link">Trao đổi</div>
-        <div class="nav-link">Xu hướng</div>
+        <div class="nav-link active" onclick="selectTab(0)">Thống kê tài khoản</div>
+        <div class="nav-link" onclick="selectTab(1)">Trao đổi</div>
+        <div class="nav-link" onclick="selectTab(2)">Xu hướng</div>
     </div>
-    <div class="list-house" id="content-render">
+    <div class="statistic">
+        <div class="head-tab">
+            <select id="transaction-year" class="form-select" onchange="zaloTransaction()">
+                @for (var year = DateTime.Now.Year; year >= 2000; year--)
+                {
+                    if (year == DateTime.Now.Year)
+                    {
+                        <option value="@year" selected> Năm @year</option>
+                    }
+                    else
+                    {
+                        <option value="@year"> Năm @year</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="head-tab tab-hide">
+            <select id="house-year" class="form-select" onchange="statisticHouse()">
+                @for (var year = DateTime.Now.Year; year >= 2000; year--)
+                {
+                    if (year == DateTime.Now.Year)
+                    {
+                        <option value="@year" selected> Năm @year</option>
+                    }
+                    else
+                    {
+                        <option value="@year"> Năm @year</option>
+                    }
+                }
+            </select>
+            <select id="statisticHouse" class="form-select" onchange="statisticHouse()">
+                @foreach (var item in Model)
+                {
+                    <option value="@item.Id">@item.Name</option>
+                }
+            </select>
+        </div>
+        <div class="head-tab tab-hide"></div>
+        <div class="statistic-img" style="width: 100%; height: 100%;">
+            <canvas id="statistic-render"></canvas>
+            <div class="loading-box">
+                <div class="loader"></div>
+            </div>
+        </div>
     </div>
 </div>
 
 @section Scripts{
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.2.1/dist/chart.umd.min.js"></script>
     <script src="~/js/Transaction/create.js" type="text/javascript"></script>
+    <script src="~/js/Transaction/statistics.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        var now = @DateTime.Now.Year;
+        zaloTransaction();
+    </script>
 }

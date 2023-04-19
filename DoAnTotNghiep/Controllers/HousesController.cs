@@ -86,32 +86,13 @@ namespace DoAnTotNghiep.Controllers
                         {
                             if(data.Lat == 0 || data.Lng == 0)
                             {
-                                List<double> doubles = await this.GetLocation(data.Location);
+                                string query = data.Location + ", " + data.WardName + ", " + data.DistrictName + ", " + data.CityName;
+                                List<double> doubles = await this.GetLocation(query);
                                 data.Lat = doubles[0];
                                 data.Lng = doubles[1];
                             }
 
-                            House house = new House()
-                            {
-                                Name = data.Name,
-                                Type = data.Option,
-                                Description = data.Description,
-                                People = data.People,
-                                BedRoom = data.BedRoom,
-                                BathRoom = data.BathRoom,
-                                Area = data.Square,
-                                Lat = data.Lat,
-                                Lng = data.Lng,
-                                Price = data.Price,
-                                IdCity = (data.IdCity == 0? 1: data.IdCity),
-                                IdDistrict = (data.IdDistrict == 0? null: data.IdDistrict),
-                                IdWard = (data.IdWard == 0? null: data.IdWard),
-                                Rating = 0,
-                                IdUser = this.GetIdUser(),
-                                Status = (int) Enum.StatusHouse.VALID,
-                                StreetAddress = data.Location,
-                                Bed = data.Bed
-                            };
+                            House house = new House().CreateHouse(data, this.GetIdUser(), (int)StatusHouse.VALID);
 
                             Context.Houses.Add(house);
                             Context.SaveChanges();
@@ -181,6 +162,10 @@ namespace DoAnTotNghiep.Controllers
                             DetailHouseViewModel detailHouseViewModel = new DetailHouseViewModel(house, salt);
                             detailHouseViewModel.Rules = data.Rules;
                             detailHouseViewModel.Utilities = data.Utilities;
+                            detailHouseViewModel.CityName = data.CityName;
+                            detailHouseViewModel.DistrictName = data.DistrictName;
+                            detailHouseViewModel.WardName = data.WardName;
+
                             string host = this.GetWebsitePath();
                             List<ImageBase> images = new List<ImageBase>();
                             foreach (var item in files) images.Add(new ImageBase(item, host));
@@ -319,13 +304,16 @@ namespace DoAnTotNghiep.Controllers
                             //Lng == 0
                             if (data.Lat == 0 || data.Lng == 0)
                             {
-                                List<double> doubles = await this.GetLocation(data.Location);
+                                string query = data.Location + ", " + data.WardName + ", " + data.DistrictName + ", " + data.CityName;
+                                List<double> doubles = await this.GetLocation(query);
                                 data.Lat = doubles[0];
                                 data.Lng = doubles[1];
                             }
 
                             var model = listHouse.First();
-                            model.Name = data.Name;
+                            model.EditHouse(data);
+                            /*
+                             * model.Name = data.Name;
                             model.Type = data.Option;
                             model.Description = data.Description;
                             model.People = data.People;
@@ -340,6 +328,8 @@ namespace DoAnTotNghiep.Controllers
                             model.IdWard = (data.IdWard == 0 ? null : data.IdWard);
                             model.Price = data.Price;
                             model.Status = data.Status;
+                            model.Bed = data.Bed;
+                             */
 
                             Context.Houses.Update(model);
                             Context.SaveChanges();
@@ -537,6 +527,10 @@ namespace DoAnTotNghiep.Controllers
                             DetailHouseViewModel detailHouseViewModel = new DetailHouseViewModel(model, salt);
                             detailHouseViewModel.Rules = data.Rules;
                             detailHouseViewModel.Utilities = data.Utilities;
+
+                            detailHouseViewModel.CityName = data.CityName;
+                            detailHouseViewModel.DistrictName = data.DistrictName;
+                            detailHouseViewModel.WardName = data.WardName;
                             string host = this.GetWebsitePath();
                             List<ImageBase> images = new List<ImageBase>();
                             Context.Entry(model).Collection(m => m.FileOfHouses).Query().Load();
@@ -716,6 +710,9 @@ namespace DoAnTotNghiep.Controllers
             {
                 this._context.Entry(house.Users).Collection(m => m.Houses).Query().Load();
             }
+
+
+            house.IncludeLocation(this._context);
             DetailHouseViewModel model = new DetailHouseViewModel(house, salt, house.Users, host);
             model.Ratings = this.GetRatingByHouse(house, host, salt);
             DoAnTotNghiepContext Context = this._context;
@@ -765,7 +762,8 @@ namespace DoAnTotNghiep.Controllers
                                             .Include(m => m.Wards)
                                             .Include(m => m.Requests)
                                             .Include(m => m.FileOfHouses)
-                                            .Include(m => m.Users)
+                                            .Include(m => m.FeedBacks)
+                                            .Include(m => m.Users).ThenInclude(u => u.Files)
                                             .FirstOrDefault(m => m.Id == Id && m.Status == status);
             return house;
         }
@@ -827,9 +825,16 @@ namespace DoAnTotNghiep.Controllers
         public IActionResult HouseOverView(int Id)
         {
             int IdUser = this.GetIdUser();
-            var house = this._context.Houses.Include(m => m.Users)
-                                            .Where(m => m.Id == Id && m.Users != null && m.IdUser == IdUser)
-                                            .FirstOrDefault();
+            var house = this._context.Houses.Include(m => m.RulesInHouses)
+                                            .Include(m => m.UtilitiesInHouses)
+                                            .Include(m => m.Citys)
+                                            .Include(m => m.Districts)
+                                            .Include(m => m.Wards)
+                                            .Include(m => m.Requests)
+                                            .Include(m => m.FeedBacks)
+                                            .Include(m => m.FileOfHouses)
+                                            .Include(m => m.Users).ThenInclude(u => u.Files)
+                                            .FirstOrDefault(m => m.Id == Id && m.Users != null && m.IdUser == IdUser);
             if (house == null) return NotFound();
             ViewData["isAuthorize"] = "true";
             ViewData["isOwner"] = "true";
@@ -860,7 +865,7 @@ namespace DoAnTotNghiep.Controllers
             }
             return View("./Views/Houses/Details.cshtml", model);
         }
-
+        /*
         [HttpGet("/api/House/OverView")]
         public IActionResult OwnerHouseOverView(int Id)
         {
@@ -880,6 +885,7 @@ namespace DoAnTotNghiep.Controllers
                 Data = this.CreateDetailsHouse(house)
             });
         }
+        */
 
 
         //get by userAccess
@@ -915,21 +921,22 @@ namespace DoAnTotNghiep.Controllers
                                         .ToList();
             string host = this.GetWebsitePath();
             List<DetailHouseViewModel> res = new List<DetailHouseViewModel>();
-            DoAnTotNghiepContext Context = this._context;
             foreach (var item in listHouse)
             {
-                Context.Entry(item).Reference(m => m.Citys).Query().Load();
-                Context.Entry(item).Reference(m => m.Districts).Query().Load();
-                Context.Entry(item).Collection(m => m.FileOfHouses).Query().Load();
-                Context.Entry(item).Collection(m => m.RulesInHouses).Query().Load();
-                Context.Entry(item).Collection(m => m.UtilitiesInHouses).Query().Load();
-                Context.Entry(item).Reference(m => m.Users).Query().Load();
+                //Context.Entry(item).Reference(m => m.Citys).Query().Load();
+                //Context.Entry(item).Reference(m => m.Districts).Query().Load();
+                this._context.Entry(item).Collection(m => m.FileOfHouses).Query().Load();
+                this._context.Entry(item).Collection(m => m.RulesInHouses).Query().Load();
+                this._context.Entry(item).Collection(m => m.UtilitiesInHouses).Query().Load();
+                this._context.Entry(item).Reference(m => m.Users).Query().Load();
+                item.IncludeLocation(this._context);
+
                 DetailHouseViewModel model = new DetailHouseViewModel(item, salt, item.Users, host);
                 if (item.FileOfHouses != null)
                 {
                     foreach (var f in item.FileOfHouses)
                     {
-                        Context.Entry(f).Reference(m => m.Files).Load();
+                        this._context.Entry(f).Reference(m => m.Files).Load();
                         if (f.Files != null)
                         {
                             model.Images.Add(new ImageBase(f.Files, host));
@@ -959,25 +966,22 @@ namespace DoAnTotNghiep.Controllers
             byte[] salt = Crypto.Salt(this._configuration);
             string host = this.GetWebsitePath();
             List<DetailHouseViewModel> res = new List<DetailHouseViewModel>();
-            DoAnTotNghiepContext Context = this._context;
             foreach (var item in listHouse)
             {
-                Context.Entry(item).Reference(m => m.Users).Load();
-                Context.Entry(item).Collection(m => m.RulesInHouses).Query().Load();
-                Context.Entry(item).Collection(m => m.UtilitiesInHouses).Query().Load();
-                Context.Entry(item).Reference(m => m.Citys).Query().Load();
-                Context.Entry(item).Reference(m => m.Districts).Query().Load();
-                Context.Entry(item).Reference(m => m.Wards).Query().Load();
-                Context.Entry(item).Collection(m => m.Requests).Query().Load();
-                Context.Entry(item).Collection(m => m.FileOfHouses).Query().Load();
-                Context.Entry(item).Collection(m => m.FeedBacks).Query().Load();
+                this._context.Entry(item).Reference(m => m.Users).Load();
+                this._context.Entry(item).Collection(m => m.RulesInHouses).Query().Load();
+                this._context.Entry(item).Collection(m => m.UtilitiesInHouses).Query().Load();
+                this._context.Entry(item).Collection(m => m.Requests).Query().Load();
+                this._context.Entry(item).Collection(m => m.FileOfHouses).Query().Load();
+                this._context.Entry(item).Collection(m => m.FeedBacks).Query().Load();
 
+                item.IncludeLocation(this._context);
                 DetailHouseViewModel model = new DetailHouseViewModel(item, salt, item.Users, host);
                 if (item.FileOfHouses != null)
                 {
                     foreach (var f in item.FileOfHouses)
                     {
-                        Context.Entry(f).Reference(m => m.Files).Load();
+                        this._context.Entry(f).Reference(m => m.Files).Load();
                         if (f.Files != null)
                         {
                             model.Images.Add(new ImageBase(f.Files, host));

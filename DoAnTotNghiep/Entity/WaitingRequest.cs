@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualBasic;
+﻿using DoAnTotNghiep.Modules;
+using Microsoft.VisualBasic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -7,30 +8,43 @@ namespace DoAnTotNghiep.Entity
     [Table("Waiting_request")]
     public class WaitingRequest
     {
+        public WaitingRequest CreateModel(CreateWaitingRequest model, int IdHouse)
+        {
+            return new WaitingRequest()
+            {
+                StartDate = model.DateStart,
+                EndDate = model.DateEnd,
+                IdCity = model.IdCity,
+                IdUser = model.IdUser,
+                IdHouse = IdHouse,
+                Status = 0,
+                Point = 0,
+                IdDistrict = null,
+                IdWard = null
+            };
+        }
+
+
         [Key]
         [Column("id")]
         public int Id { get; set; }
 
-        [Required]
         [Column("start_date")]
         [DataType(DataType.Date)]
-        public DateTime StartDate { get; set; }
+        public DateTime? StartDate { get; set; }
 
-        [Required]
         [Column("end_date")]
         [DataType(DataType.Date)]
-        public DateTime EndDate { get; set; }
+        public DateTime? EndDate { get; set; }
 
-        [Required]
         [Column("status")]
         public int Status { get; set; } = 0;
 
-        [Required]
         [Column("point")]
         public int Point { get; set; } = 0;
 
-        [Column("id_user")]
         [Required]
+        [Column("id_user")]
         public virtual int IdUser { get; set; }
 
         [ForeignKey(nameof(IdUser))]

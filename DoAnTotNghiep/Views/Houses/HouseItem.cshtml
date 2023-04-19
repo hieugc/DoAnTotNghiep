@@ -52,7 +52,7 @@
                 </div>
                 <p class="card-text">@Model.Location</p>
                 <p class="card-control">
-                    <a href="@Url.Action("HouseOverView", "Houses", new{Id = Model.Id})" class="btn btn-primary" title="Xem chi tiết">Chi tiết</a>
+                    <a href="@Url.Action("HouseOverView", "Houses", new{Id = Model.Id})" class="btn btn-primary" title="Xem chi tiết" target="_blank">Chi tiết</a>
                     @if (Model.Status != (int)StatusHouse.SWAPPING)
                     {
                         <button type="button" class="btn btn-warning" onclick="editHouse(@Model.Id)">Chỉnh sửa</button>

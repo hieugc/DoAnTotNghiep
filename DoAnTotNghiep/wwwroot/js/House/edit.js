@@ -10,7 +10,7 @@
     getHouseModalWithData(editHouse);
 }
 function getHouseModalWithData(temp_data) {
-    if (data != null) {
+    if (temp_data != null) {
         let images = [null, null, null, null];
         for (let e in temp_data.images) {
             images[e] = temp_data.images[e];

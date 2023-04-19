@@ -5,25 +5,49 @@
     <div class="row g-0">
         <div class="col-md-12">
             <div class="user-info">
-                <div>Người bạn đã gửi yêu cầu: </div>
-                <div class="user">
-                    @if (Model.House.User != null)
-                    {
-                        @if (!string.IsNullOrEmpty(Model.House.User.UrlImage))
+                @if(Model.Request.isOwner == false){
+                    <div class="user">
+                        @if (Model.Request.User != null)
                         {
-                            <img src="@Model.House.User.UrlImage" alt="avt" />
+                            @if (!string.IsNullOrEmpty(Model.Request.User.ImageUrl))
+                            {
+                                <img src="@Model.Request.User.ImageUrl" alt="avt" />
+                            }
+                            else
+                            {
+                                <img src="~/Image/user.svg" alt="avt" />
+                            }
+                            <div class="name">@Model.Request.User.UserName</div>
                         }
                         else
                         {
                             <img src="~/Image/user.svg" alt="avt" />
                         }
-                        <div class="name">@Model.House.User.FirstName @Model.House.User.LastName</div>
-                    }
-                    else
-                    {
-                        <img src="~/Image/user.svg" alt="avt" />
-                    }
-                </div>
+                    </div>
+                    <div>đã gửi yêu cầu đến <strong>bạn</strong></div>
+                }
+                else
+                {
+                    <div><strong>Bạn</strong> đã gửi yêu cầu đến </div>
+                    <div class="user">
+                        @if (Model.House.User != null)
+                        {
+                            @if (!string.IsNullOrEmpty(Model.House.User.UrlImage))
+                            {
+                                <img src="@Model.House.User.UrlImage" alt="avt" />
+                            }
+                            else
+                            {
+                                <img src="~/Image/user.svg" alt="avt" />
+                            }
+                            <div class="name">@Model.House.User.FirstName @Model.House.User.LastName</div>
+                        }
+                        else
+                        {
+                            <img src="~/Image/user.svg" alt="avt" />
+                        }
+                    </div>
+                }
             </div>
             <span class="status-@Model.Request.Status text-success">@StatusRequestStr.getStatus(Model.Request.Status)</span>
         </div>
@@ -143,16 +167,25 @@
                 }
                 else if (Model.Request.Status == (int)StatusRequest.CHECK_OUT)
                 {
-                    <div class="control"><button class="btn btn-primary">Đánh giá ngay</button></div>
-                }
-                else
-                {
-                    //thêm đánh giá trong detail
-                    //thêm đánh giá trong request
-                    //thêm detail đánh giá
-                    //request trong
+                   <div class="control"><button class="btn btn-primary" onclick="renderRatingForm(@Model.Request.Id, null)">Đánh giá ngay</button></div>
                 }
             </div>
         </div>
+        @if(Model.UserRating != null || Model.MyRating != null)
+        {
+            <div class="frame-title">Đánh giá từ người dùng</div>
+            <div class="d-flex col-12 justify-content-start">
+                
+                @if(Model.UserRating != null)
+                {
+                    @Html.Partial("~/Views/Rating/_RatingDetail.cshtml", Model.UserRating)
+                }
+                @if (Model.MyRating != null)
+                {
+                    ViewData["isOwner"] = "true";
+                    @Html.Partial("~/Views/Rating/_RatingDetail.cshtml", Model.MyRating)
+                }
+            </div>
+        }
     </div>
 </div>

@@ -85,7 +85,10 @@ namespace DoAnTotNghiep.Controllers
                         Amount = amount.Price,
                         Status = (int)StatusTransaction.PENDING,
                         IdUser = IdUser,
-                        Content = "Bạn nạp tích lũy điểm"
+                        Content = "Bạn đã nạp "
+                                    + amount.Price
+                                    + " VNĐ vào hệ thống tích lũy điểm lúc "
+                                    + DateTime.Now.ToString("hh:mm:ss dd/MM/yyyy")
                     };
                     using (var tran = this._context.Database.BeginTransaction())
                     {
@@ -325,7 +328,7 @@ namespace DoAnTotNghiep.Controllers
             {
                 transaction.AddRange(this._context.HistoryTransactions
                                             .Where(m => m.Status == Status && m.IdUser == IdUser && m.CreatedDate.Year == year)
-                                            .OrderByDescending(m => m.CreatedDate)
+                                            .OrderBy(m => m.CreatedDate)
                                             .Select(m => new TransactionViewModel(m))
                                             .ToList());
             }
@@ -333,8 +336,8 @@ namespace DoAnTotNghiep.Controllers
             {
                 transaction.AddRange(this._context.HistoryTransactions
                                             .Where(m => m.IdUser == IdUser && m.CreatedDate.Year == year)
+                                            .OrderBy(m => m.CreatedDate)
                                             .Select(m => new TransactionViewModel(m))
-                                            .OrderByDescending(m => m.CreatedDate)
                                             .ToList());
             }
             return Json(new
@@ -347,17 +350,17 @@ namespace DoAnTotNghiep.Controllers
         [HttpGet("/Statistics/Payment/All")]
         public IActionResult GetAll(int year = 2023)
         {
-            return this.GetTransaction(null);
+            return this.GetTransaction(null, year);
         }
         [HttpGet("/Statistics/Payment/Valid")]
         public IActionResult GetValid(int year = 2023)
         {
-            return this.GetTransaction((int)StatusTransaction.VALID);
+            return this.GetTransaction((int)StatusTransaction.VALID, year);
         }
         [HttpGet("/Statistics/Payment/Used")]
         public IActionResult GetUsed(int year = 2023)
         {
-            return this.GetTransaction((int)StatusTransaction.USED);
+            return this.GetTransaction((int)StatusTransaction.USED, year);
         }
     }
 }

@@ -27,7 +27,9 @@ namespace DoAnTotNghiep.ViewModels
         public int Square { get; set; } = 0;
         [Required(ErrorMessage = "Hãy điền địa chỉ nhà")]
         public string Location { get; set; } = string.Empty;
-
+        public string? CityName { get; set; } = string.Empty;
+        public string? DistrictName { get; set; } = string.Empty;
+        public string? WardName { get; set; } = string.Empty;
         public double Lat { get; set; } = 0;
         public double Lng { get; set; } = 0;
         public int IdCity { get; set; } = 0;
@@ -80,6 +82,9 @@ namespace DoAnTotNghiep.ViewModels
             this.IdCity = house.IdCity == null ? 0 : house.IdCity.Value; //id bắt buộc => tạo yêu cầu xoay vòng
             this.IdDistrict = house.IdDistrict == null ? 0 : house.IdDistrict.Value;//idDistrict 
             this.IdWard = house.IdWard == null ? 0 : house.IdWard.Value;// có thể không có
+            this.CityName = house.Citys == null ? string.Empty : house.Citys.Name;
+            this.DistrictName = house.Districts == null ? string.Empty : house.Districts.Name;
+            this.WardName = house.Wards == null ? string.Empty : house.Wards.Name;
             this.Price = house.Price;//int
             this.Utilities = utilities;//list<int>
             this.Rules = rules;//list<int>
@@ -91,11 +96,14 @@ namespace DoAnTotNghiep.ViewModels
             {
                 this.Request = house.Requests.Where(m => m.Status == (int) StatusRequest.WAIT_FOR_SWAP).Count();
                 DateTime now = DateTime.Now;
+
+                //lấy rangeTime
+
                 List<RangeDate> rangeDates = house.Requests.Where(r => (r.Status == (int)StatusRequest.ACCEPT
                                                                         || r.Status == (int)StatusRequest.CHECK_IN
-                                                                        || r.Status == (int)StatusRequest.CHECK_OUT
                                                                     )
-                                                                    && (DateTime.Compare(r.StartDate, now)  <= 0 && DateTime.Compare(now, r.EndDate) <= 0)
+                                                                    && ((DateTime.Compare(r.StartDate, now) <= 0 && DateTime.Compare(now, r.EndDate) <= 0)
+                                                                        || DateTime.Compare(r.StartDate, now) >= 0)
                                                                 )
                                                         .Select(m => new RangeDate()
                                                         {
@@ -160,6 +168,9 @@ namespace DoAnTotNghiep.ViewModels
         public int Square { get; set; } = 0;
         [Required(ErrorMessage = "Hãy điền địa chỉ nhà")]
         public string Location { get; set; } = string.Empty; //địa chỉ
+        public string? CityName { get; set; } = string.Empty;
+        public string? DistrictName { get; set; } = string.Empty;
+        public string? WardName { get; set; } = string.Empty;
         public double Lat { get; set; } = 0;// :))
         public double Lng { get; set; } = 0;//
         public int? Bed { get; set; } = 0;
@@ -174,7 +185,6 @@ namespace DoAnTotNghiep.ViewModels
         public List<int> Utilities { get; set; } = new List<int>();
         public List<int> Rules { get; set; } = new List<int>();
 
-        [Required(ErrorMessage = "Hãy thêm hình ảnh nhà của bạn")]
         public IFormFileCollection? Files { get; set; } //
     }
     public class MobileEditHouseViewModel : MobileCreateHouseViewModel
@@ -207,6 +217,7 @@ namespace DoAnTotNghiep.ViewModels
                 this.Utilities = mobileCreateHouseViewModel.Utilities;
                 this.Rules = mobileCreateHouseViewModel.Rules;
                 this.Files = mobileCreateHouseViewModel.Files;
+                this.Bed = mobileCreateHouseViewModel?.Bed;
             }
             else if(createHouseViewModel != null)
             {
@@ -229,6 +240,7 @@ namespace DoAnTotNghiep.ViewModels
                 this.Rules = createHouseViewModel.Rules;
                 this.Files = null;
                 this.Images = createHouseViewModel.Images;
+                this.Bed = mobileCreateHouseViewModel?.Bed;
             }
         }
         public string Name { get; set; } = string.Empty;
@@ -241,6 +253,9 @@ namespace DoAnTotNghiep.ViewModels
         public string Location { get; set; } = string.Empty;
         public double Lat { get; set; } = 0;
         public double Lng { get; set; } = 0;
+        public string? CityName { get; set; } = string.Empty;
+        public string? DistrictName { get; set; } = string.Empty;
+        public string? WardName { get; set; } = string.Empty;
         public int IdCity { get; set; } = 0;
         public int? IdDistrict { get; set; } = 0;
         public int? IdWard { get; set; } = 0;
@@ -298,11 +313,6 @@ namespace DoAnTotNghiep.ViewModels
     }
     public class Pagination
     {
-        //page => 1 -> total
-        //page = ceil(total/limit)
-        //  100 => 10 trang
-        //  101 => 11 trang
-        //  109 => 11 trang
         public Pagination()
         {
             Page = 1;
@@ -317,5 +327,16 @@ namespace DoAnTotNghiep.ViewModels
         public int Page { get; set; } = 1;
         public int Limit { get; set; } = 10;
         public int Total { get; set; } = 0;
+    }
+
+    public class HouseSelector
+    {
+        public HouseSelector(House house)
+        {
+            this.Id = house.Id;
+            this.Name = house.Name;
+        }
+        public int Id { get; set; }
+        public string Name { get; set; }
     }
 }

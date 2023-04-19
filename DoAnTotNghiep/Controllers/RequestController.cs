@@ -67,16 +67,13 @@ namespace DoAnTotNghiep.Controllers
             {
                 this._context.Entry(house.Users).Collection(m => m.Houses).Query().Where(m =>m.Status == (int)StatusHouse.VALID).Load();
             }
-
-            this._context.Entry(house).Reference(m => m.Citys).Query().Load();
-            this._context.Entry(house).Reference(m => m.Districts).Query().Load();
+            house.IncludeLocation(this._context);
             DetailHouseViewModel model = new DetailHouseViewModel(house, salt, house.Users, host);
-            DoAnTotNghiepContext Context = this._context;
             if (house.FileOfHouses != null)
             {
                 foreach (var f in house.FileOfHouses)
                 {
-                    Context.Entry(f).Reference(m => m.Files).Load();
+                    this._context.Entry(f).Reference(m => m.Files).Load();
                     if (f.Files != null)
                     {
                         model.Images.Add(new ImageBase(f.Files, host));
@@ -98,56 +95,49 @@ namespace DoAnTotNghiep.Controllers
                 byte[] salt = Crypto.Salt(this._configuration);
                 string host = this.GetWebsitePath();
                 //list house của người đó
-                var userHouses = this._context.Houses.Where(m => m.IdUser == Id && m.Status == (int) StatusHouse.VALID).ToList();
-                foreach (var item in userHouses)
-                {
-                    this._context.Entry(item).Collection(m => m.FileOfHouses).Query().Load();
-                    this._context.Entry(item).Collection(m => m.FeedBacks).Query().Load();
-                    this._context.Entry(item).Collection(m => m.Requests).Query().Load();
-
-                    DetailHouseViewModel m = new DetailHouseViewModel(item, salt, item.Users, host);
-                    if (item.FileOfHouses != null)
-                    {
-                        foreach (var f in item.FileOfHouses)
-                        {
-                            this._context.Entry(f).Reference(m => m.Files).Load();
-                            if (f.Files != null)
-                            {
-                                m.Images.Add(new ImageBase(f.Files, host));
-                                break;
-                            }
-                        }
-                    }
-                    model.UserHouses.Add(m);
-                }
-
+                model.UserHouses.AddRange(GetListHouse(Id, host, salt));
                 //list house của mình
                 int IdUser = this.GetIdUser();
-                var myHouses = this._context.Houses.Where(m => m.IdUser == IdUser && m.Status == (int)StatusHouse.VALID).ToList();
-                foreach (var item in myHouses)
-                {
-                    this._context.Entry(item).Collection(m => m.FileOfHouses).Query().Load();
-                    this._context.Entry(item).Collection(m => m.FeedBacks).Query().Load();
-                    this._context.Entry(item).Collection(m => m.Requests).Query().Load();
-
-                    DetailHouseViewModel m = new DetailHouseViewModel(item, salt, item.Users, host);
-                    if (item.FileOfHouses != null)
-                    {
-                        foreach (var f in item.FileOfHouses)
-                        {
-                            this._context.Entry(f).Reference(m => m.Files).Load();
-                            if (f.Files != null)
-                            {
-                                m.Images.Add(new ImageBase(f.Files, host));
-                                break;
-                            }
-                        }
-                    }
-                    model.MyHouses.Add(m);
-                }
+                model.MyHouses.AddRange(GetListHouse(IdUser, host, salt));
             }
             return PartialView("./Views/Request/_RequestForm.cshtml", model);
         }
+
+        private List<DetailHouseViewModel> GetListHouse(int IdUser, string host, byte[] salt)
+        {
+            List<DetailHouseViewModel> model = new List<DetailHouseViewModel>();
+            var userHouses = this._context.Houses.Where(m => m.IdUser == IdUser && m.Status == (int)StatusHouse.VALID).ToList();
+            foreach (var item in userHouses)
+            {
+                model.Add(this.CreateDetailHouse(item, host, salt));
+            }
+            return model;
+        }
+        private DetailHouseViewModel CreateDetailHouse(House item, string host, byte[] salt)
+        {
+            this._context.Entry(item).Collection(m => m.FileOfHouses).Query().Load();
+            this._context.Entry(item).Collection(m => m.FeedBacks).Query().Load();
+            this._context.Entry(item).Collection(m => m.Requests).Query().Load();
+
+            item.IncludeLocation(this._context);
+            DetailHouseViewModel m = new DetailHouseViewModel(item, salt, item.Users, host);
+            if (item.FileOfHouses != null)
+            {
+                foreach (var f in item.FileOfHouses)
+                {
+                    this._context.Entry(f).Reference(m => m.Files).Load();
+                    if (f.Files != null)
+                    {
+                        m.Images.Add(new ImageBase(f.Files, host));
+                        break;
+                    }
+                }
+            }
+            return m;
+        }
+
+
+
 
         [HttpGet("/Request/FormWithHouseId")]//chưa xong
         public IActionResult RequestForm(int IdHouse)
@@ -159,25 +149,7 @@ namespace DoAnTotNghiep.Controllers
             var userHouses = this._context.Houses.Where(m => m.Id == IdHouse && m.Status == (int)StatusHouse.VALID).ToList();
             foreach (var item in userHouses)
             {
-                this._context.Entry(item).Collection(m => m.FileOfHouses).Query().Load();
-                this._context.Entry(item).Collection(m => m.FeedBacks).Query().Load();
-                this._context.Entry(item).Collection(m => m.Requests).Query().Load();
-                this._context.Entry(item).Reference(m => m.Citys).Query().Load();
-                this._context.Entry(item).Reference(m => m.Districts).Query().Load();
-                DetailHouseViewModel m = new DetailHouseViewModel(item, salt, item.Users, host);
-                if (item.FileOfHouses != null)
-                {
-                    foreach (var f in item.FileOfHouses)
-                    {
-                        this._context.Entry(f).Reference(m => m.Files).Load();
-                        if (f.Files != null)
-                        {
-                            m.Images.Add(new ImageBase(f.Files, host));
-                            break;
-                        }
-                    }
-                }
-                model.UserHouses.Add(m);
+                model.UserHouses.Add(this.CreateDetailHouse(item, host, salt));
             }
 
             //list house của mình
@@ -185,25 +157,7 @@ namespace DoAnTotNghiep.Controllers
             var myHouses = this._context.Houses.Where(m => m.IdUser == IdUser && m.Status == (int)StatusHouse.VALID).ToList();
             foreach (var item in myHouses)
             {
-                this._context.Entry(item).Collection(m => m.FileOfHouses).Query().Load();
-                this._context.Entry(item).Collection(m => m.FeedBacks).Query().Load();
-                this._context.Entry(item).Collection(m => m.Requests).Query().Load();
-                this._context.Entry(item).Reference(m => m.Citys).Query().Load();
-                this._context.Entry(item).Reference(m => m.Districts).Query().Load();
-                DetailHouseViewModel m = new DetailHouseViewModel(item, salt, item.Users, host);
-                if (item.FileOfHouses != null)
-                {
-                    foreach (var f in item.FileOfHouses)
-                    {
-                        this._context.Entry(f).Reference(m => m.Files).Load();
-                        if (f.Files != null)
-                        {
-                            m.Images.Add(new ImageBase(f.Files, host));
-                            break;
-                        }
-                    }
-                }
-                model.MyHouses.Add(m);
+                model.MyHouses.Add(this.CreateDetailHouse(item, host, salt));
             }
             return PartialView("./Views/Request/_RequestForm.cshtml", model);
         }
@@ -343,6 +297,7 @@ namespace DoAnTotNghiep.Controllers
                 Status = (int) StatusRequest.WAIT_FOR_SWAP,
                 IdUser = this.GetIdUser()
             };
+            var transaction = this._context.Database.BeginTransaction();
             try
             {
                 this._context.Requests.Add(request);
@@ -366,7 +321,7 @@ namespace DoAnTotNghiep.Controllers
                         IdUser = house.Users.Id,
                         IdType = request.Id,
                         IsSeen = false,
-                        ImageUrl = this.GetWebsitePath() + "/Image/house-demo.png"
+                        ImageUrl = "/Image/house-demo.png"
                     };
 
                     this._context.Notifications.Add(notification);
@@ -377,12 +332,13 @@ namespace DoAnTotNghiep.Controllers
                         target: TargetSignalR.Notification(), 
                         model: new NotificationViewModel(notification, this.GetWebsitePath()));
                 }
-
+                transaction.Commit();
                 return request;
             }
             catch(Exception ex)
             {
                 Console.WriteLine(ex.ToString());
+                transaction.Rollback();
             }
             return null;
         }
@@ -578,12 +534,21 @@ namespace DoAnTotNghiep.Controllers
                                 Context.Entry(item).Reference(m => m.SwapHouses).Query().Load();
                                 if (item.SwapHouses != null)
                                 {
-                                    this._context.Entry(item.SwapHouses).Reference(m => m.Citys).Query().Load();
-                                    this._context.Entry(item.SwapHouses).Reference(m => m.Districts).Query().Load();
+                                    item.SwapHouses.IncludeLocation(this._context);
                                     swapHouse = new DetailHouseViewModel(item.SwapHouses, salt, item.Users, host);
                                 }
                             }
-                            DetailRequestViewModel request = new DetailRequestViewModel(item, item.Users, salt, host);
+                            User? inputUser = null;
+                            if (item.IdUser == IdUser)
+                            {
+                                inputUser = item.Houses.Users;
+                            }
+                            else
+                            {
+                                inputUser = item.Users;
+                            }
+                            DetailRequestViewModel request = new DetailRequestViewModel(item, inputUser, salt, host);
+
                             model.Add(new NotifyRequest()
                             {
                                 Request = request,
@@ -598,24 +563,24 @@ namespace DoAnTotNghiep.Controllers
 
         //lấy danh sách yêu cầu bản thân đã gửi
         [HttpGet("/Request/GetRequestSent")]
-        public IActionResult GetListRequestSent()
+        public IActionResult GetListRequestSent(int? Status)
         {
             return Json(new
             {
                 Status = 200,
-                Data = this.GetAllRequestsSent()
+                Data = this.GetAllRequestsSent(Status)
             });
         }
         [HttpGet("/api/Request/GetRequestSent")]
-        public IActionResult ApiGetListRequestSent()
+        public IActionResult ApiGetListRequestSent(int? Status)
         {
             return Json(new
             {
                 Status = 200,
-                Data = this.GetAllRequestsSent()
+                Data = this.GetAllRequestsSent(Status)
             });
         }
-        private List<DetailRequest> GetAllRequestsSent()
+        private List<DetailRequest> GetAllRequestsSent(int? Status)
         {
             int IdUser = this.GetIdUser();
             var requests = this._context.Requests
@@ -629,7 +594,7 @@ namespace DoAnTotNghiep.Controllers
             {
                 if(item != null)
                 {
-                    DetailRequest? request = this.CreateDetailRequest(item);
+                    DetailRequest? request = this.CreateDetailRequest(item, Status);
                     if (request != null)
                     {
                         model.Add(request);
@@ -644,14 +609,14 @@ namespace DoAnTotNghiep.Controllers
         [HttpGet("/Request/Detail")]
         public IActionResult GetDetailRequest(int Id)
         {
-            DetailRequest? model = this.GetDetailHouse(Id);
+            DetailRequest? model = this.DetailRequest(Id);
             if (model == null) return NotFound();
             return PartialView("./Views/Request/_RequestDetail.cshtml", model);
         }
         [HttpGet("/api/Request/Detail")]
         public IActionResult ApiGetDetailRequest(int Id)
         {
-            DetailRequest? model = this.GetDetailHouse(Id);
+            DetailRequest? model = this.DetailRequest(Id);
             if (model == null) return BadRequest(new
             {
                 Status = 400,
@@ -663,18 +628,19 @@ namespace DoAnTotNghiep.Controllers
                 Data = model
             });
         }
-        private DetailRequest? GetDetailHouse(int IdRequest)
+        private DetailRequest? DetailRequest(int IdRequest)
         {
             //int IdUser = this.GetIdUser();
             var item = this._context.Requests
                                         .Where(m => m.Id == IdRequest).FirstOrDefault();
+            
             if(item != null)
             {
-                return this.CreateDetailRequest(item);
+                return this.CreateDetailRequest(item, null);
             }
             return null;
         }
-        private DetailRequest? CreateDetailRequest(Request item)
+        private DetailRequest? CreateDetailRequest(Request item, int? Status)
         {
             byte[] salt = Crypto.Salt(this._configuration);
             string host = this.GetWebsitePath();
@@ -683,6 +649,14 @@ namespace DoAnTotNghiep.Controllers
             this._context.Entry(item).Collection(m => m.FeedBacks).Query().Where(m => m.IdUser == IdUser).Load();
             this._context.Entry(item).Collection(m => m.CheckOuts).Query().Where(m => m.IdUser == IdUser).Load();
             this._context.Entry(item).Collection(m => m.CheckIns).Query().Where(m => m.IdUser == IdUser).Load();
+            item.CheckStatus(item);
+            if(Status != null)
+            {
+                if(item.Status != Status)
+                {
+                    return null;
+                }
+            }
             if (item.Houses != null)
             {
                 this._context.Entry(item.Houses).Reference(m => m.Users).Query().Load();
@@ -691,13 +665,21 @@ namespace DoAnTotNghiep.Controllers
                 {
                     DetailHouseViewModel house = this.CreateDetailsHouse(item.Houses);
                     DetailHouseViewModel? swapHouse = null;
-                    DetailRatingViewModel? rating = null;
+                    DetailRatingViewModel? userRating = null;
+                    DetailRatingViewModel? myRating = null;
+                    FeedBack? userFeedBack = this._context.FeedBacks
+                                                                .Where(m => m.IdUser != IdUser && m.IdRequest == item.Id)
+                                                                .FirstOrDefault();
+                    if (userFeedBack != null)
+                    {
+                        userRating = new DetailRatingViewModel(userFeedBack);
+                    }
                     if (item.FeedBacks != null)
                     {
-                        FeedBack? feedBack = item.FeedBacks.FirstOrDefault();
-                        if (feedBack != null)
+                        FeedBack? myFeedBack = item.FeedBacks.Where(m => m.IdUser == IdUser).FirstOrDefault();
+                        if (myFeedBack != null)
                         {
-                            rating = new DetailRatingViewModel(feedBack);
+                            myRating = new DetailRatingViewModel(myFeedBack);
                             item.Status = (int)StatusRequest.ENDED;
                         }
                     }
@@ -712,13 +694,23 @@ namespace DoAnTotNghiep.Controllers
                             swapHouse = this.CreateDetailsHouse(item.SwapHouses);
                         }
                     }
-                    DetailRequestViewModel request = new DetailRequestViewModel(item, item.Users, salt, host);
+                    User? inputUser = null;
+                    if (item.IdUser == IdUser)
+                    {
+                        inputUser = item.Houses.Users;
+                    }
+                    else
+                    {
+                        inputUser = item.Users;
+                    }
+                    DetailRequestViewModel request = new DetailRequestViewModel(item, inputUser, salt, host);
                     return new DetailRequest()
                     {
                         Request = request,
                         SwapHouse = swapHouse,
                         House = house,
-                        Rating = rating
+                        UserRating = userRating,
+                        MyRating = myRating
                     };
                 }
             }
@@ -726,24 +718,24 @@ namespace DoAnTotNghiep.Controllers
         }
 
         [HttpGet("/Request/GetRequestsByUserAccess")]//lấy danh sách yêu cầu mới
-        public IActionResult GetListRequestsByUserAccess(string UserAccess)
+        public IActionResult GetListRequestsByUserAccess(string UserAccess, int? Status)
         {
             return Json(new
             {
                 Status = 200,
-                Data = this.GetAllRequestsByUserAccess(UserAccess)
+                Data = this.GetAllRequestsByUserAccess(UserAccess, Status)
             });
         }
         [HttpGet("/api/Request/GetRequestsByUserAccess")]
-        public IActionResult ApiGetListRequestsByUserAccess(string UserAccess)
+        public IActionResult ApiGetListRequestsByUserAccess(string UserAccess, int? Status)
         {
             return Json(new
             {
                 Status = 200,
-                Data = this.GetAllRequestsByUserAccess(UserAccess)
+                Data = this.GetAllRequestsByUserAccess(UserAccess, Status)
             });
         }
-        private List<DetailRequest> GetAllRequestsByUserAccess(string UserAccess)
+        private List<DetailRequest> GetAllRequestsByUserAccess(string UserAccess, int? Status)
         {
             int Id = 0;
             if(!int.TryParse(Crypto.DecodeKey(UserAccess, Crypto.Salt(this._configuration)), out Id))
@@ -773,7 +765,7 @@ namespace DoAnTotNghiep.Controllers
                     {
                         if (itemRequest != null)
                         {
-                            DetailRequest? request = this.CreateDetailRequest(itemRequest);
+                            DetailRequest? request = this.CreateDetailRequest(itemRequest, Status);
                             if (request != null)
                             {
                                 model.Add(request);
@@ -828,8 +820,6 @@ namespace DoAnTotNghiep.Controllers
             return await UpdateStatusRequestAsync(rq, Status);
         }
 
-
-
         [HttpPost("/api/Request/UpdateStatus")]
         public async Task<IActionResult> ApiUpdateStatusAsync([FromBody] UpdateStatusViewModel model)
         {
@@ -865,6 +855,7 @@ namespace DoAnTotNghiep.Controllers
             if (rq != null)
             {
                 int IdUser = this.GetIdUser();
+                var DBtransaction = this._context.Database.BeginTransaction();
                 try
                 {
                     this._context.Entry(rq).Reference(m => m.Houses).Query().Load();
@@ -890,7 +881,23 @@ namespace DoAnTotNghiep.Controllers
                                 notification.Content = "Yêu cầu của bạn đến nhà "
                                                         + rq.Houses.Name
                                                         + " bị từ chối";
-
+                                if(rq.Houses.IdCity != null)
+                                {
+                                    DateTime? DateStart = null, DateEnd = null;
+                                    DateTime now = DateTime.Now;
+                                    if(DateTime.Compare(now, rq.StartDate) <= 0)
+                                    {
+                                        DateStart = rq.StartDate;
+                                        DateEnd = rq.EndDate;
+                                    }
+                                    else if (DateTime.Compare(now, rq.EndDate) <= 0)
+                                    {
+                                        DateStart = now;
+                                        DateEnd = rq.EndDate;
+                                    }
+                                    await CreateWaitingRequestTimerAsync(TargetFunction.ExecuteCreateWaiting,
+                                                            TimeSpan.FromSeconds(10), 1, rq.Houses.IdCity.Value, IdUser, DateStart, DateEnd);
+                                }
                                 //chạy code trao đổi xoay vòng
                                 break;
                             case (int)StatusRequest.ACCEPT://chấp nhận
@@ -1003,7 +1010,12 @@ namespace DoAnTotNghiep.Controllers
                                                 IdUser = IdUser,
                                                 CreatedDate = DateTime.Now,
                                                 Status = (int)StatusTransaction.USED,
-                                                Content = "Bạn thanh toán tiền trao đổi nhà " + rq.Houses.Name + " của " + user.FirstName + " " + user.LastName
+                                                Content = "Bạn thanh toán "
+                                                            + rq.Point + ""
+                                                            + " điểm trao đổi nhà " 
+                                                            + rq.Houses.Name + " của " 
+                                                            + user.FirstName + " " + user.LastName
+                                                            + " vào lúc" + DateTime.Now.ToString("hh:mm:ss dd/MM/yyyy")
                                             };
                                             this._context.HistoryTransactions.Add(transaction);
                                             this._context.SaveChanges();
@@ -1058,16 +1070,20 @@ namespace DoAnTotNghiep.Controllers
                         this._context.Requests.Update(rq);
                         this._context.SaveChanges();
 
+                        DBtransaction.Commit();
                         return Json(new
                         {
                             Status = 200,
                             Message = "Cập nhật thành công"
                         });
                     }
+
+                    DBtransaction.Commit();
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex.Message);
+                    DBtransaction.Rollback();
                 }
             }
 
@@ -1105,14 +1121,32 @@ namespace DoAnTotNghiep.Controllers
 
             await timer.StartAsync(token);
         }
+        private async Task CreateWaitingRequestTimerAsync(string Function, TimeSpan timeStart, int limit, int IdCity, int IdUser, DateTime? DateStart, DateTime? DateEnd)
+        {
+            CancellationTokenSource source = new CancellationTokenSource();
+            CancellationToken token = source.Token;
+            DoAnTotNghiepContext inputContext = new DoAnTotNghiepContext(this._context.GetConfig());
+            string host = this.GetWebsitePath();
+            CreateWaitingRequest Object = new CreateWaitingRequest(IdCity, IdUser, DateStart, DateEnd);
 
+            TimedHostedService timer = new TimedHostedService(
+                                            inputContext,
+                                            host,
+                                            Function,
+                                            token,
+                                            limit,
+                                            timeStart,
+                                            Object);
+
+            await timer.StartAsync(token);
+        }
         //timer trước ngày trao đổi 1 ngày thông báo checkin//
         //timer sau ngày trao đổi 1 ngày chưa checkin => hủy yêu cầu//
         //timer trước ngày checkout 1 ngày thông báo checkout
         //      => tăng phí người chưa check out
         //update endDATE => TĂNG PHÍ NẾU NGƯỜI KIA ACCEPT
 
-        [HttpGet("Statistics/House")]
+        [HttpGet("/Statistics/House")]
         public IActionResult StatisticsHouse(InputRequestStatistic input)
         {
             int IdUser = this.GetIdUser();

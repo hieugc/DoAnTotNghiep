@@ -20,7 +20,7 @@
 </div>
 
 <script type="text/javascript">
-    var listHouse = @Html.Raw(Json.Serialize(Model.Houses));
+    var listHouse = @Html.Raw(Json.Serialize(Model.Houses.Houses));
 </script>
 
 
@@ -44,6 +44,11 @@
     <script src="~/js/House/delete.js" type="text/javascript"></script>
     <script src="~/js/House/edit.js" type="text/javascript"></script>
     <script src="~/js/House/updateHouse.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        if($(".material-symbols-outlined").length > 3){
+            $(".material-symbols-outlined")[3].innerHTML = "mic";
+        }
+    </script>
 }
 
 @section houseListRequest{

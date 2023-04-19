@@ -226,12 +226,8 @@ function updateNoti(data) {
     prependNewNotification(".dropdown-item" + tag_message);
 }
 function returnFunction(model) {
-    console.log(model);
-    if (model.type == 0) { //request
+    if (model.type == 0 || model.type == 1) { //request
         return `requestView(${model.idType})`;
-    }
-    else if (model.type == 1) { //rating
-        
     }
     else if (model.type == 2) { //admin report
         return window.location.origin + "/Report/";
@@ -248,7 +244,7 @@ function itemNoti(model) {
                             <span class="title">${model.title}</span>
                             <span>${model.content}</span>
                         </div>
-                        <span class="time">${model.createdDate}</span>
+                        <span class="time">${model.createdDate.split("T")}</span>
                     </div>`;
     if (!model.isSeen) {
         res += `<div class="status"><i class="fa-solid fa-circle"></i></div>`;

@@ -91,9 +91,11 @@ function getDataDistrict() {
                             let model = "\"" + data.data[e]["bingName"] + "\":" + omodel.slice(0, omodel.length - 1) + ", \"ward\": null}";
                             bingStr += model + ", ";
                         }
+                        
                         bingStr = bingStr.trim();
                         bingStr = bingStr.slice(0, bingStr.length - 1);
                         bingStr += "}";
+                        console.log(bingStr);
                         dataBingLocation[dataLocation[id].bingName].district = JSON.parse(bingStr);
 
                         let model = JSON.stringify(data.data).replaceAll("name", "text");
@@ -177,7 +179,6 @@ function getDataWard() {
 
 
                         if ($("#ward-select").length > 0) {
-
                             changeDataForSelect2("#ward-select", [{ "id": -1, "text": "Phường / Xã" }].concat(JSON.parse(model)));
                         }
                     },
@@ -188,7 +189,7 @@ function getDataWard() {
             }
             else {
                 if ($("#ward-select").length > 0) {
-                    changeDataForSelect2("#ward-select", getDataFormat(dataLocation[id].district, "Phường / Xã"));
+                    changeDataForSelect2("#ward-select", getDataFormat(dataLocation[id_city].district[id].ward, "Phường / Xã"));
                 }
             }
         }
@@ -245,7 +246,7 @@ function hideMainForm() {
 function showMainForm() {
     $("#location").val($("#mapAddress").text().replace("Địa chỉ nhà: ", ""));
     if ($("#location").val().length > 0) {
-        data.location = $("#location").val();
+        data.location = $("#map-location").val();
         if ($("#city-select").val() != -1) {
             data.idCity = $("#city-select").val();
             if ($("#district-select").val() != -1) {
@@ -288,46 +289,40 @@ function reloadMap(address) {
     showAddress(address);
 }
 function getLocation(temp_address) {
-    if (temp_address != null) {
-        address = temp_address
-    }
-    else {
-        address = "adminDistrict=" + encodeURIComponent(dataLocation[$("#city-select").val()].bingName)
-            + "&locality=" + encodeURIComponent(dataLocation[$("#city-select").val()].district[$("#district-select").val()].bingName)
-            + "&addressLine=" + encodeURIComponent($("#map-location").val() + ", " + dataLocation[$("#city-select").val()].district[$("#district-select").val()].ward[$("#ward-select").val()].bingName);
-    }
-    var url_temp = window.location.protocol + '//dev.virtualearth.net/REST/v1/Locations?CountryRegion=VN&' + address + '&key=' + key;
-    
-    $.ajax({
-        url: url_temp,
-        dataType: "jsonp",
-        jsonp: "jsonp",
-        success: function (data) {
-            if (data.statusCode == 200) {
-                var result = data.resourceSets[0].resources[0].geocodePoints[0].coordinates;
-                loc = new Microsoft.Maps.Location(result[0], result[1]);
-                let temp_address = $("#map-location").val()
-                    + ", " + dataLocation[$("#city-select").val()].district[$("#district-select").val()].ward[$("#ward-select").val()].name
-                    + ", " + dataLocation[$("#city-select").val()].district[$("#district-select").val()].name
-                    + ", " + dataLocation[$("#city-select").val()].name;
-                reloadMap(temp_address);
-                $("#mapAddress").html("<strong>Địa chỉ nhà: </strong>" + temp_address);
-            }
-            else {
-                alert("Bạn hãy thử lại");
-            }
-        },
-        error: function (e) {
-            console.log(e);
+    if (checkAddress()) {
+        if (temp_address != null) {
+            address = temp_address
         }
-    });
-}
-function autoGetLocation() {
-    if (dataLocation != null
-        && $("#city-select").val() != -1
-        && $("#district-select").val() != -1
-        && $("#ward-select").val() != -1) {
-        //getDataLocation();
+        else {
+            address = "adminDistrict=" + encodeURIComponent(dataLocation[$("#city-select").val()].bingName)
+                + "&locality=" + encodeURIComponent(dataLocation[$("#city-select").val()].district[$("#district-select").val()].bingName)
+                + "&addressLine=" + encodeURIComponent($("#map-location").val() + ", " + dataLocation[$("#city-select").val()].district[$("#district-select").val()].ward[$("#ward-select").val()].bingName);
+        }
+        var url_temp = window.location.protocol + '//dev.virtualearth.net/REST/v1/Locations?CountryRegion=VN&' + address + '&key=' + key;
+
+        $.ajax({
+            url: url_temp,
+            dataType: "jsonp",
+            jsonp: "jsonp",
+            success: function (data) {
+                if (data.statusCode == 200) {
+                    var result = data.resourceSets[0].resources[0].geocodePoints[0].coordinates;
+                    loc = new Microsoft.Maps.Location(result[0], result[1]);
+                    let temp_address = $("#map-location").val()
+                        + ", " + dataLocation[$("#city-select").val()].district[$("#district-select").val()].ward[$("#ward-select").val()].name
+                        + ", " + dataLocation[$("#city-select").val()].district[$("#district-select").val()].name
+                        + ", " + dataLocation[$("#city-select").val()].name;
+                    reloadMap(temp_address);
+                    $("#mapAddress").html("<strong>Địa chỉ nhà: </strong>" + temp_address);
+                }
+                else {
+                    alert("Bạn hãy thử lại");
+                }
+            },
+            error: function (e) {
+                console.log(e);
+            }
+        });
     }
 }
 function getIdCity(cityBingName) {

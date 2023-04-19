@@ -72,24 +72,22 @@ namespace DoAnTotNghiep.Controllers
             string host = this.GetWebsitePath();
 
             List<DetailHouseViewModel> detailHouseViewModels = new List<DetailHouseViewModel>();
-            DoAnTotNghiepContext Context = this._context;
             foreach (var item in listHouse.Skip(skip).Take(pagination.Limit))
             {
-                Context.Entry(item).Reference(m => m.Users).Load();
-                Context.Entry(item).Collection(m => m.RulesInHouses).Query().Load();
-                Context.Entry(item).Collection(m => m.UtilitiesInHouses).Query().Load();
-                Context.Entry(item).Reference(m => m.Citys).Query().Load();
-                Context.Entry(item).Reference(m => m.Districts).Query().Load();
-                Context.Entry(item).Reference(m => m.Wards).Query().Load();
-                Context.Entry(item).Collection(m => m.Requests).Query().Where(m => m.Status == (int)StatusRequest.WAIT_FOR_SWAP).Load();
-                Context.Entry(item).Collection(m => m.FileOfHouses).Query().Load();
+                this._context.Entry(item).Reference(m => m.Users).Load();
+                this._context.Entry(item).Collection(m => m.RulesInHouses).Query().Load();
+                this._context.Entry(item).Collection(m => m.UtilitiesInHouses).Query().Load();
+                this._context.Entry(item).Collection(m => m.Requests).Query().Where(m => m.Status == (int)StatusRequest.WAIT_FOR_SWAP).Load();
+                this._context.Entry(item).Collection(m => m.FileOfHouses).Query().Load();
+                this._context.Entry(item).Collection(m => m.FeedBacks).Query().Load();
 
+                item.IncludeLocation(this._context);
                 DetailHouseViewModel model = new DetailHouseViewModel(item, salt, item.Users, host);
                 if (item.FileOfHouses != null)
                 {
                     foreach (var f in item.FileOfHouses)
                     {
-                        Context.Entry(f).Reference(m => m.Files).Load();
+                        this._context.Entry(f).Reference(m => m.Files).Load();
                         if(f.Files != null)
                         {
                             model.Images.Add(new ImageBase(f.Files, host));
@@ -153,15 +151,15 @@ namespace DoAnTotNghiep.Controllers
         }
 
         [HttpGet("/api/Request/GetRequestReceived")]
-        public IActionResult ApiGetListRequestReceived()
+        public IActionResult ApiGetListRequestReceived(int? Status)
         {
             return Json(new
             {
                 Status = 200,
-                Data = this.GetAllRequestsReceived()
+                Data = this.GetAllRequestsReceived(Status)
             });
         }
-        private List<DetailRequest> GetAllRequestsReceived()
+        private List<DetailRequest> GetAllRequestsReceived(int? Status)
         {
             int IdUser = this.GetIdUser();
             var houses = this._context.Houses
@@ -182,7 +180,7 @@ namespace DoAnTotNghiep.Controllers
                     {
                         if (itemRequest != null)
                         {
-                            DetailRequest? request = this.CreateDetailRequest(itemRequest);
+                            DetailRequest? request = this.CreateDetailRequest(itemRequest, Status);
                             if (request != null)
                             {
                                 model.Add(request);
@@ -204,7 +202,8 @@ namespace DoAnTotNghiep.Controllers
                                             .Include(m => m.Houses)
                                             .Where(m => (       m.Status == (int)StatusRequest.ACCEPT
                                                             ||  m.Status == (int)StatusRequest.CHECK_IN
-                                                            ||  m.Status == (int)StatusRequest.CHECK_OUT)
+                                                            ||  m.Status == (int)StatusRequest.CHECK_OUT
+                                                            ||  m.Status == (int)StatusRequest.ENDED)
                                                         && (m.IdUser == IdUser || m.Houses != null && m.Houses.IdUser == IdUser))
                                             .ToList();
 
@@ -215,7 +214,7 @@ namespace DoAnTotNghiep.Controllers
             {
                 if (itemRequest != null)
                 {
-                    DetailRequest? request = this.CreateDetailRequest(itemRequest);
+                    DetailRequest? request = this.CreateDetailRequest(itemRequest, null);
                     if (request != null)
                     {
                         model.Add(request);
@@ -236,7 +235,7 @@ namespace DoAnTotNghiep.Controllers
             {
                 if (item != null)
                 {
-                    DetailRequest? request = this.CreateDetailRequest(item);
+                    DetailRequest? request = this.CreateDetailRequest(item, null);
                     if (request != null)
                     {
                         model.Add(request);
@@ -246,11 +245,12 @@ namespace DoAnTotNghiep.Controllers
 
             return model;
         }
-        private DetailRequest? CreateDetailRequest(Request item)
+        private DetailRequest? CreateDetailRequest(Request item, int? Status)
         {
             DoAnTotNghiepContext Context = this._context;
             byte[] salt = Crypto.Salt(this._configuration);
             string host = this.GetWebsitePath();
+            int IdUser = this.GetIdUser();
             if (item.Houses == null || !Context.Entry(item).Reference(m => m.Houses).IsLoaded)
             {
                 Context.Entry(item).Reference(m => m.Houses).Query().Load();
@@ -259,21 +259,32 @@ namespace DoAnTotNghiep.Controllers
             {
                 Context.Entry(item.Houses).Reference(m => m.Users).Query().Load();
                 Context.Entry(item.Houses).Collection(m => m.FileOfHouses).Query().Load();
-                Context.Entry(item).Collection(m => m.FeedBacks).Query().Where(m => m.IdUser == this.GetIdUser()).Load();
+                Context.Entry(item).Collection(m => m.FeedBacks).Query().Where(m => m.IdUser == IdUser).Load();
+                this._context.Entry(item).Collection(m => m.CheckOuts).Query().Where(m => m.IdUser == IdUser).Load();
+                this._context.Entry(item).Collection(m => m.CheckIns).Query().Where(m => m.IdUser == IdUser).Load();
 
-                this._context.Entry(item).Collection(m => m.CheckOuts).Query().Where(m => m.IdUser == item.IdUser).Load();
-                this._context.Entry(item).Collection(m => m.CheckIns).Query().Where(m => m.IdUser == item.IdUser).Load();
+                item.CheckStatus(item);
+                if (Status != null && item.Status != Status) return null;
+
                 if (item.Houses.Users != null)
                 {
                     DetailHouseViewModel house = this.CreateDetailsHouse(item.Houses);
                     DetailHouseViewModel? swapHouse = null;
-                    DetailRatingViewModel? rating= null;
-                    if(item.FeedBacks != null)
+                    DetailRatingViewModel? userRating= null;
+                    DetailRatingViewModel? myRating = null;
+                    FeedBack? userFeedBack = this._context.FeedBacks
+                                                                .Where(m => m.IdUser != IdUser && m.IdRequest == item.Id)
+                                                                .FirstOrDefault();
+                    if (userFeedBack != null)
                     {
-                        FeedBack? feedBack = item.FeedBacks.FirstOrDefault();
-                        if(feedBack != null)
+                        userRating = new DetailRatingViewModel(userFeedBack);
+                    }
+                    if (item.FeedBacks != null)
+                    {
+                        FeedBack? myFeedBack = item.FeedBacks.Where(m => m.IdUser == IdUser).FirstOrDefault();
+                        if (myFeedBack != null)
                         {
-                            rating = new DetailRatingViewModel(feedBack);
+                            myRating = new DetailRatingViewModel(myFeedBack);
                             item.Status = (int)StatusRequest.ENDED;
                         }
                     }
@@ -288,14 +299,23 @@ namespace DoAnTotNghiep.Controllers
                             swapHouse = this.CreateDetailsHouse(item.SwapHouses);
                         }
                     }
-
-                    DetailRequestViewModel request = new DetailRequestViewModel(item, item.Users, salt, host);
+                    User? inputUser = null;
+                    if (item.IdUser != IdUser)
+                    {
+                        inputUser = item.Houses.Users;
+                    }
+                    else
+                    {
+                        inputUser = item.Users;
+                    }
+                    DetailRequestViewModel request = new DetailRequestViewModel(item, inputUser, salt, host);
                     return new DetailRequest()
                     {
                         Request = request,
                         SwapHouse = swapHouse,
                         House = house,
-                        Rating = rating
+                        UserRating = userRating,
+                        MyRating = myRating
                     };
                 }
             }
@@ -309,9 +329,7 @@ namespace DoAnTotNghiep.Controllers
             {
                 this._context.Entry(house.Users).Collection(m => m.Houses).Query().Where(m => m.Status == (int)StatusHouse.VALID).Load();
             }
-
-            this._context.Entry(house).Reference(m => m.Citys).Query().Load();
-            this._context.Entry(house).Reference(m => m.Districts).Query().Load();
+            house.IncludeLocation(this._context);
             DetailHouseViewModel model = new DetailHouseViewModel(house, salt, house.Users, host);
             DoAnTotNghiepContext Context = this._context;
             if (house.FileOfHouses != null)
@@ -328,7 +346,6 @@ namespace DoAnTotNghiep.Controllers
             }
             return model;
         }
-
         public IActionResult WaitingRequest()
         {
             ViewData["active"] = 4;
@@ -337,7 +354,12 @@ namespace DoAnTotNghiep.Controllers
         public IActionResult History()
         {
             ViewData["active"] = 5;
-            return View();
+            int IdUser = this.GetIdUser();
+            return View(this._context.Houses
+                                    .Where(m => m.IdUser == IdUser 
+                                                && m.Status == (int) StatusHouse.VALID)
+                                    .Select(m => new HouseSelector(m))
+                                    .ToList());
         }
         //adminReport
         [HttpGet("/api/User/Point")]
@@ -625,7 +647,7 @@ namespace DoAnTotNghiep.Controllers
                                     }
                                 }
                             }
-                            else if (model.File != null)
+                            if (model.File != null)
                             {
                                 if (user.IdFile == null)
                                 {
@@ -639,7 +661,7 @@ namespace DoAnTotNghiep.Controllers
                                 }
                                 else
                                 {
-                                    var file = Context.Files.Where(m => m.Id == user.IdFile).FirstOrDefault();
+                                    var file = Context.Files.Where(m => m.Id == user.IdFile.Value).FirstOrDefault();
                                     if (file != null)
                                     {
                                         Entity.File? saveFile = this.SaveFile(model.File);
@@ -739,6 +761,32 @@ namespace DoAnTotNghiep.Controllers
             {
                 Status = 400,
                 Message = this.ModelErrors()
+            });
+        }
+
+        [HttpGet("/Request/All")]
+        [AllowAnonymous]
+        public IActionResult GetAll()
+        {
+            var request = this._context.Requests.ToList();
+            List<DetailRequest> model = new List<DetailRequest>();
+            DoAnTotNghiepContext Context = this._context;
+
+            byte[] salt = Crypto.Salt(this._configuration);
+            string host = this.GetWebsitePath();
+
+            foreach (var item in request)
+            {
+                DetailRequest? itemAdd = this.CreateDetailRequest(item, null);
+                if (itemAdd != null)
+                {
+                    model.Add(itemAdd);
+                }
+            }
+            return Json(new
+            {
+                Status = 200,
+                Data = model
             });
         }
     }

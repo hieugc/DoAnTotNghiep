@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using DoAnTotNghiep.Data;
+using DoAnTotNghiep.ViewModels;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Composition;
 
@@ -7,6 +9,60 @@ namespace DoAnTotNghiep.Entity
     [Table("House")]
     public class House
     {
+        public House CreateHouse(CreateHouse data, int IdUser, int Status)
+        {
+            return new House()
+            {
+                Name = data.Name,
+                Type = data.Option,
+                Description = data.Description,
+                People = data.People,
+                BedRoom = data.BedRoom,
+                BathRoom = data.BathRoom,
+                Area = data.Square,
+                Lat = data.Lat,
+                Lng = data.Lng,
+                Price = data.Price,
+                IdCity = (data.IdCity == 0 ? 1 : data.IdCity),
+                IdDistrict = (data.IdDistrict == 0 ? null : data.IdDistrict),
+                IdWard = (data.IdWard == 0 ? null : data.IdWard),
+                Rating = 0,
+                IdUser = IdUser,
+                Status = Status,
+                StreetAddress = data.Location,
+                Bed = data.Bed
+            };
+        }
+        public void EditHouse(EditHouse data)
+        {
+            this.Name = data.Name;
+            this.Type = data.Option;
+            this.Description = data.Description;
+            this.People = data.People;
+            this.BedRoom = data.BedRoom;
+            this.BathRoom = data.BathRoom;
+            this.Area = data.Square;
+            this.Lat = data.Lat;
+            this.Lng = data.Lng;
+            this.StreetAddress = data.Location;
+            this.IdCity = data.IdCity;
+            this.IdDistrict = (data.IdDistrict == 0 ? null : data.IdDistrict);
+            this.IdWard = (data.IdWard == 0 ? null : data.IdWard);
+            this.Price = data.Price;
+            this.Status = data.Status;
+            this.Bed = data.Bed;
+        }
+        public void IncludeLocation(DoAnTotNghiepContext context)
+        {
+            if(this.Citys == null && !context.Entry(this).Reference(m => m.Citys).IsLoaded)
+                    context.Entry(this).Reference(m => m.Citys).Load();
+            if (this.Districts == null && !context.Entry(this).Reference(m => m.Districts).IsLoaded)
+                context.Entry(this).Reference(m => m.Districts).Load();
+            if (this.Wards == null && !context.Entry(this).Reference(m => m.Wards).IsLoaded)
+                context.Entry(this).Reference(m => m.Wards).Load();
+        }
+
+
         [Key]
         [Column("id")]
         public int Id { get; set; }

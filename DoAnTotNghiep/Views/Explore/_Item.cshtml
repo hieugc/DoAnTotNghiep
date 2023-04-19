@@ -1,0 +1,85 @@
+﻿@model DoAnTotNghiep.ViewModels.ListDetailHouses
+@using DoAnTotNghiep.Entity;
+
+@{
+    int numberNode = 5;
+    int frame = (int)Math.Ceiling((double)(Model.Pagination.Page / numberNode));
+    int lastFrame = (int)Math.Ceiling((double)(Model.Pagination.Total / numberNode));
+    int index = 0;
+}
+
+<div class="result">
+    <div class="result-tab">
+        <div>
+            <span>Kết quả tìm kiếm:</span>
+            <span><strong>@Model.Pagination.Total</strong></span>
+        </div>
+        <div class="attribute" data-bs-toggle="modal" data-bs-target="#filterModal">
+            <i class="fa-sharp fa-solid fa-filter"></i><span>Tùy chỉnh</span>
+        </div>
+    </div>
+    <div class="list-house">
+        @foreach (var item in Model.Houses)
+        {
+            <div class="house-card" onmouseover="showInfobox(@(index++))">
+                @if (item.Images.Count() > 0)
+                {
+                    <img src="@item.Images.First().Data" alt="Mike" style="width:100%">
+                }
+                else
+                {
+                    <img src="~/Image/logo.png" alt="Mike" style="width:100%">
+                }
+                <div class="house-img-container">
+                    <h2>@item.Name</h2>
+                    <p class="attribute"><i class="fa-solid fa-map-location-dot"></i><span>@item.Location</span></p>
+                    <div class="list-attribute">
+                        <p class="attribute"><span>@item.Rating (@item.NumberRating)</span><i class="fa-solid fa-star"></i></p>
+                        <p class="attribute"><i class="fa-solid fa-users"></i><span>@item.People</span></p>
+                        <p class="attribute"><i class="fa-solid fa-bed"></i><span>@item.BedRoom</span></p>
+                    </div>
+                    <p>
+                        <label class="item-button">
+                            <span class="label-show">@item.Price (Point/ngày)</span>
+                            <a class="label-hide" href="@Url.Action("Details", "Houses", new {Id = item.Id })">Xem chi tiết</a>
+                        </label>
+                    </p>
+                </div>
+            </div>
+        }
+    </div>
+    @if(Model.Pagination.Total > 1)
+    {
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center">
+                @if (Model.Pagination.Total > numberNode && frame > 0)
+                {
+                    <li class="page-item" onclick="search(@(Model.Pagination.Page - 1), @Model.Pagination.Limit)"><span class="page-link" aria-hidden="true">&laquo;</span></li>
+                }
+
+                @for (var page = 1; page <= numberNode; page++)
+                {
+                    if ((page + frame * numberNode) <= Model.Pagination.Total)
+                    {
+                        if (page == (Model.Pagination.Page % numberNode))
+                        {
+                            <li class="page-item active" onclick="search(@(page + frame*numberNode), @Model.Pagination.Limit)"><a class="page-link" href="#">@(page + frame * numberNode)</a></li>
+                        }
+                        else
+                        {
+                            <li class="page-item" onclick="search(@(page + frame*numberNode), @Model.Pagination.Limit)"><a class="page-link" href="#">@(page + frame * numberNode)</a></li>
+                        }
+                    }
+                }
+                @if (Model.Pagination.Total > numberNode && frame < lastFrame)
+                {
+                    <li class="page-item" onclick="search(@(Model.Pagination.Page + 1), @Model.Pagination.Limit)"><span class="page-link" aria-hidden="true">&raquo;</span></li>
+                }
+            </ul>
+        </nav>
+    }
+</div>
+
+<script type="text/javascript">
+    var houseResult = @Html.Raw(Json.Serialize(Model.Houses));
+</script>

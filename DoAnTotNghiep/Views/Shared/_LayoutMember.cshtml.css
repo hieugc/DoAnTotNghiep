@@ -78,10 +78,10 @@
 }
 
 .tab-right{
-    background-color: white;
     margin: 24px;
     display: flex;
     width: 100%;
+    justify-content: center;
 }
 main{
     clear: both;

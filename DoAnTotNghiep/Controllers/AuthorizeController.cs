@@ -138,7 +138,7 @@ namespace DoAnTotNghiep.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = this._context.Users.Where(x => x.Email == loginViewModel.Email);
+                var user = this._context.Users.Where(x => x.Email == loginViewModel.Email).ToList();
                 if (user != null && user.Count() == 1)
                 {
                     var checkUser = user.First();
@@ -162,6 +162,7 @@ namespace DoAnTotNghiep.Controllers
 
                         this._context.Entry(checkUser).Collection(m => m.Houses).Query().Load();
                         this._context.Entry(checkUser).Reference(m => m.Files).Query().Load();
+
                         return Json(new
                         {
                             Status = 200,

@@ -5,8 +5,11 @@ using DoAnTotNghiep.Hubs;
 using DoAnTotNghiep.ViewModels;
 using Hangfire;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Data.Common;
 using System.Security.Cryptography;
 using System.Security.Policy;
 using System.Text;
@@ -45,7 +48,6 @@ namespace DoAnTotNghiep.Modules
             _startTime = startTime;
             _functionObject = functionObject;
         }
-
         public Task StartAsync(CancellationToken stoppingToken)
         {
             Console.WriteLine("Timed Hosted Service running. Time: " + DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"));
@@ -61,9 +63,13 @@ namespace DoAnTotNghiep.Modules
             {
                 _timer = new Timer(ExecuteCheckTransaction, null, this._startTime, TimeSpan.FromMinutes(1));
             }
+            else if (_function == TargetFunction.ExecuteCreateWaiting)
+            {
+                _timer = new Timer(ExecuteCreateWaiting, null, this._startTime, TimeSpan.FromMinutes(1));
+            }
             return Task.CompletedTask;
         }
-
+        //request
         private void ExecuteCheckIn(object? Object)
         {
             //tới trước ngày đó thông báo sẽ Check-In
@@ -74,114 +80,126 @@ namespace DoAnTotNghiep.Modules
             {
                 var count = Interlocked.Increment(ref executionCount);
                 RequestBackground requestBackground = (RequestBackground)this._functionObject;
+
+                List<Notification> notificationList = new List<Notification>();
+                var userRequest = requestBackground.Request.Users;
+                var houseRequest = requestBackground.Request.Houses;
+                var swapHouseRequest = requestBackground.Request.SwapHouses;//này để làm gì
+                User? userHouseRequest = null;
+
+                if (userRequest == null)
+                {
+                    userRequest = this._context.Users.Where(m => m.Id == requestBackground.Request.IdUser).FirstOrDefault();
+                }
+                if (houseRequest == null)
+                {
+                    houseRequest = this._context.Houses.Where(m => m.Id == requestBackground.Request.IdHouse).FirstOrDefault();
+                }
+                if (requestBackground.Request.Type == 2 && swapHouseRequest == null && requestBackground.Request.IdSwapHouse.HasValue)
+                {
+                    swapHouseRequest = this._context.Houses.Where(m => m.Id == requestBackground.Request.IdSwapHouse.Value).FirstOrDefault();
+                }
                 if (count == 1)
                 {
-                    List<Notification> notificationList = new List<Notification>();
-                    var userRequest = requestBackground.Request.Users;
-                    var houseRequest = requestBackground.Request.Houses;
-                    var swapHouseRequest = requestBackground.Request.SwapHouses;
-                    User? userHouseRequest = null;
-
-                    if (userRequest == null)
-                    {
-                        userRequest = this._context.Users.Where(m => m.Id == requestBackground.Request.IdUser).FirstOrDefault();
-                    }
-
-                    if (userRequest != null)
-                    {
-                        Notification notification = new Notification().Request(requestBackground.Request);
-                        notification.Content = "Bạn có yêu cầu trao đổi vào lúc "
-                                                    + requestBackground.Request.StartDate.ToString("dd/MM/yyyy")
-                                                    + " - "
-                                                    + requestBackground.Request.EndDate.ToString("dd/MM/yyyy")
-                                                    + " cần Check In";
-                        notification.Users = userRequest;
-                        notificationList.Add(notification);
-                    }
-                    if (houseRequest == null)
-                    {
-                        houseRequest = this._context.Houses.Where(m => m.Id == requestBackground.Request.IdHouse).FirstOrDefault();
-                    }
-
-                    if (requestBackground.Request.Type == 2 && swapHouseRequest == null && requestBackground.Request.IdSwapHouse.HasValue)
-                    {
-                        swapHouseRequest = this._context.Houses.Where(m => m.Id == requestBackground.Request.IdSwapHouse.Value).FirstOrDefault();
-                        if (houseRequest != null && userHouseRequest == null)
-                        {
-                            userHouseRequest = this._context.Users.Where(m => m.Id == houseRequest.IdUser).FirstOrDefault();
-                        }
-                        if (houseRequest != null && userHouseRequest != null)
-                        {
-                            Notification notification = new Notification().Request(requestBackground.Request);
-                            notification.IdUser = userHouseRequest.Id;
-                            notification.Content = "Bạn có yêu cầu trao đổi vào lúc "
-                                                    + requestBackground.Request.StartDate.ToString("dd/MM/yyyy")
-                                                    + " - "
-                                                    + requestBackground.Request.EndDate.ToString("dd/MM/yyyy")
-                                                    + " cần Check In";
-                            notification.Users = userHouseRequest;
-                            notificationList.Add(notification);
-                        }
-                    }
+                    notificationList.AddRange(
+                        this.CreateNotification(userRequest, 
+                                                userHouseRequest, 
+                                                houseRequest, 
+                                                requestBackground,
+                                                (requestBackground.Request.Type == 2 && swapHouseRequest != null && requestBackground.Request.IdSwapHouse.HasValue),
+                                                " cần check-in")
+                    );
+                    var DBtransaction = this._context.Database.BeginTransaction();
 
                     try
                     {
                         this._context.Notifications.AddRange(notificationList);
                         this._context.SaveChanges();
 
-                        //=> gửi signalR
-                        foreach (var item in notificationList)
-                        {
-                            requestBackground.ChatHub.SendNotification(
-                                    group: Crypto.EncodeKey(item.IdUser.ToString(), Crypto.Salt(requestBackground.Configuration)),
-                                    target: TargetSignalR.Notification(),
-                                    model: new NotificationViewModel(item, this._host)).Wait(TimeSpan.FromMinutes(1));
-                        }
-
-                        //=> gửi mail
-                        foreach (var item in notificationList)
-                        {
-                            if (item.Users != null)
-                            {
-                                string? moduleEmail = requestBackground.Configuration.GetConnectionString(ConfigurationEmail.Email());
-                                string? modulePassword = requestBackground.Configuration.GetConnectionString(ConfigurationEmail.Password());
-                                if (!string.IsNullOrEmpty(moduleEmail) && !string.IsNullOrEmpty(modulePassword))
-                                {
-                                    Email sender = new Email(moduleEmail, modulePassword);
-                                    string body = item.Content;
-                                    sender.SendMail(item.Users.Email, Subject.SendCheckIn(), body, null, string.Empty);
-                                }
-                            }
-                        }
-
                         Console.WriteLine(count.ToString() + " Time: " + DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"));
-
-                        this._timer?.Change(TimeSpan.FromDays(1), TimeSpan.FromDays(1));
+                        DBtransaction.Commit();
+                        this.SendNotificationAndMail(notificationList, requestBackground);
                     }
                     catch (Exception e)
                     {
                         Console.WriteLine(e);
                         this.StopAsync(this._cancel);
+                        DBtransaction.Rollback();
                     }
                 }
                 else if (count == 2)
                 {
-                    var rq = this._context.Requests.Where(m => m.Id == requestBackground.Request.Id).FirstOrDefault();
+                    var rq = this._context.Requests
+                                        .Include(m => m.Houses).ThenInclude(h => h.Users)
+                                        .Where(m => m.Id == requestBackground.Request.Id).FirstOrDefault();
+                    var DBtransaction = this._context.Database.BeginTransaction();
                     if (rq != null)
                     {
                         if (rq.Status == (int)StatusRequest.ACCEPT) //chưa Check In
                         {
-                            rq.Status = (int)StatusRequest.REJECT;
+                            notificationList.AddRange(
+                                this.CreateNotification(userRequest,
+                                                userHouseRequest,
+                                                houseRequest,
+                                                requestBackground,
+                                                true,
+                                                " đã được hệ thống tự check-in")
+                            );
+
+                            //rq.Status = (int)StatusRequest.REJECT;
+                            rq.Status = (int)StatusRequest.CHECK_IN; //tự động CheckIn
+
                             try
                             {
+                                this._context.Notifications.AddRange(notificationList);
+                                this._context.SaveChanges();
+
                                 this._context.Requests.Update(rq);
                                 this._context.SaveChanges();
+                                DBtransaction.Commit();
+
+                                //thông báo tất cả đã từ chối
+                                this.SendNotificationAndMail(notificationList, requestBackground);
+
+                                /*Tự động checkIn*/
+                                //rq.Status = (int)StatusRequest.CHECK_IN;
+                                //long range = rq.EndDate.AddDays(-1).Ticks - DateTime.Now.Ticks;
+                                //this._timer?.Change(TimeSpan.FromTicks(range), TimeSpan.FromDays(1));
+                                /*Tự động checkIn*/
                             }
                             catch (Exception e)
                             {
                                 Console.WriteLine(e);
+                                DBtransaction.Rollback();
                             }
                         }
+                    }
+                    this.StopAsync(this._cancel);
+                }
+                else if (count == 3)
+                {
+                    notificationList.AddRange(
+                        this.CreateNotification(userRequest,
+                                                userHouseRequest,
+                                                houseRequest,
+                                                requestBackground,
+                                                (requestBackground.Request.Type == 2 && swapHouseRequest != null && requestBackground.Request.IdSwapHouse.HasValue),
+                                                " cần check-out")
+                    );
+                    var DBtransaction = this._context.Database.BeginTransaction();
+                    try
+                    {
+                        this._context.Notifications.AddRange(notificationList);
+                        this._context.SaveChanges();
+                        DBtransaction.Commit();
+                        this.SendNotificationAndMail(notificationList, requestBackground);
+
+                        Console.WriteLine(count.ToString() + " Time: " + DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"));
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e);
+                        DBtransaction.Rollback();
                     }
                     this.StopAsync(this._cancel);
                 }
@@ -189,6 +207,69 @@ namespace DoAnTotNghiep.Modules
             else
             {
                 this.StopAsync(this._cancel);
+            }
+        }
+        private List<Notification> CreateNotification(User? userRequest, User? userHouseRequest, House? houseRequest, RequestBackground requestBackground, bool condition, string content)
+        {
+            List<Notification> notificationList = new List<Notification>();
+
+            if (userRequest != null)
+            {
+                Notification notification = new Notification().Request(requestBackground.Request);
+                notification.Content = "Bạn có yêu cầu trao đổi vào lúc "
+                                            + requestBackground.Request.StartDate.ToString("dd/MM/yyyy")
+                                            + " - "
+                                            + requestBackground.Request.EndDate.ToString("dd/MM/yyyy")
+                                            + content;
+                notification.Users = userRequest;
+                notificationList.Add(notification);
+            }
+            if (condition)
+            {
+                if (houseRequest != null && userHouseRequest == null)
+                {
+                    userHouseRequest = this._context.Users.Where(m => m.Id == houseRequest.IdUser).FirstOrDefault();
+                }
+                if (houseRequest != null && userHouseRequest != null)
+                {
+                    Notification notification = new Notification().Request(requestBackground.Request);
+                    notification.IdUser = userHouseRequest.Id;
+                    notification.Content = "Bạn có yêu cầu trao đổi vào lúc "
+                                            + requestBackground.Request.StartDate.ToString("dd/MM/yyyy")
+                                            + " - "
+                                            + requestBackground.Request.EndDate.ToString("dd/MM/yyyy")
+                                            + content;
+                    notification.Users = userHouseRequest;
+                    notificationList.Add(notification);
+                }
+            }
+            return notificationList;
+        }
+        private void SendNotificationAndMail(List<Notification> notifications, RequestBackground requestBackground)
+        {
+            //=> gửi signalR
+            foreach (var item in notifications)
+            {
+                requestBackground.ChatHub.SendNotification(
+                        group: Crypto.EncodeKey(item.IdUser.ToString(), Crypto.Salt(requestBackground.Configuration)),
+                        target: TargetSignalR.Notification(),
+                        model: new NotificationViewModel(item, this._host)).Wait(TimeSpan.FromMinutes(1));
+            }
+
+            //=> gửi mail
+            foreach (var item in notifications)
+            {
+                if (item.Users != null)
+                {
+                    string? moduleEmail = requestBackground.Configuration.GetConnectionString(ConfigurationEmail.Email());
+                    string? modulePassword = requestBackground.Configuration.GetConnectionString(ConfigurationEmail.Password());
+                    if (!string.IsNullOrEmpty(moduleEmail) && !string.IsNullOrEmpty(modulePassword))
+                    {
+                        Email sender = new Email(moduleEmail, modulePassword);
+                        string body = item.Content;
+                        sender.SendMail(item.Users.Email, Subject.SendCheckOut(), body, null, string.Empty);
+                    }
+                }
             }
         }
         private void ExecuteCheckOut(object? Object)
@@ -211,71 +292,36 @@ namespace DoAnTotNghiep.Modules
                 {
                     userRequest = this._context.Users.Where(m => m.Id == requestBackground.Request.IdUser).FirstOrDefault();
                 }
-
-                if (userRequest != null)
-                {
-                    Notification notification = new Notification().Request(requestBackground.Request);
-                    notification.Content = "Bạn có yêu cầu trao đổi vào lúc " + requestBackground.Request.StartDate.ToString("dd/MM/yyyy") + " - " + requestBackground.Request.EndDate.ToString("dd/MM/yyyy") + " cần Check Out";
-                    notification.Users = userRequest;
-                    notificationList.Add(notification);
-                }
                 if (houseRequest == null)
                 {
                     houseRequest = this._context.Houses.Where(m => m.Id == requestBackground.Request.IdHouse).FirstOrDefault();
                 }
-
                 if (requestBackground.Request.Type == 2 && swapHouseRequest == null && requestBackground.Request.IdSwapHouse.HasValue)
                 {
                     swapHouseRequest = this._context.Houses.Where(m => m.Id == requestBackground.Request.IdSwapHouse.Value).FirstOrDefault();
-                    if (houseRequest != null && userHouseRequest == null)
-                    {
-                        userHouseRequest = this._context.Users.Where(m => m.Id == houseRequest.IdUser).FirstOrDefault();
-                    }
-                    if (houseRequest != null && userHouseRequest != null)
-                    {
-                        Notification notification = new Notification().Request(requestBackground.Request);
-                        notification.IdUser = userHouseRequest.Id;
-                        notification.Content = "Bạn có yêu cầu trao đổi vào lúc " + requestBackground.Request.StartDate.ToString("dd/MM/yyyy") + " - " + requestBackground.Request.EndDate.ToString("dd/MM/yyyy") + " cần Check Out";
-                        notification.Users = userHouseRequest;
-                        notificationList.Add(notification);
-                    }
                 }
-
+                notificationList.AddRange(
+                        this.CreateNotification(userRequest,
+                                                userHouseRequest,
+                                                houseRequest,
+                                                requestBackground,
+                                                (requestBackground.Request.Type == 2 && swapHouseRequest != null && requestBackground.Request.IdSwapHouse.HasValue),
+                                                " cần check-out")
+                    );
+                var DBtransaction = this._context.Database.BeginTransaction();
                 try
                 {
                     this._context.Notifications.AddRange(notificationList);
                     this._context.SaveChanges();
-
-                    //=> gửi signalR
-                    foreach (var item in notificationList)
-                    {
-                        requestBackground.ChatHub.SendNotification(
-                                group: Crypto.EncodeKey(item.IdUser.ToString(), Crypto.Salt(requestBackground.Configuration)),
-                                target: TargetSignalR.Notification(),
-                                model: new NotificationViewModel(item, this._host)).Wait(TimeSpan.FromMinutes(1));
-                    }
-
-                    //=> gửi mail
-                    foreach (var item in notificationList)
-                    {
-                        if (item.Users != null)
-                        {
-                            string? moduleEmail = requestBackground.Configuration.GetConnectionString(ConfigurationEmail.Email());
-                            string? modulePassword = requestBackground.Configuration.GetConnectionString(ConfigurationEmail.Password());
-                            if (!string.IsNullOrEmpty(moduleEmail) && !string.IsNullOrEmpty(modulePassword))
-                            {
-                                Email sender = new Email(moduleEmail, modulePassword);
-                                string body = item.Content;
-                                sender.SendMail(item.Users.Email, Subject.SendCheckOut(), body, null, string.Empty);
-                            }
-                        }
-                    }
+                    DBtransaction.Commit();
+                    this.SendNotificationAndMail(notificationList, requestBackground);
 
                     Console.WriteLine(count.ToString() + " Time: " + DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"));
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
+                    DBtransaction.Rollback();
                 }
                 this.StopAsync(this._cancel);
             }
@@ -285,6 +331,7 @@ namespace DoAnTotNghiep.Modules
             }
         }
 
+        //transaction
         private void ExecuteCheckTransaction(object? Object)
         {
             CheckTransactionBackground checkObject = (CheckTransactionBackground)this._functionObject;
@@ -416,12 +463,71 @@ namespace DoAnTotNghiep.Modules
                                                     .Wait(TimeSpan.FromMinutes(5));
             }
         }
-
         private void DeleteTransaction(DoAnTotNghiepContext context, int IdUser, DateTime time)
         {
             var transaction = context.HistoryTransactions.Where(m => m.IdUser == IdUser && m.Status == (int)StatusTransaction.PENDING && DateTime.Compare(m.CreatedDate, time) < 0).ToList();
             context.HistoryTransactions.RemoveRange(transaction);
             context.SaveChanges();
+        }
+
+        //waiting
+        private void ExecuteCreateWaiting(object? Object)
+        {
+            //chạy 1 lần
+            CreateWaitingRequest model = (CreateWaitingRequest)this._functionObject;
+            var user = this._context.Users.Where(m => m.Id == model.IdUser).FirstOrDefault();
+            if (user != null)
+            {
+                var waitingRq = this._context.WaitingRequests.Where(m => m.IdUser == model.IdUser && m.IdCity == model.IdCity).ToList();
+                if (waitingRq.Count() > 0)
+                {
+                    if(model.DateStart != null && model.DateEnd != null)
+                    {
+                        foreach(var item in waitingRq)
+                        {
+                            item.StartDate = model.DateStart;
+                            item.EndDate = model.DateEnd;
+                        }
+                        try
+                        {
+                            this._context.WaitingRequests.UpdateRange(waitingRq);
+                            this._context.SaveChanges();
+                        }
+                        catch(Exception e)
+                        {
+                            Console.WriteLine(e);
+                        }
+                    }
+                }
+                else
+                {
+                    //kiểm tra nhà => có thì thêm
+                    var houses = this._context.Houses
+                                            .Where(m => m.IdUser == model.IdUser 
+                                                    && m.Status == (int)StatusHouse.VALID 
+                                                    && m.IdCity != m.IdCity)
+                                            .ToList();
+                    if(houses.Count() > 0)
+                    {
+                        //create
+                        List<WaitingRequest> waitingRequest  = new List<WaitingRequest>();
+                        foreach(var item in houses)
+                        {
+                            waitingRequest.Add(new WaitingRequest().CreateModel(model, item.Id));
+                        }
+                        try
+                        {
+                            this._context.WaitingRequests.AddRange(waitingRequest);
+                            this._context.SaveChanges();
+                        }
+                        catch(Exception ex)
+                        {
+                            Console.WriteLine(ex);
+                        }
+                    }
+                }
+            }
+            this.StopAsync(this._cancel);
         }
 
         public Task StopAsync(CancellationToken stoppingToken)
@@ -451,7 +557,6 @@ namespace DoAnTotNghiep.Modules
             Configuration = configuration;
         }
     }
-
     public class CheckTransactionBackground
     {
         public ChatHub ChatHub { get; set; }
@@ -474,6 +579,24 @@ namespace DoAnTotNghiep.Modules
             ChatHub = chatHub;
             this.Configuration = Configuration;
             this.Transaction = Transaction;
+        }
+    }
+    public class CreateWaitingRequest
+    {
+        public int IdCity { get; set; }
+        public int IdUser { get; set; }
+        public DateTime? DateStart { get; set; }
+        public DateTime? DateEnd { get; set; }
+        public CreateWaitingRequest(
+            int IdCity,
+            int IdUser,
+            DateTime? DateStart,
+            DateTime? DateEnd)
+        {
+            this.IdCity = IdCity;
+            this.IdUser = IdUser;
+            this.DateEnd = DateEnd;
+            this.DateStart = DateStart;
         }
     }
 }

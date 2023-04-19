@@ -47,36 +47,40 @@ namespace DoAnTotNghiep.Controllers
         {
             var listHouse = this.GetContextHouses(number);
             byte[] salt = Crypto.Salt(this._configuration);
-                string host = this.GetWebsitePath();
-                List<DetailHouseViewModel> res = new List<DetailHouseViewModel>();
-                foreach (var item in listHouse)
-                {
-                    //this._context.Entry(item).Collection(m => m.RulesInHouses).Query().Load();
-                    //this._context.Entry(item).Collection(m => m.UtilitiesInHouses).Query().Load();
-                    //this._context.Entry(item).Reference(m => m.Users).Query().Load();
-                    this._context.Entry(item).Reference(m => m.Citys).Query().Load();
-                    this._context.Entry(item).Reference(m => m.Districts).Query().Load();
-                    //this._context.Entry(item).Reference(m => m.Wards).Query().Load();
-                    this._context.Entry(item).Collection(m => m.Requests).Query().Load();
-                    this._context.Entry(item).Collection(m => m.FileOfHouses).Query().Load();
-                    this._context.Entry(item).Collection(m => m.FeedBacks).Query().Load();
+            string host = this.GetWebsitePath();
+            List<DetailHouseViewModel> res = new List<DetailHouseViewModel>();
+            foreach (var item in listHouse)
+            {
+                //this._context.Entry(item).Collection(m => m.RulesInHouses).Query().Load();
+                //this._context.Entry(item).Collection(m => m.UtilitiesInHouses).Query().Load();
+                //this._context.Entry(item).Reference(m => m.Users).Query().Load();
 
-                    DetailHouseViewModel model = new DetailHouseViewModel(item, salt, item.Users, host);
-                    if (item.FileOfHouses != null)
+                item.IncludeLocation(this._context);
+
+                //this._context.Entry(item).Reference(m => m.Citys).Query().Load();
+                //this._context.Entry(item).Reference(m => m.Districts).Query().Load();
+                //this._context.Entry(item).Reference(m => m.Wards).Query().Load();
+
+                this._context.Entry(item).Collection(m => m.Requests).Query().Load();
+                this._context.Entry(item).Collection(m => m.FileOfHouses).Query().Load();
+                this._context.Entry(item).Collection(m => m.FeedBacks).Query().Load();
+
+                DetailHouseViewModel model = new DetailHouseViewModel(item, salt, item.Users, host);
+                if (item.FileOfHouses != null)
+                {
+                    foreach (var f in item.FileOfHouses)
                     {
-                        foreach (var f in item.FileOfHouses)
+                        this._context.Entry(f).Reference(m => m.Files).Load();
+                        if (f.Files != null)
                         {
-                            this._context.Entry(f).Reference(m => m.Files).Load();
-                            if (f.Files != null)
-                            {
-                                model.Images.Add(new ImageBase(f.Files, host));
-                                break;
-                            }
+                            model.Images.Add(new ImageBase(f.Files, host));
+                            break;
                         }
                     }
-                    res.Add(model);
                 }
-                return res;
+                res.Add(model);
+            }
+            return res;
         }
 
         private List<House> GetContextHouses(int number = 10)

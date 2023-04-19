@@ -5,6 +5,7 @@
     max-width: 1200px;
     width: 1200px;
     border-radius: 12px;
+    background-color: white;
     box-shadow: 0 0.25rem 0.75rem 0 rgba(161, 172, 184, 0.12);
 }
 .house-head {

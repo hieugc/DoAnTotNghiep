@@ -8,9 +8,11 @@
 <script src='https://www.bing.com/api/maps/mapcontrol?callback=getSuggest&key=@key' type='text/javascript' async defer></script>
 <script type="text/javascript">
     var suggest = null;
+    var moduleSuggest = null;
+    var manager = null;
     function onLoad() {
         var options = { maxResults: 5 };
-        var manager = new Microsoft.Maps.AutosuggestManager(options);
+        manager = new Microsoft.Maps.AutosuggestManager(options);
         manager.attachAutosuggest('#explore-input', '#container-explore', selectedSuggestion);
     }
     function onError(message) {
@@ -21,8 +23,8 @@
     }
     function stringToSlug(str) {
         // remove accents
-        var from = "àáãảạăằắẳẵặâầấẩẫậèéẻẽẹêềếểễệđùúủũụưừứửữựòóỏõọôồốổỗộơờớởỡợìíỉĩịäëïîöüûñçýỳỹỵỷ",
-            to = "aaaaaaaaaaaaaaaaaeeeeeeeeeeeduuuuuuuuuuuoooooooooooooooooiiiiiaeiiouuncyyyyy";
+        var from =  "àáãảạăằắẳẵặâầấẩẫậèéẻẽẹêềếểễệđùúủũụưừứửữựòóỏõọôồốổỗộơờớởỡợìíỉĩịäëïîöüûñçýỳỹỵỷ",
+            to =    "aaaaaaaaaaaaaaaaaeeeeeeeeeeeduuuuuuuuuuuoooooooooooooooooiiiiiaeiiouuncyyyyy";
         for (var i = 0, l = from.length; i < l; i++) {
             str = str.replace(RegExp(from[i], "gi"), to[i]);
         }
@@ -35,14 +37,16 @@
         return str;
     }
     function includeIdCity() {
-        for (e in dataLocation) {
-            if (stringToSlug(suggest.address.adminDistrict).indexOf(stringToSlug(dataLocation[e].name)) != -1) {
-                return e;
+        if (suggest != null){
+            for (e in dataLocation) {
+                if (stringToSlug(suggest.address.adminDistrict).indexOf(stringToSlug(dataLocation[e].name)) != -1) {
+                    return e;
+                }
             }
         }
     }
     function getSuggest() {
-        Microsoft.Maps.loadModule('Microsoft.Maps.AutoSuggest', {
+        moduleSuggest = Microsoft.Maps.loadModule('Microsoft.Maps.AutoSuggest', {
             callback: onLoad,
             errorCallback: onError
         });
@@ -53,6 +57,17 @@
 </script>
 <script type="text/javascript">
     function explore() {
-        window.location.href = "@Url.Action("Index", "Explore")?IdCity=" + includeIdCity();
+        if(window.location.href.indexOf("/Explore") == -1){
+
+            if(suggest == null){
+                window.location.href = "@Url.Action("Index", "Explore")?location=" + $("#explore-input").val();
+            }
+            else{
+                window.location.href = "@Url.Action("Index", "Explore")?idCity=" + includeIdCity();
+            }
+        }
+        else{
+            search(1, 12);
+        }
     }
 </script>

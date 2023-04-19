@@ -109,16 +109,8 @@
                     <div id="myMap" class="BingMap" onload="GetMap(@Model.Lat, @Model.Lng)"></div>
                 </div>
             </section>
-
-            @if (Model.NumberRating > 0)
-            {
-                <section id="tab6">
-                </section>
-                <script src="~/js/Rating/index.js" type="text/javascript"></script>
-                <script type="text/javascript">
-                    getRating(@Model.Id);
-                </script>
-            }
+            <section id="tab6">
+            </section>
         </div>
     </div>
     <div class="right">
@@ -162,7 +154,7 @@
             <div class="bot">
                 <div><a href="@Url.Action("Messages", "Member", new {connection = Model.User?.UserAccess})" class="btn btn-primary" style="display: block;">Liên hệ</a></div>
                 <div><button class="btn btn-success" onclick="getRequestFormByHouseId(@Model.Id)">Yêu cầu trao đổi</button></div>
-                <div><button class="btn btn-danger" type="button" data-bs-toggle="modal" data-bs-target="#reportModal">Báo cáo</button></div>
+                <div><button class="btn btn-danger" type="button" onclick="renderReportForm('@(Model.User?.UserAccess)')">Báo cáo</button></div>
             </div>
         }
     </div>
@@ -179,6 +171,7 @@
         var lat = @Model.Lat;
         var lng = @Model.Lng;
         var map = null;
+        var houseItem = @Html.Raw(Json.Serialize(Model))
         function GetMap() {
             let loc = new Microsoft.Maps.Location(lat, lng);
             map = new Microsoft.Maps.Map('#myMap', {
@@ -186,16 +179,64 @@
                 center: loc,
                 customMapStyle: StyleMap()
             });
-            let pin = new Microsoft.Maps.Pushpin(loc, {
-                title: '@Html.Raw(Model.Name)',
-                subTitle: '@Html.Raw(Model.Location)'
-            });
-            console.log(map);
+            var pin = createFontPushpin(loc, '\uF3C5', 'FontAwesome', 45, '#2c3e59', houseItem, e);
             map.entities.push(pin);
+            var infobox = new Microsoft.Maps.Infobox(loc, {
+                    htmlContent: infoboxTemplate("@Html.Raw(Model.Name)", 1, "@Html.Raw(Model.Location + ", " + Model.WardName + ", " + Model.DistrictName + ", " + Model.CityName)")
+            });
+            infobox.setMap(map);
         }
-        $(".material-symbols-outlined")[3].innerHTML = "mic";
+        if($(".material-symbols-outlined").length > 3){
+            $(".material-symbols-outlined")[3].innerHTML = "mic";
+        }
+        function infoboxTemplate(title, index, description) {
+            return `<div class="customInfobox">
+                        <div class="content">
+                            <div class="title">${title}</div>
+                            <div class="address"><strong>Địa chỉ:</strong> ${description}</div>
+                                            <div class="price"><strong>Giá:</strong> ${@Model.Price}</div>
+                                    <div class="click"><a href="#" class="btn btn-primary btn-sm"><i class="fa-solid fa-magnifying-glass"></i></a></div>
+                        </div>
+                    </div>`;
+        }
+        function createFontPushpin(location, text, fontName, fontSizePx, color, object, index) {
+            var c = document.createElement('canvas');
+            var ctx = c.getContext('2d');
+
+            //Define font style
+            var font = fontSizePx + 'px ' + fontName;
+            ctx.font = font
+
+            //Resize canvas based on sie of text.
+            var size = ctx.measureText(text);
+            c.width = size.width;
+            c.height = fontSizePx;
+
+            //Reset font as it will be cleared by the resize.
+            ctx.font = font;
+            ctx.textBaseline = 'top';
+            ctx.fillStyle = color;
+
+            ctx.fillText(text, 0, 0);
+
+            return new Microsoft.Maps.Pushpin(location, {
+                icon: c.toDataURL(),
+                anchor: new Microsoft.Maps.Point(c.width / 2, c.height / 2),
+                title: "@Html.Raw(Model.Name)",
+                subTitle: "@Html.Raw(Model.Location)"
+            });
+        }
+
     </script>
     <script src="~/js/House/detail.js" type="text/javascript" async defer></script>
+    <script src="~/js/Report/index.js" type="text/javascript" async defer></script>
     <script src="~/js/Request/create.js" type="text/javascript"></script>
     <script src="~/js/Request/getFormByHouseId.js" type="text/javascript"></script>
+    <script src="~/js/Rating/index.js" type="text/javascript"></script>
+    @if (Model.Ratings.Count() > 0)
+    {
+        <script type="text/javascript">
+            renderFrameRating(@Model.Id);
+        </script>
+    }
 }

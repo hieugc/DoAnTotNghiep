@@ -644,6 +644,7 @@ i.fa-solid.fa-bell{
     padding: 24px;
     width: 100%;
     border-radius: 12px;
+    background-color: white;
     box-shadow: 0 0.25rem 0.75rem 0 rgba(161, 172, 184, 0.12);
 }
 
@@ -800,6 +801,7 @@ i.fa-solid.fa-bell{
         font-size: x-large;
         padding: 6px;
     }
+    .list-house .house-card.selected,
     .house-card:hover {
         box-shadow: 0 4px 8px 0 rgba(var(--bs-primary-rgb), 1);
     }
@@ -899,9 +901,13 @@ i.fa-solid.fa-bell{
     font-weight: 700;
 }
 #tag_notification .dropdown-menu .alert-frame .content > div > span:last-child {
-    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    display: -webkit-box;
+    line-height: 21px;
+    max-height: 48px;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
 }
 
 #transactionModalToggle #renderQRCode .data{
@@ -946,4 +952,309 @@ i.fa-solid.fa-bell{
 #transactionModalToggle .zaloPay-notification div i {
     font-size: 120px;
     color: var(--bs-success);
+}
+#ratingModal h4,
+#reportModal h4 {
+    width: 100%;
+    text-align: center;
+}
+
+#reportModal #file-result {
+    display: flex;
+    flex-wrap: nowrap;
+    max-width: 100%;
+    gap: 26px;
+    overflow: auto;
+    padding: 12px;
+    margin-left: -12px;
+}
+
+#reportModal #file-result::-webkit-scrollbar {
+    height: 4px;
+}
+
+#reportModal #file-result::-webkit-scrollbar-track {
+    background: rgba(161, 172, 184, 0.4);
+    border-radius: 10px;
+    margin-left: 12px;
+}
+
+#reportModal #file-result::-webkit-scrollbar-thumb {
+    background: #1b6ec2;
+    border-radius: 10px;
+}
+
+#reportModal #file-result::-webkit-scrollbar-thumb:hover {
+    background: #1861ac;
+}
+
+
+#reportModal #file-result .picture-frame{
+    position: relative;
+    width: 25%;
+    min-width: 200px;
+    background: white;
+    box-shadow: 0 0.25rem 0.35rem #00000020;
+    height: 150px;
+    margin-bottom: 12px;
+}
+#reportModal #file-result .picture-frame img{
+    width: 100%;
+    height: 100%;
+}
+#reportModal #file-result .picture-frame button{
+    position: absolute;
+    right: 6px;
+    top: 12px;
+}
+
+#ratingModal .mb-3 .star-select{
+    display: flex;
+    gap: 12px;
+}
+#ratingModal .mb-3 .star-select i{
+    font-size: 24px;
+    cursor: pointer;
+}
+#ratingModal .mb-3 .star-select > i.selected,
+#ratingModal .mb-3 .star-select:hover > i{
+    color: var(--bs-orange);
+}
+#ratingModal .mb-3 div.label{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+#ratingModal .mb-3 label{
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+
+/* The actual timeline (the vertical ruler) */
+.timeline {
+  position: relative;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* The actual timeline (the vertical ruler) */
+.timeline::after {
+  content: '';
+  position: absolute;
+  width: 6px;
+  background-color: #0e365e;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  margin-left: -3px;
+}
+
+/* Container around content */
+.timeline .container {
+  padding: 10px 40px;
+  position: relative;
+  background-color: inherit;
+  width: 50%;
+  margin: 0;
+}
+
+/* The circles on the timeline */
+.timeline .container::after {
+  content: '';
+  position: absolute;
+  width: 25px;
+  height: 25px;
+  right: -12px;
+  background-color: white;
+  border: 4px solid #FF9F55;
+  top: 15px;
+  border-radius: 50%;
+  z-index: 1;
+}
+
+/* Place the container to the left */
+.timeline .left {
+  left: 0;
+}
+
+/* Place the container to the right */
+    .timeline .right {
+        left: 50%;
+    }
+
+
+.timeline .right::before,
+.timeline .left::before{
+  content: " ";
+  height: 0;
+  position: absolute;
+  top: 22px;
+  width: 0;
+  z-index: 1;
+}
+    .timeline .left.valid::before {
+        right: 30px;
+        border: medium solid var(--bs-success);
+        border-width: 10px 0 10px 10px;
+        border-color: transparent transparent transparent var(--bs-success);
+    }
+    .timeline .left.used::before {
+        right: 30px;
+        border: medium solid var(--bs-danger);
+        border-width: 10px 0 10px 10px;
+        border-color: transparent transparent transparent var(--bs-danger);
+    }
+    .timeline .right.valid::before {
+        left: 30px;
+        border: medium solid var(--bs-success);
+        border-width: 10px 10px 10px 0;
+        border-color: transparent var(--bs-success) transparent transparent;
+    }
+    .timeline .right.used::before {
+        left: 30px;
+        border: medium solid var(--bs-danger);
+        border-width: 10px 10px 10px 0;
+        border-color: transparent var(--bs-danger) transparent transparent;
+    }
+
+/* Fix the circle for containers on the right side */
+.timeline .right::after {
+  left: -12px;
+}
+
+/* The actual content */
+.timeline .content {
+  padding: 20px 30px;
+  background-color: white;
+  position: relative;
+  border-radius: 6px;
+  color:white;
+}
+.timeline .content.valid {
+  background-color: var(--bs-success);
+}
+.timeline .content.used {
+  background-color: var(--bs-danger);
+}
+#infoStatisticModal .modal-header .modal-title.fs-5{
+    width: 100%;
+    text-align: center;
+}
+/* Media queries - Responsive timeline on screens less than 600px wide */
+@media screen and (max-width: 600px) {
+    /* Place the timelime to the left */
+    .timeline::after {
+  left: 31px;
+  }
+  
+  /* Full-width containers */
+  .timeline .container {
+  width: 100%;
+  padding-left: 70px;
+  padding-right: 25px;
+  }
+  
+  /* Make sure that all arrows are pointing leftwards */
+  .timeline .container::before {
+      left: 60px;
+      border: medium solid white;
+      border-width: 10px 10px 10px 0;
+      border-color: transparent white transparent transparent;
+  }
+
+  /* Make sure all circles are at the same spot */
+  .timeline .left::after,
+  .timeline .right::after {
+        left: 15px;
+  }
+  
+  /* Make all right containers behave like the left ones */
+  .timeline .right {
+  left: 0%;
+  }
+}
+
+/* CSS styles used by custom infobox template */
+.customInfobox {
+    background-color: rgba(0,0,0,0.5);
+    color: white;
+    width: 200px;
+    min-height: 150px;
+    pointer-events: auto !important;
+    position: relative;
+    border-radius: 24px;
+    border-end-start-radius: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    bottom: 16px;
+}
+.customInfobox img{
+    display: none;
+    width: 100%;
+    height: auto;
+    opacity: 0.5;
+    border-radius: 24px;
+    border-end-start-radius: 0;
+}
+.customInfobox .content{
+    position:absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    flex-flow: column;
+    width: 100%;
+    padding: 12px;
+    font-size: 13px;
+}
+
+.customInfobox .title {
+    font-size: 15px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.customInfobox .price{
+    margin-top: 6px;
+}
+.customInfobox .click{
+    display: flex;
+    justify-content: end;
+}
+.customInfobox .btn {
+    border-radius: 50%;
+    background: white;
+    color: var(--bs-primary);
+    border: unset;
+}
+.customInfobox .address {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    line-height: 21px;
+    max-height: 48px;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+
+
+.house-card h2 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+}
+
+.house-card h2 p.attribute span{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
 }

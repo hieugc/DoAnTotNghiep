@@ -16,8 +16,18 @@ namespace DoAnTotNghiep.ViewModels
         [MaxLength(1000, ErrorMessage = "Nội dung tối đa 500 ký tự")]
         public string Content { get; set; } = string.Empty;
     }
+
     public class EditRatingViewModel: CreateRatingViewModel
     {
+        public EditRatingViewModel(){}
+        public EditRatingViewModel(FeedBack feed)
+        {
+            this.Id = feed.Id;
+            this.RatingHouse = feed.Rating;
+            this.RatingUser = feed.RatingUser;
+            this.Content = feed.Content;
+            this.IdRequest = feed.IdRequest;
+        }
         [Required]
         public int Id { get; set; }
     }
@@ -36,13 +46,20 @@ namespace DoAnTotNghiep.ViewModels
             this.Rating = feedBack.Rating;
             this.RatingUser = feedBack.RatingUser;
             this.Id = feedBack.Id;
+            if(feedBack.Users != null)
+            {
+                this.UserName = feedBack.Users.FirstName + " " + feedBack.Users.LastName;
+            }
+            this.IdRequest = feedBack.IdRequest;
         }
         public DateTime UpdatedDate { get; set; } = DateTime.Now;
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public string Content { get; set; } = string.Empty;
         public int Rating { get; set; } = 0;
         public int RatingUser { get; set; } = 0;
+        public string UserName { get; set; } = string.Empty;
         public int Id { get; set; } = 0;
+        public int IdRequest { get; set; } = 0;
     }
 
     public class DetailRatingWithUser
@@ -64,5 +81,6 @@ namespace DoAnTotNghiep.ViewModels
         public int FourStar { get; set; } = 0;
         public int FiveStar { get; set; } = 0;
         public int Total() => OneStar + TwoStar + ThreeStar + FourStar + FiveStar;
+        public double Rating() => (double) (OneStar + TwoStar + ThreeStar + FourStar + FiveStar)/Total();
     }
 }

@@ -171,9 +171,10 @@
                     <div class="col-md-6">
                         <label for="map-location" class="form-label">Số nhà, tên đường:</label>
                         <div class="input-group mb-3">
-                            <input type="text" class="form-control" name="map-location" id="map-location" aria-describedby="btn-map" onchange="autoGetLocation()"/>
-                            <span class="btn btn-primary input-group-text" onclick="getLocation()" id="btn-map" title="Ghim trên bản đồ"><i class="fa-solid fa-location-dot"></i></span>
+                            <input type="text" class="form-control" name="map-location" id="map-location" aria-describedby="btn-map" onchange="checkAddress(this)"/>
+                            <span class="btn btn-primary input-group-text" onclick="getLocation(null)" id="btn-map" title="Ghim trên bản đồ"><i class="fa-solid fa-location-dot"></i></span>
                         </div>                        
+                        <span class="text-danger" id="map-location-validate"></span>
                     </div>
                 </div>
                 <div id="myMap" style="width: 100%; height: 60vh;" class="form-map" onload="GetMap();"></div>

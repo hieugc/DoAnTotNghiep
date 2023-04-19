@@ -32,7 +32,6 @@ namespace DoAnTotNghiep.ViewModels
         [DataType(DataType.Date)]
         public DateTime EndDate { get; set; }
     }
-
     public class EditRequestViewModel: RequestViewModel
     {
         public EditRequestViewModel(Request request): base(request)
@@ -48,25 +47,19 @@ namespace DoAnTotNghiep.ViewModels
         {
             if(user != null)
             {
-                this.User = new UserMessageViewModel(user, salt, host);
+                this.isOwner = (user.Id == request.IdUser);
             }
-            if(request.CheckOuts != null && request.CheckOuts.Count() > 0)
+            if(request.Users != null)
             {
-                this.Status = (int)StatusRequest.CHECK_OUT;
+                this.User = new UserMessageViewModel(request.Users, salt, host);
             }
-            else if (request.CheckIns != null && request.CheckIns.Count() > 0)
-            {
-                this.Status = (int)StatusRequest.CHECK_IN;
-            }
-            else
-            {
-                this.Status = request.Status;
-            }
+            this.Status = request.Status;
             //this.IsCanCancel = (this.Status == (int)Enum.StatusRequest.WAIT_FOR_SWAP);
         }
         public DetailRequestViewModel() { }
         public UserMessageViewModel User { get; set; } = new UserMessageViewModel();
         public int Status { get; set; }
+        public bool isOwner { get; set; } = false;
         //public bool IsCanCancel { get; set; } = false;
     }
     public class UpdateStatusViewModel
@@ -74,22 +67,19 @@ namespace DoAnTotNghiep.ViewModels
         public int Id { get; set; } = 0;
         public int Status { get; set; } = 0;
     }
-
-
     public class DetailRequest
     {
         public DetailHouseViewModel House { get; set; } = new DetailHouseViewModel();
         public DetailRequestViewModel Request { get; set; } = new DetailRequestViewModel();
         public DetailHouseViewModel? SwapHouse { get; set; } = null;
-        public DetailRatingViewModel? Rating { get; set; } = null;
+        public DetailRatingViewModel? UserRating { get; set; } = null;
+        public DetailRatingViewModel? MyRating { get; set; } = null;
     }
-
     public class NotifyRequest
     {
         public DetailRequestViewModel Request { get; set; } = new DetailRequestViewModel();
         public DetailHouseViewModel? SwapHouse { get; set; } = null;
     }
-
     public class ModelRequestForm
     {
         public List<DetailHouseViewModel> UserHouses { get; set; } = new List<DetailHouseViewModel>();

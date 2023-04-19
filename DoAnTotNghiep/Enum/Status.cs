@@ -9,6 +9,20 @@
         CHECK_OUT,
         ENDED
     }
+    /// <summary>
+    /// Đợi accept => checkin => checkout => comment => end
+    /// </summary>
+    /// 
+    enum StatusWaitingRequest
+    {
+        INIT,
+        IN_CIRCLE,
+        DISABLE,
+        IS_SETTED,
+        CHECK_IN,
+        CHECK_OUT,
+        ENDED
+    }
 
     enum StatusMessage
     {
@@ -16,7 +30,6 @@
         UNSEEN,
         REMOVED
     }
-
     enum StatusTransaction
     {
         PENDING,
@@ -24,21 +37,17 @@
         REFUND,
         USED
     }
-
     enum StatusHouse
     {
         VALID,
         PENDING,
         SWAPPING
     }
-
-
     enum StatusAdminReport
     {
         WAITING,
         RESPONSED
     }
-
     public class StatusRequestStr
     {
         public static string getStatus(int status)
@@ -78,7 +87,8 @@
             {
                 (int) StatusRequest.ACCEPT,
                 (int) StatusRequest.CHECK_IN,
-                (int) StatusRequest.CHECK_OUT
+                (int) StatusRequest.CHECK_OUT,
+                (int) StatusRequest.ENDED
             };
         }
 
@@ -90,8 +100,7 @@
         public static bool IsUnValidHouse(int Status)
         {
             return Status == (int)StatusRequest.ACCEPT
-                || Status == (int)StatusRequest.CHECK_IN
-                || Status == (int)StatusRequest.CHECK_OUT;
+                || Status == (int)StatusRequest.CHECK_IN;
         }
     }
 }

@@ -1,0 +1,66 @@
+﻿@model DetailRatingViewModel
+
+
+<div class="rating-detail">
+    <div class="head">
+        <div>
+            <div class="title">
+                Đánh giá của @Model.UserName
+            </div>
+            <div class="time">Đánh giá được chỉnh lần cuối vào @Model.UpdatedDate.ToString("hh:mm:ss dd/MM/yyyy")</div>
+        </div>
+        @if (ViewData["isOwner"] != null && ViewData["isOwner"] == "true"){
+            <div class="control"><button type="button" class="btn btn-primary" onclick="renderRatingForm(@Model.IdRequest, @Model.Id)">Sửa</button></div>
+        }
+    </div>
+    <div class="mb-3 item-house">
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="label">
+                <i class="fa-solid fa-house"></i>
+                <span>Đánh giá căn hộ</span>
+            </div>
+            <div class="star-select">
+                <i class="fa-solid fa-star @if(Model.Rating >= 1){@Html.Raw("selected")}"></i>
+                <div class="star-select">
+                    <i class="fa-solid fa-star @if(Model.Rating >= 2){@Html.Raw("selected")}"></i>
+                    <div class="star-select">
+                        <i class="fa-solid fa-star @if(Model.Rating >= 3){@Html.Raw("selected")}"></i>
+                        <div class="star-select">
+                            <i class="fa-solid fa-star @if(Model.Rating >= 4){@Html.Raw("selected")}"></i>
+                            <div class="star-select">
+                                <i class="fa-solid fa-star @if(Model.Rating >= 5){@Html.Raw("selected")}"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="mb-3 user">
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="label">
+                <i class="fa-solid fa-user"></i>
+                <span>Đánh giá người dùng</span>
+            </div>
+            <div class="star-select">
+                <i class="fa-solid fa-star @if(Model.RatingUser >= 1){@Html.Raw("selected")}"></i>
+                <div class="star-select">
+                    <i class="fa-solid fa-star @if(Model.RatingUser >= 2){@Html.Raw("selected")}"></i>
+                    <div class="star-select">
+                        <i class="fa-solid fa-star @if(Model.RatingUser >= 3){@Html.Raw("selected")}"></i>
+                        <div class="star-select">
+                            <i class="fa-solid fa-star @if(Model.RatingUser >= 4){@Html.Raw("selected")}"></i>
+                            <div class="star-select">
+                                <i class="fa-solid fa-star @if(Model.RatingUser >= 5){@Html.Raw("selected")}"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="mb-3">
+        <label for="contentRating">Cảm nghĩ của bạn về căn hộ</label>
+        <p class="contentRating">@Model.Content</p>
+    </div>
+</div>

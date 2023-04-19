@@ -96,9 +96,9 @@ function finish() {
                     //nếu đúng
                     console.log(result);
                     if (result.status == 200) {
-                        for (e in listHouse.houses) {
-                            if (listHouse.houses[e].id == result.data.id) {
-                                listHouse.houses[e] = result.data;
+                        for (e in listHouse) {
+                            if (listHouse[e].id == result.data.id) {
+                                listHouse[e] = result.data;
                                 break;
                             }
                         }
@@ -133,7 +133,7 @@ function finish() {
                     console.log(result);
                     if (result.status == 200) {
                         //thêm item
-                        listHouse.houses.push(result.data);
+                        listHouse.push(result.data);
                         reloadPage();
                         houseModal.getElementsByClassName("progress-bar")[0].style.width = "100%";
                         setTimeout(function () {
@@ -442,8 +442,8 @@ function houseItem(data) {
 }
 function reloadPage() {
     $("#list-house").html(null);
-    for (let e in listHouse.houses) {
-        $("#list-house").append(houseItem(listHouse.houses[e]));
+    for (let e in listHouse) {
+        $("#list-house").append(houseItem(listHouse[e]));
     }
 }
 
@@ -469,3 +469,13 @@ function getStep() {
 function runBackStep(step) {
 }
 
+function checkAddress() {
+    if ($("#map-location").val().length == 0) {
+        $("#map-location-validate").html("Hãy điền địa chỉ nhà");
+        return false;
+    }
+    else {
+        $("#map-location-validate").html("");
+        return true;
+    }
+}

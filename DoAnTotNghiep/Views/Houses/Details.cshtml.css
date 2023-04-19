@@ -152,6 +152,7 @@ img.hover-shadow {
     float: left;
     width: 15%;
     margin-top: 10px;
+    font-weight: 500;
 }
 
 .middle {
@@ -223,11 +224,11 @@ img.hover-shadow {
 }
 
 
-.option-control{
+.option-control {
     display: flex;
     position: sticky;
     top: 83px;
-    z-index: 2;
+    z-index: 9999;
     background: white;
     padding-top: 12px;
     border-bottom: 2px solid #00000011;

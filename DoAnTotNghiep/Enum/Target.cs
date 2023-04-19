@@ -20,5 +20,6 @@
         public const string ExecuteCheckIn = "ExecuteCheckIn";
         public const string ExecuteCheckOut = "ExecuteCheckOut";
         public const string ExecuteCheckTransaction = "ExecuteCheckTransaction";
+        public const string ExecuteCreateWaiting = "ExecuteCreateWaiting";
     }
 }

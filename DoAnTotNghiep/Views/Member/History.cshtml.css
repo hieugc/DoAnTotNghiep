@@ -4,87 +4,82 @@
     padding: 24px;
     max-width: 1200px;
     border-radius: 12px;
+    background-color: white;
     box-shadow: 0 0.25rem 0.75rem 0 rgba(161, 172, 184, 0.12);
 }
-.house-head {
+.nav-link {
+    cursor: pointer;
+}
+
+.head-tab{
     display: flex;
-    padding-bottom: 12px;
-    border-bottom: 1px solid rgba(161, 172, 184, 0.4);
-    justify-content: space-between;
-    margin-bottom: 24px;
+    justify-content: end;
+    gap: 12px;
 }
-.house-head > button{
-    align-self: center;
+.head-tab.tab-hide {
+    display: none;
 }
-.list-house{
-    max-height: 100%;
-    overflow: auto;
+.head-tab select{
+    width: 25%;
 }
-.card {
-    box-shadow: 0 0.125rem 0.375rem rgba(161, 172, 184, 0.2);
-    margin-right: 12px;
+.statistic {
+    display: flex;
+    flex-flow: column;
+    height: 100%;
+    overflow: hidden;
 }
-.card .col-md-8:first-child{
-    padding: 6px;
+.statistic-img {
     display: flex;
     justify-content: center;
     align-items: center;
-}
-
-.card.swaped .col-md-8:first-child,
-.card.wait-validate .col-md-8:first-child,
-.card.was-validated .col-md-8:first-child{
-    border-left: 5px solid var(--bs-success);
-    position: relative;
-}
-.card.swaped .col-md-8:first-child:before,
-.card.wait-validate .col-md-8:first-child:before,
-.card.was-validated .col-md-8:first-child:before{
-    content: "Đã duyệt";
-    padding: 12px;
-    color: white;
-    position: absolute;
-    top: 0;
-    left: 0px;
-    font-size: large;
-    background: var(--bs-success);
-}
-
-.card.wait-validate .col-md-8:first-child{
-    border-left: 5px solid var(--bs-warning);
-}
-.card.wait-validate .col-md-8:first-child:before{
-    content: "Chờ kiểm duyệt";
-    background: var(--bs-warning);
-}
-.card.swaped .col-md-8:first-child{
-    border-left: 5px solid var(--bs-gray-500);
-}
-.card.swaped .col-md-8:first-child:before{
-    content: "Đang trao đổi";
-    background: var(--bs-gray-500);
-}
-.body-head{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-.body-detail {
-    display: flex;
-    justify-content: space-between;
-    padding-right: 12px;
-    font-size: 20px;
-}
-.body-detail > .house-attr div{
-    display: grid;
-    gap: 24px;
-    grid-template-columns: 1fr 2fr;
-    align-items: center;
-    margin: 6px 0;
-}
-.body-detail .alert-swap span{
-    font-size: 10px;
-}
-.body-detail .alert-swap{
+    height: 100%;
     margin-top: 12px;
+    overflow: hidden;
+}
+.statistic-img .loading-box {
+    width: 0;
+}
+.statistic-img.loading{
+    background-color: rgba(0,0,0,0.05);
+    margin: 24px;
+}
+.statistic-img.loading > canvas{
+    display: none!important;
+}
+.statistic-img > canvas{
+    width: auto !important;
+    height: 100%!important;
+    object-fit: scale-down;
+}
+.statistic-img.loading > .loading-box {
+    position: relative;
+    width: 50%;
+    height: 40px;
+    border-radius: 50px;
+    border: 3px solid #eee;
+    overflow: hidden;
+}
+
+.statistic-img.loading .loader {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    border-radius: 50px;
+    background: linear-gradient(45deg,var(--bs-gray-400),var(--bs-gray-900));
+    left: 0%;
+}
+/**/
+.statistic-img.loading .loader {
+    left: -100%;
+    animation: load 3s linear infinite;
+}
+
+@keyframes load {
+    0% {
+        left: -100%;
+    }
+
+    100% {
+        left: 100%;
+    }
 }

@@ -4,5 +4,5 @@
         function (data) {
             $("#renderModal").html(data);
         }
-    )
+    );
 }

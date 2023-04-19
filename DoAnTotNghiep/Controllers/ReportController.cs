@@ -38,6 +38,25 @@ namespace DoAnTotNghiep.Controllers
             _configuration = configuration;
         }
 
+        [HttpGet("/Report/Form")]
+        public IActionResult FormReport(string UserAccess)
+        {
+            int IdUser = 0;
+            if(int.TryParse(Crypto.DecodeKey(UserAccess, Crypto.Salt(this._configuration)), out IdUser)){
+                var user = this._context.Users.Where(m => m.Id == IdUser).FirstOrDefault();
+                if(user != null)
+                {
+                    ViewData["name"] = user.FirstName + " " + user.LastName;
+                    return PartialView("~/Views/PartialView/_FormReport.cshtml", UserAccess);
+                }
+
+               
+            }
+            return NotFound();
+        }
+
+
+
         //create
         //HINH ANH + TIEU DE + ID NHA + NOI DUNG
         [HttpPost("/Report/Create")]
@@ -48,21 +67,29 @@ namespace DoAnTotNghiep.Controllers
             {
                 try
                 {
-                    int.TryParse(Crypto.DecodeKey(model.UserAccess, Crypto.Salt(this._configuration)), out IdUser);
+                    if(int.TryParse(Crypto.DecodeKey(model.UserAccess, Crypto.Salt(this._configuration)), out IdUser))
+                    {
+                        return this.Create(new CreateReportViewModel()
+                        {
+                            Content = model.Content,
+                            IdHouse = null,
+                            IdUser = IdUser,
+                            Images = model.Images,
+                            Files = null
+                        });
+                    }
                 }
                 catch
                 {
 
                 }
             }
-
-            return this.Create(new CreateReportViewModel() { 
-                Content = model.Content, 
-                IdHouse = model.IdHouse, 
-                IdUser = IdUser == 0? null: IdUser,
-                Images = model.Images, 
-                Files = null
+            return BadRequest(new
+            {
+                Status = 400,
+                Message = "Không tìm thấy User"
             });
+            
         }
         [HttpPost("/api/Report/Create")]
         public IActionResult ApiCreateReport(MobileReportViewModel model)
@@ -72,7 +99,17 @@ namespace DoAnTotNghiep.Controllers
             {
                 try
                 {
-                    int.TryParse(Crypto.DecodeKey(model.UserAccess, Crypto.Salt(this._configuration)), out IdUser);
+                    if(int.TryParse(Crypto.DecodeKey(model.UserAccess, Crypto.Salt(this._configuration)), out IdUser))
+                    {
+                        return this.Create(new CreateReportViewModel()
+                        {
+                            Content = model.Content,
+                            IdHouse = null,
+                            IdUser = IdUser,
+                            Images = new List<ImageBase>(),
+                            Files = model.Files
+                        });
+                    }
                 }
                 catch
                 {
@@ -80,13 +117,10 @@ namespace DoAnTotNghiep.Controllers
                 }
             }
 
-            return this.Create(new CreateReportViewModel()
+            return BadRequest(new
             {
-                Content = model.Content,
-                IdHouse = model.IdHouse,
-                IdUser = IdUser == 0 ? null : IdUser,
-                Images = new List<ImageBase>(),
-                Files = model.Files
+                Status = 400,
+                Message = "Không tìm thấy User"
             });
         }
         private IActionResult Create(CreateReportViewModel model)

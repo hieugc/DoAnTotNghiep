@@ -43,6 +43,7 @@ namespace DoAnTotNghiep.Controllers
         //Dash board
         //Danh sách report người dùng 
         //hiển thị số người báo cáo thôi => xem chi tiết load thêm
+        /*
         [HttpGet("/Admin")]    
         public IActionResult UserReport()
         {
@@ -83,6 +84,7 @@ namespace DoAnTotNghiep.Controllers
 
             return View(reportList);
         }
+        */
 
 
         //Danh sách người dùng
