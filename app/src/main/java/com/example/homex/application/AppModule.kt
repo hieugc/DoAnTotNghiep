@@ -11,4 +11,5 @@ val appModules = module {
     viewModel { ChatViewModel(get()) }
     viewModel { RequestViewModel(get()) }
     viewModel { NotificationViewModel(get()) }
+    viewModel { ProfileViewModel(get()) }
 }

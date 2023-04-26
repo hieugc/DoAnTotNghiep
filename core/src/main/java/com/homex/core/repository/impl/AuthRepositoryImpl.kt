@@ -64,17 +64,4 @@ class AuthRepositoryImpl(private val api: ApiService): AuthRepository {
         }.build().asLiveData()
     }
 
-    override suspend fun updatePassword(param: PasswordParam): LiveData<ResultResponse<JsonObject>> {
-        return object : NetworkBoundResource<ObjectResponse<JsonObject>, JsonObject>(){
-            override fun processResponse(response: ObjectResponse<JsonObject>): JsonObject? = response.data
-            override suspend fun createCall(): Response<ObjectResponse<JsonObject>> = api.updateNewPassword(param)
-        }.build().asLiveData()
-    }
-
-    override suspend fun updateProfile(body: RequestBody): LiveData<ResultResponse<JsonObject>> {
-        return object : NetworkBoundResource<ObjectResponse<JsonObject>, JsonObject>(){
-            override fun processResponse(response: ObjectResponse<JsonObject>): JsonObject? = response.data
-            override suspend fun createCall(): Response<ObjectResponse<JsonObject>> = api.updateProfile(body)
-        }.build().asLiveData()
-    }
 }

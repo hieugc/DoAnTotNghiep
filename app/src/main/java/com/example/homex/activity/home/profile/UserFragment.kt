@@ -12,14 +12,17 @@ import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentUserBinding
 import com.example.homex.extension.gone
 import com.example.homex.extension.visible
+import com.example.homex.viewmodel.ProfileViewModel
 import com.homex.core.util.PrefUtil
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class UserFragment : BaseFragment<FragmentUserBinding>() {
     override val layoutId: Int = R.layout.fragment_user
     private val prefUtil: PrefUtil by inject()
     private var isAuthenticated = true
+    private val viewModel: ProfileViewModel by viewModel()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

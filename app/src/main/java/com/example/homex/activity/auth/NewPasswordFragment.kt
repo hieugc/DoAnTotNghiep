@@ -9,14 +9,14 @@ import com.example.homex.app.EMAIL
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentNewPasswordBinding
 import com.example.homex.extension.*
-import com.example.homex.viewmodel.AuthViewModel
+import com.example.homex.viewmodel.ProfileViewModel
 import com.homex.core.param.auth.PasswordParam
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class NewPasswordFragment : BaseFragment<FragmentNewPasswordBinding>() {
     override val layoutId: Int = R.layout.fragment_new_password
-    private val viewModel: AuthViewModel by viewModel()
+    private val viewModel: ProfileViewModel by viewModel()
 
     override fun setEvent() {
         binding.btnBack.setOnClickListener {

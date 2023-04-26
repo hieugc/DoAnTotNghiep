@@ -18,7 +18,7 @@ class Profile(
     var phoneNumber: String? = null,
     var userAccess: String? = null,
     var point: Int? = null,
-    var userRating: Int? = null,
+    var userRating: Double? = null,
     var numberOfHouses: Int? = null
 
 ): Parcelable {

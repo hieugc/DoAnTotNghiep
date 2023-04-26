@@ -24,9 +24,5 @@ interface AuthRepository {
 
     suspend fun checkOTPForgotPassword(param: OTPParam): LiveData<ResultResponse<Token>>
 
-    suspend fun updatePassword(param: PasswordParam): LiveData<ResultResponse<JsonObject>>
 
-    suspend fun updateProfile(
-        body: RequestBody
-    ): LiveData<ResultResponse<JsonObject>>
 }

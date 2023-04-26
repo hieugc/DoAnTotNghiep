@@ -23,7 +23,7 @@ import com.example.homex.app.DATE_TIME_FORMAT
 import com.example.homex.app.IMAGE
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentUpdateProfileBinding
-import com.example.homex.viewmodel.AuthViewModel
+import com.example.homex.viewmodel.ProfileViewModel
 import com.homex.core.param.profile.UpdateProfileParam
 import com.homex.core.util.AppEvent
 import com.homex.core.util.PrefUtil
@@ -44,7 +44,7 @@ class UpdateProfileFragment : BaseFragment<FragmentUpdateProfileBinding>() {
     private var validTime = true
     private lateinit var file: File
     private lateinit var updateProfileParam: UpdateProfileParam
-    private val viewModel: AuthViewModel by viewModel()
+    private val viewModel: ProfileViewModel by viewModel()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
