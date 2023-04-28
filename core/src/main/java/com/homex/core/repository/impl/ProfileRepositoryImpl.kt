@@ -6,7 +6,9 @@ import com.homex.core.api.ApiService
 import com.homex.core.data.NetworkBoundResource
 import com.homex.core.model.general.ObjectResponse
 import com.homex.core.model.general.ResultResponse
+import com.homex.core.model.response.PaymentInfoResponse
 import com.homex.core.param.auth.PasswordParam
+import com.homex.core.param.profile.TopUpPointParam
 import com.homex.core.repository.ProfileRepository
 import okhttp3.RequestBody
 import retrofit2.Response
@@ -23,6 +25,13 @@ class ProfileRepositoryImpl(val api: ApiService): ProfileRepository {
         return object : NetworkBoundResource<ObjectResponse<JsonObject>, JsonObject>(){
             override fun processResponse(response: ObjectResponse<JsonObject>): JsonObject? = response.data
             override suspend fun createCall(): Response<ObjectResponse<JsonObject>> = api.updateProfile(body)
+        }.build().asLiveData()
+    }
+
+    override suspend fun topUpPoint(param: TopUpPointParam): LiveData<ResultResponse<PaymentInfoResponse>> {
+        return object : NetworkBoundResource<ObjectResponse<PaymentInfoResponse>, PaymentInfoResponse>(){
+            override fun processResponse(response: ObjectResponse<PaymentInfoResponse>): PaymentInfoResponse? = response.data
+            override suspend fun createCall(): Response<ObjectResponse<PaymentInfoResponse>> = api.topUpPoint(param)
         }.build().asLiveData()
     }
 }

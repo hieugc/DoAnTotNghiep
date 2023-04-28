@@ -181,4 +181,5 @@
     <string name="error_invalid_phone">Số điện thoại không hợp lệ</string>
     <string name="error_invalid_dob">Ngày sinh không hợp lệ</string>
     <string name="update_profile_success">Cập nhật thông tin thành công!</string>
+    <string name="input_point_amount_hint">Nhập số lượng điểm cần nạp</string>
 </resources>

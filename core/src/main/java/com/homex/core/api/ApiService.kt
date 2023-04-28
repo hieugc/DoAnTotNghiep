@@ -11,6 +11,7 @@ import com.homex.core.param.chat.ContactUserParam
 import com.homex.core.param.chat.GetMessagesParam
 import com.homex.core.param.chat.SendMessageParam
 import com.homex.core.param.notification.UpdateSeenNotificationParam
+import com.homex.core.param.profile.TopUpPointParam
 import com.homex.core.param.request.*
 import okhttp3.RequestBody
 import retrofit2.Response
@@ -182,12 +183,19 @@ interface ApiService {
     @POST("api/Rating/Update")
     suspend fun updateRating(@Body param: UpdateRatingParam): Response<ObjectResponse<JsonObject>>
 
-    @POST("api/User/UpdateInfo")
-    suspend fun updateProfile(@Body body: RequestBody) : Response<ObjectResponse<JsonObject>>
+
 
     @GET("api/Notification/Get")
     suspend fun getNotifications(@Query("page") page: Int, @Query("limit") limit: Int) : Response<ObjectResponse<GetNotificationResponse>>
 
     @POST("api/Notification/Seen")
     suspend fun updateSeenNotification(@Body param: UpdateSeenNotificationParam) : Response<ObjectResponse<JsonObject>>
+
+    //--------------------PROFILE-----------------------------
+    @POST("api/User/UpdateInfo")
+    suspend fun updateProfile(@Body body: RequestBody) : Response<ObjectResponse<JsonObject>>
+
+    @POST("api/Payment/Zalo")
+    suspend fun topUpPoint(@Body param: TopUpPointParam): Response<ObjectResponse<PaymentInfoResponse>>
+
 }

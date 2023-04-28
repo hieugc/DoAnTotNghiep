@@ -7,8 +7,8 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:name="com.example.homex.app.MainApplication"
@@ -23,6 +23,9 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".activity.webview.WebviewActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.SplashActivity"
             android:exported="true">
             <intent-filter>
@@ -34,7 +37,7 @@
         <activity
             android:name=".activity.home.HomeActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize"/>
+            android:windowSoftInputMode="adjustResize" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -46,16 +49,17 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <service android:name=".service.ChatService"
-            android:exported="false"/>
-
-        <service android:name=".service.NotificationService"
-            android:exported="false"/>
+        <service
+            android:name=".service.ChatService"
+            android:exported="false" />
+        <service
+            android:name=".service.NotificationService"
+            android:exported="false" />
 
         <activity
             android:name=".activity.auth.AuthActivity"
-            android:windowSoftInputMode="stateHidden"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="stateHidden" />
     </application>
 
 </manifest>
