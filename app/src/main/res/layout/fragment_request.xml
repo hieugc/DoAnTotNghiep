@@ -9,60 +9,20 @@
         android:layout_height="match_parent"
         android:background="@color/background_gray">
 
-        <com.facebook.shimmer.ShimmerFrameLayout
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tab_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/requestShimmer"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                >
-                <include layout="@layout/request_shimmer"/>
-
-                <include layout="@layout/request_shimmer"/>
-
-                <include layout="@layout/request_shimmer"/>
-
-            </LinearLayout>
-
-        </com.facebook.shimmer.ShimmerFrameLayout>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:visibility="gone"
-            android:nestedScrollingEnabled="true"
-            android:overScrollMode="never"
-            android:clipToPadding="false"
-            android:paddingBottom="16dp"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/request_item"
-            tools:itemCount="3"
-            android:id="@+id/requestRecView"
-            app:layout_constraintTop_toTopOf="parent"/>
-
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/noHomeTxt"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
-            android:layout_marginBottom="25dp"
-            android:textStyle="bold"
-            android:gravity="center"
-            android:text="@string/system_will_notify_you_when_new_request_come"
-            android:textColor="@color/gray"
-            android:textSize="16sp"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:textAllCaps="true" />
+            android:layout_gravity="center_horizontal"
+            app:tabMode="scrollable" />
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:id="@+id/viewPager2"
+            app:layout_constraintTop_toBottomOf="@id/tab_layout"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

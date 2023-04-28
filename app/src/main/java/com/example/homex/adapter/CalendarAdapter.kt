@@ -9,10 +9,12 @@ import com.example.homex.R
 import com.example.homex.databinding.MonthGridItemBinding
 import com.example.homex.extension.longToDate
 import com.homex.core.model.CalendarDate
+import com.homex.core.model.DateRange
 import java.util.*
+import kotlin.collections.ArrayList
 
 
-class CalendarAdapter(val monthList: ArrayList<Date> = arrayListOf(), var selectedDates: Pair<CalendarDate?, CalendarDate?> = Pair(null, null), val onClick: (CalendarDate)->Unit): RecyclerView.Adapter<CalendarAdapter.MonthViewHolder>() {
+class CalendarAdapter(val monthList: ArrayList<Date> = arrayListOf(), var selectedDates: Pair<CalendarDate?, CalendarDate?> = Pair(null, null), val invalid: MutableList<DateRange>? = null, val onClick: (CalendarDate)->Unit): RecyclerView.Adapter<CalendarAdapter.MonthViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MonthViewHolder {
         return MonthViewHolder(
             MonthGridItemBinding.bind(
@@ -51,7 +53,7 @@ class CalendarAdapter(val monthList: ArrayList<Date> = arrayListOf(), var select
             }
         }
 
-        (holder.binding.monthDateGridView as GridView).adapter = MonthGridAdapter(arrayList, selectedDates){
+        (holder.binding.monthDateGridView as GridView).adapter = MonthGridAdapter(arrayList, selectedDates, invalid){
             val cal = Calendar.getInstance()
             cal.clear()
             cal.set(Calendar.YEAR, calendar.get(Calendar.YEAR))

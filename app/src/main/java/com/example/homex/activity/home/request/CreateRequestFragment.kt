@@ -17,6 +17,7 @@ import com.example.homex.extension.betweenDays
 import com.example.homex.extension.longToFormat
 import com.example.homex.viewmodel.RequestViewModel
 import com.homex.core.model.CalendarDate
+import com.homex.core.model.DateRange
 import com.homex.core.model.Home
 import com.homex.core.param.request.CreateRequestParam
 import com.homex.core.util.AppEvent
@@ -55,15 +56,18 @@ class CreateRequestFragment : BaseFragment<FragmentCreateRequestBinding>() {
 
         findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Home>("SWAP_HOUSE")?.observe(viewLifecycleOwner){
             viewModel.houseSwap.postValue(it)
+            viewModel.myInValidRangeDates.postValue(it.inValidRangeDates)
         }
 
         findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Home>("TARGET_HOUSE")?.observe(viewLifecycleOwner){
             viewModel.house.postValue(it)
+            viewModel.inValidRangeDates.postValue(it.inValidRangeDates)
         }
 
 
         if(args.targetHome != null){
             viewModel.house.postValue(args.targetHome)
+            viewModel.inValidRangeDates.postValue(args.targetHome?.inValidRangeDates)
         }
     }
 
@@ -71,7 +75,7 @@ class CreateRequestFragment : BaseFragment<FragmentCreateRequestBinding>() {
         if (prefUtil.profile != null){
             binding.yourPointTV.text = getString(R.string.point_you_have, prefUtil.profile?.point)
         }
-
+        viewModel.type.postValue(args.type)
         if(args.startDate != null && args.endDate != null){
             viewModel.startDate.postValue(args.startDate)
             viewModel.endDate.postValue(args.endDate)
@@ -104,7 +108,12 @@ class CreateRequestFragment : BaseFragment<FragmentCreateRequestBinding>() {
         }
 
         binding.changeDateBtn.setOnClickListener {
-            val action = CreateRequestFragmentDirections.actionCreateRequestFragmentToBottomSheetChangeDateFragment(viewModel.startDate.value, viewModel.endDate.value)
+            val ranges = viewModel.inValidRangeDates.value?: arrayListOf()
+            val myRange = viewModel.myInValidRangeDates.value?: arrayListOf()
+            val invalid = arrayListOf<DateRange>()
+            invalid.addAll(ranges)
+            invalid.addAll(myRange)
+            val action = CreateRequestFragmentDirections.actionCreateRequestFragmentToBottomSheetChangeDateFragment(viewModel.startDate.value, viewModel.endDate.value, inValidRangeDates = invalid.toTypedArray())
             findNavController().navigate(action)
         }
 

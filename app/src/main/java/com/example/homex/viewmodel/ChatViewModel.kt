@@ -20,7 +20,7 @@ import okhttp3.RequestBody
 
 class ChatViewModel(private val repository: ChatRepository): ViewModel() {
     val connectChat = MediatorLiveData<JsonObject?>()
-    val connectToUser = MediatorLiveData<MessageRoom?>()
+    var connectToUser = MediatorLiveData<MessageRoom?>()
     val connectToRoom = MediatorLiveData<JsonObject?>()
     val messages = MediatorLiveData<MessageRoom?>()
     val chatRoom = MediatorLiveData<MessageResponse?>()
@@ -127,6 +127,10 @@ class ChatViewModel(private val repository: ChatRepository): ViewModel() {
                 }
             }
         }
+    }
+
+    fun clearContactUser(){
+        connectToUser = MediatorLiveData<MessageRoom?>()
     }
 
     fun contactToUser(param: ContactUserParam){

@@ -6,9 +6,12 @@ import com.example.homex.R
 import com.example.homex.activity.home.HomeActivity
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentMyProfileBinding
+import com.homex.core.util.PrefUtil
+import org.koin.android.ext.android.inject
 
 class MyProfileFragment : BaseFragment<FragmentMyProfileBinding>() {
     override val layoutId: Int = R.layout.fragment_my_profile
+    private val prefUtil: PrefUtil by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,6 +23,12 @@ class MyProfileFragment : BaseFragment<FragmentMyProfileBinding>() {
             showBottomNav = false,
             showBoxChatLayout = Pair(false, null),
         )
+    }
+
+    override fun setView() {
+        if(prefUtil.profile != null){
+            binding.user = prefUtil.profile
+        }
     }
 
     override fun setEvent() {

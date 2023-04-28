@@ -19,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
-            app:sv_stepsNumber="4"
+            app:sv_stepsNumber="5"
             app:sv_animationType="All"
             android:paddingTop="16dp"
             android:paddingBottom="16dp"

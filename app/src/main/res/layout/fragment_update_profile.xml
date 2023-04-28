@@ -2,6 +2,12 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <data>
+        <variable
+            name="user"
+            type="com.homex.core.model.Profile" />
+    </data>
+
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -49,7 +55,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="52dp"
                     android:inputType="text"
-                    android:text="Phạm Minh"
+                    android:text="@{user.firstName}"
                     android:textAlignment="center" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -69,7 +75,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="52dp"
                     android:inputType="text"
-                    android:text="Hiếu"
+                    android:text="@{user.lastName}"
                     android:textAlignment="center" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -89,7 +95,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="52dp"
                     android:inputType="textEmailAddress"
-                    android:text="hieu.phamchuanmen@hcmut.edu.vn"
+                    android:text="@{user.email}"
                     android:textAlignment="center" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -109,7 +115,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="52dp"
                     android:inputType="phone"
-                    android:text="+65 0973409127"
+                    android:text="@{user.phoneNumber}"
                     android:textAlignment="center" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -128,13 +134,13 @@
                     style="@style/AppTheme.TextViewStyle"
                     android:layout_width="match_parent"
                     android:layout_height="52dp"
-                    android:inputType="datetime"
-                    android:text="07/07/1996"
+                    android:inputType="date"
+                    android:text="@{user.getDobDDMMYYYY()}"
                     android:textAlignment="center" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btnChangePwd"
+                android:id="@+id/btnUpdate"
                 style="@style/ButtonPrimary"
                 android:layout_width="match_parent"
                 android:layout_below="@id/checkPassword2"

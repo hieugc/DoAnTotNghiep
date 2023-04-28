@@ -13,9 +13,9 @@
         <action
             android:id="@+id/action_homeFragment_to_searchFragment"
             app:destination="@id/searchFragment"
-            app:exitAnim="@anim/fade_out"
+            app:exitAnim="@anim/slide_out_left"
             app:enterAnim="@anim/slide_in_left"
-            app:popEnterAnim="@anim/fade_in"
+            app:popEnterAnim="@anim/slide_out_right"
             app:popExitAnim="@anim/slide_in_right"/>
     </fragment>
     <fragment
@@ -27,7 +27,20 @@
         android:id="@+id/notificationFragment"
         android:name="com.example.homex.activity.home.NotificationFragment"
         android:label="fragment_notification"
-        tools:layout="@layout/fragment_notification" />
+        tools:layout="@layout/fragment_notification" >
+        <action
+            android:id="@+id/action_notificationFragment_to_requestDetailFragment"
+            app:destination="@id/requestDetailFragment"
+            app:exitAnim="@anim/slide_out_left"
+            app:enterAnim="@anim/slide_in_left"
+            app:popEnterAnim="@anim/slide_out_right"
+            app:popExitAnim="@anim/slide_in_right">
+            <argument
+                android:name="id"
+                app:argType="integer"
+                android:defaultValue="0" />
+        </action>
+    </fragment>
     <fragment
         android:id="@+id/userFragment"
         android:name="com.example.homex.activity.home.profile.UserFragment"
@@ -36,37 +49,37 @@
         <action
             android:id="@+id/action_userFragment_to_myHomeFragment"
             app:destination="@id/myHomeFragment"
-            app:exitAnim="@anim/fade_out"
+            app:exitAnim="@anim/slide_out_left"
             app:enterAnim="@anim/slide_in_left"
-            app:popEnterAnim="@anim/fade_in"
+            app:popEnterAnim="@anim/slide_out_right"
             app:popExitAnim="@anim/slide_in_right"/>
         <action
             android:id="@+id/action_userFragment_to_myProfileFragment"
             app:destination="@id/myProfileFragment"
-            app:exitAnim="@anim/fade_out"
+            app:exitAnim="@anim/slide_out_left"
             app:enterAnim="@anim/slide_in_left"
-            app:popEnterAnim="@anim/fade_in"
+            app:popEnterAnim="@anim/slide_out_right"
             app:popExitAnim="@anim/slide_in_right"/>
         <action
             android:id="@+id/action_userFragment_to_transHistoryFragment"
             app:destination="@id/transHistoryFragment"
-            app:exitAnim="@anim/fade_out"
+            app:exitAnim="@anim/slide_out_left"
             app:enterAnim="@anim/slide_in_left"
-            app:popEnterAnim="@anim/fade_in"
+            app:popEnterAnim="@anim/slide_out_right"
             app:popExitAnim="@anim/slide_in_right"/>
         <action
             android:id="@+id/action_userFragment_to_pointHistoryFragment"
             app:destination="@id/pointHistoryFragment"
-            app:exitAnim="@anim/fade_out"
+            app:exitAnim="@anim/slide_out_left"
             app:enterAnim="@anim/slide_in_left"
-            app:popEnterAnim="@anim/fade_in"
+            app:popEnterAnim="@anim/slide_out_right"
             app:popExitAnim="@anim/slide_in_right"/>
         <action
             android:id="@+id/action_userFragment_to_requestFragment"
             app:destination="@id/requestFragment"
-            app:exitAnim="@anim/fade_out"
+            app:exitAnim="@anim/slide_out_left"
             app:enterAnim="@anim/slide_in_left"
-            app:popEnterAnim="@anim/fade_in"
+            app:popEnterAnim="@anim/slide_out_right"
             app:popExitAnim="@anim/slide_in_right"/>
     </fragment>
     <fragment
@@ -77,9 +90,9 @@
         <action
             android:id="@+id/action_messageFragment_to_messageBoxFragment"
             app:destination="@id/messageBoxFragment"
-            app:exitAnim="@anim/fade_out"
+            app:exitAnim="@anim/slide_out_left"
             app:enterAnim="@anim/slide_in_left"
-            app:popEnterAnim="@anim/fade_in"
+            app:popEnterAnim="@anim/slide_out_right"
             app:popExitAnim="@anim/slide_in_right">
             <argument
                 android:name="id"
@@ -90,9 +103,9 @@
     <action
         android:id="@+id/action_global_messageFragment"
         app:destination="@id/messageFragment"
-        app:exitAnim="@anim/fade_out"
+        app:exitAnim="@anim/slide_out_left"
         app:enterAnim="@anim/slide_in_left"
-        app:popEnterAnim="@anim/fade_in"
+        app:popEnterAnim="@anim/slide_out_right"
         app:popExitAnim="@anim/slide_in_right"/>
     <fragment
         android:id="@+id/messageBoxFragment"
@@ -102,9 +115,9 @@
         <action
             android:id="@+id/action_messageBoxFragment_to_createRequestFragment"
             app:destination="@id/createRequestFragment"
-            app:exitAnim="@anim/fade_out"
+            app:exitAnim="@anim/slide_out_left"
             app:enterAnim="@anim/slide_in_left"
-            app:popEnterAnim="@anim/fade_in"
+            app:popEnterAnim="@anim/slide_out_right"
             app:popExitAnim="@anim/slide_in_right">
             <argument android:defaultValue=""
                 android:name="userAccess"
@@ -124,10 +137,27 @@
         <action
             android:id="@+id/action_searchFragment_to_searchResultFragment"
             app:destination="@id/searchResultFragment"
-            app:exitAnim="@anim/fade_out"
+            app:exitAnim="@anim/slide_out_left"
             app:enterAnim="@anim/slide_in_left"
-            app:popEnterAnim="@anim/fade_in"
+            app:popEnterAnim="@anim/slide_out_right"
             app:popExitAnim="@anim/slide_in_right"/>
+        <action
+            android:id="@+id/action_searchFragment_to_bottomSheetChangeDateFragment"
+            app:destination="@id/bottomSheetChangeDateFragment">
+            <argument android:name="numberOfPeople"
+                app:argType="integer"
+                android:defaultValue="1" />
+            <argument
+                android:name="startDate"
+                app:argType="com.homex.core.model.CalendarDate"
+                app:nullable="true"
+                android:defaultValue="@null" />
+            <argument
+                android:name="endDate"
+                app:argType="com.homex.core.model.CalendarDate"
+                app:nullable="true"
+                android:defaultValue="@null" />
+        </action>
     </fragment>
     <fragment
         android:id="@+id/searchResultFragment"
@@ -164,13 +194,18 @@
                 app:argType="com.homex.core.model.CalendarDate"
                 app:nullable="true"
                 android:defaultValue="@null" />
+            <argument
+                android:name="inValidRangeDates"
+                app:argType="com.homex.core.model.DateRange[]"
+                app:nullable="true"
+                android:defaultValue="@null" />
         </action>
         <action
             android:id="@+id/action_homeDetailFragment_to_createRequestFragment"
             app:destination="@id/createRequestFragment"
-            app:exitAnim="@anim/fade_out"
+            app:exitAnim="@anim/slide_out_left"
             app:enterAnim="@anim/slide_in_left"
-            app:popEnterAnim="@anim/fade_in"
+            app:popEnterAnim="@anim/slide_out_right"
             app:popExitAnim="@anim/slide_in_right">
             <argument
                 android:name="userAccess"
@@ -197,9 +232,9 @@
     <action
         android:id="@+id/action_global_homeDetailFragment"
         app:destination="@id/homeDetailFragment"
-        app:exitAnim="@anim/fade_out"
+        app:exitAnim="@anim/slide_out_left"
         app:enterAnim="@anim/slide_in_left"
-        app:popEnterAnim="@anim/fade_in"
+        app:popEnterAnim="@anim/slide_out_right"
         app:popExitAnim="@anim/slide_in_right">
         <argument app:argType="integer"
             android:name="id"
@@ -236,19 +271,22 @@
             android:name="targetHome"
             app:nullable="true"
             android:defaultValue="@null"/>
+        <argument app:argType="integer"
+            android:name="type"
+            android:defaultValue="1"/>
         <action
             android:id="@+id/action_createRequestFragment_to_pickHomeFragment"
             app:destination="@id/pickHomeFragment"
-            app:exitAnim="@anim/fade_out"
+            app:exitAnim="@anim/slide_out_left"
             app:enterAnim="@anim/slide_in_left"
-            app:popEnterAnim="@anim/fade_in"
+            app:popEnterAnim="@anim/slide_out_right"
             app:popExitAnim="@anim/slide_in_right"/>
         <action
             android:id="@+id/action_createRequestFragment_to_pickYourHomeFragment"
             app:destination="@id/pickYourHomeFragment"
-            app:exitAnim="@anim/fade_out"
+            app:exitAnim="@anim/slide_out_left"
             app:enterAnim="@anim/slide_in_left"
-            app:popEnterAnim="@anim/fade_in"
+            app:popEnterAnim="@anim/slide_out_right"
             app:popExitAnim="@anim/slide_in_right"/>
         <action
             android:id="@+id/action_createRequestFragment_to_bottomSheetChangeDateFragment"
@@ -263,6 +301,11 @@
                 app:argType="com.homex.core.model.CalendarDate"
                 app:nullable="true"
                 android:defaultValue="@null" />
+            <argument
+                android:name="inValidRangeDates"
+                app:argType="com.homex.core.model.DateRange[]"
+                app:nullable="true"
+                android:defaultValue="@null" />
         </action>
     </fragment>
     <fragment
@@ -273,9 +316,9 @@
         <action
             android:id="@+id/action_myHomeFragment_to_addHomeFragment"
             app:destination="@id/addHomeFragment"
-            app:exitAnim="@anim/fade_out"
+            app:exitAnim="@anim/slide_out_left"
             app:enterAnim="@anim/slide_in_left"
-            app:popEnterAnim="@anim/fade_in"
+            app:popEnterAnim="@anim/slide_out_right"
             app:popExitAnim="@anim/slide_in_right"/>
     </fragment>
     <fragment
@@ -289,9 +332,9 @@
         <action
             android:id="@+id/action_myHomeDetailFragment_to_addHomeFragment"
             app:destination="@id/addHomeFragment"
-            app:exitAnim="@anim/fade_out"
+            app:exitAnim="@anim/slide_out_left"
             app:enterAnim="@anim/slide_in_left"
-            app:popEnterAnim="@anim/fade_in"
+            app:popEnterAnim="@anim/slide_out_right"
             app:popExitAnim="@anim/slide_in_right"/>
     </fragment>
     <fragment
@@ -302,9 +345,9 @@
         <action
             android:id="@+id/action_pickYourHomeFragment_to_myHomeFragment"
             app:destination="@id/myHomeFragment"
-            app:exitAnim="@anim/fade_out"
+            app:exitAnim="@anim/slide_out_left"
             app:enterAnim="@anim/slide_in_left"
-            app:popEnterAnim="@anim/fade_in"
+            app:popEnterAnim="@anim/slide_out_right"
             app:popExitAnim="@anim/slide_in_right"/>
     </fragment>
     <fragment
@@ -315,9 +358,9 @@
     <action
         android:id="@+id/action_global_myHomeDetailFragment"
         app:destination="@id/myHomeDetailFragment"
-        app:exitAnim="@anim/fade_out"
+        app:exitAnim="@anim/slide_out_left"
         app:enterAnim="@anim/slide_in_left"
-        app:popEnterAnim="@anim/fade_in"
+        app:popEnterAnim="@anim/slide_out_right"
         app:popExitAnim="@anim/slide_in_right">
         <argument android:name="id"
             app:argType="integer"
@@ -332,16 +375,16 @@
         <action
             android:id="@+id/action_myProfileFragment_to_updateProfileFragment"
             app:destination="@id/updateProfileFragment"
-            app:exitAnim="@anim/fade_out"
+            app:exitAnim="@anim/slide_out_left"
             app:enterAnim="@anim/slide_in_left"
-            app:popEnterAnim="@anim/fade_in"
+            app:popEnterAnim="@anim/slide_out_right"
             app:popExitAnim="@anim/slide_in_right"/>
         <action
             android:id="@+id/action_myProfileFragment_to_changePasswordFragment"
             app:destination="@id/changePasswordFragment"
-            app:exitAnim="@anim/fade_out"
+            app:exitAnim="@anim/slide_out_left"
             app:enterAnim="@anim/slide_in_left"
-            app:popEnterAnim="@anim/fade_in"
+            app:popEnterAnim="@anim/slide_out_right"
             app:popExitAnim="@anim/slide_in_right"/>
     </fragment>
     <fragment
@@ -370,9 +413,9 @@
         <action
             android:id="@+id/action_transHistoryFragment_to_requestDetailFragment"
             app:destination="@id/requestDetailFragment"
-            app:exitAnim="@anim/fade_out"
+            app:exitAnim="@anim/slide_out_left"
             app:enterAnim="@anim/slide_in_left"
-            app:popEnterAnim="@anim/fade_in"
+            app:popEnterAnim="@anim/slide_out_right"
             app:popExitAnim="@anim/slide_in_right"/>
     </fragment>
     <dialog
@@ -398,9 +441,9 @@
         <action
             android:id="@+id/action_bottomSheetDialogSelectImage_to_galleryFragment"
             app:destination="@id/galleryFragment"
-            app:exitAnim="@anim/fade_out"
+            app:exitAnim="@anim/slide_out_left"
             app:enterAnim="@anim/slide_in_left"
-            app:popEnterAnim="@anim/fade_in"
+            app:popEnterAnim="@anim/slide_out_right"
             app:popExitAnim="@anim/slide_in_right"/>
     </dialog>
     <fragment
@@ -410,28 +453,56 @@
         tools:layout="@layout/fragment_gallery"/>
     <fragment
         android:id="@+id/requestFragment"
-        android:name="com.example.homex.activity.home.RequestFragment"
+        android:name="com.example.homex.activity.home.pending.RequestFragment"
         android:label="RequestFragment"
         tools:layout="@layout/fragment_request">
         <action
             android:id="@+id/action_requestFragment_to_pendingRequestDetailFragment"
             app:destination="@id/pendingRequestDetailFragment"
-            app:exitAnim="@anim/fade_out"
+            app:exitAnim="@anim/slide_out_left"
             app:enterAnim="@anim/slide_in_left"
-            app:popEnterAnim="@anim/fade_in"
+            app:popEnterAnim="@anim/slide_out_right"
             app:popExitAnim="@anim/slide_in_right">
             <argument android:name="id"
                 app:argType="integer"/>
         </action>
+        <action
+            android:id="@+id/action_requestFragment_to_createRequestFragment"
+            app:destination="@id/createRequestFragment">
+            <argument app:argType="string"
+                android:name="userAccess"
+                android:defaultValue=""/>
+            <argument app:argType="com.homex.core.model.Home"
+                android:name="targetHome"
+                app:nullable="true"
+                android:defaultValue="@null"/>
+            <argument app:argType="integer"
+                android:name="type"
+                android:defaultValue="1"/>
+        </action>
     </fragment>
     <fragment
         android:id="@+id/pendingRequestDetailFragment"
-        android:name="com.example.homex.activity.home.PendingRequestDetailFragment"
+        android:name="com.example.homex.activity.home.pending.PendingRequestDetailFragment"
         android:label="PendingRequestDetailFragment"
         tools:layout="@layout/fragment_pending_request_detail">
         <argument android:name="id"
             app:argType="integer"
             android:defaultValue="0"/>
+        <action
+            android:id="@+id/action_pendingRequestDetailFragment_to_createRequestFragment"
+            app:destination="@id/createRequestFragment">
+            <argument app:argType="string"
+                android:name="userAccess"
+                android:defaultValue=""/>
+            <argument app:argType="com.homex.core.model.Home"
+                android:name="targetHome"
+                app:nullable="true"
+                android:defaultValue="@null"/>
+            <argument app:argType="integer"
+                android:name="type"
+                android:defaultValue="1"/>
+        </action>
     </fragment>
     <dialog
         android:id="@+id/bottomSheetChangeDateFragment"
@@ -446,6 +517,14 @@
         <argument
             android:name="endDate"
             app:argType="com.homex.core.model.CalendarDate"
+            app:nullable="true"
+            android:defaultValue="@null" />
+        <argument android:name="numberOfPeople"
+            app:argType="integer"
+            android:defaultValue="0" />
+        <argument
+            android:name="inValidRangeDates"
+            app:argType="com.homex.core.model.DateRange[]"
             app:nullable="true"
             android:defaultValue="@null" />
     </dialog>

@@ -45,13 +45,12 @@ class MyHomeFragment : BaseFragment<FragmentMyHomeBinding>() {
 
     override fun setView() {
         adapter = MyHomeAdapter(
-            arrayListOf(),
+            homeList,
             onClick = {
                 val action = MyHomeFragmentDirections.actionGlobalMyHomeDetailFragment(id = it)
                 findNavController().navigate(action)
             }
         )
-        adapter.homeList = homeList
         binding.mainHomeRecView.adapter = adapter
         val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         binding.mainHomeRecView.layoutManager = layoutManager
@@ -66,10 +65,8 @@ class MyHomeFragment : BaseFragment<FragmentMyHomeBinding>() {
     override fun setViewModel() {
         viewModel.myHomesLiveData.observe(viewLifecycleOwner){
             if (it != null){
-                if(page == 1){
-                    homeList.clear()
-                }
-                val homes = it.homes
+                homeList.clear()
+                val homes = it.houses
                 if (homes != null){
                     homeList.addAll(homes)
                     adapter.notifyDataSetChanged()

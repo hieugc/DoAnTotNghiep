@@ -11,4 +11,6 @@ val repositoryModule = module {
     single<YourHomeRepository> { YourHomeRepositoryImpl(get()) }
     single<ChatRepository> { ChatRepositoryImpl(get()) }
     single<RequestRepository> { RequestRepositoryImpl(get()) }
+    single<NotificationRepository> { NotificationRepositoryImpl(get()) }
+    single<ProfileRepository> { ProfileRepositoryImpl(get()) }
 }

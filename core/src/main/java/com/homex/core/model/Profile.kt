@@ -2,6 +2,8 @@ package com.homex.core.model
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+import java.text.SimpleDateFormat
+import java.util.*
 
 @Parcelize
 class Profile(
@@ -16,7 +18,7 @@ class Profile(
     var phoneNumber: String? = null,
     var userAccess: String? = null,
     var point: Int? = null,
-    var userRating: Int? = null,
+    var userRating: Double? = null,
     var numberOfHouses: Int? = null
 
 ): Parcelable {
@@ -24,4 +26,13 @@ class Profile(
         return "${lastName?:""} ${firstName?:""}"
     }
 
+    public fun getDobDDMMYYYY(): String {
+        val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+        formatter.timeZone = TimeZone.getTimeZone("UTC")
+        val value = formatter.parse(birthDay)
+        val dateFormatter = SimpleDateFormat("dd/MM/yyyy") //this format changeable
+        dateFormatter.timeZone = TimeZone.getDefault()
+        val dob = dateFormatter.format(value)
+        return dob
+    }
 }

@@ -68,7 +68,7 @@ dependencies {
     implementation 'de.hdodenhof:circleimageview:3.1.0'
 
     implementation 'com.microsoft.signalr:signalr:7.0.0'
-
+    implementation 'org.slf4j:slf4j-jdk14:1.7.25'
     //shimmer
     implementation deps.shimmer.facebook
 }

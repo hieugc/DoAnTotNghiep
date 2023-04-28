@@ -7,24 +7,91 @@
         <variable
             name="request"
             type="com.homex.core.model.response.RequestResponse" />
+        <import type="com.example.homex.extension.RequestStatus"/>
     </data>
-
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:fillViewport="true"
-        android:layout_height="match_parent">
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:background="@color/background_gray"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingBottom="16dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            app:layout_constraintTop_toTopOf="parent"
+            android:id="@+id/statusLayout">
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            style="@style/Regular"
+            android:id="@+id/appCompatTextView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="16dp"
+            android:text="Trạng thái yêu cầu:"
+            android:textColor="@color/black_60" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvRequestStatus"
+                style="@style/Regular"
+                requestStatus="@{request.request.status}"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:textColor="@color/black_60"
+                app:layout_constraintBottom_toBottomOf="@id/appCompatTextView3"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/appCompatTextView3"
+                app:layout_constraintTop_toTopOf="@id/appCompatTextView3" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/requestTxt"
+                requestText="@{request.request.status}"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="8dp"
+                android:textColor="@color/primary"
+                app:layout_constraintEnd_toStartOf="@+id/appCompatImageView10"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvRequestStatus" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/appCompatImageView10"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginEnd="16dp"
+                android:src="@mipmap/request"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/requestTxt" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.appcompat.widget.AppCompatTextView
             style="@style/Regular"
             android:id="@+id/appCompatTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/statusLayout"
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="24dp"
             android:layout_marginTop="16dp"
@@ -40,17 +107,31 @@
             android:background="@color/white"
             android:orientation="vertical">
 
-            <androidx.appcompat.widget.AppCompatTextView
-                style="@style/MediumText"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="3"
-                android:padding="8dp"
-                android:drawableStart="@drawable/ic_user"
-                android:drawablePadding="12dp"
-                android:gravity="center_vertical"
-                android:text="Bạn" />
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="8dp">
 
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:id="@+id/ivAvatar"
+                    android:src="@mipmap/avatar"
+                    android:layout_gravity="center_vertical"
+                    loadAvatar="@{request.house.user.urlImage}"
+                    />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvUserName"
+                    style="@style/MediumText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="12dp"
+                    android:layout_gravity="center_vertical"
+                    android:text="Bạn" />
+        </LinearLayout>
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
@@ -92,6 +173,7 @@
                         android:layout_marginTop="5dp"
                         android:drawableStart="@drawable/ic_ppl"
                         android:drawablePadding="8dp"
+                        android:gravity="center_vertical"
                         android:text="@{request.house.people + ` người`}" />
 
                     <androidx.appcompat.widget.AppCompatTextView
@@ -126,15 +208,11 @@
                             android:layout_width="wrap_content"
                             android:layout_gravity="center"
                             android:layout_height="wrap_content"
+                            android:drawableEnd="@drawable/ic_rating"
+                            android:gravity="center_vertical"
+                            android:drawablePadding="8dp"
                             android:text="@{`(` + request.house.numberRating + `)`}"
-                            android:layout_marginEnd="8dp"
-                            android:textAlignment="center"/>
-
-                        <androidx.appcompat.widget.AppCompatImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:src="@drawable/ic_rating"/>
+                            />
 
                     </LinearLayout>
 
@@ -162,20 +240,34 @@
             android:id="@+id/linearLayout2"
             app:layout_constraintTop_toBottomOf="@id/offerLayout"
             android:background="@color/white"
-            android:visibility="gone"
+            android:visibility="visible"
             setVisibilityGone="@{request.request.type == 1}"
             android:orientation="vertical">
 
-            <androidx.appcompat.widget.AppCompatTextView
-                style="@style/MediumText"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="3"
-                android:padding="8dp"
-                android:drawableStart="@drawable/ic_user"
-                android:drawablePadding="12dp"
-                android:gravity="center_vertical"
-                android:text="@{request.request.user.userName}"  />
+                android:orientation="horizontal"
+                android:padding="8dp">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/ivAvatar2"
+                    loadAvatar="@{request.request.user.imageUrl}"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center_vertical"
+                    android:src="@mipmap/avatar" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvUserName2"
+                    style="@style/MediumText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    android:text="@{request.request.user.userName}" />
+            </LinearLayout>
 
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"
@@ -235,16 +327,30 @@
             setVisibilityGone="@{request.request.type == 2}"
             android:orientation="vertical">
 
-            <androidx.appcompat.widget.AppCompatTextView
-                style="@style/MediumText"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="3"
-                android:padding="8dp"
-                android:drawableStart="@drawable/ic_user"
-                android:drawablePadding="12dp"
-                android:gravity="center_vertical"
-                android:text="@{request.request.user.userName}" />
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="8dp">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/ivAvatar1"
+                    loadAvatar="@{request.request.user.imageUrl}"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center_vertical"
+                    android:src="@mipmap/avatar" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvUserName1"
+                    style="@style/MediumText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    android:text="@{request.request.user.userName}" />
+            </LinearLayout>
 
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"
@@ -285,6 +391,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
+                        android:gravity="center_vertical"
                         android:drawableStart="@drawable/ic_ppl"
                         android:drawablePadding="8dp"
                         android:text="@{request.swapHouse.people + ` người`}" />
@@ -322,14 +429,11 @@
                             android:layout_gravity="center"
                             android:layout_height="wrap_content"
                             android:text="@{`(` + request.swapHouse.numberRating + `)`}"
-                            android:layout_marginEnd="8dp"
-                            android:textAlignment="center"/>
+                            android:drawablePadding="8dp"
+                            android:gravity="center_vertical"
+                            android:drawableEnd="@drawable/ic_rating"
+                            />
 
-                        <androidx.appcompat.widget.AppCompatImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:src="@drawable/ic_rating"/>
 
                     </LinearLayout>
 
@@ -349,7 +453,7 @@
             android:layout_marginStart="24dp"
             android:layout_marginTop="16dp"
             android:id="@+id/appCompatTextView2"
-            android:text="Bạn được yêu cầu"
+            android:text="Thời gian"
             android:textColor="@color/black_60" />
 
         <LinearLayout
@@ -413,31 +517,48 @@
                     formatDate="@{request.request.endDate}" />
             </LinearLayout>
         </LinearLayout>
+
         <androidx.appcompat.widget.AppCompatButton
-            style="@style/ButtonOutline"
-            android:text="Từ chối"
-            android:id="@+id/rejectBtn"
-            android:layout_width="match_parent"
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="24dp"
-            android:layout_gravity="bottom"
+            style="@style/FlexLongButtonSecondary"
+            android:text="Liên hệ"
+            android:id="@+id/contactBtn"
             app:layout_constraintTop_toBottomOf="@id/linearLayout3"
-            app:layout_constraintVertical_bias="1"
-            app:layout_constraintBottom_toTopOf="@id/acceptBtn"
-            />
-        <androidx.appcompat.widget.AppCompatButton
-            style="@style/ButtonPrimary"
-            android:text="Chấp nhận"
-            android:id="@+id/acceptBtn"
-            app:layout_constraintBottom_toBottomOf="parent"
             android:layout_gravity="bottom"
             android:layout_width="match_parent"
             android:layout_marginStart="24dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginTop="16dp"
             android:layout_marginEnd="24dp"/>
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:orientation="horizontal"
+            android:elevation="5dp"
+            >
+            <androidx.appcompat.widget.AppCompatButton
+                style="@style/ButtonOutline"
+                android:id="@+id/rejectBtn"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_margin="8dp"
+                requestSecondary="@{request.request.status}"
+                />
+            <androidx.appcompat.widget.AppCompatButton
+                style="@style/ButtonPrimary"
+                requestPrimary="@{request.request.status}"
+                startDate="@{request.request.startDate}"
+                endDate="@{request.request.endDate}"
+                android:id="@+id/acceptBtn"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_margin="8dp"/>
+
+        </LinearLayout>
+    </LinearLayout>
 
 </layout>

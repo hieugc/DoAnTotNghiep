@@ -65,7 +65,7 @@ class PickYourHomeFragment : BaseFragment<FragmentPickYourHomeBinding>() {
     override fun setViewModel() {
         yourHomeViewModel.myHomesLiveData.observe(this){
             if (it != null){
-                val homes = it.homes
+                val homes = it.houses
                 myHomeList.clear()
                 if (homes != null){
                     myHomeList.addAll(homes)
@@ -74,7 +74,8 @@ class PickYourHomeFragment : BaseFragment<FragmentPickYourHomeBinding>() {
                         binding.homeShimmer.stopShimmer()
                         binding.homeShimmer.gone()
                         isShimmer = false
-                        binding.appCompatTextView28.visible()
+                        binding.appCompatTextView28.gone()
+                        binding.noHomeTxt.visible()
                         binding.addHomeBtn.visible()
                     }else{
                         if (isShimmer){
@@ -83,7 +84,8 @@ class PickYourHomeFragment : BaseFragment<FragmentPickYourHomeBinding>() {
                             isShimmer = false
                         }
                         binding.pickYourHomeRecView.visible()
-                        binding.appCompatTextView28.gone()
+                        binding.appCompatTextView28.visible()
+                        binding.noHomeTxt.gone()
                         binding.addHomeBtn.gone()
                     }
                 }else{
@@ -91,7 +93,8 @@ class PickYourHomeFragment : BaseFragment<FragmentPickYourHomeBinding>() {
                     binding.homeShimmer.gone()
                     isShimmer = false
                     binding.pickYourHomeRecView.gone()
-                    binding.appCompatTextView28.visible()
+                    binding.appCompatTextView28.gone()
+                    binding.noHomeTxt.visible()
                     binding.addHomeBtn.visible()
                 }
             }else{
@@ -100,7 +103,8 @@ class PickYourHomeFragment : BaseFragment<FragmentPickYourHomeBinding>() {
                 isShimmer = false
                 binding.pickYourHomeRecView.gone()
                 binding.addHomeBtn.visible()
-                binding.appCompatTextView28.visible()
+                binding.noHomeTxt.visible()
+                binding.appCompatTextView28.gone()
             }
         }
     }

@@ -5,6 +5,7 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.JsonObject
+import com.homex.core.model.BingLocation
 import com.homex.core.model.Home
 import com.homex.core.model.general.ResultResponse
 import com.homex.core.model.response.MyHomeResponse
@@ -21,6 +22,9 @@ class YourHomeViewModel(private val repository: YourHomeRepository): ViewModel()
     val editMessageLiveData = MediatorLiveData<JsonObject?>()
     val homeDetailsLiveData = MediatorLiveData<Home?>()
     val listHomeLiveData = MediatorLiveData<ArrayList<Home>?>()
+    val cityLiveData = MediatorLiveData<ArrayList<BingLocation>?>()
+    val districtLiveData = MediatorLiveData<ArrayList<BingLocation>?>()
+    val wardLiveData = MediatorLiveData<ArrayList<BingLocation>?>()
 
     fun createHome(body: RequestBody){
         AppEvent.showPopUp()
@@ -134,6 +138,66 @@ class YourHomeViewModel(private val repository: YourHomeRepository): ViewModel()
                     is ResultResponse.Success -> {
                         Log.e("SuccessGetHomeUser", "${it.data}")
                         listHomeLiveData.value = it.data
+                    }
+                    is ResultResponse.Error ->{
+                        AppEvent.showPopUpError(it.message)
+                    }
+                    else -> {
+                        Log.e("Loading", "hello")
+                    }
+                }
+            }
+        }
+    }
+
+    fun getCity(){
+        viewModelScope.launch {
+            cityLiveData.addSource(repository.getCity()){
+                Log.e("response", it.toString())
+                when (it) {
+                    is ResultResponse.Success -> {
+                        Log.e("SuccessGetCity", "${it.data}")
+                        cityLiveData.value = it.data
+                    }
+                    is ResultResponse.Error ->{
+                        AppEvent.showPopUpError(it.message)
+                    }
+                    else -> {
+                        Log.e("Loading", "hello")
+                    }
+                }
+            }
+        }
+    }
+
+    fun getDistrict(id: Int){
+        viewModelScope.launch {
+            districtLiveData.addSource(repository.getDistrict(id)){
+                Log.e("response", it.toString())
+                when (it) {
+                    is ResultResponse.Success -> {
+                        Log.e("SuccessGetDistrict", "${it.data}")
+                        districtLiveData.value = it.data
+                    }
+                    is ResultResponse.Error ->{
+                        AppEvent.showPopUpError(it.message)
+                    }
+                    else -> {
+                        Log.e("Loading", "hello")
+                    }
+                }
+            }
+        }
+    }
+
+    fun getWard(id: Int){
+        viewModelScope.launch {
+            wardLiveData.addSource(repository.getWard(id)){
+                Log.e("response", it.toString())
+                when (it) {
+                    is ResultResponse.Success -> {
+                        Log.e("SuccessGetWard", "${it.data}")
+                        wardLiveData.value = it.data
                     }
                     is ResultResponse.Error ->{
                         AppEvent.showPopUpError(it.message)

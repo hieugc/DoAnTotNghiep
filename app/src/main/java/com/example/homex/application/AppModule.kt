@@ -10,4 +10,6 @@ val appModules = module {
     viewModel { YourHomeViewModel(get()) }
     viewModel { ChatViewModel(get()) }
     viewModel { RequestViewModel(get()) }
+    viewModel { NotificationViewModel(get()) }
+    viewModel { ProfileViewModel(get()) }
 }

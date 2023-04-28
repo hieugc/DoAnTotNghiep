@@ -2,6 +2,7 @@ package com.homex.core.repository
 
 import androidx.lifecycle.LiveData
 import com.google.gson.JsonObject
+import com.homex.core.model.BingLocation
 import com.homex.core.model.Home
 import com.homex.core.model.general.ResultResponse
 import com.homex.core.model.response.MyHomeResponse
@@ -33,4 +34,10 @@ interface YourHomeRepository {
     suspend fun getHomeByUser(
         userAccess: String
     ): LiveData<ResultResponse<ArrayList<Home>>>
+
+    suspend fun getCity(): LiveData<ResultResponse<ArrayList<BingLocation>>>
+
+    suspend fun getDistrict(id: Int): LiveData<ResultResponse<ArrayList<BingLocation>>>
+
+    suspend fun getWard(id: Int): LiveData<ResultResponse<ArrayList<BingLocation>>>
 }

@@ -1,11 +1,15 @@
 package com.example.homex.activity.home
 
 import android.content.*
+import android.graphics.Color
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
+import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
+import android.widget.FrameLayout
+import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.annotation.MenuRes
 import androidx.appcompat.widget.PopupMenu
@@ -22,6 +26,8 @@ import androidx.navigation.ui.NavigationUI.setupWithNavController
 import com.bumptech.glide.Glide
 import com.example.homex.R
 import com.example.homex.activity.home.addhome.FileViewModel
+import com.example.homex.app.CONNECT_CHAT
+import com.example.homex.app.NOTIFICATIONS
 import com.example.homex.app.RECEIVE_MESSAGE
 import com.example.homex.base.BaseActivity
 import com.example.homex.databinding.ActivityHomeBinding
@@ -29,16 +35,20 @@ import com.example.homex.extension.gone
 import com.example.homex.extension.visible
 import com.example.homex.service.ChatService
 import com.example.homex.viewmodel.ChatViewModel
+import com.example.homex.viewmodel.NotificationViewModel
+import com.google.android.material.snackbar.Snackbar
+import com.homex.core.CoreApplication
 import com.homex.core.model.MessageRoom
+import com.homex.core.model.Notification
 import com.homex.core.model.UserMessage
 import com.homex.core.util.PrefUtil
+import com.microsoft.signalr.HubConnectionState
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
-import java.util.*
 
 
 class HomeActivity : BaseActivity() {
@@ -61,6 +71,7 @@ class HomeActivity : BaseActivity() {
     private var mService: ChatService? = null
     private var mBound = false
     private val chatViewModel: ChatViewModel by viewModel()
+    private val notificationViewModel: NotificationViewModel by viewModel()
 
     companion object{
         fun open(context: Context) = Intent(context, HomeActivity::class.java)
@@ -163,6 +174,11 @@ class HomeActivity : BaseActivity() {
         }
     }
 
+    fun setSearchParam(location: String, startDate: String, endDate: String){
+        binding.locationTV.text = location
+        binding.dateTV.text = "$startDate - $endDate"
+    }
+
     private fun setViewModel(){
         fileViewModel.tmpFiles.observe(this){
             if(it != null){
@@ -175,7 +191,6 @@ class HomeActivity : BaseActivity() {
                 Log.i("ConnectAllRoom", "Connect success")
             }
         }
-        chatViewModel
     }
     private fun setEvent(){
         binding.btnMessage.setOnClickListener {
@@ -193,10 +208,6 @@ class HomeActivity : BaseActivity() {
         return navigateUp(navController, appBarConfiguration)
     }
 
-    fun showSearchLayout(){
-        binding.searchLayout.visible()
-        binding.btnFilter.visible()
-    }
 
     fun showReadAllNotificationDialog(){
         val supportFragmentManager = supportFragmentManager
@@ -223,22 +234,27 @@ class HomeActivity : BaseActivity() {
     }
 
     override fun onStart() {
+        super.onStart()
         //Start ChatService
         if (prefUtil.token != null){
             val intent = Intent()
             intent.setClass(mContext, ChatService::class.java)
             bindService(intent, mConnection, Context.BIND_AUTO_CREATE)
         }
-        super.onStart()
+//        Timer().scheduleAtFixedRate(object : TimerTask(){
+//            override fun run() {
+//                Log.e("connectionStatus", "${mService?.hubConnection?.connectionState}")
+//            }
+//        }, 0, 5000)
     }
 
     override fun onStop() {
+        super.onStop()
         // Unbind from the service
         if (mBound) {
             unbindService(mConnection)
             mBound = false
         }
-        super.onStop()
     }
 
     override fun onResume() {
@@ -265,15 +281,17 @@ class HomeActivity : BaseActivity() {
             val binder = p1 as ChatService.LocalBinder
             mService = binder.service
             mBound = true
-            binder.service.hubConnection.connectionId?.let{
-                val mediaType = "application/json".toMediaType()
-                val body: RequestBody = "\"$it\"".toRequestBody(mediaType)
-                Log.e("connectionId", it)
-                chatViewModel.connectionId.postValue(it)
-                chatViewModel.connectAllRoom(body)
-            }
-            binder.service.hubConnection.connectionState?.let{
-                Log.e("connectionStatus", "$it")
+            binder.service.hubConnection.connectionState?.let{ state ->
+                Log.e("connectionStatus", "$state")
+                if (state == HubConnectionState.CONNECTED){
+                    binder.service.hubConnection.connectionId?.let {
+                        val mediaType = "application/json".toMediaType()
+                        val body: RequestBody = "\"$it\"".toRequestBody(mediaType)
+                        Log.e("connectionId", it)
+                        CoreApplication.instance.saveConnectionId(it)
+                        chatViewModel.connectAllRoom(body)
+                    }
+                }
             }
         }
 
@@ -286,8 +304,55 @@ class HomeActivity : BaseActivity() {
         override fun onReceive(p0: Context?, p1: Intent?) {
             val message = p1?.getParcelableExtra<MessageRoom>(RECEIVE_MESSAGE)
             if (message != null){
-                this@HomeActivity.chatViewModel.newMessage.postValue(message)
+                chatViewModel.newMessage.postValue(message)
             }
+            val connect = p1?.getBooleanExtra(CONNECT_CHAT, false)
+            if (connect == true){
+                mService?.apply {
+                    hubConnection.connectionState?.let{ state ->
+                        Log.e("connectionStatus", "$state")
+                        if (state == HubConnectionState.CONNECTED){
+                            hubConnection.connectionId?.let {
+                                val mediaType = "application/json".toMediaType()
+                                val body: RequestBody = "\"$it\"".toRequestBody(mediaType)
+                                Log.e("connectionId", it)
+                                CoreApplication.instance.saveConnectionId(it)
+                                chatViewModel.connectAllRoom(body)
+                            }
+                        }
+                    }
+                }
+            }
+            val notification = p1?.getParcelableExtra<Notification>(NOTIFICATIONS)
+            handleNotification(notification)
+        }
+    }
+
+    private fun handleNotification(notification: Notification?) {
+        if(notification != null){
+            notificationViewModel.notificationLiveDate.postValue(notification)
+
+            val snackbar: Snackbar = Snackbar.make(findViewById(R.id.rootView), "", Snackbar.LENGTH_LONG)
+
+            val customSnackView: View = layoutInflater.inflate(R.layout.layout_snackbar_notification, null)
+            val tvTitle = customSnackView.findViewById<TextView>(R.id.tvTitle)
+            val tvContent = customSnackView.findViewById<TextView>(R.id.tvContent)
+            tvTitle.text = notification.title
+            tvContent.text = notification.content
+
+            snackbar.view.layoutParams = (snackbar.view.layoutParams as FrameLayout.LayoutParams).apply {
+                gravity = Gravity.TOP
+            }
+            snackbar.view.setBackgroundColor(Color.TRANSPARENT)
+
+            val snackbarLayout: Snackbar.SnackbarLayout =
+                snackbar.getView() as Snackbar.SnackbarLayout
+
+            snackbarLayout.setPadding(0, 0, 0, 0)
+
+            snackbarLayout.addView(customSnackView, 0)
+
+            snackbar.show()
         }
     }
 }

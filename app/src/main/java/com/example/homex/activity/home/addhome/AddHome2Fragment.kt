@@ -15,7 +15,6 @@ class AddHome2Fragment : BaseFragment<FragmentAddHome2Binding>() {
             binding.homeNameInputEdtTxt.setText(this.name.value)
             if(this.square.value != 0)
                 binding.homeAreaEdtTxt.setText(this.square.value.toString())
-            binding.homeAddressEdtTxt.setText(this.location.value)
             binding.homeDescriptionEdtTxt.setText(this.description.value)
             if (this.price.value != 0)
                 binding.homePriceEdtTxt.setText(this.price.value.toString())
@@ -28,9 +27,6 @@ class AddHome2Fragment : BaseFragment<FragmentAddHome2Binding>() {
                 viewModel.square.postValue(0)
             else
                 viewModel.square.postValue(it?.toString()?.toInt())
-        }
-        binding.homeAddressEdtTxt.addTextChangedListener {
-            viewModel.location.postValue(it?.toString()?:"")
         }
         binding.homeDescriptionEdtTxt.addTextChangedListener {
             viewModel.description.postValue(it?.toString()?:"")

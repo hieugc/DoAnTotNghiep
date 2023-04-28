@@ -4,23 +4,36 @@ import com.google.gson.JsonObject
 import com.homex.core.model.*
 import com.homex.core.model.general.ListResponse
 import com.homex.core.model.general.ObjectResponse
-import com.homex.core.model.response.MessageResponse
-import com.homex.core.model.response.MyHomeResponse
-import com.homex.core.model.response.RequestResponse
-import com.homex.core.model.response.UserResponse
+import com.homex.core.model.response.*
 import com.homex.core.param.auth.*
 import com.homex.core.param.chat.ConnectToRoomParam
 import com.homex.core.param.chat.ContactUserParam
 import com.homex.core.param.chat.GetMessagesParam
 import com.homex.core.param.chat.SendMessageParam
-import com.homex.core.param.request.CreateRequestParam
-import com.homex.core.param.request.EditRequestParam
-import com.homex.core.param.request.UpdateStatusParam
+import com.homex.core.param.notification.UpdateSeenNotificationParam
+import com.homex.core.param.request.*
 import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.*
 
 interface ApiService {
+    //--------------------SEARCH-----------------------------
+
+    @GET("api/Explore")
+    suspend fun searchHome(
+        @Query("idCity") idCity: Int,
+        @Query("people") people: Int?,
+        @Query("idDistrict") idDistrict: Int?,
+        @Query("dateStart") startDate: String?,
+        @Query("dateEnd") endDate: String?,
+        @Query("priceStart") startPrice: Int?,
+        @Query("priceEnd") endPrice: Int?,
+        @Query("utilities") utilities: ArrayList<Int>?,
+        @Query("optionSort") sortBy: Int,
+        @Query("page") page: Int,
+        @Query("limit") limit: Int
+    ): Response<ObjectResponse<SearchHomeResponse>>
+
     //--------------------POPULAR-----------------------------
     @GET("api/GetPopularHouse")
     suspend fun getPopularHome(): Response<ListResponse<Home>>
@@ -91,6 +104,19 @@ interface ApiService {
         @Query("UserAccess") userAccess: String
     ): Response<ListResponse<Home>>
 
+    @GET("api/Location/City")
+    suspend fun getCity(): Response<ListResponse<BingLocation>>
+
+    @GET("api/Location/District")
+    suspend fun getDistrict(
+        @Query("IdCity") id: Int
+    ): Response<ListResponse<BingLocation>>
+
+    @GET("api/Location/Ward")
+    suspend fun getWard(
+        @Query("IdDistrict") id: Int
+    ): Response<ListResponse<BingLocation>>
+
     //--------------------MESSAGE-----------------------------
 
     @POST("api/Message/Send")
@@ -148,5 +174,20 @@ interface ApiService {
     suspend fun getPendingRequest(): Response<ListResponse<RequestResponse>>
 
     @POST("api/Request/UpdateStatus")
-    suspend fun updateStatus(param: UpdateStatusParam): Response<ObjectResponse<JsonObject>>
+    suspend fun updateStatus(@Body param: UpdateStatusParam): Response<ObjectResponse<JsonObject>>
+
+    @POST("api/Rating/Create")
+    suspend fun createRating(@Body param: CreateRatingParam): Response<ObjectResponse<JsonObject>>
+
+    @POST("api/Rating/Update")
+    suspend fun updateRating(@Body param: UpdateRatingParam): Response<ObjectResponse<JsonObject>>
+
+    @POST("api/User/UpdateInfo")
+    suspend fun updateProfile(@Body body: RequestBody) : Response<ObjectResponse<JsonObject>>
+
+    @GET("api/Notification/Get")
+    suspend fun getNotifications(@Query("page") page: Int, @Query("limit") limit: Int) : Response<ObjectResponse<GetNotificationResponse>>
+
+    @POST("api/Notification/Seen")
+    suspend fun updateSeenNotification(@Body param: UpdateSeenNotificationParam) : Response<ObjectResponse<JsonObject>>
 }

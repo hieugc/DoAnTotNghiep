@@ -21,10 +21,7 @@ import com.example.homex.app.CONTACT_USER
 import com.example.homex.app.ID
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentHomeDetailBinding
-import com.example.homex.extension.betweenDays
-import com.example.homex.extension.gone
-import com.example.homex.extension.longToDate
-import com.example.homex.extension.visible
+import com.example.homex.extension.*
 import com.example.homex.utils.CenterZoomLayoutManager
 import com.example.homex.viewmodel.ChatViewModel
 import com.example.homex.viewmodel.YourHomeViewModel
@@ -48,7 +45,7 @@ class HomeDetailFragment : BaseFragment<FragmentHomeDetailBinding>() {
     private lateinit var similarHomeAdapter: SimilarHomeAdapter
     private val args: HomeDetailFragmentArgs by navArgs()
     private val viewModel: YourHomeViewModel by viewModel()
-    private val chatViewModel: ChatViewModel by sharedViewModel()
+    private val chatViewModel: ChatViewModel by viewModel()
     private var selection: Pair<CalendarDate?, CalendarDate?> = Pair(null, null)
     private val prefUtil: PrefUtil by inject()
 
@@ -90,6 +87,65 @@ class HomeDetailFragment : BaseFragment<FragmentHomeDetailBinding>() {
                 utilAdapter.notifyDataSetChanged()
                 rulesAdapter.notifyDataSetChanged()
 
+                val invalid = it.inValidRangeDates
+                if (invalid != null){
+                    val cal = Calendar.getInstance()
+                    var found = false
+                    while (!found){
+                        found = true
+                        val f = cal.time.time
+                        val c = Calendar.getInstance()
+                        c.time = cal.time
+                        c.add(Calendar.DATE, 7)
+                        val s = c.time.time
+                        for (day in invalid){
+                            if (f.longToDate() == day.startDate?.formatIso8601ToFormat("dd/MM/yyyy")
+                                || f.longToDate() == day.endDate?.formatIso8601ToFormat("dd/MM/yyyy")
+                            ){
+                                found = false
+                                break
+                            }
+
+                            if (s.longToDate() == day.startDate?.formatIso8601ToFormat("dd/MM/yyyy")
+                                || s.longToDate() == day.endDate?.formatIso8601ToFormat("dd/MM/yyyy")
+                            ){
+                                found = false
+                                break
+                            }
+                            val start = day.startDate?.convertIso8601ToLong()
+                            val end = day.endDate?.convertIso8601ToLong()
+                            if (start != null && end != null && s > start && s < end){
+                                found = false
+                                break
+                            }
+                            if (start != null && end != null && f > start && f < end){
+                                found = false
+                                break
+                            }
+                            if (start != null && end != null && f <  start && s > end){
+                                found = false
+                                break
+                            }
+                        }
+                        if (!found)
+                            cal.add(Calendar.DATE, 1)
+                    }
+
+
+                    val first = CalendarDate(cal.time, cal.get(Calendar.DAY_OF_MONTH).toString())
+                    Log.e("first", cal.get(Calendar.DAY_OF_MONTH).toString())
+                    cal.add(Calendar.DATE, 7)
+                    val second = CalendarDate(cal.time, cal.get(Calendar.DAY_OF_MONTH).toString())
+                    Log.e("second", cal.get(Calendar.DAY_OF_MONTH).toString())
+                    selection = Pair(
+                        first, second
+                    )
+                    val from = first.time?.time?.longToDate()
+                    val to = second.time?.time?.longToDate()
+                    binding.homeDateTV.text = getString(R.string.start_end_date, from, to)
+                    binding.dayCountTV.text = getString(R.string.between_dates, 7)
+                }
+
                 if (binding.home?.userAccess == prefUtil.profile?.userAccess){
                     binding.pickDateLayout.gone()
                     binding.userLayout.gone()
@@ -110,7 +166,7 @@ class HomeDetailFragment : BaseFragment<FragmentHomeDetailBinding>() {
                         CONTACT_USER to true
                         ))
                 }
-                chatViewModel.connectToUser.postValue(null)
+                chatViewModel.clearContactUser()
             }
         }
     }
@@ -191,7 +247,8 @@ class HomeDetailFragment : BaseFragment<FragmentHomeDetailBinding>() {
 
     override fun setEvent() {
         binding.changeDateBtn.setOnClickListener {
-            val action = HomeDetailFragmentDirections.actionHomeDetailFragmentToBottomSheetChangeDateFragment(selection.first, selection.second)
+            val invalid = binding.home?.inValidRangeDates?: arrayListOf()
+            val action = HomeDetailFragmentDirections.actionHomeDetailFragmentToBottomSheetChangeDateFragment(selection.first, selection.second, inValidRangeDates = invalid.toTypedArray())
             findNavController().navigate(action)
         }
         binding.createRequestBtn.setOnClickListener {
@@ -217,7 +274,7 @@ class HomeDetailFragment : BaseFragment<FragmentHomeDetailBinding>() {
 
         }
         binding.contactBtn.setOnClickListener {
-            chatViewModel.connectionId.value?.let { it1->
+            prefUtil.connectionId?.let { it1->
                 binding.home?.userAccess?.let { it2->
                     chatViewModel.contactToUser(
                         ContactUserParam(

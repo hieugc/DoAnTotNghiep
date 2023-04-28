@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
         <variable
             name="request"
             type="com.homex.core.model.response.RequestResponse" />
+        <import type="com.example.homex.extension.RequestStatus"/>
     </data>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="16dp"
-    android:paddingBottom="8dp"
     android:background="@drawable/request_bg"
     android:orientation="vertical">
 
@@ -19,14 +20,21 @@
         android:orientation="horizontal"
         android:padding="8dp">
 
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:id="@+id/ivAvatar"
+            android:src="@mipmap/avatar"
+            loadAvatar="@{request.request.user.imageUrl}"
+            />
+
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvUserName"
             style="@style/MediumText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="3"
-            android:drawableStart="@drawable/ic_user"
-            android:drawablePadding="12dp"
+            android:layout_marginStart="12dp"
             android:gravity="center_vertical"
             android:text="@{request.request.user.userName}" />
 
@@ -34,11 +42,10 @@
             style="@style/MediumText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="2"
             android:gravity="right"
             android:padding="4dp"
-            android:text="@string/pending"
-            android:textColor="@color/orange" />
+            requestStatus="@{request.request.status}"/>
     </LinearLayout>
 
     <com.google.android.material.divider.MaterialDivider
@@ -80,7 +87,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:text="@{(request.request.type == 1) ? `Phương thức: Trao đổi bằng điểm` : `Phương thức: Trao đổi bằng nhà`}" />
+                requestType="@{request.request.type}"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -145,14 +152,52 @@
         </LinearLayout>
     </LinearLayout>
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btnRate"
-        style="@style/ButtonPrimary"
+    <com.google.android.material.divider.MaterialDivider
         android:layout_width="match_parent"
-        android:layout_marginTop="4dp"
-        android:layout_marginStart="12dp"
-        android:layout_marginEnd="12dp"
-        android:text="@string/detail" />
+        android:layout_height="1dp"
+        app:dividerColor="@color/divider"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/requestTxt"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btnRate"
+            android:layout_marginEnd="8dp"
+            style="@style/RequestSmallText"
+            requestText="@{request.request.status}"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/requestTxt"
+            app:layout_constraintStart_toStartOf="@id/requestTxt"
+            android:text="Đánh giá và nhận ngay 20 Points"
+            style="@style/SmallText"
+            setVisibilityGone="@{request.request.status.equals(RequestStatus.REVIEWING.ordinal())}"
+            android:textColor="@color/primary"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnRate"
+            style="@style/FlexLongButtonPrimary"
+            requestStatus="@{request.request.status}"
+            startDate="@{request.request.startDate}"
+            endDate="@{request.request.endDate}"
+            android:layout_width="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 </LinearLayout>
