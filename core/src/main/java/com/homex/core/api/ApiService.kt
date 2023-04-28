@@ -198,4 +198,15 @@ interface ApiService {
     @POST("api/Payment/Zalo")
     suspend fun topUpPoint(@Body param: TopUpPointParam): Response<ObjectResponse<PaymentInfoResponse>>
 
+    @GET("api/User/Point")
+    suspend fun getPoint(): Response<ObjectResponse<Long>>
+
+    @GET("api/Payment/All")
+    suspend fun getHistoryAll(): Response<ListResponse<PaymentHistory>>
+
+    @GET("api/Payment/Valid")
+    suspend fun getHistoryReceived(): Response<ListResponse<PaymentHistory>>
+
+    @GET("api/Payment/Used")
+    suspend fun getHistoryUsed(): Response<ListResponse<PaymentHistory>>
 }

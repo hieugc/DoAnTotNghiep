@@ -1,7 +1,8 @@
-package com.example.homex.activity.home
+package com.example.homex.activity.home.profile
 
 import android.os.Bundle
 import com.example.homex.R
+import com.example.homex.activity.home.HomeActivity
 import com.example.homex.adapter.TransHistoryViewPager
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentTransHistoryBinding

@@ -8,5 +8,6 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 class PaymentInfoResponse(
-    val redirect: String = ""
+    val orderurl: String = "",
+    val zptranstoken: String = ""
 ): Parcelable

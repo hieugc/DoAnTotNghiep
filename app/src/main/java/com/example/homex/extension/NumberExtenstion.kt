@@ -1,6 +1,7 @@
 package com.example.homex.extension
 
 import android.content.Context
+import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -17,4 +18,11 @@ fun Long.longToFormat(format: String): String{
     val date = Date(this)
     val formatter = SimpleDateFormat(format, Locale.getDefault())
     return formatter.format(date)
+}
+
+fun Long.thousandSeparator(): String{
+    this.let {
+        val numberFormat = DecimalFormat("#,###")
+        return numberFormat.format(it)
+    }
 }

@@ -38,3 +38,9 @@ enum class SearchBy{
     PRICE_LOW_TO_HIGH,
     PRICE_HIGH_TO_LOW
 }
+
+enum class Payment{
+    ALL,
+    VALID,
+    USED
+}

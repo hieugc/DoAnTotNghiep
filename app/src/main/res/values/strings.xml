@@ -182,4 +182,10 @@
     <string name="error_invalid_dob">Ngày sinh không hợp lệ</string>
     <string name="update_profile_success">Cập nhật thông tin thành công!</string>
     <string name="input_point_amount_hint">Nhập số lượng điểm cần nạp</string>
+    <string name="top_up_succeed">Nạp điểm thành công!</string>
+    <string name="top_up_cancel">Hủy thanh toán!</string>
+    <string name="top_up_failed">Nạp điểm thất bại!</string>
+    <string name="history">Lịch sử</string>
+    <string name="received">Đã nhận</string>
+    <string name="used">Đã dùng</string>
 </resources>

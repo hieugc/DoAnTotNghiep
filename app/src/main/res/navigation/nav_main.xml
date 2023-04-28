@@ -404,7 +404,7 @@
         tools:layout="@layout/fragment_change_password"/>
     <fragment
         android:id="@+id/transHistoryFragment"
-        android:name="com.example.homex.activity.home.TransHistoryFragment"
+        android:name="com.example.homex.activity.home.profile.TransHistoryFragment"
         android:label="TransHistoryFragment"
         tools:layout="@layout/fragment_trans_history">
         <action
@@ -420,7 +420,7 @@
     </fragment>
     <dialog
         android:id="@+id/rateBottomSheetFragment"
-        android:name="com.example.homex.activity.home.RateBottomSheetFragment"
+        android:name="com.example.homex.activity.home.profile.RateBottomSheetFragment"
         android:label="RateBottomSheetFragment"
         tools:layout="@layout/fragment_rate_bottom_sheet"/>
     <fragment
@@ -430,7 +430,7 @@
         tools:layout="@layout/fragment_request_detail"/>
     <fragment
         android:id="@+id/pointHistoryFragment"
-        android:name="com.example.homex.activity.home.PointHistoryFragment"
+        android:name="com.example.homex.activity.home.profile.PointHistoryFragment"
         android:label="PointHistoryFragment"
         tools:layout="@layout/fragment_point_history"/>
     <dialog

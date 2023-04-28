@@ -19,21 +19,22 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="4dp"
-                android:scaleX="1.4"
-                android:scaleY="1.4"
+                android:scaleX="1"
+                android:scaleY="1"
                 android:src="@drawable/ic_dollar_coin" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvPointAvailable"
-                style="@style/GiantText"
+                style="@style/LargeText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="1200" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                style="@style/Regular"
+                style="@style/MediumText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
                 android:text="Points khả dụng" />
 
             <androidx.appcompat.widget.AppCompatButton
@@ -45,12 +46,23 @@
 
         </LinearLayout>
 
-        <androidx.viewpager2.widget.ViewPager2
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tab_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_below="@id/llPoint"
             android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true" />
+            android:layout_alignParentEnd="true"
+            android:layout_gravity="center_horizontal"/>
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/tab_layout"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true" />
 
 
     </RelativeLayout>

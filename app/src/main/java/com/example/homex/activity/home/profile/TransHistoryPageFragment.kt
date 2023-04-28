@@ -1,4 +1,4 @@
-package com.example.homex.activity.home
+package com.example.homex.activity.home.profile
 
 import android.os.Bundle
 import androidx.core.os.bundleOf
@@ -6,6 +6,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.homex.R
+import com.example.homex.activity.home.HomeActivity
 import com.example.homex.adapter.TransHistoryAdapter
 import com.example.homex.app.REQUEST_STATUS
 import com.example.homex.base.BaseFragment

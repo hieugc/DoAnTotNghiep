@@ -353,6 +353,10 @@
         <item name="android:textSize">36sp</item>
     </style>
 
+    <style name="LargeText" parent="AppTheme.TextViewStyle">
+        <item name="android:textSize">24sp</item>
+    </style>
+
     <style name="AppTheme.TextInputLayout" parent="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <item name="android:textColorHint">@color/secondary_60</item>
         <item name="hintTextColor">@color/primary</item>

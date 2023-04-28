@@ -3,7 +3,7 @@ package com.example.homex.adapter
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.example.homex.activity.home.TransHistoryPageFragment
+import com.example.homex.activity.home.profile.TransHistoryPageFragment
 import com.example.homex.app.REQUEST_STATUS
 import com.example.homex.extension.RequestStatus
 

@@ -48,6 +48,8 @@ import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import vn.zalopay.sdk.Environment
+import vn.zalopay.sdk.ZaloPaySDK
 import java.io.File
 
 
@@ -112,6 +114,12 @@ class HomeActivity : BaseActivity() {
         navController.addOnDestinationChangedListener{ _, _, _->
             supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_back_main)
         }
+        ZaloPaySDK.init(554, Environment.SANDBOX)
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        ZaloPaySDK.getInstance().onResult(intent)
     }
 
     fun setPropertiesScreen(showLogo: Boolean, showBottomNav: Boolean, showTitleApp: Pair<Boolean, String>, showMessage: Boolean, showMenu: Boolean, showBoxChatLayout: Pair<Boolean, UserMessage?>, showSearchLayout: Boolean = false){

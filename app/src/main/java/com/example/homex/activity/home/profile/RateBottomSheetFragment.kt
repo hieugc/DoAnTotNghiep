@@ -1,4 +1,4 @@
-package com.example.homex.activity.home
+package com.example.homex.activity.home.profile
 
 import android.app.Dialog
 import android.graphics.Color

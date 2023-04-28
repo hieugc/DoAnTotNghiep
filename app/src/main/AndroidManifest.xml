@@ -36,8 +36,17 @@
         </activity>
         <activity
             android:name=".activity.home.HomeActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize"
+            android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:host="app"
+                    android:scheme="demozpdk"/>
+            </intent-filter>
+        </activity>
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -51,9 +60,6 @@
 
         <service
             android:name=".service.ChatService"
-            android:exported="false" />
-        <service
-            android:name=".service.NotificationService"
             android:exported="false" />
 
         <activity
