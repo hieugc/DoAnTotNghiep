@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.homex.R
+import com.example.homex.activity.home.profile.PointInputDialogFragment
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentPointHistoryBinding
 
@@ -22,6 +23,12 @@ class PointHistoryFragment : BaseFragment<FragmentPointHistoryBinding>() {
             showBoxChatLayout = Pair(false, null),
             showSearchLayout = false
         )
+    }
+
+    override fun setEvent() {
+        binding.btnTopUp.setOnClickListener{
+            PointInputDialogFragment().show(parentFragmentManager, "DIALOG")
+        }
     }
 
 }
