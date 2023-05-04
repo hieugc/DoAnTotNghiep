@@ -34,7 +34,7 @@ class PaymentHistoryAdapter(
 
     public fun setList(paymentHistory: ArrayList<PaymentHistory>) {
         this.paymentHistory.clear()
-        this.paymentHistory.addAll(paymentHistory)
+        this.paymentHistory.addAll(paymentHistory.reversed())
         notifyDataSetChanged()
     }
 

@@ -54,6 +54,7 @@ class ChangePasswordFragment : BaseFragment<FragmentChangePasswordBinding>() {
     override fun setViewModel() {
         viewModel.passwordLiveData.observe(viewLifecycleOwner){
             Toast.makeText(requireContext(), getString(R.string.change_password_success), Toast.LENGTH_SHORT).show()
+            findNavController().popBackStack()
         }
     }
 

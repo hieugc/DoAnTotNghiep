@@ -14,12 +14,13 @@ import com.example.homex.databinding.FragmentPaymentViewPagerBinding
 import com.example.homex.extension.Payment
 import com.example.homex.viewmodel.ProfileViewModel
 import com.homex.core.util.AppEvent
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PaymentViewPagerFragment : BaseFragment<FragmentPaymentViewPagerBinding>() {
     override val layoutId: Int = R.layout.fragment_payment_view_pager
     private var paymentStatus: Int = Payment.ALL.ordinal
-    private val viewModel: ProfileViewModel by viewModel()
+    private val viewModel: ProfileViewModel by sharedViewModel()
     private lateinit var adapter: PaymentHistoryAdapter
 
     override fun onCreateView(
@@ -53,12 +54,34 @@ class PaymentViewPagerFragment : BaseFragment<FragmentPaymentViewPagerBinding>()
     }
 
     override fun setViewModel() {
-        viewModel.paymentHistoryLiveData.observe(viewLifecycleOwner){
+        viewModel.paymentHistoryAllLiveData.observe(viewLifecycleOwner){
             if(it != null){
-                adapter.setList(it)
+                if(paymentStatus == Payment.ALL.ordinal) {
+                    adapter.setList(it)
+                }
             }
             AppEvent.closePopup()
         }
+
+        viewModel.paymentHistoryReceivedLiveData.observe(viewLifecycleOwner){
+            if(it != null){
+                if(paymentStatus == Payment.VALID.ordinal) {
+                    adapter.setList(it)
+                }
+            }
+            AppEvent.closePopup()
+        }
+
+
+        viewModel.paymentHistoryUsedLiveData.observe(viewLifecycleOwner){
+            if(it != null){
+                if(paymentStatus == Payment.USED.ordinal) {
+                    adapter.setList(it)
+                }
+            }
+            AppEvent.closePopup()
+        }
+
     }
 
 }

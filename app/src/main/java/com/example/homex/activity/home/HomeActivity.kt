@@ -31,11 +31,13 @@ import com.example.homex.app.NOTIFICATIONS
 import com.example.homex.app.RECEIVE_MESSAGE
 import com.example.homex.base.BaseActivity
 import com.example.homex.databinding.ActivityHomeBinding
+import com.example.homex.extension.NotificationType
 import com.example.homex.extension.gone
 import com.example.homex.extension.visible
 import com.example.homex.service.ChatService
 import com.example.homex.viewmodel.ChatViewModel
 import com.example.homex.viewmodel.NotificationViewModel
+import com.example.homex.viewmodel.ProfileViewModel
 import com.google.android.material.snackbar.Snackbar
 import com.homex.core.CoreApplication
 import com.homex.core.model.MessageRoom
@@ -73,6 +75,7 @@ class HomeActivity : BaseActivity() {
     private var mService: ChatService? = null
     private var mBound = false
     private val chatViewModel: ChatViewModel by viewModel()
+    private val profileViewModel: ProfileViewModel by viewModel()
     private val notificationViewModel: NotificationViewModel by viewModel()
 
     companion object{
@@ -333,6 +336,11 @@ class HomeActivity : BaseActivity() {
             }
             val notification = p1?.getParcelableExtra<Notification>(NOTIFICATIONS)
             handleNotification(notification)
+            if (notification?.type == NotificationType.PAYMENT.ordinal){
+                profileViewModel.getPoint()
+                profileViewModel.getHistoryAll()
+                profileViewModel.getHistoryReceived()
+            }
         }
     }
 

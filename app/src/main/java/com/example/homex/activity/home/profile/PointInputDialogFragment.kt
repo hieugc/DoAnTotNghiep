@@ -97,7 +97,6 @@ class PointInputDialogFragment(private val listener: EventListener) : DialogFrag
                         dismiss()
                     }
                     override fun onPaymentSucceeded(transactionId: String, transToken: String, appTransID: String?) {
-                        Toast.makeText(requireContext(), getString(R.string.top_up_succeed), Toast.LENGTH_SHORT).show()
                         listener.onPaymentSuccess()
                         dismiss()
                     }

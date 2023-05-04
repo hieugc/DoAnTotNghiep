@@ -8,7 +8,7 @@ data class Notification(
     val id: String? = null,
     val title: String? = null,
     val content: String? = null,
-    val type: String? = null,
+    val type: Int? = null,
     val isSeen: Boolean? = null,
     val imageUrl: String? = null,
     val idType: Int? = null,

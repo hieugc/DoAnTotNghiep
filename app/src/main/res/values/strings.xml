@@ -188,4 +188,6 @@
     <string name="history">Lịch sử</string>
     <string name="received">Đã nhận</string>
     <string name="used">Đã dùng</string>
+    <string name="success">Thành công</string>
+    <string name="content_payment_success">Nạp điểm thành công.\n Điểm sẽ được cộng vào tài khoảng của bạn trong vòng ít phút</string>
 </resources>

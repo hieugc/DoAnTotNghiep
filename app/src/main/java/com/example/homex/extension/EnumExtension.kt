@@ -44,3 +44,13 @@ enum class Payment{
     VALID,
     USED
 }
+
+enum class NotificationType{
+    REQUEST,
+    COMMENT,
+    RESPONSE,
+    ADMIN_REPORT,
+    MESSAGE,
+    CIRCLE_SWAP,
+    PAYMENT
+}

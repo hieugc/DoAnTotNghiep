@@ -7,6 +7,7 @@ import com.example.homex.R
 import com.example.homex.databinding.NotificationItemBinding
 import com.example.homex.extension.getFormatDateTime
 import com.example.homex.extension.gone
+import com.example.homex.extension.loadImage
 import com.example.homex.extension.visible
 import com.homex.core.model.Notification
 
@@ -37,6 +38,7 @@ class NotificationAdapter(
         holder.binding.root.setOnClickListener {
             item?.idType?.let { onClick.invoke(it) }
         }
+        holder.binding.notificationImg.loadImage(item?.imageUrl)
     }
 
     public fun setList(notificationList: ArrayList<Notification>) {

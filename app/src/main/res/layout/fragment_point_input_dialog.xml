@@ -21,8 +21,9 @@
             style="@style/AppTheme.Icon"
             android:src="@drawable/ic_close"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="6dp"
+            android:layout_marginEnd="6dp"/>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/pointAmountInputLayout"
@@ -32,8 +33,8 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginHorizontal="32dp"
             android:layout_marginTop="32dp"
+            android:layout_marginHorizontal="32dp"
             android:hint="@string/input_point_amount_hint">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -45,16 +46,99 @@
                 android:textAlignment="center" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <TextView
+            android:id="@+id/tvGuide"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1000 VND = 1000 points \n (Tối thiếu 1000 points)"
+            android:textSize="12dp"
+            android:textColor="@color/gray6"
+            android:textStyle="italic"
+            android:layout_marginTop="6dp"
+            app:layout_constraintTop_toBottomOf="@id/pointAmountInputLayout"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="32dp"/>
+
+        <TextView
+            android:id="@+id/tvPaymentMethod"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Phương thức thanh toán: "
+            app:layout_constraintTop_toBottomOf="@id/tvGuide"
+            app:layout_constraintStart_toStartOf="parent"
+            android:textStyle="bold"
+            android:layout_marginTop="6dp"
+            android:layout_marginStart="32dp"/>
+
+        <RadioGroup
+            android:id="@+id/paymentRadioGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:checkedButton="@id/zaloPay"
+            android:layout_marginHorizontal="32dp"
+            android:layout_marginTop="6dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvPaymentMethod">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <androidx.appcompat.widget.AppCompatRadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/zaloPay"/>
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    style="@style/AppTheme.Icon"
+                    android:layout_width="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:layout_height="48dp"
+                    android:scaleX="1.5"
+                    android:scaleY="1.5"
+                    android:src="@drawable/zalopay"/>
+
+            </LinearLayout>
+
+<!--            <LinearLayout-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_weight="1"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:gravity="center_vertical"-->
+<!--                android:orientation="horizontal">-->
+
+<!--                <androidx.appcompat.widget.AppCompatRadioButton-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:enabled="false"-->
+<!--                    android:id="@+id/momo"/>-->
+
+<!--                <androidx.appcompat.widget.AppCompatImageView-->
+<!--                    style="@style/AppTheme.Icon"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:adjustViewBounds="true"-->
+<!--                    android:layout_height="48dp"-->
+<!--                    android:scaleType="centerInside"-->
+<!--                    android:src="@drawable/momo"/>-->
+
+<!--            </LinearLayout>-->
+
+        </RadioGroup>
+
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnTopup"
             style="@style/ButtonPrimary"
             android:layout_width="match_parent"
-            app:layout_constraintTop_toBottomOf="@id/pointAmountInputLayout"
+            app:layout_constraintTop_toBottomOf="@id/paymentRadioGroup"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="16dp"
             android:layout_marginHorizontal="32dp"
+            android:layout_marginTop="12dp"
             android:layout_marginBottom="32dp"
             android:text="@string/top_up_point" />
 

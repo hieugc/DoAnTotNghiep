@@ -20,7 +20,9 @@ class ProfileViewModel(private val repository: ProfileRepository): ViewModel() {
     val updateProfileLiveData = MediatorLiveData<JsonObject?>()
     val topUpLiveData = MediatorLiveData<PaymentInfoResponse?>()
     val pointLiveData = MediatorLiveData<Long?>()
-    val paymentHistoryLiveData = MediatorLiveData<ArrayList<PaymentHistory>?>()
+    val paymentHistoryAllLiveData = MediatorLiveData<ArrayList<PaymentHistory>?>()
+    val paymentHistoryReceivedLiveData = MediatorLiveData<ArrayList<PaymentHistory>?>()
+    val paymentHistoryUsedLiveData = MediatorLiveData<ArrayList<PaymentHistory>?>()
 
     fun updatePassword(param: PasswordParam){
         viewModelScope.launch {
@@ -107,11 +109,11 @@ class ProfileViewModel(private val repository: ProfileRepository): ViewModel() {
     fun getHistoryAll(){
         AppEvent.showPopUp()
         viewModelScope.launch {
-            paymentHistoryLiveData.addSource(repository.getHistoryAll()){
+            paymentHistoryAllLiveData.addSource(repository.getHistoryAll()){
                 Log.e("response", it.toString())
                 when (it) {
                     is ResultResponse.Success -> {
-                        paymentHistoryLiveData.value = it.data
+                        paymentHistoryAllLiveData.value = it.data
                     }
                     is ResultResponse.Error ->{
                         AppEvent.showPopUpError(it.message)
@@ -127,11 +129,11 @@ class ProfileViewModel(private val repository: ProfileRepository): ViewModel() {
     fun getHistoryReceived(){
         AppEvent.showPopUp()
         viewModelScope.launch {
-            paymentHistoryLiveData.addSource(repository.getHistoryReceived()){
+            paymentHistoryReceivedLiveData.addSource(repository.getHistoryReceived()){
                 Log.e("response", it.toString())
                 when (it) {
                     is ResultResponse.Success -> {
-                        paymentHistoryLiveData.value = it.data
+                        paymentHistoryReceivedLiveData.value = it.data
                     }
                     is ResultResponse.Error ->{
                         AppEvent.showPopUpError(it.message)
@@ -147,11 +149,11 @@ class ProfileViewModel(private val repository: ProfileRepository): ViewModel() {
     fun getHistoryUsed(){
         AppEvent.showPopUp()
         viewModelScope.launch {
-            paymentHistoryLiveData.addSource(repository.getHistoryUsed()){
+            paymentHistoryUsedLiveData.addSource(repository.getHistoryUsed()){
                 Log.e("response", it.toString())
                 when (it) {
                     is ResultResponse.Success -> {
-                        paymentHistoryLiveData.value = it.data
+                        paymentHistoryUsedLiveData.value = it.data
                     }
                     is ResultResponse.Error ->{
                         AppEvent.showPopUpError(it.message)

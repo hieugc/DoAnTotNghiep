@@ -127,14 +127,12 @@ class UpdateProfileFragment : BaseFragment<FragmentUpdateProfileBinding>() {
 
     override fun setViewModel() {
         viewModel.updateProfileLiveData.observe(viewLifecycleOwner) {
-            if (it != null) {
                 findNavController().popBackStack()
                 Toast.makeText(
                     requireContext(),
                     getString(R.string.update_profile_success),
                     Toast.LENGTH_LONG
                 ).show()
-            }
             AppEvent.closePopup()
         }
     }
@@ -291,9 +289,12 @@ class UpdateProfileFragment : BaseFragment<FragmentUpdateProfileBinding>() {
             builder.addFormDataPart("birthDay", updateProfileParam.birthDay)
             builder.addFormDataPart("gender", prefUtil.profile?.gender.toString())
             val mediaType: MediaType = "multipart/form-data".toMediaType()
-            val requestBody = file.asRequestBody(mediaType)
-            val body = MultipartBody.Part.createFormData("file", file.name, requestBody)
-            builder.addPart(body)
+
+            if (this::file.isInitialized){
+                val requestBody = file.asRequestBody(mediaType)
+                val body = MultipartBody.Part.createFormData("file", file.name, requestBody)
+                builder.addPart(body)
+            }
 
             viewModel.updateProfile(builder.build())
         }
@@ -334,8 +335,8 @@ class UpdateProfileFragment : BaseFragment<FragmentUpdateProfileBinding>() {
             AppEvent.showPopUpError(e.message)
         }
         updateProfileParam = UpdateProfileParam(
-            lastname,
             firstname,
+            lastname,
             phoneNumber,
             email,
             dob
