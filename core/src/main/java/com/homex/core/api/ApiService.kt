@@ -4,6 +4,7 @@ import com.google.gson.JsonObject
 import com.homex.core.model.*
 import com.homex.core.model.general.ListResponse
 import com.homex.core.model.general.ObjectResponse
+import com.homex.core.model.general.ResultResponse
 import com.homex.core.model.response.*
 import com.homex.core.param.auth.*
 import com.homex.core.param.chat.ConnectToRoomParam
@@ -183,13 +184,17 @@ interface ApiService {
     @POST("api/Rating/Update")
     suspend fun updateRating(@Body param: UpdateRatingParam): Response<ObjectResponse<JsonObject>>
 
-
+    @GET("api/CircleRequest/Get")
+    suspend fun getCircleRequest(): Response<ListResponse<CircleRequest>>
 
     @GET("api/Notification/Get")
     suspend fun getNotifications(@Query("page") page: Int, @Query("limit") limit: Int) : Response<ObjectResponse<GetNotificationResponse>>
 
     @POST("api/Notification/Seen")
-    suspend fun updateSeenNotification(@Body param: UpdateSeenNotificationParam) : Response<ObjectResponse<JsonObject>>
+    suspend fun updateSeenNotification(@Body id: String) : Response<ObjectResponse<JsonObject>>
+
+    @POST("api/Notification/SeenAll")
+    suspend fun seenAllNotification() : Response<ObjectResponse<JsonObject>>
 
     //--------------------PROFILE-----------------------------
     @POST("api/User/UpdateInfo")
@@ -209,4 +214,7 @@ interface ApiService {
 
     @GET("api/Payment/Used")
     suspend fun getHistoryUsed(): Response<ListResponse<PaymentHistory>>
+
+    @GET("api/User/Info")
+    suspend fun getUserInfo(): Response<ObjectResponse<Profile>>
 }

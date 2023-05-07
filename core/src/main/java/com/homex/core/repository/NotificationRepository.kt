@@ -12,5 +12,7 @@ interface NotificationRepository {
         limit: Int
     ): LiveData<ResultResponse<GetNotificationResponse>>
 
-    suspend fun updateSeenNotification(param: UpdateSeenNotificationParam): LiveData<ResultResponse<JsonObject>>
+    suspend fun updateSeenNotification(id: String): LiveData<ResultResponse<JsonObject>>
+
+    suspend fun seenAllNotification(): LiveData<ResultResponse<JsonObject>>
 }

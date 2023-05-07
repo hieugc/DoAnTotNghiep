@@ -24,6 +24,7 @@ import com.example.homex.app.IMAGE
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentUpdateProfileBinding
 import com.example.homex.viewmodel.ProfileViewModel
+import com.homex.core.CoreApplication
 import com.homex.core.param.profile.UpdateProfileParam
 import com.homex.core.util.AppEvent
 import com.homex.core.util.PrefUtil
@@ -127,13 +128,20 @@ class UpdateProfileFragment : BaseFragment<FragmentUpdateProfileBinding>() {
 
     override fun setViewModel() {
         viewModel.updateProfileLiveData.observe(viewLifecycleOwner) {
+                viewModel.getUserInfo()
+        }
+
+        viewModel.userInfoLiveData.observe(viewLifecycleOwner){
+            if (it != null){
+                CoreApplication.instance.saveProfile(it)
                 findNavController().popBackStack()
                 Toast.makeText(
                     requireContext(),
                     getString(R.string.update_profile_success),
                     Toast.LENGTH_LONG
                 ).show()
-            AppEvent.closePopup()
+                AppEvent.closePopup()
+            }
         }
     }
 

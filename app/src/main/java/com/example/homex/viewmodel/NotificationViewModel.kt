@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.JsonObject
 import com.homex.core.model.Notification
 import com.homex.core.model.general.ResultResponse
 import com.homex.core.model.response.GetNotificationResponse
@@ -14,7 +15,8 @@ import kotlinx.coroutines.launch
 
 class NotificationViewModel(private val repository: NotificationRepository) : ViewModel() {
     public val notificationListLiveDate = MediatorLiveData<GetNotificationResponse?>()
-    public val notificationLiveDate = MediatorLiveData<Notification?>()
+    public val notificationLiveData = MediatorLiveData<Notification?>()
+    public val notificationLiveMessage = MediatorLiveData<JsonObject?>()
 
     fun getNotifications(page: Int, limit: Int) {
         viewModelScope.launch {
@@ -35,13 +37,31 @@ class NotificationViewModel(private val repository: NotificationRepository) : Vi
         }
     }
 
-    fun updateSeenNotification(param: UpdateSeenNotificationParam) {
+    fun updateSeenNotification(id: String) {
         viewModelScope.launch {
-            notificationListLiveDate.addSource(repository.updateSeenNotification(param)) {
+            notificationLiveMessage.addSource(repository.updateSeenNotification(id)) {
                 Log.e("response", it.toString())
                 when (it) {
                     is ResultResponse.Success -> {
-                        Log.e("SuccessSeenNotification", "${it.data}")
+                        notificationLiveMessage.value = it.data
+                    }
+                    is ResultResponse.Error -> {
+                        AppEvent.showPopUpError(it.message)
+                    }
+                    else -> {
+                    }
+                }
+            }
+        }
+    }
+
+    fun seenAllNotification() {
+        viewModelScope.launch {
+            notificationLiveMessage.addSource(repository.seenAllNotification()) {
+                Log.e("response", it.toString())
+                when (it) {
+                    is ResultResponse.Success -> {
+                        notificationLiveMessage.value = it.data
                     }
                     is ResultResponse.Error -> {
                         AppEvent.showPopUpError(it.message)

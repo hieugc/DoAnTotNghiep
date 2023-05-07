@@ -346,7 +346,7 @@ class HomeActivity : BaseActivity() {
 
     private fun handleNotification(notification: Notification?) {
         if(notification != null){
-            notificationViewModel.notificationLiveDate.postValue(notification)
+            notificationViewModel.notificationLiveData.postValue(notification)
 
             val snackbar: Snackbar = Snackbar.make(findViewById(R.id.rootView), "", Snackbar.LENGTH_LONG)
 

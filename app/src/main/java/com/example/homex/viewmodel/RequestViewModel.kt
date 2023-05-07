@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.gson.JsonObject
 import com.homex.core.model.response.RequestResponse
 import com.homex.core.model.general.ResultResponse
+import com.homex.core.model.response.CircleRequest
 import com.homex.core.param.request.*
 import com.homex.core.repository.RequestRepository
 import com.homex.core.util.AppEvent
@@ -17,6 +18,8 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
     val messageLiveData = MediatorLiveData<JsonObject?>()
     val requestResponseLiveData = MediatorLiveData<RequestResponse?>()
     val requestResponseListLiveDate = MediatorLiveData<ArrayList<RequestResponse>?>()
+    val requestSentResponseListLiveDate = MediatorLiveData<ArrayList<RequestResponse>?>()
+    val circleRequestResponseListLiveDate = MediatorLiveData<ArrayList<CircleRequest>?>()
 
     fun createNewRequest(param: CreateRequestParam){
         AppEvent.showPopUp()
@@ -101,12 +104,12 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
 
     fun getRequestHistory(){
         viewModelScope.launch {
-            requestResponseListLiveDate.addSource(repository.getRequestSent()){
+            requestSentResponseListLiveDate.addSource(repository.getRequestSent()){
                 Log.e("response", it.toString())
                 when (it) {
                     is ResultResponse.Success -> {
                         Log.e("SuccessGetHistory", "${it.data}")
-                        requestResponseListLiveDate.value = it.data
+                        requestSentResponseListLiveDate.value = it.data
                     }
                     is ResultResponse.Error ->{
                         AppEvent.showPopUpError(it.message)
@@ -219,4 +222,23 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
         }
     }
 
+    fun getCircleRequest(){
+        viewModelScope.launch {
+            circleRequestResponseListLiveDate.addSource(repository.getCircleRequest()){
+                Log.e("response", it.toString())
+                when (it) {
+                    is ResultResponse.Success -> {
+                        Log.e("SuccessGetPending", "${it.data}")
+                        circleRequestResponseListLiveDate.value = it.data
+                    }
+                    is ResultResponse.Error ->{
+                        AppEvent.showPopUpError(it.message)
+                    }
+                    else -> {
+                        Log.e("Loading", "hello")
+                    }
+                }
+            }
+        }
+    }
 }

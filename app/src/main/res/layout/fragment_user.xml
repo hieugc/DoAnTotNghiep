@@ -258,6 +258,16 @@
                     android:layout_height="1dp"
                     android:background="@color/divider" />
                 <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnCircleRequest"
+                    style="@style/ButtonProfile"
+                    android:drawableStart="@drawable/ic_circle_request"
+                    android:text="@string/circle_request" />
+
+                <com.google.android.material.divider.MaterialDivider
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/divider" />
+                <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btnManual"
                     style="@style/ButtonProfile"
                     android:drawableStart="@drawable/ic_books"

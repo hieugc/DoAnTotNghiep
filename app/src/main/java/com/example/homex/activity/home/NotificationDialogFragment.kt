@@ -8,9 +8,12 @@ import android.view.*
 import androidx.fragment.app.DialogFragment
 import com.example.homex.R
 import com.example.homex.databinding.FragmentNotificationDialogBinding
+import com.example.homex.viewmodel.NotificationViewModel
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 class NotificationDialogFragment : DialogFragment() {
     private lateinit var binding: FragmentNotificationDialogBinding
+    private val viewModel: NotificationViewModel by sharedViewModel()
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState)
@@ -38,6 +41,7 @@ class NotificationDialogFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.btnOk.setOnClickListener {
+            viewModel.seenAllNotification()
             dismiss()
         }
         binding.btnCancel.setOnClickListener {

@@ -39,12 +39,17 @@ class NotificationFragment : BaseFragment<FragmentNotificationBinding>() {
         adapter = NotificationAdapter(
             notificationList,
             onClick = {
-                viewModel.updateSeenNotification(UpdateSeenNotificationParam("1"))
-                val action =
-                    NotificationFragmentDirections.actionNotificationFragmentToRequestDetailFragment(
-                        id = it
-                    )
-                findNavController().navigate(action)
+                idType, id ->
+                if (id != null) {
+                    viewModel.updateSeenNotification(id)
+                }
+                if (idType != null) {
+                    val action =
+                        NotificationFragmentDirections.actionNotificationFragmentToRequestDetailFragment(
+                            id = idType
+                        )
+                    findNavController().navigate(action)
+                }
             }
         )
         binding.notificationRecView.adapter = adapter
@@ -62,20 +67,24 @@ class NotificationFragment : BaseFragment<FragmentNotificationBinding>() {
     override fun setViewModel() {
         viewModel.notificationListLiveDate.observe(viewLifecycleOwner) {
             if (it != null) {
-                val listRequest = it.model
-                if (listRequest != null) {
-                    adapter.setList(listRequest)
+                val listNotification = it.model
+                if (listNotification != null) {
+                    adapter.setList(listNotification)
                 }
             }
         }
 
-        viewModel.notificationLiveDate.observe(this) {
+        viewModel.notificationLiveData.observe(this) {
             if (it != null) {
                 adapter.add(it)
                 adapter.notifyItemInserted(0)
                 adapter.notifyItemRangeChanged(0, 1)
-                viewModel.notificationLiveDate.postValue(null)
+                viewModel.notificationLiveData.postValue(null)
             }
+        }
+
+        viewModel.notificationLiveMessage.observe(this) {
+            viewModel.getNotifications(1,1000)
         }
     }
 

@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.FrameLayout
 import androidx.core.content.ContextCompat
+import androidx.navigation.fragment.navArgs
 import com.example.homex.R
 import com.example.homex.databinding.FragmentRateBottomSheetBinding
 import com.example.homex.viewmodel.RequestViewModel
@@ -25,6 +26,7 @@ class RateBottomSheetFragment : BottomSheetDialogFragment() {
     private lateinit var binding: FragmentRateBottomSheetBinding
     private lateinit var request: RequestResponse
     private val viewModel: RequestViewModel by viewModel()
+    private val args: RateBottomSheetFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -47,13 +49,15 @@ class RateBottomSheetFragment : BottomSheetDialogFragment() {
     }
 
     private fun initView() {
-        request = arguments?.getParcelable<RequestResponse>("request")!!
-        binding.tvTitle.text = request.house?.name
-        binding.tvAddress.text = request.house?.location
-        binding.tvPeople.text = request.house?.people.toString()
-        binding.ratingHouse.rating = request.myRating?.rating?.toFloat() ?: 0f
-        binding.ratingUser.rating = request.myRating?.ratingUser?.toFloat() ?: 0f
-        binding.edtComment.setText(request.myRating?.content)
+        if(args.request != null) {
+            request = args.request!!
+            binding.tvTitle.text = request.house?.name
+            binding.tvAddress.text = request.house?.location
+            binding.tvPeople.text = request.house?.people.toString()
+            binding.ratingHouse.rating = request.myRating?.rating?.toFloat() ?: 0f
+            binding.ratingUser.rating = request.myRating?.ratingUser?.toFloat() ?: 0f
+            binding.edtComment.setText(request.myRating?.content)
+        }
     }
 
     private fun initListener() {

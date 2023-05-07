@@ -5,6 +5,7 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.JsonObject
+import com.homex.core.model.Profile
 import com.homex.core.model.general.ResultResponse
 import com.homex.core.model.response.PaymentHistory
 import com.homex.core.model.response.PaymentInfoResponse
@@ -23,6 +24,7 @@ class ProfileViewModel(private val repository: ProfileRepository): ViewModel() {
     val paymentHistoryAllLiveData = MediatorLiveData<ArrayList<PaymentHistory>?>()
     val paymentHistoryReceivedLiveData = MediatorLiveData<ArrayList<PaymentHistory>?>()
     val paymentHistoryUsedLiveData = MediatorLiveData<ArrayList<PaymentHistory>?>()
+    val userInfoLiveData = MediatorLiveData<Profile?>()
 
     fun updatePassword(param: PasswordParam){
         viewModelScope.launch {
@@ -154,6 +156,26 @@ class ProfileViewModel(private val repository: ProfileRepository): ViewModel() {
                 when (it) {
                     is ResultResponse.Success -> {
                         paymentHistoryUsedLiveData.value = it.data
+                    }
+                    is ResultResponse.Error ->{
+                        AppEvent.showPopUpError(it.message)
+                    }
+                    else -> {
+                        Log.e("Loading", "hello")
+                    }
+                }
+            }
+        }
+    }
+
+    fun getUserInfo(){
+        AppEvent.showPopUp()
+        viewModelScope.launch {
+            userInfoLiveData.addSource(repository.getUserInfo()){
+                Log.e("response", it.toString())
+                when (it) {
+                    is ResultResponse.Success -> {
+                        userInfoLiveData.value = it.data
                     }
                     is ResultResponse.Error ->{
                         AppEvent.showPopUpError(it.message)

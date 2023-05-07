@@ -8,12 +8,13 @@ import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentTransHistoryBinding
 import com.example.homex.viewmodel.RequestViewModel
 import com.google.android.material.tabs.TabLayoutMediator
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class TransHistoryFragment : BaseFragment<FragmentTransHistoryBinding>() {
     override val layoutId: Int = R.layout.fragment_trans_history
     private lateinit var viewPagerAdapter: TransHistoryViewPager
-    private val viewModel: RequestViewModel by viewModel()
+    private val viewModel: RequestViewModel by sharedViewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

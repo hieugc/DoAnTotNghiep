@@ -87,5 +87,10 @@ class UserFragment : BaseFragment<FragmentUserBinding>() {
             startActivity(i)
             activity?.overridePendingTransition(0, 0)
         }
+
+        binding.btnCircleRequest.setOnClickListener{
+            if (isAuthenticated)
+                findNavController().navigate(R.id.action_userFragment_to_circleRequestFragment)
+        }
     }
 }

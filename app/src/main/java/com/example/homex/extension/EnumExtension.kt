@@ -54,3 +54,14 @@ enum class NotificationType{
     CIRCLE_SWAP,
     PAYMENT
 }
+
+enum class StatusWaitingRequest
+{
+    INIT,//mới khởi tạo
+    IN_CIRCLE,//trong vòng + chưa xác nhận
+    DISABLE,//không muốn vào vòng => không gợi ý nữa
+    ACCEPT,//đã xác nhận
+    CHECK_IN,
+    CHECK_OUT,
+    ENDED
+}

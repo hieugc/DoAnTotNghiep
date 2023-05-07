@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import com.google.gson.JsonObject
 import com.homex.core.model.response.RequestResponse
 import com.homex.core.model.general.ResultResponse
+import com.homex.core.model.response.CircleRequest
 import com.homex.core.param.request.*
 import okhttp3.RequestBody
 
@@ -27,4 +28,6 @@ interface RequestRepository {
     suspend fun createRating(param: CreateRatingParam): LiveData<ResultResponse<JsonObject>>
 
     suspend fun updateRating(param: UpdateRatingParam): LiveData<ResultResponse<JsonObject>>
+
+    suspend fun getCircleRequest(): LiveData<ResultResponse<ArrayList<CircleRequest>>>
 }

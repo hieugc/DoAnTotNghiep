@@ -7,6 +7,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.homex.R
 import com.example.homex.activity.home.HomeActivity
+import com.example.homex.activity.home.pending.RequestFragmentDirections
+import com.example.homex.adapter.RequestItemAdapter
 import com.example.homex.adapter.TransHistoryAdapter
 import com.example.homex.app.REQUEST_STATUS
 import com.example.homex.base.BaseFragment
@@ -14,14 +16,15 @@ import com.example.homex.databinding.FragmentTransHistoryPageBinding
 import com.example.homex.extension.RequestStatus
 import com.example.homex.viewmodel.RequestViewModel
 import com.homex.core.model.response.RequestResponse
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
-class TransHistoryPageFragment : BaseFragment<FragmentTransHistoryPageBinding>(),
-    TransHistoryAdapter.EventListener {
+class TransHistoryPageFragment : BaseFragment<FragmentTransHistoryPageBinding>(){
     override val layoutId: Int = R.layout.fragment_trans_history_page
 
-    private lateinit var adapter: TransHistoryAdapter
+    private lateinit var adapter: RequestItemAdapter
     private var requestType: Int = RequestStatus.WAITING.ordinal
-    private val viewModel: RequestViewModel by viewModels({ requireParentFragment() })
+    private val viewModel: RequestViewModel by sharedViewModel()
+    private val requestList = arrayListOf<RequestResponse>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +42,23 @@ class TransHistoryPageFragment : BaseFragment<FragmentTransHistoryPageBinding>()
     }
 
     override fun setView() {
-        adapter = TransHistoryAdapter(this, requireContext())
+        adapter = RequestItemAdapter(
+            requestList,
+            onClick = {
+                val action = TransHistoryFragmentDirections.actionTransHistoryFragmentToRequestDetailFragment(it)
+                findNavController().navigate(action)
+            },
+            btnClick = {
+                val action = it.request?.id?.let { it1 ->
+                    TransHistoryFragmentDirections.actionTransHistoryFragmentToRequestDetailFragment(
+                        it1
+                    )
+                }
+                if (action != null) {
+                    findNavController().navigate(action)
+                }
+            }
+        )
         binding.rvTransHis.adapter = adapter
         val layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
@@ -55,28 +74,18 @@ class TransHistoryPageFragment : BaseFragment<FragmentTransHistoryPageBinding>()
             viewModel.getRequestHistory()
         }
 
-        viewModel.requestResponseListLiveDate.observe(viewLifecycleOwner) {
+        viewModel.requestSentResponseListLiveDate.observe(viewLifecycleOwner) {
             if (it != null) {
+                requestList.clear()
                 val listRequest = ArrayList<RequestResponse>()
                 for (request in it) {
                     if (request.request?.status == requestType) {
                         listRequest.add(request)
                     }
                 }
-                adapter.setRequestList(listRequest)
+                requestList.addAll(listRequest)
+                adapter.notifyDataSetChanged()
             }
         }
-    }
-
-    override fun onBtnRateClick(request: RequestResponse) {
-        val bundle = bundleOf("request" to request)
-        findNavController().navigate(
-            R.id.action_transHistoryFragment_to_rateBottomSheetFragment,
-            bundle
-        )
-    }
-
-    override fun OnItemTransClicked() {
-        findNavController().navigate(R.id.action_transHistoryFragment_to_requestDetailFragment)
     }
 }

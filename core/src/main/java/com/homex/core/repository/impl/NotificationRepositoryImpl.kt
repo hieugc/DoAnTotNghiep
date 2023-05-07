@@ -26,14 +26,23 @@ class NotificationRepositoryImpl(private val api: ApiService) : NotificationRepo
         }.build().asLiveData()
     }
 
-    override suspend fun updateSeenNotification(param: UpdateSeenNotificationParam): LiveData<ResultResponse<JsonObject>> {
+    override suspend fun updateSeenNotification(id: String): LiveData<ResultResponse<JsonObject>> {
         return object : NetworkBoundResource<ObjectResponse<JsonObject>, JsonObject>() {
             override fun processResponse(response: ObjectResponse<JsonObject>): JsonObject? =
                 response.data
 
             override suspend fun createCall(): Response<ObjectResponse<JsonObject>> =
-                api.updateSeenNotification(param)
+                api.updateSeenNotification(id)
         }.build().asLiveData()
     }
 
+    override suspend fun seenAllNotification(): LiveData<ResultResponse<JsonObject>> {
+        return object : NetworkBoundResource<ObjectResponse<JsonObject>, JsonObject>() {
+            override fun processResponse(response: ObjectResponse<JsonObject>): JsonObject? =
+                response.data
+
+            override suspend fun createCall(): Response<ObjectResponse<JsonObject>> =
+                api.seenAllNotification()
+        }.build().asLiveData()
+    }
 }

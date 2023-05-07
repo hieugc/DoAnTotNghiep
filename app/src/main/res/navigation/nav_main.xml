@@ -81,6 +81,13 @@
             app:enterAnim="@anim/slide_in_left"
             app:popEnterAnim="@anim/slide_out_right"
             app:popExitAnim="@anim/slide_in_right"/>
+        <action
+            android:id="@+id/action_userFragment_to_circleRequestFragment"
+            app:destination="@id/circleRequestFragment"
+            app:exitAnim="@anim/slide_out_left"
+            app:enterAnim="@anim/slide_in_left"
+            app:popEnterAnim="@anim/slide_out_right"
+            app:popExitAnim="@anim/slide_in_right"/>
     </fragment>
     <fragment
         android:id="@+id/messageFragment"
@@ -409,25 +416,45 @@
         tools:layout="@layout/fragment_trans_history">
         <action
             android:id="@+id/action_transHistoryFragment_to_rateBottomSheetFragment"
-            app:destination="@id/rateBottomSheetFragment" />
+            app:destination="@id/rateBottomSheetFragment">
+            <argument android:name="request"
+                app:argType="com.homex.core.model.response.RequestResponse"
+                app:nullable="true"/>
+        </action>
         <action
             android:id="@+id/action_transHistoryFragment_to_requestDetailFragment"
             app:destination="@id/requestDetailFragment"
             app:exitAnim="@anim/slide_out_left"
             app:enterAnim="@anim/slide_in_left"
             app:popEnterAnim="@anim/slide_out_right"
-            app:popExitAnim="@anim/slide_in_right"/>
+            app:popExitAnim="@anim/slide_in_right">
+            <argument android:name="id"
+                app:argType="integer"/>
+        </action>
     </fragment>
     <dialog
         android:id="@+id/rateBottomSheetFragment"
         android:name="com.example.homex.activity.home.profile.RateBottomSheetFragment"
         android:label="RateBottomSheetFragment"
-        tools:layout="@layout/fragment_rate_bottom_sheet"/>
+        tools:layout="@layout/fragment_rate_bottom_sheet">
+        <argument android:name="request"
+            app:argType="com.homex.core.model.response.RequestResponse"
+            app:nullable="true"
+            android:defaultValue="@null"/>
+    </dialog>
     <fragment
         android:id="@+id/requestDetailFragment"
         android:name="com.example.homex.activity.home.RequestDetailFragment"
         android:label="RequestDetailFragment"
-        tools:layout="@layout/fragment_request_detail"/>
+        tools:layout="@layout/fragment_request_detail">
+        <action
+            android:id="@+id/action_requestDetailFragment_to_rateBottomSheetFragment"
+            app:destination="@id/rateBottomSheetFragment">
+            <argument android:name="request"
+                app:argType="com.homex.core.model.response.RequestResponse"
+                app:nullable="true"/>
+        </action>
+    </fragment>
     <fragment
         android:id="@+id/pointHistoryFragment"
         android:name="com.example.homex.activity.home.profile.PointHistoryFragment"
@@ -528,5 +555,29 @@
             app:nullable="true"
             android:defaultValue="@null" />
     </dialog>
+    <fragment
+        android:id="@+id/circleRequestFragment"
+        android:name="com.example.homex.activity.home.profile.CircleRequestFragment"
+        android:label="CircleRequestFragment"
+        tools:layout="@layout/fragment_circle_request">
+        <action
+            android:id="@+id/action_circleRequestFragment_to_circleRequestDetailFragment"
+            app:destination="@id/circleRequestDetailFragment">
+            <argument android:name="request"
+                app:argType="com.homex.core.model.response.CircleRequest"
+                app:nullable="true"/>
+        </action>
+    </fragment>
+
+    <fragment
+        android:id="@+id/circleRequestDetailFragment"
+        android:name="com.example.homex.activity.home.profile.CircleRequestDetailFragment"
+        android:label="CircleRequestDetailFragment"
+        tools:layout="@layout/fragment_circle_request_detail">
+        <argument android:name="request"
+            app:argType="com.homex.core.model.response.CircleRequest"
+            app:nullable="true"
+            android:defaultValue="@null"/>
+    </fragment>
 
 </navigation>

@@ -12,7 +12,7 @@ import com.example.homex.extension.visible
 import com.homex.core.model.Notification
 
 class NotificationAdapter(
-    private val notificationList: ArrayList<Notification>?, val onClick: (Int) -> Unit
+    private val notificationList: ArrayList<Notification>?, val onClick: (Int?, String?) -> Unit
 ) : RecyclerView.Adapter<NotificationAdapter.NotificationViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NotificationViewHolder {
@@ -36,7 +36,7 @@ class NotificationAdapter(
             holder.binding.notificationIndicator.visible()
         }
         holder.binding.root.setOnClickListener {
-            item?.idType?.let { onClick.invoke(it) }
+            onClick(item?.idType, item?.id)
         }
         holder.binding.notificationImg.loadImage(item?.imageUrl)
     }
