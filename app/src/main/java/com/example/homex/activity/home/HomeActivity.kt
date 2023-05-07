@@ -26,6 +26,7 @@ import androidx.navigation.ui.NavigationUI.setupWithNavController
 import com.bumptech.glide.Glide
 import com.example.homex.R
 import com.example.homex.activity.home.addhome.FileViewModel
+import com.example.homex.activity.home.search.SearchResultFragmentDirections
 import com.example.homex.app.CONNECT_CHAT
 import com.example.homex.app.NOTIFICATIONS
 import com.example.homex.app.RECEIVE_MESSAGE
@@ -40,6 +41,7 @@ import com.example.homex.viewmodel.NotificationViewModel
 import com.example.homex.viewmodel.ProfileViewModel
 import com.google.android.material.snackbar.Snackbar
 import com.homex.core.CoreApplication
+import com.homex.core.model.Filter
 import com.homex.core.model.MessageRoom
 import com.homex.core.model.Notification
 import com.homex.core.model.UserMessage
@@ -69,7 +71,7 @@ class HomeActivity : BaseActivity() {
     private var showSearchLayout: Boolean = false
     private val fileViewModel: FileViewModel by viewModels()
     private val tmpFiles = mutableListOf<File>()
-
+    private var filter: Filter? = null
     private val prefUtil: PrefUtil by inject()
     private val mContext: Context = this
     private var mService: ChatService? = null
@@ -96,7 +98,7 @@ class HomeActivity : BaseActivity() {
 
         appBarConfiguration = AppBarConfiguration.Builder(
             R.id.homeFragment,
-            R.id.exploreFragment,
+//            R.id.exploreFragment,
             R.id.notificationFragment,
             R.id.userFragment
         ).build()
@@ -185,9 +187,9 @@ class HomeActivity : BaseActivity() {
         }
     }
 
-    fun setSearchParam(location: String, startDate: String, endDate: String){
+    fun setSearchParam(location: String?, startDate: String, endDate: String, people: Int){
         binding.locationTV.text = location
-        binding.dateTV.text = "$startDate - $endDate"
+        binding.dateTV.text = "$startDate - $endDate / $people người"
     }
 
     private fun setViewModel(){
@@ -211,8 +213,13 @@ class HomeActivity : BaseActivity() {
             showMenu(it, R.menu.box_chat_menu)
         }
         binding.btnFilter.setOnClickListener {
-            findNavController(R.id.nav_main_fragment).navigate(R.id.action_searchResultFragment_to_filterBottomSheetFragment)
+            val action = SearchResultFragmentDirections.actionSearchResultFragmentToFilterBottomSheetFragment(filter)
+            findNavController(R.id.nav_main_fragment).navigate(action)
         }
+    }
+
+    fun setFilter(filter: Filter?){
+        this.filter = filter
     }
 
     override fun onSupportNavigateUp(): Boolean {

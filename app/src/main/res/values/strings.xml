@@ -15,6 +15,7 @@
     <string name="pwd_check_2">1 chữ hoa, 1 chữ thường</string>
     <string name="verification">Xác thực tài khoản</string>
     <string name="verify_code">Mã xác thực</string>
+    <string name="resend_otp_html">&lt;u>Gửi lại email&lt;/u> </string>
     <string name="cannot_received">Không nhận được?</string>
     <string name="resend_verification"><u>Gửi lại email</u></string>
     <string name="verify">Xác thực</string>
@@ -182,6 +183,12 @@
     <string name="error_invalid_dob">Ngày sinh không hợp lệ</string>
     <string name="update_profile_success">Cập nhật thông tin thành công!</string>
     <string name="input_point_amount_hint">Nhập số lượng điểm cần nạp</string>
+    <string name="delete_home_success">Xóa nhà thành công</string>
+    <string name="accept_request_success">Chấp nhận yêu cầu thành công</string>
+    <string name="create_request_success">Tạo yêu cầu thành công</string>
+    <string name="reject_request_success">Từ chối yêu cầu thành công</string>
+    <string name="checkin_request_success">Check-in nhà thành công</string>
+    <string name="checkout_request_success">Check-out nhà thành công</string>
     <string name="top_up_succeed">Nạp điểm thành công!</string>
     <string name="top_up_cancel">Hủy thanh toán!</string>
     <string name="top_up_failed">Nạp điểm thất bại!</string>

@@ -27,15 +27,12 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <androidx.appcompat.widget.AppCompatImageView
+                <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/ivAvatar"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
-                    android:scaleType="fitXY"
-                    app:srcCompat="@mipmap/avatar"
                     android:layout_marginStart="32dp"
                     android:layout_marginTop="20dp"
-                    app:cardCornerRadius="80dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"/>
 

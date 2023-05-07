@@ -115,7 +115,7 @@
                         android:drawableStart="@drawable/ic_from_date"
                         android:gravity="center"
                         android:id="@+id/fromDateRequest"
-                        app:formatDate="@{request.request.startDate}"/>
+                        app:dateFormat="@{request.request.startDate}"/>
                 </LinearLayout>
 
                 <com.google.android.material.divider.MaterialDivider
@@ -144,7 +144,7 @@
                         android:drawableStart="@drawable/ic_to_date"
                         android:gravity="center"
                         android:id="@+id/toDateRequest"
-                        app:formatDate="@{request.request.endDate}"
+                        app:dateFormat="@{request.request.endDate}"
                         />
                 </LinearLayout>
             </LinearLayout>

@@ -23,7 +23,7 @@ class PendingRequestFragment : BaseFragmentViewPager<FragmentPendingRequestBindi
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.getPendingRequest()
+
         binding.requestShimmer.gone()
         if (isShimmer){
             binding.requestShimmer.startShimmer()

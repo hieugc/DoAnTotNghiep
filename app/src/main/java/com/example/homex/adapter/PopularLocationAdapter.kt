@@ -12,7 +12,7 @@ import com.example.homex.extension.dpToPx
 import com.homex.core.model.Location
 
 
-class PopularLocationAdapter(var list: ArrayList<Location>? = arrayListOf()): RecyclerView.Adapter<PopularLocationAdapter.PopularLocationViewHolder>() {
+class PopularLocationAdapter(var list: ArrayList<Location>? = arrayListOf(), val onClick: (Location)->Unit): RecyclerView.Adapter<PopularLocationAdapter.PopularLocationViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PopularLocationViewHolder {
         return PopularLocationViewHolder(
@@ -39,6 +39,9 @@ class PopularLocationAdapter(var list: ArrayList<Location>? = arrayListOf()): Re
             val lastParams = holder.itemView.layoutParams as ViewGroup.MarginLayoutParams
             lastParams.leftMargin = 16f.dpToPx(holder.itemView.context)
             holder.itemView.requestLayout()
+        }
+        holder.binding.root.setOnClickListener {
+            item?.let(onClick)
         }
     }
 

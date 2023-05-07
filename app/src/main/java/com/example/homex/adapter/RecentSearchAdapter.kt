@@ -6,11 +6,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.homex.R
 import com.example.homex.databinding.RecentSearchHomeItemBinding
 import com.example.homex.databinding.RecentSearchLocationItemBinding
+import com.example.homex.extension.gone
+import com.example.homex.extension.visible
+import com.homex.core.model.LocationSuggestion
 
 private const val LOCATION_ITEM = 1
 private const val HOME_ITEM = 2
 
-class RecentSearchAdapter(val searchList: ArrayList<String>?): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class RecentSearchAdapter(val searchList: ArrayList<LocationSuggestion>?, val recentSearch: Boolean = true, val onClick: (LocationSuggestion)->Unit, val deleteOnClick: (Int)->Unit): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         if (viewType == LOCATION_ITEM){
             return RecentSearchLocationViewHolder(RecentSearchLocationItemBinding.bind(
@@ -23,14 +26,28 @@ class RecentSearchAdapter(val searchList: ArrayList<String>?): RecyclerView.Adap
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        val item = searchList?.get(position)
         if (holder.itemViewType == HOME_ITEM)
         {
             val tmp = holder as RecentSearchHomeViewHolder
-            tmp.binding.homeNameTV.text = searchList?.get(position) ?: ""
         }
         else{
             val tmp = holder as RecentSearchLocationViewHolder
-            tmp.binding.locationNameTV.text = searchList?.get(position) ?: ""
+            if (item?.districtName == null){
+                tmp.binding.locationNameTV.text = "${item?.cityName?:""}"
+            }else{
+                tmp.binding.locationNameTV.text = "${item.districtName}, ${item.cityName?:""}"
+            }
+            tmp.binding.root.setOnClickListener {
+                item?.let(onClick)
+            }
+            tmp.binding.closeBtn.setOnClickListener {
+                position.let(deleteOnClick)
+            }
+            if (recentSearch){
+                tmp.binding.closeBtn.visible()
+            }else
+                tmp.binding.closeBtn.gone()
         }
     }
 
@@ -39,8 +56,6 @@ class RecentSearchAdapter(val searchList: ArrayList<String>?): RecyclerView.Adap
     }
 
     override fun getItemViewType(position: Int): Int {
-        if (position > 2)
-            return HOME_ITEM
         return LOCATION_ITEM
     }
 

@@ -1,6 +1,5 @@
 package com.example.homex.adapter
 
-import android.content.Context
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 

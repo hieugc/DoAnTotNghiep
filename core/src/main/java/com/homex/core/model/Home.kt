@@ -30,7 +30,7 @@ data class Home(
     val user: Profile? = null,
     val numberRating: Int? = null,
     val bed: Int? = null,
-    val ratings: ArrayList<Rating>? = null,
+    val ratings: ArrayList<UserRating>? = null,
     val cityName: String? = null,
     val districtName: String? = null,
     val inValidRangeDates: ArrayList<DateRange>? = null
@@ -48,6 +48,9 @@ data class Home(
             HomeStatus.DISABLE.ordinal-> "Đang ẩn"
             else->""
         }
+    }
+    fun getHomeLocation(): String{
+        return if (districtName == null || districtName == "") cityName?:"" else "${districtName?:""}, ${cityName?:""}"
     }
 }
 

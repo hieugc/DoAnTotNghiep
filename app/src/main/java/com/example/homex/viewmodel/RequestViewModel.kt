@@ -83,6 +83,7 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
     }
 
     fun getRequestDetail(id: Int){
+        AppEvent.showPopUp()
         viewModelScope.launch {
             requestResponseLiveData.addSource(repository.getRequestById(id)){
                 Log.e("response", it.toString())

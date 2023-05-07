@@ -10,7 +10,7 @@
         app:layout_constraintTop_toTopOf="parent"
         android:id="@+id/img"
         android:src="@mipmap/location"
-        android:background="@color/grey_light"
+        android:background="@color/gray7_50"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

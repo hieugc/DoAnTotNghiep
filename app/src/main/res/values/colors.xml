@@ -41,4 +41,6 @@
     <color name="gray7_50">#50777777</color>
     <color name="red">#F44336</color>
     <color name="done">#4CAF50</color>
+    <color name="successGreen">#00C885</color>
+    <color name="errorRed">#EB7070</color>
 </resources>

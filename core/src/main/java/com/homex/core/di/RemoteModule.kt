@@ -1,32 +1,39 @@
 package com.homex.core.di
 
 import com.facebook.stetho.okhttp3.StethoInterceptor
+import com.homex.core.AccessTokenInterceptor
 import com.homex.core.BuildConfig
 import com.homex.core.CoreApplication
 import com.homex.core.api.ApiService
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 val remoteModule = module {
-
     single {
         createService<ApiService>(get())
     }
 
+    single(named("Service")) {
+        createService<ApiService>()
+    }
+
+    single { AccessTokenInterceptor(get(), get(named("Service"))) }
     single {
-        createOkHttpClient()
+        createOkHttpClient(get())
     }
 }
 
-fun createOkHttpClient(): OkHttpClient {
+fun createOkHttpClient(accessTokenInterceptor: AccessTokenInterceptor): OkHttpClient {
     val httpLoggingInterceptor = HttpLoggingInterceptor()
     httpLoggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
     return OkHttpClient.Builder()
+        .authenticator(accessTokenInterceptor)
         .writeTimeout(15 * 60 * 1000, TimeUnit.MILLISECONDS)
         .readTimeout(60 * 1000, TimeUnit.MILLISECONDS)
         .connectTimeout(20 * 1000, TimeUnit.MILLISECONDS)
@@ -51,6 +58,14 @@ inline fun <reified T> createService(okHttpClient: OkHttpClient): T {
     val retrofit = Retrofit.Builder()
         .baseUrl(BuildConfig.SERVER_URL)
         .client(okHttpClient)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+    return retrofit.create(T::class.java)
+}
+
+inline fun <reified T> createService(): T {
+    val retrofit = Retrofit.Builder()
+        .baseUrl(BuildConfig.SERVER_URL)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
     return retrofit.create(T::class.java)

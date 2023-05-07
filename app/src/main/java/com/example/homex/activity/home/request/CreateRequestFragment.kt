@@ -3,7 +3,6 @@ package com.example.homex.activity.home.request
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -11,6 +10,7 @@ import androidx.navigation.fragment.navArgs
 import com.example.homex.R
 import com.example.homex.activity.home.HomeActivity
 import com.example.homex.app.USER_ACCESS
+import com.example.homex.base.BaseActivity
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentCreateRequestBinding
 import com.example.homex.extension.betweenDays
@@ -100,11 +100,17 @@ class CreateRequestFragment : BaseFragment<FragmentCreateRequestBinding>() {
                 viewModel.type.postValue(2)
             }
         }
+        binding.homeRBLayout.setOnClickListener {
+            binding.homeRB.isChecked = true
+        }
 
         binding.pointRB.setOnCheckedChangeListener { _, b ->
             if (b){
                 viewModel.type.postValue(1)
             }
+        }
+        binding.pointRBLayout.setOnClickListener {
+            binding.pointRB.isChecked = true
         }
 
         binding.changeDateBtn.setOnClickListener {
@@ -200,7 +206,7 @@ class CreateRequestFragment : BaseFragment<FragmentCreateRequestBinding>() {
     override fun setViewModel() {
         requestViewModel.messageLiveData.observe(viewLifecycleOwner){
             if (it != null){
-                Toast.makeText(requireContext(), "Tạo yêu cầu thành công", Toast.LENGTH_LONG).show()
+                (activity as BaseActivity).displayMessage(getString(R.string.create_request_success))
                 findNavController().popBackStack()
             }
             AppEvent.closePopup()

@@ -21,7 +21,6 @@ import com.homex.core.model.response.RequestResponse
 import com.homex.core.param.chat.ContactUserParam
 import com.homex.core.util.PrefUtil
 import org.koin.android.ext.android.inject
-import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PendingRequestRejectFragment: BaseFragmentViewPager<FragmentPendingRequestBinding>() {
@@ -31,6 +30,25 @@ class PendingRequestRejectFragment: BaseFragmentViewPager<FragmentPendingRequest
         get() = RequestStatus.REJECTED.ordinal
     private val chatViewModel: ChatViewModel by viewModel()
     private val prefUtil : PrefUtil by inject()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        chatViewModel.connectToUser.observe(this){ messageRoom ->
+            Log.e("messageRoom", "$messageRoom")
+            if (messageRoom != null){
+                messageRoom.idRoom?.let {
+                    findNavController().navigate(
+                        R.id.action_global_messageFragment, bundleOf(
+                            ID to it,
+                            CONTACT_USER to true
+                        )
+                    )
+                }
+//                chatViewModel.clearContactUser()
+            }
+        }
+    }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -99,21 +117,6 @@ class PendingRequestRejectFragment: BaseFragmentViewPager<FragmentPendingRequest
                 isShimmer = false
                 binding.noRequestLayout.visible()
                 binding.requestRecView.gone()
-            }
-        }
-
-        chatViewModel.connectToUser.observe(this){ messageRoom ->
-            Log.e("messageRoom", "$messageRoom")
-            if (messageRoom != null){
-                messageRoom.idRoom?.let {
-                    findNavController().navigate(
-                        R.id.action_global_messageFragment, bundleOf(
-                            ID to it,
-                            CONTACT_USER to true
-                        )
-                    )
-                }
-                chatViewModel.clearContactUser()
             }
         }
     }

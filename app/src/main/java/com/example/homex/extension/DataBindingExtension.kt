@@ -468,7 +468,7 @@ fun AppCompatTextView.setRequestType(requestType: String?){
 }
 
 
-@BindingAdapter(value = ["formatDate"])
+@BindingAdapter(value = ["dateFormat"])
 fun AppCompatTextView.getFormatDate(formatDate: String?){
     val df1: DateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
     if (formatDate != null) {

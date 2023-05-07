@@ -18,11 +18,11 @@
             app:popEnterAnim="@anim/slide_out_right"
             app:popExitAnim="@anim/slide_in_right"/>
     </fragment>
-    <fragment
-        android:id="@+id/exploreFragment"
-        android:name="com.example.homex.activity.home.explore.ExploreFragment"
-        android:label="fragment_explore"
-        tools:layout="@layout/fragment_explore" />
+<!--    <fragment-->
+<!--        android:id="@+id/exploreFragment"-->
+<!--        android:name="com.example.homex.activity.home.explore.ExploreFragment"-->
+<!--        android:label="fragment_explore"-->
+<!--        tools:layout="@layout/fragment_explore" />-->
     <fragment
         android:id="@+id/notificationFragment"
         android:name="com.example.homex.activity.home.NotificationFragment"
@@ -165,6 +165,13 @@
                 app:nullable="true"
                 android:defaultValue="@null" />
         </action>
+        <action
+            android:id="@+id/action_searchFragment_to_bottomSheetSearchFragment"
+            app:destination="@id/bottomSheetSearchFragment"
+            app:exitAnim="@anim/slide_out_left"
+            app:enterAnim="@anim/slide_in_left"
+            app:popEnterAnim="@anim/slide_out_right"
+            app:popExitAnim="@anim/slide_in_right"/>
     </fragment>
     <fragment
         android:id="@+id/searchResultFragment"
@@ -173,13 +180,42 @@
         tools:layout="@layout/fragment_search_result">
         <action
             android:id="@+id/action_searchResultFragment_to_filterBottomSheetFragment"
-            app:destination="@id/filterBottomSheetFragment"/>
+            app:destination="@id/filterBottomSheetFragment"
+            app:exitAnim="@anim/slide_out_left"
+            app:enterAnim="@anim/slide_in_left"
+            app:popEnterAnim="@anim/slide_out_right"
+            app:popExitAnim="@anim/slide_in_right">
+            <argument
+                android:name="filter"
+                app:argType="com.homex.core.model.Filter"
+                app:nullable="true"
+                android:defaultValue="@null" />
+        </action>
+        <action
+            android:id="@+id/action_searchResultFragment_to_homeDetailFragment"
+            app:destination="@id/homeDetailFragment"
+            app:exitAnim="@anim/slide_out_left"
+            app:enterAnim="@anim/slide_in_left"
+            app:popEnterAnim="@anim/slide_out_right"
+            app:popExitAnim="@anim/slide_in_right">
+            <argument android:name="id"
+                app:argType="integer"/>
+        </action>
+        <action
+            android:id="@+id/action_searchResultFragment_to_searchFragment"
+            app:destination="@id/searchFragment" />
     </fragment>
     <dialog
         android:id="@+id/filterBottomSheetFragment"
         android:name="com.example.homex.activity.home.search.FilterBottomSheetFragment"
         android:label="FilterBottomSheetFragment"
-        tools:layout="@layout/fragment_filter_bottom_sheet"/>
+        tools:layout="@layout/fragment_filter_bottom_sheet">
+        <argument
+            android:name="filter"
+            app:argType="com.homex.core.model.Filter"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </dialog>
     <fragment
         android:id="@+id/homeDetailFragment"
         android:name="com.example.homex.activity.home.homepage.HomeDetailFragment"
@@ -232,7 +268,14 @@
                 app:nullable="true"
                 android:defaultValue="@null" />
         </action>
-<!--        <action-->
+        <action
+            android:id="@+id/action_homeDetailFragment_to_mapFragment"
+            app:destination="@id/mapFragment"
+            app:exitAnim="@anim/slide_out_left"
+            app:enterAnim="@anim/slide_in_left"
+            app:popEnterAnim="@anim/slide_out_right"
+            app:popExitAnim="@anim/slide_in_right"/>
+        <!--        <action-->
 <!--            android:id="@+id/action_homeDetailFragment_to_messageFragment"-->
 <!--            app:destination="@id/messageFragment"/>-->
     </fragment>
@@ -339,6 +382,13 @@
         <action
             android:id="@+id/action_myHomeDetailFragment_to_addHomeFragment"
             app:destination="@id/addHomeFragment"
+            app:exitAnim="@anim/slide_out_left"
+            app:enterAnim="@anim/slide_in_left"
+            app:popEnterAnim="@anim/slide_out_right"
+            app:popExitAnim="@anim/slide_in_right"/>
+        <action
+            android:id="@+id/action_myHomeDetailFragment_to_mapFragment"
+            app:destination="@id/mapFragment"
             app:exitAnim="@anim/slide_out_left"
             app:enterAnim="@anim/slide_in_left"
             app:popEnterAnim="@anim/slide_out_right"
@@ -579,5 +629,15 @@
             app:nullable="true"
             android:defaultValue="@null"/>
     </fragment>
+    <fragment
+        android:id="@+id/bottomSheetSearchFragment"
+        android:name="com.example.homex.BottomSheetSearchFragment"
+        android:label="fragment_bottom_sheet_search"
+        tools:layout="@layout/fragment_bottom_sheet_search" />
+    <fragment
+        android:id="@+id/mapFragment"
+        android:name="com.example.homex.activity.home.MapFragment"
+        android:label="fragment_map"
+        tools:layout="@layout/fragment_map" />
 
 </navigation>

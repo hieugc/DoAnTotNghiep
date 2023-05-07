@@ -1,7 +1,9 @@
 package com.example.homex.viewmodel
 
+import android.os.CountDownTimer
 import android.util.Log
 import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.JsonObject
@@ -16,12 +18,71 @@ import kotlinx.coroutines.launch
 import okhttp3.RequestBody
 
 class AuthViewModel(private val repository: AuthRepository): ViewModel() {
+    private lateinit var timer: CountDownTimer
+    var seconds = MutableLiveData<Int>()
     val loginLiveData = MediatorLiveData<UserResponse?>()
     val signupLiveData = MediatorLiveData<Token?>()
     val checkEmailLiveData = MediatorLiveData<CheckEmailExisted?>()
     val otpLiveData = MediatorLiveData<Token?>()
     val userInfoLiveData = MediatorLiveData<UserResponse?>()
     val forgotLiveData = MediatorLiveData<Token?>()
+    val resendLiveData = MediatorLiveData<JsonObject?>()
+
+    fun resendOTPForgotPassword(){
+        viewModelScope.launch {
+            resendLiveData.addSource(repository.resendOTPForgotPassword()){
+                Log.e("response", it.toString())
+                when (it) {
+                    is ResultResponse.Success -> {
+                        Log.e("SuccessResendOTP", "${it.data}")
+                        resendLiveData.value = it.data
+                        startTimer()
+                    }
+                    is ResultResponse.Error ->{
+                        AppEvent.showPopUpError(it.message)
+                    }
+                    else -> {
+                        Log.e("Loading", "hello")
+                    }
+                }
+            }
+        }
+    }
+
+    fun resendOTP(){
+        viewModelScope.launch {
+            resendLiveData.addSource(repository.resendOTPSignup()){
+                Log.e("response", it.toString())
+                when (it) {
+                    is ResultResponse.Success -> {
+                        Log.e("SuccessResendOTP", "${it.data}")
+                        resendLiveData.value = it.data
+                        startTimer()
+                    }
+                    is ResultResponse.Error ->{
+                        AppEvent.showPopUpError(it.message)
+                    }
+                    else -> {
+                        Log.e("Loading", "hello")
+                    }
+                }
+            }
+        }
+    }
+
+    private fun startTimer(){
+        Log.e("startTimer","hello")
+        timer = object : CountDownTimer(60000, 1000){
+            override fun onTick(p0: Long) {
+                val timeLeft = p0/1000
+
+                seconds.value = timeLeft.toInt()
+            }
+
+            override fun onFinish() {
+            }
+        }.start()
+    }
 
     fun login(param: LoginParam){
         AppEvent.showPopUp()

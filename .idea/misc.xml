@@ -113,6 +113,7 @@
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/activity_home.xml" value="0.33" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/activity_main.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/activity_splash.xml" value="0.16197916666666667" />
+        <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/activity_webview.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/add_home_image_item.xml" value="0.176" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/date_cell_item.xml" value="0.5" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/dialog_error.xml" value="0.264" />
@@ -125,6 +126,7 @@
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/fragment_add_home_address.xml" value="0.33" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/fragment_bottom_sheet_change_date.xml" value="0.33" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/fragment_bottom_sheet_dialog_select_image.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/fragment_bottom_sheet_search.xml" value="0.25" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/fragment_change_password.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/fragment_create_request.xml" value="0.33" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/fragment_create_request_bottom_sheet.xml" value="0.25416666666666665" />
@@ -138,6 +140,7 @@
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/fragment_home_detail.xml" value="0.25" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/fragment_item_list.xml" value="0.24010416666666667" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/fragment_login.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/fragment_map.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/fragment_message.xml" value="0.2" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/fragment_message_box.xml" value="0.2" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/fragment_my_home.xml" value="0.25416666666666665" />
@@ -154,7 +157,7 @@
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/fragment_request.xml" value="0.22" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/fragment_request_detail.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/fragment_search.xml" value="0.25416666666666665" />
-        <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/fragment_search_result.xml" value="0.25" />
+        <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/fragment_search_result.xml" value="0.18" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/fragment_sign_in.xml" value="0.264" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/fragment_sign_in_verification.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/fragment_trans_history.xml" value="0.36666666666666664" />
@@ -178,13 +181,13 @@
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/message_shimmer.xml" value="0.365625" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/message_time_item.xml" value="0.253125" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/month_grid_item.xml" value="0.25" />
-        <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/my_home_item.xml" value="0.264" />
+        <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/my_home_item.xml" value="0.25" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/my_message_item.xml" value="0.5" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/my_message_shimmer.xml" value="0.365625" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/notifcation_item.xml" value="0.264" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/notification_item.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/pick_date_bg.xml" value="0.253125" />
-        <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/popular_home_item.xml" value="0.40754039497307004" />
+        <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/popular_home_item.xml" value="0.25" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/popular_location_item.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/recent_search_home_item.xml" value="0.253125" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/recent_search_location_item.xml" value="0.253125" />

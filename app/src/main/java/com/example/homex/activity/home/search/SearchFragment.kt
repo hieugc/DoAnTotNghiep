@@ -15,14 +15,19 @@ import com.example.homex.adapter.RecentSearchAdapter
 import com.example.homex.app.*
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentSearchBinding
-import com.example.homex.extension.betweenDays
-import com.example.homex.extension.longToDate
-import com.example.homex.extension.longToFormat
+import com.example.homex.extension.*
 import com.example.homex.viewmodel.YourHomeViewModel
+import com.homex.core.CoreApplication
 import com.homex.core.model.BingLocation
 import com.homex.core.model.CalendarDate
+import com.homex.core.model.Location
+import com.homex.core.model.LocationSuggestion
+import com.homex.core.util.AppEvent
+import com.homex.core.util.PrefUtil
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 class SearchFragment : BaseFragment<FragmentSearchBinding>() {
@@ -30,6 +35,8 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
     private lateinit var adapter: RecentSearchAdapter
     private val viewModel: SearchViewModel by viewModels()
     private val locationViewModel: YourHomeViewModel by viewModel()
+    private val prefUtil: PrefUtil by inject()
+    private val searchList = arrayListOf<LocationSuggestion>()
 
     private val cityList = arrayListOf<BingLocation>()
     private val districtList = arrayListOf<BingLocation>()
@@ -49,9 +56,19 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
             showBoxChatLayout = Pair(false, null),
         )
 
-        locationViewModel.getCity()
+        //locationViewModel.getCity()
 
         binding.viewModel = viewModel
+
+        val location = arguments?.getParcelable<Location>(LOCATION)
+        if (location != null){
+            viewModel.location.postValue(location.name)
+            binding.searchEdtTxt.text = location.name
+            viewModel.idDistrict.postValue(null)
+            viewModel.idCity.postValue(location.id)
+            val search = LocationSuggestion(location.id, null, location.name, null)
+            viewModel.search.postValue(search)
+        }
 
         findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Pair<CalendarDate?, CalendarDate?>>("DATE")?.observe(viewLifecycleOwner){
                 dates->
@@ -68,6 +85,24 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
             viewModel.people.postValue(ppl)
             binding.numberOfPeopleTV.text = "$ppl người"
         }
+
+        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<LocationSuggestion>(SUGGEST)?.observe(viewLifecycleOwner){
+            suggest->
+            if (suggest.districtName == null){
+                val loc = "${suggest.cityName?:""}"
+                viewModel.location.postValue(loc)
+                binding.searchEdtTxt.text = loc
+                viewModel.idDistrict.postValue(null)
+                viewModel.idCity.postValue(suggest.idCity)
+            }else{
+                val loc = "${suggest.districtName}, ${suggest.cityName?:""}"
+                binding.searchEdtTxt.text = loc
+                viewModel.location.postValue(loc)
+                viewModel.idDistrict.postValue(suggest.idDistrict)
+                viewModel.idCity.postValue(suggest.idCity)
+            }
+            viewModel.search.postValue(suggest)
+        }
     }
 
     override fun setView() {
@@ -77,31 +112,48 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
         districtAdapter = LocationAdapter(requireContext(), R.layout.sex_item, districtList)
         binding.districtTV.setAdapter(districtAdapter)
 
+        searchList.clear()
+        prefUtil.listSearch?.let {
+            searchList.addAll(it)
+        }
         adapter = RecentSearchAdapter(
-            arrayListOf(
-                "Hồ Chí Minh",
-                "Hà nội",
-                "Nhà của Hiếu",
-                "Nhà của Nhật",
-                "Nhà của Nhật",
-                "Nhà của Nhật",
-                "Nhà của Nhật",
-                "Nhà của Nhật",
-                "Nhà của Nhật"
-            )
+            searchList,
+            recentSearch = true,
+            onClick =
+            { suggest->
+                if (suggest.districtName == null){
+                    val loc = "${suggest.cityName?:""}"
+                    viewModel.location.postValue(loc)
+                    binding.searchEdtTxt.text = loc
+                    viewModel.idDistrict.postValue(null)
+                    viewModel.idCity.postValue(suggest.idCity)
+                }else{
+                    val loc = "${suggest.districtName}, ${suggest.cityName?:""}"
+                    binding.searchEdtTxt.text = loc
+                    viewModel.location.postValue(loc)
+                    viewModel.idDistrict.postValue(suggest.idDistrict)
+                    viewModel.idCity.postValue(suggest.idCity)
+                }
+                viewModel.search.postValue(suggest)
+            },
+            deleteOnClick = {
+                searchList.removeAt(it)
+                adapter.notifyItemRemoved(it)
+                CoreApplication.instance.saveListSearch(searchList)
+            }
         )
         binding.recentSearchRecView.adapter = adapter
-        val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, true)
         binding.recentSearchRecView.layoutManager = layoutManager
 
-        val cal = Calendar.getInstance()
-        val first = CalendarDate(cal.time, cal.get(Calendar.DAY_OF_MONTH).toString())
-        Log.e("first", cal.get(Calendar.DAY_OF_MONTH).toString())
-        cal.add(Calendar.DATE, 7)
-        val second = CalendarDate(cal.time, cal.get(Calendar.DAY_OF_MONTH).toString())
-        Log.e("second", cal.get(Calendar.DAY_OF_MONTH).toString())
-        viewModel.startDate.postValue(first)
-        viewModel.endDate.postValue(second)
+//        val cal = Calendar.getInstance()
+//        val first = CalendarDate(cal.time, cal.get(Calendar.DAY_OF_MONTH).toString())
+//        Log.e("first", cal.get(Calendar.DAY_OF_MONTH).toString())
+//        cal.add(Calendar.DATE, 7)
+//        val second = CalendarDate(cal.time, cal.get(Calendar.DAY_OF_MONTH).toString())
+//        Log.e("second", cal.get(Calendar.DAY_OF_MONTH).toString())
+//        viewModel.startDate.postValue(first)
+//        viewModel.endDate.postValue(second)
 //        selection = Pair(
 //            first, second
 //        )
@@ -112,23 +164,44 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
     }
 
     override fun setEvent() {
-        binding.iconMapPin.setOnClickListener {
-            Log.e("hello", "click")
+        binding.searchEdtTxt.setOnClickListener {
+            findNavController().navigate(R.id.action_searchFragment_to_bottomSheetSearchFragment)
+        }
+        binding.cardView.setOnClickListener{
+            findNavController().navigate(R.id.action_searchFragment_to_bottomSheetSearchFragment)
         }
         binding.btnSearch.setOnClickListener {
             val idCity = viewModel.idCity.value
-            if (idCity == 0)
+            if (idCity == 0 || idCity == null){
                 return@setOnClickListener
+            }
             val idDistrict = viewModel.idDistrict.value
-            val people = viewModel.people.value
+            val people = viewModel.people.value?:2
             val startDate = viewModel.startDate.value?.time?.time?.longToFormat("yyyy-MM-dd")
             val endDate = viewModel.endDate.value?.time?.time?.longToFormat("yyyy-MM-dd")
+            val location = viewModel.location.value?:""
 
-            Log.e("cittyName", "${binding.cityTV.text}")
-            Log.e("cittyName", "${binding.districtTV.text}")
-            Log.e("district", "$idDistrict")
-            val cityName = binding.cityTV.text.toString()
-            val districtName = binding.districtTV.text.toString()
+            val newSearch = viewModel.search.value
+            if (newSearch != null){
+                var found = false
+                var i : Int? = null
+                for ((index, s) in searchList.withIndex()){
+                    if (newSearch.idCity == s.idCity && newSearch.idDistrict == s.idDistrict){
+                        found = true
+                        i = index
+                        break
+                    }
+                }
+                if (found && i != null){
+                    searchList.removeAt(i)
+                }
+
+                if (searchList.size >= 5){
+                    searchList.removeAt(0)
+                }
+                searchList.add(newSearch)
+            }
+            CoreApplication.instance.saveListSearch(searchList)
 
             findNavController().navigate(R.id.action_searchFragment_to_searchResultFragment, bundleOf(
                 CITY to idCity,
@@ -136,8 +209,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
                 PEOPLE to people,
                 START_DATE to startDate,
                 END_DATE to endDate,
-                CITY_NAME to cityName,
-                DISTRICT_NAME to districtName
+                LOCATION to location
             ))
         }
         binding.pickDateLayout.setOnClickListener {
@@ -181,6 +253,14 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
                 districtList.clear()
                 districtList.addAll(it)
                 districtAdapter.notifyDataSetChanged()
+            }
+        }
+
+        viewModel.idCity.observe(this){
+            if (it == null || it == 0){
+                binding.btnSearch.disable()
+            }else{
+                binding.btnSearch.enable()
             }
         }
     }

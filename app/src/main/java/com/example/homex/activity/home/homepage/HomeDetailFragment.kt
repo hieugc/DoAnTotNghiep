@@ -18,6 +18,7 @@ import com.example.homex.adapter.ImageSlideAdapter
 import com.example.homex.adapter.SimilarHomeAdapter
 import com.example.homex.adapter.UtilAdapter
 import com.example.homex.app.CONTACT_USER
+import com.example.homex.app.HOME
 import com.example.homex.app.ID
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentHomeDetailBinding
@@ -31,7 +32,6 @@ import com.homex.core.param.chat.ContactUserParam
 import com.homex.core.util.AppEvent
 import com.homex.core.util.PrefUtil
 import org.koin.android.ext.android.inject
-import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
 
@@ -48,6 +48,23 @@ class HomeDetailFragment : BaseFragment<FragmentHomeDetailBinding>() {
     private val chatViewModel: ChatViewModel by viewModel()
     private var selection: Pair<CalendarDate?, CalendarDate?> = Pair(null, null)
     private val prefUtil: PrefUtil by inject()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        chatViewModel.connectToUser.observe(this){ messageRoom ->
+            if (messageRoom != null){
+                messageRoom.idRoom?.let {
+                    findNavController().navigate(
+                        R.id.action_global_messageFragment, bundleOf(
+                            ID to it,
+                            CONTACT_USER to true
+                        ))
+                }
+                //chatViewModel.clearContactUser()
+            }
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -86,6 +103,9 @@ class HomeDetailFragment : BaseFragment<FragmentHomeDetailBinding>() {
                 adapter.notifyDataSetChanged()
                 utilAdapter.notifyDataSetChanged()
                 rulesAdapter.notifyDataSetChanged()
+
+                ratingAdapter.ratingList = it.ratings
+                ratingAdapter.notifyDataSetChanged()
 
                 val invalid = it.inValidRangeDates
                 if (invalid != null){
@@ -156,31 +176,12 @@ class HomeDetailFragment : BaseFragment<FragmentHomeDetailBinding>() {
             }
             AppEvent.closePopup()
         }
-
-        chatViewModel.connectToUser.observe(this){ messageRoom ->
-            if (messageRoom != null){
-                messageRoom.idRoom?.let {
-                    findNavController().navigate(
-                        R.id.action_global_messageFragment, bundleOf(
-                        ID to it,
-                        CONTACT_USER to true
-                        ))
-                }
-                chatViewModel.clearContactUser()
-            }
-        }
     }
 
     override fun setView() {
-        ratingAdapter = HomeRatingAdapter(
-            arrayListOf(
-                "Nhà đẹp lắm mọi người",
-                "Nhà thoải mái, đẹp",
-                "Hoàn toàn tuyệt vời"
-            )
-        )
+        ratingAdapter = HomeRatingAdapter(arrayListOf())
         binding.homeRatingRecView.adapter = ratingAdapter
-        val layoutManager = CenterZoomLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false, mShrinkAmount = 0.05f, mShrinkDistance = 0.8f)
+        val layoutManager = CenterZoomLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false, mShrinkAmount = 0.05f, mShrinkDistance = 0.8f, 1.2)
         binding.homeRatingRecView.layoutManager = layoutManager
 
         val snapHelper = LinearSnapHelper()
@@ -195,7 +196,7 @@ class HomeDetailFragment : BaseFragment<FragmentHomeDetailBinding>() {
             )
         )
         binding.homeSimilarRecView.adapter = similarHomeAdapter
-        val layoutManager2 = CenterZoomLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false, mShrinkAmount = 0.05f, mShrinkDistance = 0.8f)
+        val layoutManager2 = CenterZoomLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false, mShrinkAmount = 0.05f, mShrinkDistance = 0.8f, 1.2)
         binding.homeSimilarRecView.layoutManager = layoutManager2
 
         val snapHelper2 = LinearSnapHelper()
@@ -285,6 +286,12 @@ class HomeDetailFragment : BaseFragment<FragmentHomeDetailBinding>() {
                 }
             }
 
+        }
+        binding.showMap.setOnClickListener {
+            if (binding.home != null){
+                findNavController().navigate(R.id.action_homeDetailFragment_to_mapFragment, bundleOf(
+                    HOME to binding.home))
+            }
         }
     }
 }

@@ -3,6 +3,13 @@ package com.homex.core.model
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
+
+@Parcelize
+class UserRating(
+    val user: Profile? = null,
+    val feedBack: Rating? = null
+): Parcelable
+
 @Parcelize
 class Rating(
     val updatedDate: String? = null,
@@ -10,5 +17,8 @@ class Rating(
     val content: String? = null,
     val rating: Int? = null,
     val ratingUser: Int? = null,
-    val id: Int? = null
+    val userName: String? = null,
+    val id: Int? = null,
+    val idRequest: Int? = null,
+    val isOwner: Boolean? = null
 ): Parcelable

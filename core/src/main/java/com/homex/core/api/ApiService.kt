@@ -36,6 +36,9 @@ interface ApiService {
         @Query("limit") limit: Int
     ): Response<ObjectResponse<SearchHomeResponse>>
 
+    @GET("api/Suggest")
+    suspend fun getLocationSuggestion(@Query("location") query: String): Response<ListResponse<LocationSuggestion>>
+
     //--------------------POPULAR-----------------------------
     @GET("api/GetPopularHouse")
     suspend fun getPopularHome(): Response<ListResponse<Home>>
@@ -59,7 +62,7 @@ interface ApiService {
     @POST("api/SignUp/UpdateInfo")
     suspend fun updateInformation(@Body param: UpdateInfoParam): Response<ObjectResponse<UserResponse>>
 
-    @POST("api/SignUp/ResendOTP")
+    @GET("api/SignUp/ResendOTP")
     suspend fun resendOTP(): Response<ObjectResponse<JsonObject>>
 
     @POST("api/Forgot/CheckMail")
@@ -71,7 +74,7 @@ interface ApiService {
     @POST("api/Forgot/Password")
     suspend fun updateNewPassword(@Body param: PasswordParam) : Response<ObjectResponse<JsonObject>>
 
-    @POST("api/Forgot/ResendOTP")
+    @GET("api/Forgot/ResendOTP")
     suspend fun resendOTPForgotPassword() : Response<ObjectResponse<JsonObject>>
 
     //--------------------HOUSE-----------------------------

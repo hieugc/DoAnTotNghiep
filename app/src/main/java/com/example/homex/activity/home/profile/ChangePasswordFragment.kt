@@ -9,6 +9,7 @@ import com.example.homex.R
 import com.example.homex.activity.auth.AuthActivity
 import com.example.homex.activity.home.HomeActivity
 import com.example.homex.app.EMAIL
+import com.example.homex.base.BaseActivity
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentChangePasswordBinding
 import com.example.homex.extension.*
@@ -53,7 +54,7 @@ class ChangePasswordFragment : BaseFragment<FragmentChangePasswordBinding>() {
 
     override fun setViewModel() {
         viewModel.passwordLiveData.observe(viewLifecycleOwner){
-            Toast.makeText(requireContext(), getString(R.string.change_password_success), Toast.LENGTH_SHORT).show()
+            (activity as BaseActivity).displayMessage(getString(R.string.change_password_success))
             findNavController().popBackStack()
         }
     }

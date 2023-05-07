@@ -76,46 +76,6 @@ class MessageBoxFragment : BaseFragment<FragmentMessageBoxBinding>() {
         binding.messageRecView.adapter = adapter
         val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, true)
         binding.messageRecView.layoutManager = layoutManager
-//
-//        val dayOfWeekList =
-//            listOf(
-//                "T2", "T3", "T4", "T5", "T6", "T7", "CN"
-//            )
-//
-//        val arrayAdapter = ArrayAdapter(requireContext(), R.layout.date_cell_item, dayOfWeekList)
-//
-//        binding.gridLayout.adapter = arrayAdapter
-//
-//        val calendar = Calendar.getInstance()
-//        Log.e("year", "${calendar.get(Calendar.YEAR)}")
-//        Log.e("month", "${calendar.get(Calendar.MONTH)}")
-//        Log.e("dayOfMonth", "${calendar.get(Calendar.DAY_OF_MONTH)}")
-//        Log.e("dayOfWeek", "${calendar.get(Calendar.DAY_OF_WEEK)}")
-//        Log.e("maxDay", "${calendar.getActualMaximum(Calendar.DATE)}")
-//        calendar.add(Calendar.MONTH, 1)
-//
-//        val arrayList = arrayListOf<String>()
-//        val daysInMonth = calendar.getActualMaximum(Calendar.DATE)
-//        calendar.set(Calendar.DAY_OF_MONTH, 1)
-//        val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK) - 2
-//        Log.e("dayOfWeek", "$dayOfWeek")
-//        Log.e("daysInMonth", "$daysInMonth")
-//
-//
-//        for(i in 1..42){
-//            if(i <= dayOfWeek || i > daysInMonth + dayOfWeek){
-//                arrayList.add("")
-//            }else{
-//                arrayList.add((i - dayOfWeek).toString())
-//            }
-//        }
-//
-//        monthAdapter = MyAdapter(
-//            arrayList
-//        )
-//        binding.messageRecView.adapter = monthAdapter
-//        val layoutManager = GridLayoutManager(requireContext(), 7)
-//        binding.messageRecView.layoutManager = layoutManager
 
     }
 
@@ -253,9 +213,27 @@ class MessageBoxFragment : BaseFragment<FragmentMessageBoxBinding>() {
                 Log.e("newMessage", "${it.messages}")
                 val messages = it.messages
                 if (messages != null){
+                    val date = messages[0].createdDate
+                    var item : Message? = null
+                    for(msg in messageList){
+                        if (msg.isDateItem == true){
+                            if(date?.formatIso8601ToFormat("dd/MM/yyyy") != msg.createdDate?.formatIso8601ToFormat("dd/MM/yyyy")){
+                                item = Message(
+                                    createdDate = date,
+                                    isDateItem = true
+                                )
+                            }
+                            break
+                        }
+                    }
+                    if (item != null){
+                        messageList.add(0, item)
+                        adapter.notifyItemInserted(0)
+                    }
                     messageList.addAll(0, messages)
                     adapter.notifyItemInserted(0)
-                    adapter.notifyItemRangeChanged(0, 2)
+                    val pos = messageList.size - 2
+                    adapter.notifyItemChanged(pos)
                     viewModel.seenAll(body)
                     binding.messageRecView.smoothScrollToPosition(0)
                 }

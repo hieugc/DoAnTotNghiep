@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.homex.core.model.Home
 import com.homex.core.model.Location
+import com.homex.core.model.LocationSuggestion
 import com.homex.core.model.general.ResultResponse
 import com.homex.core.model.response.SearchHomeResponse
 import com.homex.core.repository.HomeRepository
@@ -16,6 +17,27 @@ class HomeViewModel(private val repository: HomeRepository): ViewModel() {
     val popularHome = MediatorLiveData<ArrayList<Home>?>()
     val popularLocation = MediatorLiveData<ArrayList<Location>?>()
     val searchList = MediatorLiveData<SearchHomeResponse?>()
+    val suggestion = MediatorLiveData<ArrayList<LocationSuggestion>?>()
+
+    fun getSuggestion(query: String){
+        viewModelScope.launch {
+            suggestion.addSource(repository.getLocationSuggestion(query)){
+                Log.e("response", it.toString())
+                when (it) {
+                    is ResultResponse.Success -> {
+                        Log.e("SuccessGetSuggestion", "${it.data}")
+                        suggestion.value = it.data
+                    }
+                    is ResultResponse.Error ->{
+                        AppEvent.showPopUpError(it.message)
+                    }
+                    else -> {
+                        Log.e("Loading", "hello")
+                    }
+                }
+            }
+        }
+    }
 
     fun getPopularHome(){
         viewModelScope.launch {

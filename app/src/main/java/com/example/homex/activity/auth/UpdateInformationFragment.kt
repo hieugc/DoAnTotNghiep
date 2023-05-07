@@ -4,10 +4,10 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.widget.ArrayAdapter
-import android.widget.Toast
 import com.example.homex.R
 import com.example.homex.activity.home.HomeActivity
 import com.example.homex.app.DATE_TIME_FORMAT
+import com.example.homex.base.BaseActivity
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentUpdateInformationBinding
 import com.example.homex.viewmodel.AuthViewModel
@@ -146,7 +146,7 @@ class UpdateInformationFragment : BaseFragment<FragmentUpdateInformationBinding>
 
                         clean = String.format("%02d%02d%02d", day, mon, year)
                         if (flag)
-                            Toast.makeText(context, "Your date is invalid. Auto formatting...", Toast.LENGTH_SHORT).show()
+                            (activity as BaseActivity).displayError("Your date is invalid. Auto formatting...")
                         Log.e("cleanElse",clean)
                         validTime = true
                     }

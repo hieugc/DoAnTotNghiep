@@ -3,6 +3,7 @@ package com.homex.core.repository
 import androidx.lifecycle.LiveData
 import com.homex.core.model.Home
 import com.homex.core.model.Location
+import com.homex.core.model.LocationSuggestion
 import com.homex.core.model.general.ResultResponse
 import com.homex.core.model.response.SearchHomeResponse
 import retrofit2.http.Query
@@ -25,4 +26,6 @@ interface HomeRepository {
         page: Int,
         limit: Int
     ): LiveData<ResultResponse<SearchHomeResponse>>
+
+    suspend fun getLocationSuggestion(query: String): LiveData<ResultResponse<ArrayList<LocationSuggestion>>>
 }

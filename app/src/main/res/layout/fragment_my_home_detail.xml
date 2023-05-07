@@ -129,14 +129,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="@{home.location}"
+                    android:text="@{home.location + ` ` + home.homeLocation}"
                     android:maxWidth="200dp"
                     android:layout_marginTop="8dp"
                     app:layout_constraintStart_toEndOf="@+id/appCompatImageView3"
                     app:layout_constraintTop_toBottomOf="@id/homeName" />
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/appCompatTextView25"
+                    android:id="@+id/showMap"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
@@ -357,6 +357,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:text="Tiện ích"
+                    setVisibilityGone="@{!home.utilities.empty &amp;&amp; home.utilities != null}"
                     android:textColor="@color/black_60"
                     app:layout_constraintStart_toStartOf="@id/materialDivider21"
                     app:layout_constraintTop_toBottomOf="@id/materialDivider21" />
@@ -377,6 +378,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/utilRecView"
+                    setVisibilityGone="@{!home.utilities.empty &amp;&amp; home.utilities != null}"
                     app:layout_constraintTop_toBottomOf="@id/homeUtil"
                     />
 
@@ -385,6 +387,7 @@
                     android:layout_height="1dp"
                     app:dividerColor="@color/divider"
                     android:id="@+id/materialDivider22"
+                    setVisibilityGone="@{!home.utilities.empty &amp;&amp; home.utilities != null}"
                     android:layout_marginStart="16dp"
                     android:layout_marginEnd="16dp"
                     app:layout_constraintTop_toBottomOf="@+id/utilRecView" />
@@ -396,6 +399,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:text="Quy định"
+                    setVisibilityGone="@{!home.rules.empty &amp;&amp; home.rules != null}"
                     android:textColor="@color/black_60"
                     app:layout_constraintStart_toStartOf="@id/materialDivider22"
                     app:layout_constraintTop_toBottomOf="@id/materialDivider22" />
@@ -405,6 +409,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/rulesRecView"
+                    setVisibilityGone="@{!home.rules.empty &amp;&amp; home.rules != null}"
                     app:layout_constraintTop_toBottomOf="@id/homeRule"
                     />
 
@@ -414,6 +419,7 @@
                     android:layout_height="1dp"
                     app:dividerColor="@color/divider"
                     android:id="@+id/materialDivider23"
+                    setVisibilityGone="@{!home.rules.empty &amp;&amp; home.rules != null}"
                     android:layout_marginStart="16dp"
                     android:layout_marginEnd="16dp"
                     app:layout_constraintTop_toBottomOf="@+id/rulesRecView" />
@@ -424,6 +430,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:text="@{`Đánh giá (` + home.numberRating + `)`}"
+                    setVisibilityGone="@{!home.ratings.empty &amp;&amp; home.ratings != null}"
                     android:textColor="@color/black_60"
                     app:layout_constraintStart_toStartOf="@id/materialDivider23"
                     app:layout_constraintTop_toBottomOf="@id/materialDivider23" />
@@ -438,6 +445,7 @@
                     android:gravity="center"
                     android:orientation="horizontal"
                     android:padding="4dp"
+                    android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="@+id/homeNumberOfRating"
                     app:layout_constraintEnd_toEndOf="parent">
 
@@ -462,6 +470,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
+                    setVisibilityGone="@{!home.ratings.empty &amp;&amp; home.ratings != null}"
                     android:layout_marginBottom="16dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/homeNumberOfRating" />

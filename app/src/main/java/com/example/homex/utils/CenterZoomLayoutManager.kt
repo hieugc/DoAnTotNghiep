@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Recycler
 import kotlin.math.abs
 
-class CenterZoomLayoutManager(context: Context?, orientation: Int, reverseLayout: Boolean, private val mShrinkAmount: Float, private val mShrinkDistance: Float) :
+class CenterZoomLayoutManager(context: Context?, orientation: Int, reverseLayout: Boolean, private val mShrinkAmount: Float, private val mShrinkDistance: Float, private val itemWidth: Double) :
     LinearLayoutManager(
         context,
         orientation,
@@ -14,7 +14,7 @@ class CenterZoomLayoutManager(context: Context?, orientation: Int, reverseLayout
     ) {
 
     override fun checkLayoutParams(lp: RecyclerView.LayoutParams): Boolean {
-        lp.width = (width / 1.2).toInt()
+        lp.width = (width / itemWidth).toInt()
         return true
     }
 

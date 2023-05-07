@@ -1,6 +1,5 @@
 package com.example.homex.activity
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.databinding.DataBindingUtil
 import com.example.homex.R

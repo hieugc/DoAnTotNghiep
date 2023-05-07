@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.homex.core.model.LocationSuggestion
 import com.homex.core.model.Profile
 
 //KEY WORD
@@ -52,11 +53,11 @@ class PrefUtil constructor(
         get() = prefs.getString(EVENT_ID, null)
         set(value) = prefs.edit().putString(EVENT_ID, value).apply()
 
-    var listProfile: List<Profile>?
+    var listSearch: List<LocationSuggestion>?
         get() {
             val serializedObj = prefs.getString(PROFILE_LIST, null)
             if(serializedObj != null){
-                val type = object: TypeToken<List<Profile>>(){}.type
+                val type = object: TypeToken<List<LocationSuggestion>>(){}.type
                 return try{
                     gSon.fromJson(serializedObj, type)
                 }catch (e: Exception){

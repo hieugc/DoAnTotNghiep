@@ -1,11 +1,11 @@
 package com.example.homex.activity.auth
 
-import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.widget.addTextChangedListener
 import androidx.navigation.fragment.findNavController
 import com.example.homex.R
 import com.example.homex.app.EMAIL
+import com.example.homex.base.BaseActivity
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentNewPasswordBinding
 import com.example.homex.extension.*
@@ -42,7 +42,7 @@ class NewPasswordFragment : BaseFragment<FragmentNewPasswordBinding>() {
 
     override fun setViewModel() {
         viewModel.passwordLiveData.observe(viewLifecycleOwner){
-            Toast.makeText(requireContext(), getString(R.string.change_password_success), Toast.LENGTH_SHORT).show()
+            (activity as BaseActivity).displayMessage(getString(R.string.change_password_success))
             (activity as AuthActivity).redirectToLoginAfterUpdatePassword(arguments?.getString(EMAIL))
         }
     }

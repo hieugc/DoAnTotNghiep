@@ -16,6 +16,7 @@ lifecycle.viewmodel_ktx = "androidx.lifecycle:lifecycle-viewmodel-ktx:$versions.
 lifecycle.livedata_ktx = "androidx.lifecycle:lifecycle-livedata-ktx:$versions.lifecycle"
 lifecycle.extensions = "androidx.lifecycle:lifecycle-extensions:$versions.lifecycle_extensions"
 lifecycle.common_java8 ="androidx.lifecycle:lifecycle-common-java8:$versions.lifecycle"
+lifecycle.core = "androidx.lifecycle:lifecycle-livedata-core:$versions.lifecycle"
 lifecycle.activity_ktx = "androidx.activity:activity-ktx:$versions.ktx"
 lifecycle.fragment_ktx = "androidx.fragment:fragment-ktx:$versions.ktx"
 deps.lifecycle = lifecycle

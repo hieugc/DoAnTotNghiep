@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.homex.R
 import com.example.homex.activity.home.pending.RequestFragmentDirections
 import com.example.homex.adapter.RequestItemAdapter
+import com.example.homex.base.BaseActivity
 import com.example.homex.base.BaseFragmentViewPager
 import com.example.homex.databinding.FragmentPendingRequestBinding
 import com.example.homex.extension.RequestStatus
@@ -99,6 +100,14 @@ class PendingRequestAcceptFragment: BaseFragmentViewPager<FragmentPendingRequest
                 binding.noRequestLayout.visible()
                 binding.requestRecView.gone()
             }
+        }
+
+        viewModel.messageLiveData.observe(this){
+            binding.requestShimmer.startShimmer()
+            binding.requestShimmer.visible()
+            binding.requestRecView.visibility = View.INVISIBLE
+            viewModel.getPendingRequest()
+            (activity as BaseActivity).displayMessage(getString(R.string.checkin_request_success))
         }
     }
 }

@@ -64,4 +64,17 @@ class AuthRepositoryImpl(private val api: ApiService): AuthRepository {
         }.build().asLiveData()
     }
 
+    override suspend fun resendOTPForgotPassword(): LiveData<ResultResponse<JsonObject>> {
+        return object : NetworkBoundResource<ObjectResponse<JsonObject>, JsonObject>(){
+            override fun processResponse(response: ObjectResponse<JsonObject>): JsonObject? = response.data
+            override suspend fun createCall(): Response<ObjectResponse<JsonObject>> = api.resendOTPForgotPassword()
+        }.build().asLiveData()
+    }
+
+    override suspend fun resendOTPSignup(): LiveData<ResultResponse<JsonObject>> {
+        return object : NetworkBoundResource<ObjectResponse<JsonObject>, JsonObject>(){
+            override fun processResponse(response: ObjectResponse<JsonObject>): JsonObject? = response.data
+            override suspend fun createCall(): Response<ObjectResponse<JsonObject>> = api.resendOTP()
+        }.build().asLiveData()
+    }
 }

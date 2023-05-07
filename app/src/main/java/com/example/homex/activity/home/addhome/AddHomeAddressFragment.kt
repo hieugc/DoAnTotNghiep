@@ -9,6 +9,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
@@ -53,15 +54,14 @@ class AddHomeAddressFragment : BaseFragment<FragmentAddHomeAddressBinding>(), Ea
     private lateinit var userLocationTrackingState: MapUserLocationTrackingState
     private lateinit var userLocation: MapUserLocation
     private lateinit var locationPin: Geopoint
+    private var timer = Timer()
     private lateinit var options: MapLocationOptions
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        homeViewModel.getCity()
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         //Setup Map
         mapView = MapView(requireContext(), MapRenderMode.VECTOR)
         mapView.setCredentialsKey(BuildConfig.CREDENTIALS_KEY)
-        binding.mapView.addView(mapView)
 
         //Add Layer
         mPinLayer = MapElementLayer()
@@ -156,7 +156,14 @@ class AddHomeAddressFragment : BaseFragment<FragmentAddHomeAddressBinding>(), Ea
             true
         }
         mapView.onCreate(savedInstanceState)
+    }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        homeViewModel.getCity()
+        if (mapView.parent != null)
+            (mapView.parent as ViewGroup).removeView(mapView)
+        binding.mapView.addView(mapView)
     }
 
     override fun setView() {
@@ -244,7 +251,6 @@ class AddHomeAddressFragment : BaseFragment<FragmentAddHomeAddressBinding>(), Ea
 
         binding.homeAddressEdtTxt.addTextChangedListener(object : TextWatcher{
             private val delay: Long = 1000
-            private var timer = Timer()
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
@@ -390,6 +396,7 @@ class AddHomeAddressFragment : BaseFragment<FragmentAddHomeAddressBinding>(), Ea
     }
 
     override fun onDestroy() {
+        timer.cancel()
         super.onDestroy()
         mapView.onDestroy()
     }

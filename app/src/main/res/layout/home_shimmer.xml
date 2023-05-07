@@ -40,84 +40,44 @@
             style="@style/HomeTitle"
             app:layout_constraintTop_toBottomOf="@id/homeImg"/>
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:id="@+id/pplIcon"
-            app:layout_constraintTop_toBottomOf="@id/homeName"
-            android:background="@color/grey_light"
-            app:layout_constraintStart_toStartOf="@id/homeName"
-            android:layout_marginTop="8dp"/>
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:layout_width="100dp"
+            android:layout_width="50dp"
             android:layout_height="wrap_content"
-            tools:text="4 người"
-            android:background="@color/grey_light"
-            android:layout_marginStart="8dp"
             android:id="@+id/homeNOP"
-            style="@style/HomeTitle"
-            app:layout_constraintStart_toEndOf="@id/pplIcon"
-            app:layout_constraintTop_toTopOf="@id/pplIcon"
-            app:layout_constraintBottom_toBottomOf="@id/pplIcon"/>
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:id="@+id/locationIcon"
-            app:layout_constraintTop_toBottomOf="@id/pplIcon"
+            style="@style/HomeLocation"
             android:background="@color/grey_light"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginEnd="24dp"
+            android:textColor="@color/primary"
+            app:layout_constraintTop_toBottomOf="@id/homeName"
+            app:layout_constraintStart_toStartOf="@id/homeName"
             android:layout_marginTop="8dp"/>
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/locationTV"
             style="@style/HomeLocation"
-            android:layout_width="100dp"
+            android:layout_width="50dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            tools:text="Dĩ An, Bình Dương"
             android:background="@color/grey_light"
-            android:layout_marginEnd="8dp"
-            app:layout_constraintBottom_toBottomOf="@id/locationIcon"
-            app:layout_constraintEnd_toStartOf="@+id/locationIcon"
-            app:layout_constraintTop_toTopOf="@+id/locationIcon" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:id="@+id/ratingIcon"
+            app:layout_constraintTop_toTopOf="@id/homeNOP"
+            app:layout_constraintBottom_toBottomOf="@id/homeNOP"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/locationIcon"
-            android:background="@color/grey_light"
             android:layout_marginEnd="24dp"
-            android:layout_marginTop="8dp"/>
+            android:layout_marginTop="8dp" />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/ratingTV"
-            style="@style/HomeRating"
-            android:layout_width="40dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="4dp"
-            tools:text="4.8"
-            android:background="@color/grey_light"
-            app:layout_constraintBottom_toBottomOf="@id/ratingIcon"
-            app:layout_constraintEnd_toStartOf="@+id/numberOfRatingTV"
-            app:layout_constraintTop_toTopOf="@+id/ratingIcon" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/numberOfRatingTV"
             style="@style/HomeRating"
             android:textColor="@color/gray6"
-            android:layout_width="40dp"
-            android:layout_height="wrap_content"
-            tools:text="(10)"
+            android:layout_width="50dp"
             android:background="@color/grey_light"
-            android:layout_marginEnd="8dp"
-            app:layout_constraintBottom_toBottomOf="@id/ratingIcon"
-            app:layout_constraintEnd_toStartOf="@+id/ratingIcon"
-            app:layout_constraintTop_toTopOf="@+id/ratingIcon" />
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/locationTV"
+            android:src="@drawable/ic_rating"
+            android:layout_marginEnd="24dp"
+            android:layout_marginTop="8dp" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/homePriceTV"

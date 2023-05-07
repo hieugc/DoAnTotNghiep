@@ -24,5 +24,7 @@ interface AuthRepository {
 
     suspend fun checkOTPForgotPassword(param: OTPParam): LiveData<ResultResponse<Token>>
 
+    suspend fun resendOTPForgotPassword(): LiveData<ResultResponse<JsonObject>>
 
+    suspend fun resendOTPSignup(): LiveData<ResultResponse<JsonObject>>
 }

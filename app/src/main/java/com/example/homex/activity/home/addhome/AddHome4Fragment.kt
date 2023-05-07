@@ -3,7 +3,6 @@ package com.example.homex.activity.home.addhome
 import android.net.Uri
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager

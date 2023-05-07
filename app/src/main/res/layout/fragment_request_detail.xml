@@ -540,7 +540,7 @@
             android:elevation="5dp"
             >
             <androidx.appcompat.widget.AppCompatButton
-                style="@style/ButtonPrimary"
+                style="@style/FlexLongButtonPrimary"
                 requestSent="@{request.request.status}"
                 startDate="@{request.request.startDate}"
                 endDate="@{request.request.endDate}"

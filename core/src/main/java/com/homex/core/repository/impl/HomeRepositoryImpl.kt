@@ -5,6 +5,7 @@ import com.homex.core.api.ApiService
 import com.homex.core.data.NetworkBoundResource
 import com.homex.core.model.Home
 import com.homex.core.model.Location
+import com.homex.core.model.LocationSuggestion
 import com.homex.core.model.general.ListResponse
 import com.homex.core.model.general.ObjectResponse
 import com.homex.core.model.general.ResultResponse
@@ -46,6 +47,13 @@ class HomeRepositoryImpl(val api: ApiService): HomeRepository {
             override fun processResponse(response: ObjectResponse<SearchHomeResponse>): SearchHomeResponse? = response.data
 
             override suspend fun createCall(): Response<ObjectResponse<SearchHomeResponse>> = api.searchHome(idCity, people, idDistrict, startDate, endDate, startPrice, endPrice, utilities, sortBy, page, limit)
+        }.build().asLiveData()
+    }
+
+    override suspend fun getLocationSuggestion(query: String): LiveData<ResultResponse<ArrayList<LocationSuggestion>>> {
+        return object : NetworkBoundResource<ListResponse<LocationSuggestion>, ArrayList<LocationSuggestion>>(){
+            override fun processResponse(response: ListResponse<LocationSuggestion>): ArrayList<LocationSuggestion>? = response.data
+            override suspend fun createCall(): Response<ListResponse<LocationSuggestion>> = api.getLocationSuggestion(query)
         }.build().asLiveData()
     }
 }

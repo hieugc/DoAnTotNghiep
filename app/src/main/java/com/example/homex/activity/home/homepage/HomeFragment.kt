@@ -2,6 +2,7 @@ package com.example.homex.activity.home.homepage
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
@@ -9,6 +10,7 @@ import com.example.homex.R
 import com.example.homex.activity.home.HomeActivity
 import com.example.homex.adapter.PopularHomeAdapter
 import com.example.homex.adapter.PopularLocationAdapter
+import com.example.homex.app.LOCATION
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentHomeBinding
 import com.example.homex.extension.gone
@@ -58,10 +60,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         adapter =
             PopularLocationAdapter(
                 locationList
-            )
+            ){
+                findNavController().navigate(R.id.action_homeFragment_to_searchFragment, bundleOf(LOCATION to it))
+            }
         binding.popularLocationRecView.setHasFixedSize(true)
         binding.popularLocationRecView.adapter = adapter
-        binding.popularLocationRecView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        binding.popularLocationRecView.layoutManager = CenterZoomLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false, 0f, 1f, 1.3)
         val snapHelper2 = LinearSnapHelper()
         snapHelper2.attachToRecyclerView(binding.popularLocationRecView)
 
@@ -75,7 +79,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
             )
         binding.popularHomeRecView.setHasFixedSize(true)
         binding.popularHomeRecView.adapter = homeAdapter
-        binding.popularHomeRecView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        binding.popularHomeRecView.layoutManager = CenterZoomLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false, 0f, 1f, 1.2)
         //Add snap helper to recyclerview to make it focus at 1 item
         val snapHelper = LinearSnapHelper()
         snapHelper.attachToRecyclerView(binding.popularHomeRecView)

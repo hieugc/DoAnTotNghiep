@@ -22,6 +22,7 @@ import com.example.homex.viewmodel.RequestViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.homex.core.param.chat.ContactUserParam
 import com.homex.core.param.request.UpdateStatusParam
+import com.homex.core.util.AppEvent
 import com.homex.core.util.PrefUtil
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -126,6 +127,7 @@ class RequestDetailFragment : BaseFragment<FragmentRequestDetailBinding>() {
             if (it != null){
                 binding.request = it
             }
+            AppEvent.closePopup()
         }
 
         chatViewModel.connectToUser.observe(this){ messageRoom->

@@ -141,6 +141,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="12dp"
+                android:id="@+id/homeLayout"
                 android:orientation="horizontal">
 
                 <androidx.appcompat.widget.AppCompatImageView
@@ -361,6 +362,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="12dp"
+                android:id="@+id/targetHomeLayout"
                 android:orientation="horizontal">
 
                 <androidx.appcompat.widget.AppCompatImageView
@@ -486,7 +488,7 @@
                     android:layout_marginTop="8dp"
                     android:drawableStart="@drawable/ic_from_date"
                     android:gravity="center"
-                    formatDate="@{request.request.startDate}" />
+                    dateFormat="@{request.request.startDate}" />
             </LinearLayout>
 
             <com.google.android.material.divider.MaterialDivider
@@ -514,7 +516,7 @@
                     android:layout_marginTop="8dp"
                     android:drawableStart="@drawable/ic_to_date"
                     android:gravity="center"
-                    formatDate="@{request.request.endDate}" />
+                    dateFormat="@{request.request.endDate}" />
             </LinearLayout>
         </LinearLayout>
 
@@ -540,7 +542,7 @@
             android:elevation="5dp"
             >
             <androidx.appcompat.widget.AppCompatButton
-                style="@style/ButtonOutline"
+                style="@style/FlexLongButtonSecondary"
                 android:id="@+id/rejectBtn"
                 android:layout_width="0dp"
                 android:layout_weight="1"
@@ -548,7 +550,7 @@
                 requestSecondary="@{request.request.status}"
                 />
             <androidx.appcompat.widget.AppCompatButton
-                style="@style/ButtonPrimary"
+                style="@style/FlexLongButtonPrimary"
                 requestPrimary="@{request.request.status}"
                 startDate="@{request.request.startDate}"
                 endDate="@{request.request.endDate}"

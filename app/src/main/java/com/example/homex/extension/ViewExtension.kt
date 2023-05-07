@@ -2,6 +2,9 @@ package com.example.homex.extension
 
 import android.view.View
 import androidx.appcompat.widget.AppCompatButton
+import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.content.ContextCompat
+import com.example.homex.R
 
 fun AppCompatButton.disable(){
     this.background.alpha = 62
@@ -19,4 +22,13 @@ fun View.visible(){
 
 fun View.gone(){
     if(this.visibility != View.GONE) this.visibility = View.GONE
+}
+
+fun AppCompatTextView.disable(){
+    this.isEnabled = false
+    this.setTextColor(ContextCompat.getColor(context, R.color.gray))
+}
+fun AppCompatTextView.enable(){
+    this.isEnabled = true
+    this.setTextColor(ContextCompat.getColor(context, R.color.secondary))
 }

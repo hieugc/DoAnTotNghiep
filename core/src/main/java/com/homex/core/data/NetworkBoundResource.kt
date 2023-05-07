@@ -110,7 +110,12 @@ constructor(private val dispatcher: CoroutineDispatcher = Dispatchers.IO) {
                 {
                     val errorMsg = "502 Bad Gateway"
                     setValue(ResultResponse.Error(errorMsg, apiResponse.code()))
-                }else {
+                }
+                else if(apiResponse.code() == 503 || apiResponse.code().toString() == "503"){
+                    val errorMsg = "Server is offline"
+                    setValue(ResultResponse.Error(errorMsg, apiResponse.code()))
+                }
+                else {
                     val response =
                         Gson().fromJson(
                             apiResponse.errorBody()?.string(),

@@ -24,6 +24,7 @@
             android:layout_marginTop="10dp"
             android:layout_marginEnd="8dp"
             android:hint="Thành phố"
+            android:visibility="gone"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="@id/guideline14">
@@ -46,6 +47,7 @@
             android:layout_marginTop="10dp"
             android:layout_marginEnd="16dp"
             android:hint="Quận/Huyện"
+            android:visibility="gone"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/guideline14">
@@ -66,28 +68,30 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
-            android:visibility="gone"
+            android:clickable="true"
+            android:focusable="true"
             android:background="@drawable/search_bg"
-            app:cardCornerRadius="24dp"
-            app:cardElevation="10dp"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="5dp"
             app:layout_constraintTop_toBottomOf="@id/cityLayout">
 
-            <androidx.appcompat.widget.AppCompatEditText
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/searchEdtTxt"
-                style="@style/AppTheme.EditText"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:drawableStart="@drawable/ic_search"
                 android:drawablePadding="8dp"
-                android:hint="@string/search_hint"
-                android:imeOptions="actionDone" />
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/iconMapPin"
-                style="@style/AppTheme.Icon"
-                android:layout_gravity="end|center_vertical"
-                android:layout_marginEnd="12dp"
-                android:src="@drawable/ic_location_pin" />
+                android:paddingStart="16dp"
+                android:textSize="16sp"
+                android:paddingTop="8dp"
+                android:paddingEnd="16dp"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:paddingBottom="8dp"
+                app:drawableTint="@color/secondary"
+                android:text="@string/search_hint"
+                android:textColor="@color/secondary" />
 
         </androidx.cardview.widget.CardView>
 
@@ -131,7 +135,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
                 android:layout_marginEnd="4dp"
-                android:text="@{NumberExtenstionKt.longToDate(viewModel.startDate.time.time)}"
+                android:text="@{viewModel.startDate == null ? `Bất kỳ` :NumberExtenstionKt.longToDate(viewModel.startDate.time.time)}"
                 app:layout_constraintBottom_toBottomOf="@+id/iconFromDate"
                 app:layout_constraintEnd_toStartOf="@+id/guideline7"
                 app:layout_constraintStart_toEndOf="@+id/iconFromDate"
@@ -173,7 +177,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
                 android:layout_marginEnd="4dp"
-                android:text="@{NumberExtenstionKt.longToDate(viewModel.endDate.time.time)}"
+                android:text="@{viewModel.endDate == null ? `Bất kỳ` :NumberExtenstionKt.longToDate(viewModel.endDate.time.time)}"
                 app:layout_constraintBottom_toBottomOf="@+id/iconToDate"
                 app:layout_constraintEnd_toStartOf="@+id/guideline8"
                 app:layout_constraintStart_toEndOf="@+id/iconToDate"
@@ -215,7 +219,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
                 android:layout_marginEnd="4dp"
-                android:text="@{viewModel.people + ` người`}"
+                android:text="@{viewModel.people == null ? `Bất kỳ` :viewModel.people + ` người`}"
 
                 app:layout_constraintBottom_toBottomOf="@+id/iconNOP"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -266,9 +270,8 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recentSearchRecView"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/recentSearchTV" />
 
         <androidx.constraintlayout.widget.Guideline

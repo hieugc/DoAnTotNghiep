@@ -1,17 +1,11 @@
 package com.example.homex.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.example.homex.R
 import com.example.homex.databinding.MyHomeItemBinding
-import com.example.homex.extension.dpToPx
-import com.example.homex.extension.setHomeStatus
 import com.homex.core.model.Home
-import com.homex.core.model.HomeStatus
 
 class MyHomeAdapter(var homeList: ArrayList<Home>?, val onClick: (Int)->Unit): RecyclerView.Adapter<MyHomeAdapter.MyHomeViewHolder>() {
 

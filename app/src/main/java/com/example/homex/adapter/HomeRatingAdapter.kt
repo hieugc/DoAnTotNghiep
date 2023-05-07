@@ -6,8 +6,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.homex.R
 import com.example.homex.databinding.HomeRatingItemBinding
 import com.example.homex.extension.dpToPx
+import com.homex.core.model.UserRating
 
-class HomeRatingAdapter(val ratingList: ArrayList<String>?): RecyclerView.Adapter<HomeRatingAdapter.HomeRatingViewHolder>() {
+class HomeRatingAdapter(var ratingList: ArrayList<UserRating>? = arrayListOf()): RecyclerView.Adapter<HomeRatingAdapter.HomeRatingViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomeRatingViewHolder {
         return HomeRatingViewHolder(
             HomeRatingItemBinding.bind(LayoutInflater.from(parent.context).inflate(
@@ -18,7 +19,7 @@ class HomeRatingAdapter(val ratingList: ArrayList<String>?): RecyclerView.Adapte
 
     override fun onBindViewHolder(holder: HomeRatingViewHolder, position: Int) {
         val item = ratingList?.get(position)
-        holder.binding.ratingContent.text = item
+        holder.binding.rating = item
         if(position == ratingList?.size!! - 1 )
         {
             val lastParams = holder.itemView.layoutParams as ViewGroup.MarginLayoutParams

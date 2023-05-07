@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.os.Environment
 import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -19,6 +18,7 @@ import com.example.homex.R
 import com.example.homex.activity.home.HomeActivity
 import com.example.homex.adapter.AddHomeViewPager
 import com.example.homex.app.HOME
+import com.example.homex.base.BaseActivity
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentAddHomeBinding
 import com.example.homex.extension.gone
@@ -200,7 +200,7 @@ class AddHomeFragment : BaseFragment<FragmentAddHomeBinding>() {
         homeViewModel.messageLiveData.observe(viewLifecycleOwner){
             if(it != null){
                 findNavController().popBackStack()
-                Toast.makeText(requireContext(), getString(R.string.create_home_success), Toast.LENGTH_LONG).show()
+                (activity as BaseActivity).displayMessage(getString(R.string.create_home_success))
             }
             AppEvent.closePopup()
         }
@@ -208,7 +208,7 @@ class AddHomeFragment : BaseFragment<FragmentAddHomeBinding>() {
         homeViewModel.editMessageLiveData.observe(viewLifecycleOwner){
             if(it != null){
                 findNavController().popBackStack()
-                Toast.makeText(requireContext(), getString(R.string.edit_home_success), Toast.LENGTH_LONG).show()
+                (activity as BaseActivity).displayMessage(getString(R.string.edit_home_success))
             }
             AppEvent.closePopup()
         }

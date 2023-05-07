@@ -8,7 +8,6 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.navigation.fragment.findNavController
@@ -21,6 +20,7 @@ import com.example.homex.R
 import com.example.homex.activity.home.HomeActivity
 import com.example.homex.app.DATE_TIME_FORMAT
 import com.example.homex.app.IMAGE
+import com.example.homex.base.BaseActivity
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentUpdateProfileBinding
 import com.example.homex.viewmodel.ProfileViewModel
@@ -135,11 +135,7 @@ class UpdateProfileFragment : BaseFragment<FragmentUpdateProfileBinding>() {
             if (it != null){
                 CoreApplication.instance.saveProfile(it)
                 findNavController().popBackStack()
-                Toast.makeText(
-                    requireContext(),
-                    getString(R.string.update_profile_success),
-                    Toast.LENGTH_LONG
-                ).show()
+                (activity as BaseActivity).displayMessage(getString(R.string.update_profile_success))
                 AppEvent.closePopup()
             }
         }
@@ -231,11 +227,7 @@ class UpdateProfileFragment : BaseFragment<FragmentUpdateProfileBinding>() {
 
                         clean = String.format("%02d%02d%02d", day, mon, year)
                         if (flag)
-                            Toast.makeText(
-                                context,
-                                "Your date is invalid. Auto formatting...",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            (activity as BaseActivity).displayError("Your date is invalid. Auto formatting...")
                         Log.e("cleanElse", clean)
                         validTime = true
                     }

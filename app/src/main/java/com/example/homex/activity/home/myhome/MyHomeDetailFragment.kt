@@ -1,8 +1,10 @@
 package com.example.homex.activity.home.myhome
 
 import android.os.Bundle
-import android.view.*
-import android.widget.Toast
+import android.view.ActionMode
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
 import androidx.core.os.bundleOf
 import androidx.core.text.HtmlCompat
 import androidx.navigation.fragment.findNavController
@@ -16,6 +18,7 @@ import com.example.homex.adapter.HomeRatingAdapter
 import com.example.homex.adapter.ImageSlideAdapter
 import com.example.homex.adapter.UtilAdapter
 import com.example.homex.app.HOME
+import com.example.homex.base.BaseActivity
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentMyHomeDetailBinding
 import com.example.homex.extension.visible
@@ -108,15 +111,9 @@ class MyHomeDetailFragment : BaseFragment<FragmentMyHomeDetailBinding>() {
         actionMode = activity?.startActionMode(callback)
         actionMode?.title = "Thông tin nhà của bạn"
 
-        ratingAdapter = HomeRatingAdapter(
-            arrayListOf(
-                "Nhà đẹp lắm mọi người",
-                "Nhà thoải mái, đẹp",
-                "Hoàn toàn tuyệt vời"
-            )
-        )
+        ratingAdapter = HomeRatingAdapter(arrayListOf())
         binding.homeRatingRecView.adapter = ratingAdapter
-        val layoutManager = CenterZoomLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false, mShrinkAmount = 0.05f, mShrinkDistance = 0.8f)
+        val layoutManager = CenterZoomLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false, mShrinkAmount = 0.05f, mShrinkDistance = 0.8f, 1.2)
         binding.homeRatingRecView.layoutManager = layoutManager
 
         utilAdapter = UtilAdapter(arrayListOf(), showAll =  false, rule = false)
@@ -154,7 +151,7 @@ class MyHomeDetailFragment : BaseFragment<FragmentMyHomeDetailBinding>() {
     override fun setViewModel() {
         viewModel.messageLiveData.observe(viewLifecycleOwner){
             actionMode?.finish()
-            Toast.makeText(requireContext(), "Xóa nhà thành công", Toast.LENGTH_LONG).show()
+            (activity as BaseActivity).displayMessage(getString(R.string.delete_home_success))
             AppEvent.closePopup()
         }
 
@@ -172,6 +169,9 @@ class MyHomeDetailFragment : BaseFragment<FragmentMyHomeDetailBinding>() {
                 adapter.notifyDataSetChanged()
                 utilAdapter.notifyDataSetChanged()
                 rulesAdapter.notifyDataSetChanged()
+
+                ratingAdapter.ratingList = it.ratings
+                ratingAdapter.notifyDataSetChanged()
             }
             AppEvent.closePopup()
         }
@@ -187,6 +187,13 @@ class MyHomeDetailFragment : BaseFragment<FragmentMyHomeDetailBinding>() {
                 binding.showAllUtil.text = HtmlCompat.fromHtml(String.format(getString(R.string.see_less)), HtmlCompat.FROM_HTML_MODE_LEGACY)
                 utilAdapter.showAll = true
                 utilAdapter.notifyItemRangeInserted(4, utilAdapter.itemList?.size?.minus(4) ?: 0)
+            }
+        }
+
+        binding.showMap.setOnClickListener {
+            if (binding.home != null){
+                findNavController().navigate(R.id.action_myHomeDetailFragment_to_mapFragment, bundleOf(
+                    HOME to binding.home))
             }
         }
     }

@@ -4,6 +4,7 @@ import android.app.Application
 import com.homex.core.di.localModule
 import com.homex.core.di.remoteModule
 import com.homex.core.di.repositoryModule
+import com.homex.core.model.LocationSuggestion
 import com.homex.core.model.Profile
 import com.homex.core.util.PrefUtil
 import org.koin.android.ext.android.inject
@@ -20,7 +21,7 @@ open class CoreApplication: Application() {
     }
     private val prefsUtil: PrefUtil by inject()
     private var profile: Profile? = null
-    private var listProfile: List<Profile>? = listOf()
+    private var listSearch: List<LocationSuggestion>? = listOf()
     private var token: String? = null
     private var connectionId: String? = null
 
@@ -60,15 +61,22 @@ open class CoreApplication: Application() {
         this.connectionId = connectionId
     }
 
-    fun saveListProfile(list: List<Profile>?){
-        prefsUtil.listProfile = list
-        this.listProfile = list
+    fun saveListSearch(list: List<LocationSuggestion>?){
+        prefsUtil.listSearch = list
+        this.listSearch = list
     }
 
 
     fun getProfile(): Profile? = profile
     fun getToken(): String? = token
     fun getConnectionId(): String? = connectionId
-    fun getListProfile(): List<Profile>? = listProfile
+    fun getListSearch(): List<LocationSuggestion>? = listSearch
 
+    fun clearData(){
+        prefsUtil.clearAllData()
+        token = null
+        profile = null
+        connectionId = null
+        listSearch = null
+    }
 }
