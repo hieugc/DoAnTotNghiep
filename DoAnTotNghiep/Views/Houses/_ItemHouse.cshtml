@@ -1,0 +1,25 @@
+﻿@model DoAnTotNghiep.ViewModels.CircleRequestDetail
+
+<div class="house-result">
+    <div class="house-card">
+        <img src="@Model.ImageHouse.Data" alt="Mike" style="width:100%">
+        <div class="house-img-container">
+            <h2>@Model.House.Name</h2>
+            <p class="attribute"><i class="fa-solid fa-map-location-dot"></i><span>@Model.House.Location,  
+                @Model.House.WardName, @Model.House.DistrictName, @Model.House.CityName</span></p>
+            <div class="list-attribute">
+                <p class="attribute"><span>@Model.House.Rating (@Model.House.NumberRating)</span><i class="fa-solid fa-star"></i></p>
+                <p class="attribute"><i class="fa-solid fa-users"></i><span>@Model.House.People</span></p>
+                <p class="attribute"><i class="fa-solid fa-bed"></i><span>@Model.House.BedRoom</span></p>
+            </div>
+            <p>
+                <button class="item-button">
+                    <span>@Model.House.Price (point/ngày)</span>
+                </button>
+            </p>
+        </div>
+        <a target="_blank" href='@Url.Action("Details", "Houses", new {Id = Model.House.Id})' class="finding">
+            <i class="fa-sharp fa-solid fa-magnifying-glass"></i>
+        </a>
+    </div>
+</div>

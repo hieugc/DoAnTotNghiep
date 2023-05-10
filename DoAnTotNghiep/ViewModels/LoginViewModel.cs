@@ -52,7 +52,8 @@ namespace DoAnTotNghiep.ViewModels
             this.UrlImage = user.Files == null ? null : (host + "/" + user.Files.PathFolder + "/" + user.Files.FileName);
             this.Point = user.BonusPoint + user.Point;
             this.UserRating = user.UserRating;
-            if(user.Houses != null)
+            this.NumberRating = user.NumberUserRating;
+            if (user.Houses != null)
             {
                 this.NumberOfHouses = user.Houses.Count;
             }
@@ -69,5 +70,7 @@ namespace DoAnTotNghiep.ViewModels
         public int Point { get; set; } = 0;
         public double UserRating { get; set; } = 0;
         public int NumberOfHouses { get; set; } = 0;
+        public int NumberRating { get; set; } = 0;
+        public int NumberSwap { get; set; } = 0;
     }
 }

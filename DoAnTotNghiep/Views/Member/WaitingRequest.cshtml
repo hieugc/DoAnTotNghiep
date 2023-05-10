@@ -1,165 +1,43 @@
-﻿@model DoAnTotNghiep.Entity.AdminReport
-
+﻿@model List<CircleRequestViewModel>
+@using DoAnTotNghiep.Enum
 @{
     ViewData["Title"] = "Gợi ý trao đổi";
     Layout = "_LayoutMember";
 }
 
-
-@*
-    
-*@
-
 <div class="house">
     <div class="house-head">
         <h2>Danh sách gợi ý trao đổi xoay vòng</h2>
-        <button class="btn  btn-primary btn-sm" data-bs-target="#houseModalToggle" data-bs-toggle="modal">Thêm địa điểm muốn đến</button>
+    </div>
+    <div class="nav nav-tabs mb-2">
+        <div class="nav-link active" onclick="tabContent(null, this)">Tất cả</div>
+        @foreach (var item in StatusCircleRequestStr.getStatus())
+        {
+            <div class="nav-link" onclick="tabContent('.status-request-@item', this)">@StatusCircleRequestStr.getStatus(item)</div>
+        }
     </div>
     <div class="list-house">
-        @for (var item = 0; item < 5; item++)
+        @foreach (var item in Model)
         {
-            <div class="card mb-3">
-                <div class="row g-0">
-                    <div class="col-md-12">
-                        <div class="user">
-                            <div class="avt"><img src="~/Image/logo.png" alt="avatar" /></div>
-                            <div class="name">Phạm Minh Hiếu</div>
-                        </div>
-                        <span class="status text-success" data-bs-target="#circleRequestModal" data-bs-toggle="modal">1/4 người đã chấp nhận</span>
-                    </div>
-                    <div class="col-md-7">
-                        <img src="~/Image/logo.png" class="img-fluid rounded-start" alt="hình ảnh nhà">
-                    </div>
-                    <div class="col-md-5">
-                        <div class="card-body">
-                            <div class="body-head">
-                                <h5 class="card-title">Nhà 1</h5>
-                                <div>
-                                    <div class="point"><span>Thông tin </span><i class="fa-solid fa-circle-info"></i></div>
-                                    <div class="rating"><span>4.3</span><i class="fa-solid fa-star"></i></div>
-                                </div>
-                            </div>
-                            <div class="request-info">
-                                <span class="label">Phương thức: </span>
-                                <span class="value">Trao đổi bằng nhà</span>
-                            </div>
-                            <div class="request-info">
-                                <span class="label">Địa điểm: </span>
-                                <span class="value">165 Trương Định, kp2, p5,......</span>
-                            </div>
-                            <div class="request-info request-time">
-                                <span class="label">Thời gian: </span>
-                                <span class="value">22/02/2023 - 03/03/2023</span>
-                            </div>
-                            <div class="request-info request-price">
-                                <span class="label">Điểm bạn phải trả: </span>
-                                <span class="value">1200 Point</span>
-                            </div>
-                            <p class="card-control">
-                                <button type="button" class="btn  btn-primary">Liên hệ</button>
-                                <button type="button" class="btn  btn-success">Chấp nhận</button>
-                                <button type="button" class="btn  btn-danger">Từ chối</button>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            @(await Html.PartialAsync("~/Views/Request/_CircleRequestDetail.cshtml", item))
         }
     </div>
 </div>
-
 @section membersInCircleSwap{
-    <div class="modal fade" id="circleRequestModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="circleRequestModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl">
+    <script src="~/js/WaitingRequest/index.js" type="text/javascript"></script>
+    <script src="~/js/WaitingRequest/delete.js" type="text/javascript"></script>
+    <script src="~/js/WaitingRequest/updateStatus.js" type="text/javascript"></script>
+    <script src="~/js/WaitingRating/index.js" type="text/javascript"></script>
+    <button type="button" id="confirmClick" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#confirmPopup" hidden></button>
+    <div class="modal fade" id="confirmPopup" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="confirmPopupLabel" aria-hidden="true">
+        <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
-                    <div class="my-modal-title">
-                        <h3 class="house-title">Danh sách người trao đổi</h3>
-                    </div>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
                 <div class="modal-body">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Người trao đổi</th>
-                                <th>Xác nhận</th>
-                                <th>Người sẽ đổi</th>
-                                <th>Thông tin</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="table-light">
-                                <td>1</td>
-                                <td>
-                                    <div class="user">
-                                        <div class="avt"><img src="~/Image/logo.png" alt="avatar" /></div>
-                                        <div class="name">Phạm Minh Hiếu</div>
-                                    </div>  
-                                </td>
-                                <td>Chờ xác nhận</td>
-                                <td>
-                                    <div class="user">
-                                        <div class="avt"><img src="~/Image/logo.png" alt="avatar" /></div>
-                                        <div class="name">Phạm Minh Hiếu</div>
-                                    </div>
-                                </td>
-                                <td><a href="@Url.Action("Details", "House")" class="text-decoration-none"><span>Thông tin </span><i class="fa-solid fa-circle-info"></i></a></td>
-                            </tr>
-                            <tr class="table-success">
-                                <td>2</td>
-                                <td>
-                                    <div class="user">
-                                        <div class="avt"><img src="~/Image/logo.png" alt="avatar" /></div>
-                                        <div class="name">Phạm Minh Hiếu</div>
-                                    </div>  
-                                </td>
-                                <td>Đã chấp nhận</td>
-                                <td>
-                                    <div class="user">
-                                        <div class="avt"><img src="~/Image/logo.png" alt="avatar" /></div>
-                                        <div class="name">Phạm Minh Hiếu</div>
-                                    </div>
-                                </td>
-                                <td><a href="@Url.Action("Details", "House")" class="text-decoration-none"><span>Thông tin </span><i class="fa-solid fa-circle-info"></i></a></td>
-                            </tr>
-                            <tr class="table-danger">
-                                <td>3</td>
-                                <td>
-                                    <div class="user">
-                                        <div class="avt"><img src="~/Image/logo.png" alt="avatar" /></div>
-                                        <div class="name">Phạm Minh Hiếu</div>
-                                    </div>  
-                                </td>
-                                <td>Từ chối</td>
-                                <td>
-                                    <div class="user">
-                                        <div class="avt"><img src="~/Image/logo.png" alt="avatar" /></div>
-                                        <div class="name">Phạm Minh Hiếu</div>
-                                    </div>
-                                </td>
-                                <td><a href="@Url.Action("Details", "House")" class="text-decoration-none"><span>Thông tin </span><i class="fa-solid fa-circle-info"></i></a></td>
-                            </tr>
-                            <tr class="table-success">
-                                <td>4</td>
-                                <td>
-                                    <div class="user">
-                                        <div class="avt"><img src="~/Image/logo.png" alt="avatar" /></div>
-                                        <div class="name">Phạm Minh Hiếu</div>
-                                    </div>  
-                                </td>
-                                <td>Đã chấp nhận</td>
-                                <td>
-                                    <div class="user">
-                                        <div class="avt"><img src="~/Image/logo.png" alt="avatar" /></div>
-                                        <div class="name">Phạm Minh Hiếu</div>
-                                    </div>
-                                </td>
-                                <td><a href="@Url.Action("Details", "House")" class="text-decoration-none"><span>Thông tin </span><i class="fa-solid fa-circle-info"></i></a></td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <p class="text-danger" id="confirmContent"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" onclick="confirmDeleteHouse(false)">Hủy</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="confirmDeleteHouse(true)">Xác nhận</button>
                 </div>
             </div>
         </div>

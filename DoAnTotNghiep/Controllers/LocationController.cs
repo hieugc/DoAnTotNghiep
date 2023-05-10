@@ -118,7 +118,6 @@ namespace DoAnTotNghiep.Controllers
             );
         }
 
-
         [HttpGet("/api/Location/District")]
         public JsonResult GetDistrict(int IdCity)
         {
@@ -127,6 +126,25 @@ namespace DoAnTotNghiep.Controllers
                 Name = m.Name,
                 Id = m.Id,
                 BingName = m.BingName
+            }).ToList();
+
+            return Json(
+                new
+                {
+                    Data = districtList
+                }
+            );
+        }
+
+        [HttpGet("/api/Location/DistrictWithPoint")]
+        public JsonResult GetDistrictPoint(int IdCity)
+        {
+            var districtList = this._context.Districts.Where(m => m.IdCity == IdCity).Select(m => new
+            {
+                Name = m.Name,
+                Id = m.Id,
+                Lat = m.Lat,
+                Lng = m.Lng
             }).ToList();
 
             return Json(

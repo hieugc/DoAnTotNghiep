@@ -1,9 +1,24 @@
 ﻿@model DoAnTotNghiep.ViewModels.HomeViewModel
+@using DoAnTotNghiep.Enum;
 @{
     ViewData["Title"] = "Trang chủ";
-    var key = "Asf_PRzBpUJVcb9lcAg48BLOuAuaBItg4ZzCqaNQaSIFReqieYA02KBcovVD08Jk";
+    DateTime now = DateTime.Now.AddDays(-1);
+    List<DetailRequest> NewReceived = Model.NewRequests
+                                        .Where(m => m.Request.Status == (int)StatusRequest.WAIT_FOR_SWAP 
+                                                    && DateTime.Compare(now, m.Request.StartDate) <= 0
+                                                    && m.Request.isOwner == false)
+                                        .ToList();
+    List<DetailRequest> InAction = Model.NewRequests
+                                        .Where(m => m.Request.Status == (int)StatusRequest.CHECK_IN
+                                                    || m.Request.Status == (int)StatusRequest.ACCEPT)
+                                        .ToList();
 }
+@*
+//suggest cái mới
+//liệt kê check in
+//liệt kê check-out
 
+*@
 <div class="group-banner">
     <div class="w-100">
         <img src="~/Image/banner.png" alt="Banner Website" class="banner" />
@@ -37,63 +52,207 @@
 </div>
 
 <div class="container-fluid">
-    <!--Frame 1-->
-    <div class="frame_1">
-        <div class="container-lg">
-            <div class="description">
-                <h1>Khám phá những địa điểm của chúng tôi</h1>
-                <p><strong>VExchangeHome</strong> cung cấp cho bạn những trải nghiệm mới nhất qua từng nơi trên mọi miền đất nước.</p>
-                <div><button class="btn btn-primary btn-lg">Khám phá</button></div>
-            </div>
+    @if(NewReceived.Count() > 0)
+    {
+        <div class="suggest new-request">
+            <div class="container-lg">
+            <h2>Những yêu cầu bạn chờ xác nhận</h2>
             <div class="list">
-                @foreach(var item in Model.PopularCities)
+                @foreach (var item in NewReceived)
                 {
-                    <div class="img-container">
-                        <img src="@item.ImageUrl" alt="city" style="width:100%;">
-                        <div class="content">
-                            <h2>@item.Name</h2>
-                        </div>
-                    </div>
-                }
-            </div>
-        </div>
-    </div>
-    <!--Frame 2-->
-    <div class="frame_2">
-        <div class="container-lg">
-            <h2>Những căn nhà nổi bật</h2>
-            <div class="list">
-                @foreach (var item in Model.PopularHouses)
-                {
-                    <div class="house-card">
-                        @if(item.Images.Count() > 0){
-                            <img src="@item.Images.First().Data" alt="Mike" style="width:100%">
+                    <div class="card">
+                        @if(string.IsNullOrEmpty(item.Request.User.ImageUrl)){
+                                <img src="~/Image/user.svg" class="card-img-top avt" alt="avatar của @item.Request.User.UserName">
                         }
                         else
                         {
-                            <img src="~/Image/logo.png" alt="Mike" style="width:100%">
+                            <img  src="@item.Request.User.ImageUrl" class="card-img-top avt" alt="avatar của @item.Request.User.UserName">
                         }
-                        <div class="house-img-container">
-                            <h2>@item.Name</h2>                            
-                            <p class="attribute"><i class="fa-solid fa-map-location-dot"></i><span>@item.Location</span></p>
-                            <div class="list-attribute">
-                                <p class="attribute"><span>@item.Rating (@item.NumberRating)</span><i class="fa-solid fa-star"></i></p>
-                                <p class="attribute"><i class="fa-solid fa-users"></i><span>@item.People</span></p>
-                                <p class="attribute"><i class="fa-solid fa-bed"></i><span>@item.BedRoom</span></p>
+                        <div class="card-body">
+                            <div class="card-text">@item.Request.User.UserName yêu cầu trao đổi với nhà <strong>@item.House.Name</strong> của <strong>bạn</strong></div>
+                            <div class="mb-3">
+                                <label class="">Thời gian:</label>
+                                <strong class="value">@item.Request.StartDate.ToString("dd/MM/yyyy") <span>-</span> @item.Request.EndDate.ToString("dd/MM/yyyy")</strong>
                             </div>
-                            <p>
-                                <label class="item-button">
-                                    <span class="label-show">@item.Price (Point/ngày)</span>
-                                    <a class="label-hide" href="@Url.Action("Details", "Houses", new {Id = item.Id })">Xem chi tiết</a>
-                                </label>
-                            </p>
+                            <div class="mb-3">
+                                <label class="">Phương thức trao đổi: </label>
+                                <strong class="value">@(item.Request.Type == 1 ? "Trao đổi bằng điểm" : "Trao đổi bằng nhà")</strong>
+                            </div>
+                            <div class="control">
+                                <a href="@Url.Action("House", "Member", new {IdHouse = item.House.Id, IdRequest = item.Request.Id})" class="btn btn-outline-primary">Chi tiết</a>
+                            </div>
                         </div>
                     </div>
                 }
             </div>
-            <div><div class="btn btn-primary btn-lg"><a href="@Url.Action("Index", "Explore")">Xem thêm</a></div></div>
+            </div>
         </div>
-    </div>
+    }
+    @if (InAction.Count() > 0)
+    {
+        <div class="suggest request-valid">
+            <div class="container-lg">
+            <h2>Nhà bạn sẽ đến trong yêu cầu đang thực hiện</h2>
+            <div class="list">
+                @foreach (var item in InAction)
+                {
+                    @if (item.Request.isOwner && item.SwapHouse != null)
+                    {
+                        <div class="house-card">
+                            @if (item.SwapHouse.Images.Count() > 0)
+                            {
+                                <img src="@item.SwapHouse.Images.First().Data" alt="Hình ảnh nhà">
+                            }
+                            else
+                            {
+                                <img src="~/Image/logo.png" alt="Hình ảnh nhà">
+                            }
+                            <div class="house-img-container">
+                                <h2>@item.SwapHouse.Name</h2>
+                                <p class="attribute">
+                                    <i class="fa-solid fa-map-location-dot"></i><span>
+                                        @item.SwapHouse.Location, @item.SwapHouse.WardName,
+                                        @item.SwapHouse.DistrictName, @item.SwapHouse.CityName
+                                    </span>
+                                </p>
+                                <div class="mb-3">
+                                    <label class="">Thời gian:</label>
+                                    <strong class="value">@item.Request.StartDate.ToString("dd/MM/yyyy") <span>-</span> @item.Request.EndDate.ToString("dd/MM/yyyy")</strong>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="">Phương thức trao đổi: </label>
+                                    <strong class="value">@(item.Request.Type == 1 ? "Trao đổi bằng điểm" : "Trao đổi bằng nhà")</strong>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="">Tình trạng: </label>
+                                    <strong class="value">@StatusRequestStr.getStatus(item.Request.Status)</strong>
+                                </div>
+                                <div class="control">
+                                    <a href="@Url.Action("RequestValidReceived", "Member", new {IdRequest = item.Request.Id})" class="btn btn-outline-primary">Chi tiết yêu cầu</a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else if (item.Request.isOwner == false)
+                    {
+                        <div class="house-card">
+                            @if (item.House.Images.Count() > 0)
+                            {
+                                    <img src="@item.House.Images.First().Data" alt="Hình ảnh nhà" class="img-house">
+                            }
+                            else
+                            {
+                                <img src="~/Image/logo.png" alt="Hình ảnh nhà" class="img-house">
+                            }
+                            <div class="house-img-container">
+                                <h2>@item.SwapHouse.Name</h2>
+                                <p class="attribute">
+                                    <i class="fa-solid fa-map-location-dot"></i><span>
+                                        @item.SwapHouse.Location, @item.SwapHouse.WardName,
+                                        @item.SwapHouse.DistrictName, @item.SwapHouse.CityName
+                                    </span>
+                                </p>
+                                <div class="mb-3">
+                                    <label class="">Thời gian:</label>
+                                    <strong class="value">@item.Request.StartDate.ToString("dd/MM/yyyy") <span>-</span> @item.Request.EndDate.ToString("dd/MM/yyyy")</strong>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="">Phương thức trao đổi: </label>
+                                    <strong class="value">@(item.Request.Type == 1 ? "Trao đổi bằng điểm" : "Trao đổi bằng nhà")</strong>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="">Tình trạng: </label>
+                                        <strong class="value">@StatusRequestStr.getStatus(item.Request.Status)</strong>
+                                    </div>
+                                <div class="control">
+                                    <a href="@Url.Action("RequestValidReceived", "Member", new {IdRequest = item.Request.Id})" class="btn btn-outline-primary">Chi tiết yêu cầu</a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    }
+                </div>
+            </div>
+        </div>
+    }
+
+    <!--Frame 1-->
+    @if (Model.NumberCities > 0)
+    {
+        <div class="frame_1">
+            <div class="container-lg">
+                <div class="description">
+                    <h1>Khám phá những địa điểm của chúng tôi</h1>
+                    <p><strong>VExchangeHome</strong> cung cấp cho bạn những trải nghiệm mới nhất qua từng nơi trên mọi miền đất nước.</p>
+                    <div><button class="btn btn-primary btn-lg">Khám phá</button></div>
+                </div>
+                <div class="list">
+                    @foreach (var item in Model.PopularCities)
+                    {
+                        <div class="img-container">
+                            <img src="@item.ImageUrl" alt="city" style="width:100%;">
+                            <div class="content">
+                                <h2>@item.Name</h2>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="text-danger">Chưa có dữ liệu về thành phố</div>
+    }
+
+    <!--Frame 2-->
+    @if(Model.NumberHouses > 0)
+    {
+        <div class="frame_2">
+            <div class="container-lg">
+                <h2>Những căn nhà được xem nhiều trong hệ thống</h2>
+                <div class="list">
+                    @foreach (var item in Model.PopularHouses)
+                    {
+                        <div class="house-card">
+                            @if (item.Images.Count() > 0)
+                            {
+                                <img src="@item.Images.First().Data" alt="Mike" style="width:100%">
+                            }
+                            else
+                            {
+                                <img src="~/Image/logo.png" alt="Mike" style="width:100%">
+                            }
+                            <div class="house-img-container">
+                                <h2>@item.Name</h2>
+                                <p class="attribute"><i class="fa-solid fa-map-location-dot"></i><span>@item.Location, @item.WardName, @item.DistrictName, @item.CityName</span></p>
+                                <div class="list-attribute">
+                                    <p class="attribute"><span>@item.Rating (@item.NumberRating)</span><i class="fa-solid fa-star"></i></p>
+                                    <p class="attribute"><i class="fa-solid fa-users"></i><span>@item.People</span></p>
+                                    <p class="attribute"><i class="fa-solid fa-bed"></i><span>@item.BedRoom</span></p>
+                                </div>
+                                <p>
+                                    <label class="item-button">
+                                        <span class="label-show">@item.Price (Point/ngày)</span>
+                                        <a class="label-hide" href="@Url.Action("Details", "Houses", new {Id = item.Id })">Xem chi tiết</a>
+                                    </label>
+                                </p>
+                            </div>
+                        </div>
+                    }
+                </div>
+                @if (Model.NumberCities > 0)
+                {
+                    <div><a class="btn btn-primary btn-lg" href="@Url.Action("Index", "Explore", new {IdCity = Model.PopularCities.First().Id})">Xem thêm</a></div>
+                }
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="text-danger">Chưa có dữ liệu về nhà</div>
+    }
+    @*
     <!--Frame 3-->
     <div class="frame_3">
         <div class="container-lg">
@@ -145,7 +304,7 @@
                 </button>
             </div>
         </div>
-    </div>
+    </div>*@
 </div>
 
 @section Scripts{

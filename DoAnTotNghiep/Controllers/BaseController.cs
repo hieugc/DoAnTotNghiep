@@ -104,6 +104,16 @@ namespace DoAnTotNghiep.Controllers
                 option.Expires = DateTime.Now.AddHours(8);
             Response.Cookies.Append(key, value, option);
         }
+
+        protected void SetViewData(DoAnTotNghiepContext _context, int IdUser, byte[] salt)
+        {
+            var user = _context.Users.Include(m => m.Files).Include(m => m.Houses).Where(m => m.Id == IdUser).FirstOrDefault();
+            if (user != null)
+            {
+                ViewData["UserInfoData"] = new UserInfo(user, salt, this.GetWebsitePath());
+            }
+        }
+
         protected void RemoveCookie(string key)
         {
             Response.Cookies.Delete(key);

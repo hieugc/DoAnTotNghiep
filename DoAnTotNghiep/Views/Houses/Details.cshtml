@@ -153,6 +153,7 @@
         {
             <div class="bot">
                 <div><a href="@Url.Action("Messages", "Member", new {connection = Model.User?.UserAccess})" class="btn btn-primary" style="display: block;">Liên hệ</a></div>
+                <div><a href="@Url.Action("OverViewProfile", "Member", new {connection = Model.User?.UserAccess})" class="btn btn-primary" style="display: block;">Thông tin người dùng</a></div>
                 <div><button class="btn btn-success" onclick="getRequestFormByHouseId(@Model.Id)">Yêu cầu trao đổi</button></div>
                 <div><button class="btn btn-danger" type="button" onclick="renderReportForm('@(Model.User?.UserAccess)')">Báo cáo</button></div>
             </div>

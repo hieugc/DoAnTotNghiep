@@ -39,25 +39,81 @@
 .statistic-img .loading-box {
     width: 0;
 }
-.statistic-img.loading{
+.statistic-img.loading .tab-animation{
     background-color: rgba(0,0,0,0.05);
-    margin: 24px;
+    height: 100%;
+    display: flex;
+    justify-content: center;
 }
+.statistic-img .predict-render {
+    width: 100%;
+    height: 100%;
+}
+.statistic-img .tab-control,
+.statistic-img.loading .tab-control,
 .statistic-img.loading > canvas{
     display: none!important;
 }
-.statistic-img > canvas{
+
+.statistic-img.loading.predict .tab-control{
+    display: block!important;
+    width: 350px;
+    background: white;
+    padding: 12px;
+    margin: 12px;
+    border-radius: 12px;
+    box-shadow: 0 0 0.5rem #cdcdcd;
+}
+.statistic-img.loading.predict .tab-control > div{
+    margin-bottom: 12px;
+}
+.statistic-img.loading.predict .tab-control > div.btn{
+    width: 100%;
+}
+#predict-house{
+    margin: auto;
+}
+#predict-house .value{
+    text-align: center;
+    padding: 12px;
+    color: var(--bs-primary);
+}
+.statistic-img.loading.predict .predict-render {
+    width: 100%;
+    height: 100%;
+    margin: 24px;
+    display: flex;
+}
+.statistic-img.loading.predict .predict-render.show .loading-box{
+    display: none;
+}
+.statistic-img.loading.predict .predict-render.show #predict-house,
+.statistic-img.loading.predict .predict-render.show #predict-render {
+    display: block;
+}
+.statistic-img.loading.predict .tab-animation {
+    width: calc(100% - 350px);
+}
+.statistic-img.loading #predict-house,
+.statistic-img #predict-house,
+.statistic-img #predict-render ,
+.statistic-img.loading #predict-render {
+    display: none;
+}
+
+.statistic-img > canvas {
     width: auto !important;
-    height: 100%!important;
+    height: 100% !important;
     object-fit: scale-down;
 }
-.statistic-img.loading > .loading-box {
+.statistic-img.loading .loading-box {
     position: relative;
     width: 50%;
     height: 40px;
     border-radius: 50px;
     border: 3px solid #eee;
     overflow: hidden;
+    margin: auto;
 }
 
 .statistic-img.loading .loader {

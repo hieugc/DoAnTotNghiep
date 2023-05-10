@@ -123,7 +123,7 @@
                                     {
                                         <div class="user-chat">
                                             <div class="chat-head">
-                                                @if (string.IsNullOrEmpty(item.Value.UserMessages.First().ImageUrl))
+                                                @if (string.IsNullOrEmpty(seftAccess.ImageUrl))
                                                 {
                                                     <div class="avt"><img src="~/Image/user.svg" alt="avatar" /></div>
                                                 }
@@ -173,7 +173,7 @@
                                 {
                                     <div class="user-chat">
                                         <div class="chat-head">
-                                            @if (string.IsNullOrEmpty(item.Value.UserMessages.First().ImageUrl))
+                                            @if (string.IsNullOrEmpty(seftAccess.ImageUrl))
                                             {
                                                 <div class="avt"><img src="~/Image/user.svg" alt="avatar" /></div>
                                             }

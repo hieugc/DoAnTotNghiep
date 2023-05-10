@@ -36,8 +36,6 @@ namespace DoAnTotNghiep.ViewModels
         [MinLength(10, ErrorMessage = "Số điện thoại 10 số")]
         [Phone(ErrorMessage = "Số điện thoại 10 số")]
         public string? PhoneNumber { get; set; } = string.Empty;
-
-
         [Required(ErrorMessage = "Hãy điền email")]
         [MaxLength(320, ErrorMessage = "Email tối đa 320 ký tự")]
         [EmailAddress]
@@ -49,5 +47,19 @@ namespace DoAnTotNghiep.ViewModels
         public bool? Gender { get; set; } = false;
         public ImageBase? Image { get; set; }
         public IFormFile? File { get; set; }
+    }
+
+    public class UserProfile
+    {
+        public UserProfile(UserInfo user, List<DetailHouseViewModel> houses, List<DetailRatingWithUser> rating)
+        {
+            User = user;
+            Houses = houses;
+            Rating = rating;
+        }
+
+        public UserInfo User { get; set; }
+        public List<DetailHouseViewModel> Houses { get; set; }
+        public List<DetailRatingWithUser> Rating { get; set; }
     }
 }

@@ -69,6 +69,7 @@ namespace DoAnTotNghiep.ViewModels
     }
     public class DetailRequest
     {
+
         public DetailHouseViewModel House { get; set; } = new DetailHouseViewModel();
         public DetailRequestViewModel Request { get; set; } = new DetailRequestViewModel();
         public DetailHouseViewModel? SwapHouse { get; set; } = null;

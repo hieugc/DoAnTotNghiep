@@ -28,6 +28,14 @@ namespace DoAnTotNghiep.ViewModels
             this.Content = feed.Content;
             this.IdRequest = feed.IdRequest;
         }
+        public EditRatingViewModel(FeedBackOfCircle feed)
+        {
+            this.Id = feed.Id;
+            this.RatingHouse = feed.RateHouse;
+            this.RatingUser = feed.RateUser;
+            this.Content = feed.Content;
+            this.IdRequest = feed.IdCircle;
+        }
         [Required]
         public int Id { get; set; }
     }
@@ -52,6 +60,23 @@ namespace DoAnTotNghiep.ViewModels
             }
             this.IdRequest = feedBack.IdRequest;
         }
+
+        public DetailRatingViewModel(FeedBackOfCircle feedBack, int IdUser)
+        {
+            this.CreatedDate = feedBack.CreatedDate;
+            this.UpdatedDate = feedBack.UpdatedDate;
+            this.Content = feedBack.Content;
+            this.Rating = feedBack.RateHouse;
+            this.RatingUser = feedBack.RateUser;
+            this.Id = feedBack.Id;
+            if (feedBack.UserRated != null)
+            {
+                this.UserName = feedBack.UserRated.FirstName + " " + feedBack.UserRated.LastName;
+            }
+            this.IsOwner = IdUser == feedBack.IdUserRated;
+            this.IdRequest = feedBack.IdCircle;
+        }
+
         public DateTime UpdatedDate { get; set; } = DateTime.Now;
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public string Content { get; set; } = string.Empty;
@@ -60,10 +85,20 @@ namespace DoAnTotNghiep.ViewModels
         public string UserName { get; set; } = string.Empty;
         public int Id { get; set; } = 0;
         public int IdRequest { get; set; } = 0;
+        public bool IsOwner { get; set; } = false;
     }
 
     public class DetailRatingWithUser
     {
+        public DetailRatingWithUser() { }
+
+        public DetailRatingWithUser(FeedBack feedBack, byte[] salt, string host) { 
+            this.FeedBack = new DetailRatingViewModel(feedBack);
+            if(feedBack.Users!= null)
+            {
+                this.User = new UserInfo(feedBack.Users, salt, host);
+            }
+        }
         public UserInfo User { get; set; } = new UserInfo();
         public DetailRatingViewModel FeedBack { get; set; } = new DetailRatingViewModel();
     }
@@ -81,6 +116,6 @@ namespace DoAnTotNghiep.ViewModels
         public int FourStar { get; set; } = 0;
         public int FiveStar { get; set; } = 0;
         public int Total() => OneStar + TwoStar + ThreeStar + FourStar + FiveStar;
-        public double Rating() => (double) (OneStar + TwoStar + ThreeStar + FourStar + FiveStar)/Total();
+        public double Rating() => (double) (OneStar + TwoStar*2 + ThreeStar*3 + FourStar*4 + FiveStar*5)/Total();
     }
 }

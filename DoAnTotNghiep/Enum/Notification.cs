@@ -9,6 +9,7 @@
         public const int CIRCLE_SWAP = 4;
         public const int DEMO = 5;
         public const int PAYMENT = 6;
+        public const int CIRCLE_RATING = 7;
 
 
         public const string DemoTitle = "DEMO";
@@ -18,5 +19,17 @@
         public const string MessageTitle = "Thông báo tin nhắn";
         public const string CircleSwapTitle = "Gợi ý trao đổi";
         public const string PaymentTitle = "Nạp tích lũy";
+    }
+
+    public static class FunctionGetNotification
+    {
+        public static string GetFunction(int type, int idType, int id)
+        {
+            if(type == NotificationType.REQUEST || type == NotificationType.RATING)
+            {
+                return "requestView(" + idType + ", " + id + ")";
+            }
+            return "circleRequestView(" + idType + ")";
+        }
     }
 }

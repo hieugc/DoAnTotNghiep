@@ -1,0 +1,113 @@
+﻿@model ListRating
+@using DoAnTotNghiep.Enum;
+@{
+    double rating = Model.OverView.Rating();
+}
+    <span class="heading">Người dùng đánh giá</span>
+    <span class="fa fa-star @if(rating >= 1){@Html.Raw("checked")}"></span>
+    <span class="fa fa-star @if(rating >= 2){@Html.Raw("checked")}"></span>
+    <span class="fa fa-star @if(rating >= 3){@Html.Raw("checked")}"></span>
+    <span class="fa fa-star @if(rating >= 4){@Html.Raw("checked")}"></span>
+    <span class="fa fa-star @if(rating >= 5){@Html.Raw("checked")}"></span>
+    <p>Dựa trên @Model.OverView.Total() đánh giá từ người dùng.</p>
+    <hr style="border:3px solid #f1f1f1">
+    <div class="rate-overview">
+        <div class="line-star">
+            <div class="side">
+                <div>5 Sao</div>
+            </div>
+            <div class="middle">
+                <div class="bar-container">
+                <div class="bar-5" style="width: @Math.Ceiling((double) (Model.OverView.FiveStar  / Model.OverView.Total()))%"></div>
+                </div>
+            </div>
+            <div class="side right">
+                <div>@Model.OverView.FiveStar</div>
+            </div>
+        </div>
+
+        <div class="line-star">
+            <div class="side">
+                <div>4 Sao</div>
+            </div>
+            <div class="middle">
+                <div class="bar-container">
+                <div class="bar-4" style="width: @Math.Ceiling((double) (Model.OverView.FourStar  / Model.OverView.Total() * 100))%"></div>
+                </div>
+            </div>
+            <div class="side right">
+                <div>@Model.OverView.FourStar</div>
+            </div>
+        </div>
+
+        <div class="line-star">
+            <div class="side">
+                <div>3 Sao</div>
+            </div>
+            <div class="middle">
+                <div class="bar-container">
+                <div class="bar-3" style="width: @Math.Ceiling((double) (Model.OverView.ThreeStar  / Model.OverView.Total()))%"></div>
+                </div>
+            </div>
+            <div class="side right">
+                <div>@Model.OverView.ThreeStar</div>
+            </div>
+        </div>
+
+        <div class="line-star">
+            <div class="side">
+                <div>2 Sao</div>
+            </div>
+            <div class="middle">
+                <div class="bar-container">
+                <div class="bar-2" style="width: @Math.Ceiling((double) (Model.OverView.TwoStar  / Model.OverView.Total()))%"></div>
+                </div>
+            </div>
+            <div class="side right">
+                <div>@Model.OverView.TwoStar</div>
+            </div>
+        </div>
+
+        <div class="line-star">
+            <div class="side">
+                <div>1 Sao</div>
+            </div>
+            <div class="middle">
+                <div class="bar-container">
+                <div class="bar-1" style="width: @Math.Ceiling((double) (Model.OverView.OneStar  / Model.OverView.Total()))%"></div>
+            </div>
+            </div>
+            <div class="side right">
+                <div>@Model.OverView.OneStar</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="frame-list-comment">
+        @foreach (var item in Model.Rating)
+        {
+            <div class="comment">
+                <div class="comment-head">
+                    @if (!string.IsNullOrEmpty(item.User.UrlImage))
+                    {
+                        <div class="avt"><img src="@item.User.UrlImage" alt="avt-user" /></div>
+                    }
+                    else{
+                        <div class="avt"><img src="~/Image/user.svg" alt="avt-user" /></div>
+                    }
+                    <div class="info">
+                        <h5><span class="name">@item.User.FirstName @item.User.LastName</span>
+                            <span class="rating">
+                                <span><span>Đánh giá chất lượng nhà: @item.FeedBack.Rating</span><i class="fa-solid fa-star"></i></span>
+                                <span><span>Đánh giá người dùng: @item.FeedBack.RatingUser</span><i class="fa-solid fa-star"></i></span>
+                            </span>
+                        </h5>
+                        <div class="date"><span>@item.FeedBack.UpdatedDate.ToString("dd/MM/yyyy")</span></div>
+                    </div>
+                </div>
+                <div class="comment-content">
+                    @item.FeedBack.Content
+                </div>
+            </div>
+        }
+    </div>

@@ -54,6 +54,11 @@ namespace DoAnTotNghiep.Controllers
             {
                 await this.SignOutCookie();
             }
+            int IdUser = this.GetIdUser();
+            if(IdUser != 0)
+            {
+                this.SetViewData(new DoAnTotNghiepContext(this._context.GetConfig()), IdUser, Crypto.Salt(this._configuration));
+            }
             return View();
         }
 
@@ -85,23 +90,18 @@ namespace DoAnTotNghiep.Controllers
                         }
 
                         await this.SignClaim(claims, Scheme.AuthenticationCookie(), DateTime.UtcNow.AddHours(Cookie.TimeExpireWeb));
-                        if (checkUser.Role == Role.MemberCode)
+                        /*if (checkUser.Role == Role.MemberCode)
                         {
                             SetCookie(Enum.Cookie.RoleAccess(), Role.Member, Cookie.TimeExpireWeb);
                         }
                         else
                         {
                             SetCookie(Enum.Cookie.RoleAccess(), Role.Admin, Cookie.TimeExpireWeb);
-                        }
-
-                        this._context.Entry(checkUser).Reference(m => m.Files).Load();
-
-                        byte[] RSA = Crypto.Salt(this._configuration);
-                        this._context.Entry(checkUser).Collection(m => m.Houses).Query().Load();
-                        this._context.Entry(checkUser).Reference(m => m.Files).Query().Load();
-                        string userInfo = JsonConvert.SerializeObject(new UserInfo(checkUser, RSA, this.GetWebsitePath()));
-
-                        SetCookie(Enum.Cookie.UserInfo(), userInfo, Cookie.TimeExpireWeb);
+                        }*/
+                        //this._context.Entry(checkUser).Collection(m => m.Houses).Query().Load();
+                        //this._context.Entry(checkUser).Reference(m => m.Files).Query().Load();
+                        //string userInfo = JsonConvert.SerializeObject(new UserInfo(checkUser, Crypto.Salt(this._configuration), this.GetWebsitePath()));
+                        //SetCookie(Enum.Cookie.UserInfo(), userInfo, Cookie.TimeExpireWeb);
                         return RedirectToAction("Index", "Home");
                     }
                     else
@@ -288,10 +288,10 @@ namespace DoAnTotNghiep.Controllers
                             new Claim(ClaimTypes.Name, OTP),
                             new Claim(ClaimTypes.Role, Role.None),
                             new Claim(ClaimTypes.Email, registerPasswordViewModel.Email),
-                            new Claim(ClaimTypes.Expired, DateTime.UtcNow.AddMinutes(3).ToString()),
+                            new Claim(ClaimTypes.Expired, DateTime.UtcNow.AddSeconds(135).ToString()),
                             new Claim(ClaimTypes.Hash, registerPasswordViewModel.Password)
                         };
-                        await this.SignClaim(claims, Scheme.AuthenticationCookie(), DateTime.UtcNow.AddMinutes(3));
+                        await this.SignClaim(claims, Scheme.AuthenticationCookie(), DateTime.UtcNow.AddSeconds(135));
                         this.RemoveCookie("Email");
                         return RedirectToAction(nameof(SignUpOTP));
                     }
@@ -326,7 +326,7 @@ namespace DoAnTotNghiep.Controllers
                             new Claim(ClaimTypes.Name, OTP), //OTP => token
                             new Claim(ClaimTypes.Role, Role.None),
                             new Claim(ClaimTypes.Email, data.Email),
-                            new Claim(ClaimTypes.Expired, DateTime.UtcNow.AddMinutes(3).ToString()),
+                            new Claim(ClaimTypes.Expired, DateTime.UtcNow.AddSeconds(135).ToString()),
                             new Claim(ClaimTypes.Hash, data.Password)
                         };
                         var token = new JwtHelper(this._configuration).GenerateToken(claims);
@@ -372,6 +372,7 @@ namespace DoAnTotNghiep.Controllers
         [Authorize(Roles = Enum.Role.None)]
         public IActionResult SignUpOTP()
         {
+            ViewData["timer"] = (DateTime.Parse(this.GetExpired()) - DateTime.UtcNow.AddSeconds(15)).TotalSeconds.ToString();
             return View(new RegisterOTPViewModel());
         }
         [HttpGet]
@@ -389,10 +390,10 @@ namespace DoAnTotNghiep.Controllers
                             new Claim(ClaimTypes.Name, OTP),
                             new Claim(ClaimTypes.Role, Role.None),
                             new Claim(ClaimTypes.Email, email),
-                            new Claim(ClaimTypes.Expired, DateTime.UtcNow.AddMinutes(3).ToString()),
+                            new Claim(ClaimTypes.Expired, DateTime.UtcNow.AddSeconds(135).ToString()),
                             new Claim(ClaimTypes.Hash, password)
                         };
-                await this.SignClaim(claims, Scheme.AuthenticationCookie(), DateTime.UtcNow.AddMinutes(3));
+                await this.SignClaim(claims, Scheme.AuthenticationCookie(), DateTime.UtcNow.AddSeconds(135));
 
                 return RedirectToAction(nameof(SignUpOTP));
             }
@@ -414,7 +415,7 @@ namespace DoAnTotNghiep.Controllers
                             new Claim(ClaimTypes.Name, OTP),
                             new Claim(ClaimTypes.Role, Role.None),
                             new Claim(ClaimTypes.Email, email),
-                            new Claim(ClaimTypes.Expired, DateTime.UtcNow.AddMinutes(3).ToString()),
+                            new Claim(ClaimTypes.Expired, DateTime.UtcNow.AddSeconds(135).ToString()),
                             new Claim(ClaimTypes.Hash, password)
                         };
                 var token = new JwtHelper(this._configuration).GenerateToken(claims);
@@ -423,8 +424,11 @@ namespace DoAnTotNghiep.Controllers
                 {
                     Status = 200,
                     Message = "Đã gửi OTP xác nhận",
-                    Token = new JwtSecurityTokenHandler().WriteToken(token),
-                    Expires = token.ValidTo
+                    Data = new TokenModel()
+                    {
+                        token = new JwtSecurityTokenHandler().WriteToken(token),
+                        expire = token.ValidTo
+                    }
                 });
             }
             return BadRequest(new
@@ -725,9 +729,9 @@ namespace DoAnTotNghiep.Controllers
                             new Claim(ClaimTypes.Name, OTP),
                             new Claim(ClaimTypes.Role, Role.None),
                             new Claim(ClaimTypes.Email, data.Email),
-                            new Claim(ClaimTypes.Expired, DateTime.UtcNow.AddMinutes(3).ToString())
+                            new Claim(ClaimTypes.Expired, DateTime.UtcNow.AddSeconds(135).ToString())
                         };
-                        await this.SignClaim(claims, Scheme.AuthenticationCookie(), DateTime.UtcNow.AddMinutes(3));
+                        await this.SignClaim(claims, Scheme.AuthenticationCookie(), DateTime.UtcNow.AddSeconds(135));
 
                         return RedirectToAction(nameof(ForgotOTP));
                     }
@@ -760,7 +764,7 @@ namespace DoAnTotNghiep.Controllers
                             new Claim(ClaimTypes.Name, OTP),
                             new Claim(ClaimTypes.Role, Role.None),
                             new Claim(ClaimTypes.Email, data.Email),
-                            new Claim(ClaimTypes.Expired, DateTime.UtcNow.AddMinutes(3).ToString())
+                            new Claim(ClaimTypes.Expired, DateTime.UtcNow.AddSeconds(135).ToString())
                         };
                         var token = new JwtHelper(this._configuration).GenerateToken(claims);
 
@@ -799,6 +803,7 @@ namespace DoAnTotNghiep.Controllers
         [Authorize(Roles = Enum.Role.None)]
         public IActionResult ForgotOTP()
         {
+            ViewData["timer"] = (DateTime.Parse(this.GetExpired()) - DateTime.UtcNow.AddSeconds(15)).TotalSeconds.ToString();
             return View(new RegisterOTPViewModel());
         }
         
@@ -1061,6 +1066,7 @@ namespace DoAnTotNghiep.Controllers
         {
             await HttpContext.SignOutAsync(
                     scheme: Scheme.AuthenticationCookie());
+
             RemoveCookie(Enum.Cookie.RoleAccess());
             RemoveCookie(Enum.Cookie.UserInfo());
         }

@@ -216,20 +216,22 @@ function initCitySelect2(elementTag, data, placeholder) {
     });
 }
 function initSelect() {
-    if ($("#city-select").length > 0) {
-        $("#city-select").select2({
-            dropdownParent: $('#BingMapModal')
-        });
-    }
-    if ($("#district-select").length > 0) {
-        $("#district-select").select2({
-            dropdownParent: $('#BingMapModal')
-        });
-    }
-    if ($("#ward-select").length > 0) {
-        $("#ward-select").select2({
-            dropdownParent: $('#BingMapModal')
-        });
+    if (window.location.href.indexOf("/Member/History") == -1) {
+        if ($("#city-select").length > 0) {
+            $("#city-select").select2({
+                dropdownParent: $('#BingMapModal')
+            });
+        }
+        if ($("#district-select").length > 0) {
+            $("#district-select").select2({
+                dropdownParent: $('#BingMapModal')
+            });
+        }
+        if ($("#ward-select").length > 0) {
+            $("#ward-select").select2({
+                dropdownParent: $('#BingMapModal')
+            });
+        }
     }
 }
 function showAddress(address) {

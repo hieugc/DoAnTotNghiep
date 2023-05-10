@@ -69,5 +69,6 @@ namespace DoAnTotNghiep.Data
         public DbSet<CheckOut> CheckOuts { get; set; }
         public DbSet<HistoryTransaction> HistoryTransactions { get; set; }
         public DbSet<Notification> Notifications { get; set; }  
+        public DbSet<FeedBackOfCircle> FeedBackOfCircles { get; set; }
     }
 }

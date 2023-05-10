@@ -1,0 +1,132 @@
+﻿.frame-title {
+    text-align: center;
+    padding: 24px;
+    border-top: 1px solid rgba(161, 172, 184, 0.4);
+    font-weight: 700;
+}
+.rating-frame{
+    overflow: auto;
+}
+.user-info,
+.user {
+    display: flex;
+    gap: 2px;
+    align-items: center;
+}
+.user .name{
+    font-weight: 600;
+}
+
+.d-flex.col-12 > .request-info .user-info .user img,
+.user img {
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    border: 1px solid rgba(161, 172, 184, 0.4);
+}
+
+.card .col-md-12 {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px;
+    border-bottom: 1px solid rgba(161, 172, 184, 0.4);
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+
+    .card .col-md-12 .status {
+        font-size: 16px;
+        font-weight: 500;
+    }
+
+.d-flex.col-12 {
+    gap: 24px;
+    justify-content: center;
+}
+
+    .d-flex.col-12 > .request-info {
+        width: 33.33%;
+    }
+
+.nav-link {
+    cursor: pointer;
+}
+
+
+
+.d-flex.col-12 .request-info p {    
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.mb-3 .value{
+    background: rgba(var(--bs-primary-rgb), 0.7);
+    color: white;
+    font-weight: 700;
+    padding: 12px;
+    border-radius: 12px;
+}
+
+.access-info {
+    text-decoration: none;
+    color: black;
+    font-weight: 700;
+    position: relative;
+}
+
+.access-info:hover{
+    text-decoration: underline;
+    color: var(--bs-primary);
+    cursor: pointer;
+}
+
+.access-info .tooltiptext {
+    visibility: hidden;
+    width: 300px;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    /* Position the tooltip */
+    position: absolute;
+    top: 0;
+    left: -25%;
+    z-index: 1;
+}
+
+.access-info:hover .tooltiptext {
+    visibility: visible;
+}
+
+.card {
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    transition: 0.1s;
+    border-radius: 5px;
+}
+
+    .card:hover {
+        box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+    }
+
+img {
+    border-radius: 5px 5px 0 0;
+}
+
+.container {
+    padding: 2px 16px;
+    color: black;
+    display: flex;
+    flex-flow: column;
+}
+span.checked{
+    color: orange;
+}
+.container > span,
+.container > span.swap > span {
+    display: block;
+}
+.container > span.swap > span.label {
+    font-weight: 400;
+}

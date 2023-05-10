@@ -1,0 +1,34 @@
+﻿@model List<NotificationViewModel>
+@using DoAnTotNghiep.Enum
+
+@{
+    ViewData["Title"] = "Thông báo";
+    Layout = "_Layout";
+}
+
+
+<div class="container-lg">
+    <div>
+        <h2 class="head-notification">Thông báo</h2>
+        <div class="btn btn-primary">Đánh dấu tất cả đã đọc</div>
+    </div>
+    <div class="list-notification">
+        @foreach(var item in Model)
+        {
+            <div onclick="@FunctionGetNotification.GetFunction(item.Type, item.IdType, item.Id)" class="dropdown-item alert-noti-@item.Id">
+                <div class="avt"><img src="@item.ImageUrl" alt="avt" /></div>
+                <div class="content">
+                    <div>
+                        <span class="title">@item.Title</span>
+                        <span>@item.Content</span>
+                    </div>
+                    <span class="time">@item.CreatedDate.ToString("hh:mm:ss dd/MM/yyyy")</span>
+                </div>
+                @if (!item.IsSeen)
+                {
+                    <div class="status"><i class="fa-solid fa-circle"></i></div>
+                }
+            </div>
+        }
+    </div>
+</div>

@@ -122,7 +122,7 @@ namespace DoAnTotNghiep.Controllers
                                                 Content = request.Houses.Name + " có đánh giá mới",
                                                 CreatedDate = DateTime.Now,
                                                 IsSeen = false,
-                                                ImageUrl = "/Image/house-demo.png",
+                                                ImageUrl = NotificationImage.Alert,
                                                 Type = NotificationType.RATING
                                             };
                                             this._context.Notifications.Add(notification);
@@ -213,7 +213,7 @@ namespace DoAnTotNghiep.Controllers
                                                 Content = "Bạn có đánh giá mới",
                                                 CreatedDate = DateTime.Now,
                                                 IsSeen = false,
-                                                ImageUrl = "/Image/house-demo.png",
+                                                ImageUrl = NotificationImage.Alert,
                                                 Type = NotificationType.RATING
                                             };
                                             this._context.Notifications.Add(notification);

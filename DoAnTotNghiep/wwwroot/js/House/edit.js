@@ -78,4 +78,5 @@ function configData(temp_data) {
     $("#mapAddress").html("<strong>Địa chỉ nhà: </strong>" + temp_data.location);
     loc = new Microsoft.Maps.Location(temp_data.lat, temp_data.lng);
     //reloadMap(temp_data.location);
+    //thêm thêm cái edit house
 }

@@ -1,0 +1,87 @@
+﻿@model UserProfile
+@using DoAnTotNghiep.Enum;
+@{
+    ViewData["Title"] = "Thông tin người dùng";
+    Layout = "_Layout";
+}
+
+<div class="profile">
+    <div class="avt">
+        @if (string.IsNullOrEmpty(Model.User.UrlImage))
+        {
+            <img src="/Image/user.svg" alt="avatar của Hiếu" class="img-avt" />
+        }
+        else
+        {
+            <img src="@Model.User.UrlImage" alt="avatar của Hiếu" class="img-avt" />
+        }
+    </div>
+    <div class="info">
+        <div class="name"><strong>@Model.User.FirstName @Model.User.LastName</strong></div>
+        <div class="rate">
+            <div class="frame-start">
+                <span class="fa fa-star @if(Model.User.UserRating >= 1){@Html.Raw("checked")}"></span>
+                <span class="fa fa-star @if(Model.User.UserRating >= 2){@Html.Raw("checked")}"></span>
+                <span class="fa fa-star @if(Model.User.UserRating >= 3){@Html.Raw("checked")}"></span>
+                <span class="fa fa-star @if(Model.User.UserRating >= 4){@Html.Raw("checked")}"></span>
+                <span class="fa fa-star @if(Model.User.UserRating >= 5){@Html.Raw("checked")}"></span>
+            </div>
+            <div class="number-rate"><strong>@Model.User.NumberRating</strong> người đánh giá</div>
+        </div>
+        <div class="swap">
+            <div class="label"><span>Số lượt trao đổi: </span><strong>@Model.User.NumberSwap</strong></div>
+        </div>
+        <div class="control">
+            @if (ViewData["isSelf"] != null && (ViewData["isSelf"] as string) == "true")
+            {
+                <a href="@Url.Action("Infomation", "Member")" class="btn btn-outline-primary"><i class="fa-solid fa-pen-to-square"></i> Chỉnh sửa thông tin</a>
+            }
+            else
+            {
+                <a href="@Url.Action("Messages", "Member", new {connection = Model.User.UserAccess})" class="btn btn-primary"><i class="fa-solid fa-comments"></i> Liên hệ</a>
+            }
+        </div>
+    </div>
+</div>
+<div class="list-house">
+    <h2 class="title">Danh sách nhà của người dùng</h2>
+    <div class="list">
+        @foreach(var item in Model.Houses)
+        {
+            <div class="house-result">
+                <div class="house-card">
+                    <img src="@item.Images.FirstOrDefault()?.Data" alt="Mike" style="width:100%">
+                    <div class="house-img-container">
+                        <h2>@item.Name</h2>
+                        <p class="attribute">
+                            <i class="fa-solid fa-map-location-dot"></i><span>
+                                @item.Location, @item.WardName, @item.DistrictName, @item.CityName
+                            </span>
+                        </p>
+                        <div class="list-attribute">
+                            <p class="attribute"><span>@item.Rating (@item.NumberRating)</span><i class="fa-solid fa-star"></i></p>
+                            <p class="attribute"><i class="fa-solid fa-users"></i><span>@item.People</span></p>
+                            <p class="attribute"><i class="fa-solid fa-bed"></i><span>@item.BedRoom</span></p>
+                        </div>
+                        <p>
+                            <button class="item-button">
+                                <span>@item.Price @HouseEnum.UnitPrice</span>
+                            </button>
+                        </p>
+                    </div>
+                    <a target="_blank" href='@Url.Action("Details", "Houses", new {Id = item.Id})' class="finding">
+                        <i class="fa-sharp fa-solid fa-magnifying-glass"></i>
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="list-review">
+    <h2 class="title">Nhận xét từ người dùng</h2>
+    @foreach(var item in Model.Rating)
+    {
+        @(await Html.PartialAsync("~/Views/Rating/_Comment.cshtml", item))
+    }
+</div>

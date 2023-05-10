@@ -443,7 +443,7 @@ namespace DoAnTotNghiep.Controllers
                             List<Entity.File> files = new List<Entity.File>();
                             if (data.Files == null)
                             {
-                                List<int> idRemove = new List<int>();
+                                List<int> idNotRemove = new List<int>();
                                 foreach (var item in data.Images)
                                 {
                                     if (item != null)
@@ -460,17 +460,17 @@ namespace DoAnTotNghiep.Controllers
                                         {
                                             if (item.Id != null && item.Id != 0)
                                             {
-                                                idRemove.Add(item.Id.Value);
+                                                idNotRemove.Add(item.Id.Value);
                                             }
                                         }
                                     }
                                 }
-                                if (model.FileOfHouses != null)
+                                if (model.FileOfHouses != null && idNotRemove.Count() > 0)
                                 {
                                     var deleteFileOfHouse = model.FileOfHouses
-                                                                .Where(m => m.IdHouse == model.Id 
-                                                                            && !idRemove.Contains(m.IdFile))
+                                                                .Where(m => m.IdHouse == model.Id && !idNotRemove.Contains(m.IdFile))
                                                                 .ToList();
+                                    List<int> idRemove = deleteFileOfHouse.Select(m => m.IdFile).ToList();
                                     List<Entity.File> deleteFiles = Context.Files.Where(m => idRemove.Contains(m.Id)).ToList();
                                     Context.Files.RemoveRange(deleteFiles);
                                     Context.FilesOfHouses.RemoveRange(deleteFileOfHouse);
@@ -490,7 +490,7 @@ namespace DoAnTotNghiep.Controllers
                                         }
                                     }
                                 }
-                                if (model.FileOfHouses != null)
+                                if (model.FileOfHouses != null && data.IdRemove.Count() > 0)
                                 {
                                     var deleteFileOfHouse = model.FileOfHouses
                                                                 .Where(m => m.IdHouse == model.Id 
@@ -510,18 +510,16 @@ namespace DoAnTotNghiep.Controllers
                             List<FileOfHouse> fileOfHouses = new List<FileOfHouse>();
                             foreach (var item in files)
                             {
-                                Entity.FileOfHouse fileOfHouse = new FileOfHouse()
+                                fileOfHouses.Add(new FileOfHouse()
                                 {
                                     IdFile = item.Id,
                                     IdHouse = model.Id
-                                };
-                                fileOfHouses.Add(fileOfHouse);
+                                });
                             }
 
                             Context.FilesOfHouses.AddRange(fileOfHouses);
                             Context.SaveChanges();
 
-                            transaction.Commit();
                             byte[] salt = Crypto.Salt(this._configuration);
 
                             DetailHouseViewModel detailHouseViewModel = new DetailHouseViewModel(model, salt);
@@ -547,6 +545,7 @@ namespace DoAnTotNghiep.Controllers
                             }
 
                             detailHouseViewModel.Images.AddRange(images);
+                            transaction.Commit();
                             return Json(new
                             {
                                 Status = 200,
@@ -711,16 +710,14 @@ namespace DoAnTotNghiep.Controllers
                 this._context.Entry(house.Users).Collection(m => m.Houses).Query().Load();
             }
 
-
             house.IncludeLocation(this._context);
             DetailHouseViewModel model = new DetailHouseViewModel(house, salt, house.Users, host);
             model.Ratings = this.GetRatingByHouse(house, host, salt);
-            DoAnTotNghiepContext Context = this._context;
             if (house.FileOfHouses != null)
             {
                 foreach (var f in house.FileOfHouses)
                 {
-                    Context.Entry(f).Reference(m => m.Files).Load();
+                    this._context.Entry(f).Reference(m => m.Files).Load();
                     if (f.Files != null)
                     {
                         model.Images.Add(new ImageBase(f.Files, host));
@@ -800,6 +797,10 @@ namespace DoAnTotNghiep.Controllers
                     }
                 }
             }
+            if (IdUser != 0)
+            {
+                this.SetViewData(new DoAnTotNghiepContext(this._context.GetConfig()), IdUser, Crypto.Salt(this._configuration));
+            }
 
             return View(model);
         }
@@ -863,6 +864,11 @@ namespace DoAnTotNghiep.Controllers
                     }
                 }
             }
+
+            if (IdUser != 0)
+            {
+                this.SetViewData(new DoAnTotNghiepContext(this._context.GetConfig()), IdUser, Crypto.Salt(this._configuration));
+            }
             return View("./Views/Houses/Details.cshtml", model);
         }
         /*
@@ -925,7 +931,7 @@ namespace DoAnTotNghiep.Controllers
             {
                 //Context.Entry(item).Reference(m => m.Citys).Query().Load();
                 //Context.Entry(item).Reference(m => m.Districts).Query().Load();
-                this._context.Entry(item).Collection(m => m.FileOfHouses).Query().Load();
+                //this._context.Entry(item).Collection(m => m.FileOfHouses).Query().Load();
                 this._context.Entry(item).Collection(m => m.RulesInHouses).Query().Load();
                 this._context.Entry(item).Collection(m => m.UtilitiesInHouses).Query().Load();
                 this._context.Entry(item).Reference(m => m.Users).Query().Load();
@@ -971,9 +977,9 @@ namespace DoAnTotNghiep.Controllers
                 this._context.Entry(item).Reference(m => m.Users).Load();
                 this._context.Entry(item).Collection(m => m.RulesInHouses).Query().Load();
                 this._context.Entry(item).Collection(m => m.UtilitiesInHouses).Query().Load();
-                this._context.Entry(item).Collection(m => m.Requests).Query().Load();
-                this._context.Entry(item).Collection(m => m.FileOfHouses).Query().Load();
-                this._context.Entry(item).Collection(m => m.FeedBacks).Query().Load();
+                //this._context.Entry(item).Collection(m => m.Requests).Query().Load();
+                //this._context.Entry(item).Collection(m => m.FileOfHouses).Query().Load();
+                //this._context.Entry(item).Collection(m => m.FeedBacks).Query().Load();
 
                 item.IncludeLocation(this._context);
                 DetailHouseViewModel model = new DetailHouseViewModel(item, salt, item.Users, host);

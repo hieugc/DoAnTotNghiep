@@ -21,7 +21,7 @@ namespace DoAnTotNghiep.Entity
                 IdUser = IdUser,
                 IdType = 0,
                 IsSeen = false,
-                ImageUrl = "/Image/house-demo.png"
+                ImageUrl = NotificationImage.Alert
             };
             return notification;
         }
@@ -36,7 +36,7 @@ namespace DoAnTotNghiep.Entity
                 IdUser = request.IdUser,
                 IdType = request.Id,
                 IsSeen = false,
-                ImageUrl ="/Image/house-demo.png"
+                ImageUrl = NotificationImage.Alert
             };
             return notification;
         }

@@ -130,10 +130,7 @@ namespace DoAnTotNghiep.Controllers
                                         return Json(new
                                         {
                                             Status = 200,
-                                            Data = new
-                                            {
-                                                Redirect = response.orderurl
-                                            }
+                                            Data = response
                                         });
                                         /*
                                         return Json(new
@@ -263,7 +260,7 @@ namespace DoAnTotNghiep.Controllers
                                         IdType = model.Id,
                                         IdUser = model.IdUser,
                                         IsSeen = false,
-                                        ImageUrl = "/Image/dollar coin.svg"
+                                        ImageUrl = NotificationImage.Coin
                                     };
                                     this._context.Notifications.Add(notification);
                                     this._context.SaveChanges();

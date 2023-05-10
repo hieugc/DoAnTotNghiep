@@ -3,6 +3,7 @@
     padding: 12px;
     background-color: rgba(var(--bs-primary-rgb), 0.2);
     border-radius: 12px;
+    min-width: 450px;
 }
 .rating-detail .head {
     display: flex;

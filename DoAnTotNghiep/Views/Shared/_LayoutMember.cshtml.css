@@ -77,11 +77,12 @@
     font-size: 18px;
 }
 
-.tab-right{
+.tab-right {
     margin: 24px;
     display: flex;
     width: 100%;
     justify-content: center;
+    overflow: hidden;
 }
 main{
     clear: both;

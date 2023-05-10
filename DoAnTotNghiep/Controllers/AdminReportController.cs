@@ -138,7 +138,7 @@ namespace DoAnTotNghiep.Controllers
                                     Content = "Bạn nhận được phản ánh từ quản trị viên",
                                     CreatedDate = DateTime.Now,
                                     IsSeen = false,
-                                    ImageUrl = "/Image/house-demo.png",
+                                    ImageUrl = NotificationImage.Alert,
                                     Type = NotificationType.ADMIN_REPORT
                                 };
                                 this._context.Notifications.Add(notification);

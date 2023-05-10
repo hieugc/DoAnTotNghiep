@@ -42,6 +42,23 @@ namespace DoAnTotNghiep.Controllers
             _configuration = configuration;
             _signalContext = signalContext;
         }
+        
+        public IActionResult Index()
+        {
+            int IdUser = this.GetIdUser();
+            string host = this.GetWebsitePath();
+            var model = this._context.Notifications
+                                    .OrderByDescending(m => m.CreatedDate)
+                                    .Where(m => m.IdUser == IdUser)
+                                    .Select(m => new NotificationViewModel(m, host))
+                                    .ToList();
+            if (IdUser != 0)
+            {
+                this.SetViewData(new DoAnTotNghiepContext(this._context.GetConfig()), IdUser, Crypto.Salt(this._configuration));
+            }
+            return View(model);
+        }
+
         [HttpGet("/Notification/Get")]
         public IActionResult GetNotifications(Pagination pagination)
         {
@@ -86,6 +103,42 @@ namespace DoAnTotNghiep.Controllers
         public IActionResult ApiUpdateSeen([FromBody] int Id)
         {
             return this.SeenNotification(Id);
+        }
+
+
+        [HttpPost("/Notification/SeenAll")]
+        public IActionResult WebSeenAll()
+        {
+            return this.SeenAll();
+        }
+
+        [HttpPost("/api/Notification/SeenAll")]
+        public IActionResult ApiSeenAll()
+        {
+            return this.SeenAll();
+        }
+        private IActionResult SeenAll()
+        {
+            int IdUser = this.GetIdUser();
+            var model = this._context.Notifications
+                                        .Where(m => m.IdUser == IdUser)
+                                        .ToList();
+            try
+            {
+                foreach (var item in model) item.IsSeen = true;
+                this._context.Notifications.UpdateRange(model);
+                this._context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+
+            return Json(new
+            {
+                Status = 200,
+                Message = "Cập nhật thành công"
+            });
         }
 
         private IActionResult SeenNotification(int Id = 0)

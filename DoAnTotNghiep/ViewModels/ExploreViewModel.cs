@@ -35,9 +35,33 @@ namespace DoAnTotNghiep.ViewModels
 
     public class CityAndDistrict
     {
+        public CityAndDistrict() { }
+        public CityAndDistrict(City city)
+        {
+            IdCity = city.Id;
+            IdDistrict = null;
+            CityName = city.Name;
+            DistrictName = null;
+        }
         public int IdCity { get; set; }
         public int? IdDistrict { get; set; }
         public string CityName { get; set; } = string.Empty;
-        public string DistrictName { get; set; } = string.Empty;
+        public string? DistrictName { get; set; } = string.Empty;
+    }
+
+    public class CityView
+    {
+        public CityView(City city)
+        {
+            this.IdCity = city.Id;
+            this.CityName = city.Name;
+        }
+        public CityView(CityAndDistrict city)
+        {
+            this.IdCity = city.IdCity;
+            this.CityName = city.CityName;
+        }
+        public int IdCity { get; set; }
+        public string CityName { get; set; } = string.Empty;
     }
 }

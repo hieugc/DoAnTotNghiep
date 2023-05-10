@@ -57,7 +57,7 @@ function appendMessage(idTag, object) {
             }
             else {
                 if (prev == userAccess.userAccess) {
-                    res += selfMessage(userAccess.imageUrl, userAccess.userName, show);
+                    res += selfMessage(userAccess.urlImage, userAccess.userName, show);
                 }
                 else {
                     res += otherMessage(object.userMessages[0].imageUrl, object.userMessages[0].userName, show);
@@ -68,7 +68,7 @@ function appendMessage(idTag, object) {
         }
         if (show.length > 0) {
             if (prev == userAccess.userAccess) {
-                res += selfMessage(userAccess.imageUrl, userAccess.userName, show);
+                res += selfMessage(userAccess.urlImage, userAccess.userName, show);
             }
             else {
                 res += otherMessage(object.userMessages[0].imageUrl, object.userMessages[0].userName, show);
@@ -111,6 +111,7 @@ function otherMessage(urlImage, name, listchat) {
 }
 function headMessage(urlImage, name) {
     let str = `<div class="chat-head">`;
+    console.log(urlImage);
     if (urlImage == null) {
         str += `<div class="avt"><img src=${window.location.origin + "/Image/user.svg"} alt="avatar" /></div>`;
     }
@@ -243,8 +244,9 @@ function addMessage(messageModel, idRoom, isSelf, isContinue) {
         addMessageToFrame(messageModel.message, "#message-" + idRoom);
     }
     else {
+        console.log(userAccess);
         if (isSelf == true) {
-            $(`#message-${idRoom} .list-message`).prepend(selfMessage(userAccess.imageUrl, userAccess.firstName + " " + userAccess.lastName, [messageModel.message]));
+            $(`#message-${idRoom} .list-message`).prepend(selfMessage(userAccess.urlImage, userAccess.firstName + " " + userAccess.lastName, [messageModel.message]));
         }
         else {
             $(`#message-${idRoom} .list-message`).prepend(otherMessage(chatRoom[idRoom].userMessages[0].imageUrl, chatRoom[idRoom].userMessages[0].userName, [messageModel.message]));
@@ -335,7 +337,7 @@ function getAndLoadMessage(idRoom) {
                         }
                         else {
                             if (prev == userAccess.userAccess) {
-                                $(`#message-${idRoom} .list-message`).append(selfMessage(userAccess.imageUrl, userAccess.userName, show));
+                                $(`#message-${idRoom} .list-message`).append(selfMessage(userAccess.urlImage, userAccess.userName, show));
                             }
                             else {
                                 $(`#message-${idRoom} .list-message`).append(otherMessage(result.data[idRoom].userMessages[0].imageUrl, result.data[idRoom].userMessages[0].userName, show));
@@ -346,7 +348,7 @@ function getAndLoadMessage(idRoom) {
                     }
                     if (show.length > 0) {
                         if (prev == userAccess.userAccess) {
-                            $(`#message-${idRoom} .list-message`).append(selfMessage(userAccess.imageUrl, userAccess.userName, show));
+                            $(`#message-${idRoom} .list-message`).append(selfMessage(userAccess.urlImage, userAccess.userName, show));
                         }
                         else {
                             $(`#message-${idRoom} .list-message`).append(otherMessage(result.data[idRoom].userMessages[0].imageUrl, result.data[idRoom].userMessages[0].userName, show));

@@ -18,7 +18,7 @@
             </div>
             <div class="middle">
                 <div class="bar-container">
-                <div class="bar-5" style="width: @Math.Ceiling((double) (Model.OverView.FiveStar  / Model.OverView.Total()))%"></div>
+                <div class="bar-5" style="width: @Math.Ceiling((double) (Model.OverView.FiveStar  / Model.OverView.Total() * 100))%"></div>
                 </div>
             </div>
             <div class="side right">
@@ -46,7 +46,7 @@
             </div>
             <div class="middle">
                 <div class="bar-container">
-                <div class="bar-3" style="width: @Math.Ceiling((double) (Model.OverView.ThreeStar  / Model.OverView.Total()))%"></div>
+                <div class="bar-3" style="width: @Math.Ceiling((double) (Model.OverView.ThreeStar  / Model.OverView.Total() * 100))%"></div>
                 </div>
             </div>
             <div class="side right">
@@ -60,7 +60,7 @@
             </div>
             <div class="middle">
                 <div class="bar-container">
-                <div class="bar-2" style="width: @Math.Ceiling((double) (Model.OverView.TwoStar  / Model.OverView.Total()))%"></div>
+                <div class="bar-2" style="width: @Math.Ceiling((double) (Model.OverView.TwoStar  / Model.OverView.Total() * 100))%"></div>
                 </div>
             </div>
             <div class="side right">
@@ -74,7 +74,7 @@
             </div>
             <div class="middle">
                 <div class="bar-container">
-                <div class="bar-1" style="width: @Math.Ceiling((double) (Model.OverView.OneStar  / Model.OverView.Total()))%"></div>
+                <div class="bar-1" style="width: @Math.Ceiling((double) (Model.OverView.OneStar  / Model.OverView.Total() * 100))%"></div>
             </div>
             </div>
             <div class="side right">
@@ -86,6 +86,9 @@
     <div class="frame-list-comment">
         @foreach (var item in Model.Rating)
         {
+            @(await Html.PartialAsync("~/Views/Rating/_Comment.cshtml", item))
+            @*
+
             <div class="comment">
                 <div class="comment-head">
                     @if (!string.IsNullOrEmpty(item.User.UrlImage))
@@ -109,5 +112,6 @@
                     @item.FeedBack.Content
                 </div>
             </div>
+    *@
         }
     </div>

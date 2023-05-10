@@ -60,7 +60,7 @@ namespace DoAnTotNghiep.Entity
         public virtual int IdUser { get; set; }
 
         [ForeignKey(nameof(IdUser))]
-        public virtual User? Users { get; set; }
+        public virtual User? Users { get; set; }//người đánh giá
 
         [Column("id_house")]
         public virtual int? IdHouse { get; set; }
@@ -80,6 +80,6 @@ namespace DoAnTotNghiep.Entity
         public virtual int IdUserRated { get; set; }
 
         [ForeignKey(nameof(IdUserRated))]
-        public virtual User? UserRated { get; set; }
+        public virtual User? UserRated { get; set; }//đc đánh giá
     }
 }

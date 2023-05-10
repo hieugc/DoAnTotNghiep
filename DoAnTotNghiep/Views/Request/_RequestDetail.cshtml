@@ -1,12 +1,15 @@
 ﻿@using DoAnTotNghiep.Enum;
 @model DoAnTotNghiep.ViewModels.DetailRequest
+@{
+    int? IdRequest = ViewData["IdRequest"] as int?;
+}
 
 <div class="card card-@Model.Request.Id mb-3 status status-request-@Model.Request.Status">
     <div class="row g-0">
-        <div class="col-md-12">
+        <div class="col-md-12" @(IdRequest != null && IdRequest == Model.Request.Id? Html.Raw("style=\"border: 2px solid var(--bs-primary);\""): Html.Raw(""))>
             <div class="user-info">
                 @if(Model.Request.isOwner == false){
-                    <div class="user">
+                    <a href="@Url.Action("OverViewProfile", "Member", new {UserAccess = Model.Request.User.UserAccess})" class="user">
                         @if (Model.Request.User != null)
                         {
                             @if (!string.IsNullOrEmpty(Model.Request.User.ImageUrl))
@@ -17,19 +20,19 @@
                             {
                                 <img src="~/Image/user.svg" alt="avt" />
                             }
-                            <div class="name">@Model.Request.User.UserName</div>
+                            <span class="name">@Model.Request.User.UserName</span>
                         }
                         else
                         {
                             <img src="~/Image/user.svg" alt="avt" />
                         }
-                    </div>
-                    <div>đã gửi yêu cầu đến <strong>bạn</strong></div>
+                    </a>
+                    <span>đã gửi yêu cầu đến <strong>bạn</strong></span>
                 }
                 else
                 {
                     <div><strong>Bạn</strong> đã gửi yêu cầu đến </div>
-                    <div class="user">
+                    <a href="@Url.Action("OverViewProfile", "Member", new {UserAccess = Model.House.User.UserAccess})" class="user">
                         @if (Model.House.User != null)
                         {
                             @if (!string.IsNullOrEmpty(Model.House.User.UrlImage))
@@ -40,13 +43,13 @@
                             {
                                 <img src="~/Image/user.svg" alt="avt" />
                             }
-                            <div class="name">@Model.House.User.FirstName @Model.House.User.LastName</div>
+                            <span class="name">@Model.House.User.FirstName @Model.House.User.LastName</span>
                         }
                         else
                         {
                             <img src="~/Image/user.svg" alt="avt" />
                         }
-                    </div>
+                    </a>
                 }
             </div>
             <span class="status-@Model.Request.Status text-success">@StatusRequestStr.getStatus(Model.Request.Status)</span>

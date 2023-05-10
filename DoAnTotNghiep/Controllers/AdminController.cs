@@ -23,10 +23,10 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using static System.Net.WebRequestMethods;
 using System.Composition;
+using DoAnTotNghiep.TrainModels;
 
 namespace DoAnTotNghiep.Controllers
 {
-    [Authorize(Roles = Role.Admin)]
     public class AdminController: BaseController
     {
         private readonly DoAnTotNghiepContext _context;
@@ -85,6 +85,13 @@ namespace DoAnTotNghiep.Controllers
             return View(reportList);
         }
         */
+
+        [HttpGet("/PredictSquare")]
+        [AllowAnonymous]
+        public IActionResult GetSquared()
+        {
+            return Json(new PredictHouse().GetSquare());
+        }
 
 
         //Danh sách người dùng

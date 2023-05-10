@@ -40,6 +40,13 @@ namespace DoAnTotNghiep.Controllers
             ExploreResult model = new ExploreResult();
             model.Houses =  await this.SearchAsync(filter);
             model.Utilities = this._context.Utilities.ToList();
+
+            int IdUser = this.GetIdUser();
+            if (IdUser != 0)
+            {
+                this.SetViewData(new DoAnTotNghiepContext(this._context.GetConfig()), IdUser, Crypto.Salt(this._configuration));
+            }
+
             return View(model);
         }
 
@@ -112,12 +119,12 @@ namespace DoAnTotNghiep.Controllers
             List<DetailHouseViewModel> res = new List<DetailHouseViewModel>();
             foreach (var item in listHouse.Skip(skip).Take(number))
             {
-                if (!this._context.Entry(item).Collection(m => m.Requests).IsLoaded)
+                /*if (!this._context.Entry(item).Collection(m => m.Requests).IsLoaded)
                 {
                     this._context.Entry(item).Collection(m => m.Requests).Query().Load();
-                }
-                this._context.Entry(item).Collection(m => m.FileOfHouses).Query().Load();
-                this._context.Entry(item).Collection(m => m.FeedBacks).Query().Load();
+                }*/
+                //this._context.Entry(item).Collection(m => m.FileOfHouses).Query().Load();
+                //this._context.Entry(item).Collection(m => m.FeedBacks).Query().Load();
 
                 item.IncludeLocation(this._context);
                 DetailHouseViewModel model = new DetailHouseViewModel(item, salt, item.Users, host);
@@ -182,7 +189,6 @@ namespace DoAnTotNghiep.Controllers
                                 .Where(m => m.Status == (int)StatusHouse.VALID
                                             && m.IdCity == IdCity)
                                 .ToList();
-
                 model.AddRange(res);
             }
 
@@ -262,13 +268,13 @@ namespace DoAnTotNghiep.Controllers
             str = Regex.Replace(str, @"[ýỳỷỹỵ]", "y");
             return Regex.Replace(str, @"[đ]", "d");
         }
-
         private string RemoveSyntax(string str)
         {
             string pattern = @"[^a-z0-9\s]+";
             return Regex.Replace(str, pattern, "");
         }
-
+        /*
+        //district + city
         [HttpGet("/api/Suggest")]
         public IActionResult GetCityAndDistrict(string location)
         {
@@ -289,6 +295,43 @@ namespace DoAnTotNghiep.Controllers
             {
                 Status = 200,
                 Data = model
+            });
+        }*/
+
+        [HttpGet("/api/Suggest")]
+        public IActionResult GetCityAndDistrict(string location)
+        {
+            location = this.RemoveSyntax(this.RemoveVietnamese(location));
+            int number = 12;
+
+            List<CityAndDistrict> city = this._context.Cities.ToList()
+                                    .Where(m => this.RemoveVietnamese(m.Name).Contains(location))
+                                    .Select(m => new CityAndDistrict(m))
+                                    .Take(number).ToList();
+            number -= city.Count();
+
+            if(number > 0)
+            {
+
+                var item = from ct in this._context.Cities
+                           join dt in this._context.Districts on ct.Id equals dt.IdCity
+                           select new CityAndDistrict()
+                           {
+                               IdCity = ct.Id,
+                               IdDistrict = dt.Id,
+                               CityName = ct.Name,
+                               DistrictName = dt.Name
+                           };
+                List<CityAndDistrict> model = item.ToList()
+                                            .Where(m => this.RemoveVietnamese((m.DistrictName + " " + m.CityName)).Contains(location)
+                                                            && !city.Any(c => c.IdCity == m.IdCity))
+                                            .Take(number).ToList();
+                city.AddRange(model);
+            }
+            return Json(new
+            {
+                Status = 200,
+                Data = city
             });
         }
     }

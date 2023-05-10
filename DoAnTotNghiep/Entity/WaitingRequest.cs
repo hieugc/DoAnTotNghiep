@@ -1,4 +1,5 @@
-﻿using DoAnTotNghiep.Modules;
+﻿using DoAnTotNghiep.Enum;
+using DoAnTotNghiep.Modules;
 using Microsoft.VisualBasic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -24,6 +25,32 @@ namespace DoAnTotNghiep.Entity
             };
         }
 
+        public WaitingRequest Node(RequestInCircleExchangeHouse requestInCircleExchangeHouse, WaitingRequest request)
+        {
+            request.Status = requestInCircleExchangeHouse.Status;
+            return request;
+        }
+
+        public WaitingRequestForSearch? CreateModelByRequest(Request model)
+        {
+            if (model.Houses == null || model.SwapHouses == null || model.Houses.IdCity == null || model.SwapHouses.IdCity == null) return null;
+
+            WaitingRequest request = new WaitingRequest()
+            {
+                StartDate = model.StartDate,
+                EndDate = model.EndDate,
+                IdCity = model.Houses.IdCity.Value,//thành phố đến
+                IdUser = model.IdUser,//người request
+                IdHouse = model.SwapHouses.Id,
+                Status = (int)StatusWaitingRequest.IN_CIRCLE,
+                Point = 0,
+                IdDistrict = null,
+                IdWard = null,
+                Id = 0
+            };
+
+            return new WaitingRequestForSearch(request, request.IdCity, model.SwapHouses.IdCity.Value, model.StartDate, model.EndDate);
+        }
 
         [Key]
         [Column("id")]

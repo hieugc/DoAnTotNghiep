@@ -70,7 +70,7 @@ function createTransaction() {
             success: function (result) {
                 console.log(result);
                 if (result.status == 200) {
-                    //window.open(result.data.orderurl, "_blank");
+                    //window.open(result.url, "_blank");
                     initQR(result);
                 }
             },

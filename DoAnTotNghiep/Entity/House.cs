@@ -55,11 +55,17 @@ namespace DoAnTotNghiep.Entity
         public void IncludeLocation(DoAnTotNghiepContext context)
         {
             if(this.Citys == null && !context.Entry(this).Reference(m => m.Citys).IsLoaded)
-                    context.Entry(this).Reference(m => m.Citys).Load();
+                context.Entry(this).Reference(m => m.Citys).Load();
             if (this.Districts == null && !context.Entry(this).Reference(m => m.Districts).IsLoaded)
                 context.Entry(this).Reference(m => m.Districts).Load();
             if (this.Wards == null && !context.Entry(this).Reference(m => m.Wards).IsLoaded)
                 context.Entry(this).Reference(m => m.Wards).Load();
+            if (this.Requests == null && !context.Entry(this).Collection(m => m.Requests).IsLoaded)
+                context.Entry(this).Collection(m => m.Requests).Load();
+            if (this.FeedBacks == null && !context.Entry(this).Collection(m => m.FeedBacks).IsLoaded)
+                context.Entry(this).Collection(m => m.FeedBacks).Load();
+            if (this.FileOfHouses == null && !context.Entry(this).Collection(m => m.FileOfHouses).IsLoaded)
+                context.Entry(this).Collection(m => m.FileOfHouses).Load();
         }
 
 
@@ -145,5 +151,6 @@ namespace DoAnTotNghiep.Entity
         public virtual ICollection<Request>? Requests { get; set; }
         public virtual ICollection<UserReport>? UserReports { get; set; }
         public virtual ICollection<FeedBack>? FeedBacks { get; set; }
+        public virtual ICollection<FeedBackOfCircle>? FeedBackOfCircles { get; set; }
     }
 }

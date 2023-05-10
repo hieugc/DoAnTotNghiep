@@ -169,7 +169,6 @@ function create(data) {
         contentType: "application/json",
         type: "POST",
         success: function (result) {
-            console.log(result);
             $("#requestFormClick").click();
         },
         error: function (error) {

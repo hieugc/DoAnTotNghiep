@@ -96,9 +96,6 @@ namespace DoAnTotNghiep.ViewModels
             {
                 this.Request = house.Requests.Where(m => m.Status == (int) StatusRequest.WAIT_FOR_SWAP).Count();
                 DateTime now = DateTime.Now;
-
-                //lấy rangeTime
-
                 List<RangeDate> rangeDates = house.Requests.Where(r => (r.Status == (int)StatusRequest.ACCEPT
                                                                         || r.Status == (int)StatusRequest.CHECK_IN
                                                                     )
@@ -132,7 +129,7 @@ namespace DoAnTotNghiep.ViewModels
         public string UserAccess { get; set; } = string.Empty;
         public string? CityName { get; set; } = string.Empty;
         public string? DistrictName { get; set; } = string.Empty;
-        public UserInfo? User { get; set; }//đã trả lúc login // thông tin là của nó :))
+        public UserInfo? User { get; set; }
         public List<RangeDate> InValidRangeDates { get; set; } = new List<RangeDate>();
         //list Url
         public List<DetailRatingWithUser> Ratings { get; set; } = new List<DetailRatingWithUser>();
@@ -338,5 +335,18 @@ namespace DoAnTotNghiep.ViewModels
         }
         public int Id { get; set; }
         public string Name { get; set; }
+    }
+
+    public class HistoryViewModel
+    {
+        public HistoryViewModel(List<HouseSelector> house, double lat, double lng)
+        {
+            this.ListHouse = house;
+            this.Lat = lat;
+            this.Lng = lng;
+        }
+        public List<HouseSelector> ListHouse { get; set; }
+        public double Lat { get; set; }
+        public double Lng { get; set; }
     }
 }

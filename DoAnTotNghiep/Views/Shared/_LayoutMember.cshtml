@@ -1,10 +1,7 @@
 ﻿@using DoAnTotNghiep.Enum;
 @using Newtonsoft.Json;
 @{
-    UserInfo? userInfo = null;
-        string? info = Context.Request.Cookies[Cookie.UserInfo()];
-        if (!string.IsNullOrEmpty(info))
-            userInfo = JsonConvert.DeserializeObject<UserInfo>(info);
+    UserInfo? userInfo = ViewData["UserInfoData"] as UserInfo;
 }
 
 
@@ -104,8 +101,8 @@
                     }
                 </div>
                 <div class="name">
-                    <span>@userInfo.FirstName @userInfo.LastName</span>
-                    <span class="point">@userInfo.Point Point</span>
+                    <span>@userInfo?.FirstName @userInfo?.LastName</span>
+                    <span class="point">@userInfo?.Point Point</span>
                 </div>
             </div>
             <div class="info-frame">
@@ -181,5 +178,6 @@
         await Html.RenderPartialAsync("~/Views/PartialView/_BingMap.cshtml");
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    @await RenderSectionAsync("History", required: false)
 </body>
 </html>

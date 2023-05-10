@@ -1,4 +1,57 @@
-﻿
+﻿.suggest{
+    margin-bottom: 36px;
+}
+.suggest .list {
+    display: flex;
+    overflow: auto;
+    margin-top: 24px;
+    padding: 12px;
+    gap: 12px;
+}
+/*
+.request-valid > .container-lg {
+    background: white;
+    padding-right: 32px;
+    padding-left: 32px;
+}
+*/
+.new-request {
+    background: #b7d5c9;
+}
+.new-request > .container-lg{
+    padding: 50px;
+}
+.suggest .list .control{
+    display: flex;
+    justify-content: end;
+}
+.suggest > h2{
+    text-align: center;
+    margin-bottom: 24px;
+}
+.suggest .list .card-text {
+    margin-bottom: 12px;
+}
+.suggest .list .mb-3{
+    display: flex;
+    gap: 12px;
+    background-color: rgba(var(--bs-primary-rgb), 0.4);
+    padding: 12px;
+    border-radius: 8px;
+    align-items: center
+}
+.suggest > .container-lg > .list .house-card{
+    display: flex;
+    min-width:750px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    padding: 6px;
+    border-radius: 6px;
+}
+.suggest > .container-lg > .list .house-card img{
+    width: 350px;
+    height: unset;
+}
+
 .list > .img-container {
     position: relative;
     max-width: 800px;
@@ -79,17 +132,18 @@
 }
 
 
-
-.frame_2 > .container-lg > h2{
+.suggest > .container-lg > h2,
+.frame_2 > .container-lg > h2 {
     text-align: center;
     padding: 24px 0;
 }
 
 
-
-.frame_2 > .container-lg > div > .btn{
+.suggest > .container-lg > div > .btn,
+.frame_2 > .container-lg > div > .btn {
     width: 350px;
 }
+
 .frame_2 > .container-lg > div:last-child{
     display: flex;
     justify-content: center;
@@ -119,8 +173,9 @@
     font-size: 24px;
 }
 
-.frame_2 > .container-lg > .list::-webkit-scrollbar{
-      width: 0px;
+.suggest .list::-webkit-scrollbar,
+.frame_2 > .container-lg > .list::-webkit-scrollbar {
+    width: 0px;
 }
 
 .frame_2 > .container-lg > div > .btn > a {
@@ -128,7 +183,6 @@
     text-decoration: none;
 }
 
-/* Add some shadows to create a card effect */
 .frame_2 > .container-lg > .list .house-card {
     min-width: 350px;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
@@ -137,13 +191,16 @@
 }
 
 /* Some left and right padding inside the container */
+.suggest .house-img-container,
 .frame_2 .house-img-container {
     padding: 0 16px;
 }
-
+.suggest .house-img-container .title,
 .frame_2 .house-img-container .title {
     color: grey;
 }
+
+.suggest .house-img-container .title .checked,
 .frame_2 .house-img-container .title .checked {
     color: orange;
 }

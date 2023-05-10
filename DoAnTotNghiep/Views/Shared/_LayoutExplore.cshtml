@@ -1,15 +1,7 @@
 ﻿@using DoAnTotNghiep.Enum;
 @using Newtonsoft.Json;
 @{
-    string role = Context.Request.Cookies[Cookie.RoleAccess()] == null ? Role.UnAuthorize : Context.Request.Cookies[Cookie.RoleAccess()];
-    UserInfo? userInfo = null;
-
-    if (role != Role.UnAuthorize)
-    {
-        string? info = Context.Request.Cookies[Cookie.UserInfo()];
-        if (!string.IsNullOrEmpty(info))
-            userInfo = JsonConvert.DeserializeObject<UserInfo>(info);
-    }
+    UserInfo? userInfo = ViewData["UserInfoData"] as UserInfo;
 }
 
 
@@ -37,7 +29,7 @@
                     <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><img src="~/Image/logo.png" class="logo" alt="logo" /></a>
                 </div>
                 <div class="nav-left">
-                    @if(role == Role.UnAuthorize)
+                    @if (userInfo == null)
                     {
                         <div class="control">
                             <a href="@Url.Action("SignUpCheckMail", "Authorize")" class="btn btn-primary">Đăng ký</a>
@@ -114,7 +106,7 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/Nav/nav.js" type="text/javascript"></script>
 
-    @if (role != Role.UnAuthorize)
+    @if (userInfo != null)
     {
         @(Html.Partial("~/Views/PartialView/_Authorized.cshtml", userInfo))
     }

@@ -118,7 +118,7 @@ namespace DoAnTotNghiep.Modules
 
                         Console.WriteLine(count.ToString() + " Time: " + DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"));
                         DBtransaction.Commit();
-                        this.SendNotificationAndMail(notificationList, requestBackground);
+                        this.SendNotificationAndMail(notificationList, requestBackground, Subject.SendCheckIn());
                     }
                     catch (Exception e)
                     {
@@ -158,8 +158,7 @@ namespace DoAnTotNghiep.Modules
                                 this._context.SaveChanges();
                                 DBtransaction.Commit();
 
-                                //thông báo tất cả đã từ chối
-                                this.SendNotificationAndMail(notificationList, requestBackground);
+                                this.SendNotificationAndMail(notificationList, requestBackground, Subject.SendCheckIn());
 
                                 /*Tự động checkIn*/
                                 //rq.Status = (int)StatusRequest.CHECK_IN;
@@ -192,7 +191,7 @@ namespace DoAnTotNghiep.Modules
                         this._context.Notifications.AddRange(notificationList);
                         this._context.SaveChanges();
                         DBtransaction.Commit();
-                        this.SendNotificationAndMail(notificationList, requestBackground);
+                        this.SendNotificationAndMail(notificationList, requestBackground, Subject.SendCheckOut());
 
                         Console.WriteLine(count.ToString() + " Time: " + DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"));
                     }
@@ -245,7 +244,7 @@ namespace DoAnTotNghiep.Modules
             }
             return notificationList;
         }
-        private void SendNotificationAndMail(List<Notification> notifications, RequestBackground requestBackground)
+        private void SendNotificationAndMail(List<Notification> notifications, RequestBackground requestBackground, string title)
         {
             //=> gửi signalR
             foreach (var item in notifications)
@@ -267,7 +266,7 @@ namespace DoAnTotNghiep.Modules
                     {
                         Email sender = new Email(moduleEmail, modulePassword);
                         string body = item.Content;
-                        sender.SendMail(item.Users.Email, Subject.SendCheckOut(), body, null, string.Empty);
+                        sender.SendMail(item.Users.Email, title, body, null, string.Empty);
                     }
                 }
             }
@@ -314,7 +313,7 @@ namespace DoAnTotNghiep.Modules
                     this._context.Notifications.AddRange(notificationList);
                     this._context.SaveChanges();
                     DBtransaction.Commit();
-                    this.SendNotificationAndMail(notificationList, requestBackground);
+                    this.SendNotificationAndMail(notificationList, requestBackground, Subject.SendCheckOut());
 
                     Console.WriteLine(count.ToString() + " Time: " + DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"));
                 }
@@ -399,7 +398,7 @@ namespace DoAnTotNghiep.Modules
                                             IdType = transaction.Id,
                                             IdUser = transaction.IdUser,
                                             IsSeen = false,
-                                            ImageUrl = "/Image/dollar coin.svg"
+                                            ImageUrl = NotificationImage.Coin
                                         };
                                         this._context.Notifications.Add(notification);
                                         this._context.SaveChanges();

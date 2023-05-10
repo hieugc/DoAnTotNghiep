@@ -29,7 +29,10 @@
             </div>
             <div class="mb-3">
                 <label asp-for="OTP" class="form-label">Mã OTP</label>
-                <input class="form-control" asp-for="OTP" placeholder="000 - 000" />
+                <div class="input-timer">
+                    <input class="form-control" asp-for="OTP" placeholder="000 - 000" />
+                    <span class="timer text-danger">_ : _</span>
+                </div>
                 <span asp-validation-for="OTP" class="text-danger"></span>
             </div>
             <p class="text-center"><small>Không nhận được?</small><a href="@Url.Action("ResendSignUpOTP")" class="fw-bold text-decoration-underline" id="resend"><small>Gửi lại email</small></a></p>
@@ -37,3 +40,13 @@
         </form>
     </div>
 </div>
+
+
+@section Scripts{
+    <script src="~/js/Auth/timer.js"></script>
+    <script>
+        $(document).ready(function () {
+            timer('.timer', @(ViewData["timer"] == null ? Html.Raw("120") : Html.Raw(ViewData["timer"])))
+        })
+    </script>
+}

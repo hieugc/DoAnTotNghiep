@@ -227,7 +227,7 @@ function updateNoti(data) {
 }
 function returnFunction(model) {
     if (model.type == 0 || model.type == 1) { //request
-        return `requestView(${model.idType})`;
+        return `requestView(${model.idType}, ${model.id})`;
     }
     else if (model.type == 2) { //admin report
         return window.location.origin + "/Report/";
@@ -237,20 +237,24 @@ function returnFunction(model) {
     }
 }
 function itemNoti(model) {
-    let res = `<div onclick="${returnFunction(model)}" class="dropdown-item">
+    let res = `<div onclick="${returnFunction(model)}" class="dropdown-item alert-noti-${model.id}">
                     <div class="avt"><img src="${model.imageUrl}" alt="avt" /></div>
                     <div class="content">
                         <div>
                             <span class="title">${model.title}</span>
                             <span>${model.content}</span>
                         </div>
-                        <span class="time">${model.createdDate.split("T")}</span>
+                        <span class="time">${model.createdDate.split("T")[1].split(".")[0]} ${dateFormat(model.createdDate.split("T")[0])}</span>
                     </div>`;
     if (!model.isSeen) {
         res += `<div class="status"><i class="fa-solid fa-circle"></i></div>`;
     }
     res += `</div>`;
     return res;
+}
+function dateFormat(date) {
+    let ele = date.split("-");
+    return ele[2] + "/" + ele[1] + "/" + ele[0]; 
 }
 function initNoti(tag, list) {
     hideNewSignal(tag + " #dropdownMenuNotification");
@@ -287,7 +291,6 @@ function getNotification(tag) {
         }
     });
 }
-
 function notiPaymentSuccess() {
     let res =   `<div class="zaloPay-notification">
                     <div><i class="fa-solid fa-circle-check"></i></div>
@@ -302,8 +305,6 @@ function notiPaymentFail(message) {
                 </div>`
     return res;
 }
-
-
 function createModal(html) {
     let res = `
             <div class="modal fade" id="Notification-itemModal" data-bs-backdrop="static" data-bs-keyboard="false" aria-hidden="true"tabindex="-1">
@@ -322,10 +323,11 @@ function createModal(html) {
             <button id="NotificationModalToggleClick" style="display: none;" data-bs-target="#Notification-itemModal" data-bs-toggle="modal"></button>`;
     return res;
 }
-function requestView(id) {
+function requestView(idType, id) {
     $.get(
-        window.location.origin + "/Request/Detail?Id=" + id,
+        window.location.origin + "/Request/Detail?Id=" + idType,
         function (data) {
+            updatePopupNotification(id);
             $("#renderModal").html(createModal(data));
             $("#Notification-itemModal div.control").remove();
             $("#NotificationModalToggleClick").click();
@@ -346,6 +348,45 @@ function updatePointUser() {
             }
         }
     )
+}
+
+function updatePopupNotification(id) {
+    $.ajax({
+        url: window.location.origin + "/Notification/Seen",
+        data: JSON.stringify(id),
+        dataType: "json",
+        contentType: "application/json",
+        type: "POST",
+        success: function (result) {
+            //nếu đúng
+            console.log(result);
+            if (result.status == 200) {
+                $(`#alert-noti-${id} .status`).remove();
+            }
+        },
+        error: function (error) {
+            console.log(error);
+        }
+    });
+}
+
+function updateAllPopupNotification() {
+    $.ajax({
+        url: window.location.origin + "/Notification/SeenAll",
+        dataType: "json",
+        contentType: "application/json",
+        type: "POST",
+        success: function (result) {
+            //nếu đúng
+            console.log(result);
+            if (result.status == 200) {
+                $(`#alert-noti-${id} .status`).remove();
+            }
+        },
+        error: function (error) {
+            console.log(error);
+        }
+    });
 }
 //scroll notification
 //scroll chat

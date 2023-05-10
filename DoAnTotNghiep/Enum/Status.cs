@@ -7,7 +7,8 @@
         REJECT,
         CHECK_IN,
         CHECK_OUT,
-        ENDED
+        ENDED,
+        DISABLE
     }
     /// <summary>
     /// Đợi accept => checkin => checkout => comment => end
@@ -15,10 +16,10 @@
     /// 
     enum StatusWaitingRequest
     {
-        INIT,
-        IN_CIRCLE,
-        DISABLE,
-        IS_SETTED,
+        INIT,//mới khởi tạo
+        IN_CIRCLE,//trong vòng + chưa xác nhận
+        DISABLE,//không muốn vào vòng => không gợi ý nữa
+        ACCEPT,//đã xác nhận
         CHECK_IN,
         CHECK_OUT,
         ENDED
@@ -68,6 +69,26 @@
 
             return "Kết thúc";
         }
+
+        public static string ConvertAction(int status)
+        {
+            switch (status)
+            {
+                case (int)StatusRequest.WAIT_FOR_SWAP:
+                    return "Chờ xác nhận";
+                case (int)StatusRequest.REJECT:
+                    return "Đã từ chối";
+                case (int)StatusRequest.ACCEPT:
+                    return "Check-In";
+                case (int)StatusRequest.CHECK_IN:
+                    return "Check-Out";
+                case (int)StatusRequest.CHECK_OUT:
+                    return "Đánh giá";
+            }
+
+            return "Kết thúc";
+        }
+
         public static List<int> getStatus()
         {
             return new List<int>()
@@ -101,6 +122,37 @@
         {
             return Status == (int)StatusRequest.ACCEPT
                 || Status == (int)StatusRequest.CHECK_IN;
+        }
+    }
+
+    public class StatusCircleRequestStr
+    {
+        public static string getStatus(int status)
+        {
+            switch (status)
+            {
+                case (int)StatusWaitingRequest.INIT:
+                    return "Gợi ý mới";
+                case (int)StatusWaitingRequest.ACCEPT:
+                    return "Đã chấp nhận";
+                case (int)StatusWaitingRequest.CHECK_IN:
+                    return "Check-In";
+                case (int)StatusWaitingRequest.CHECK_OUT:
+                    return "Chờ đánh giá";
+            }
+
+            return "Kết thúc";
+        }
+        public static List<int> getStatus()
+        {
+            return new List<int>()
+            {
+                (int) StatusWaitingRequest.INIT,
+                (int) StatusWaitingRequest.ACCEPT,
+                (int) StatusWaitingRequest.CHECK_IN,
+                (int) StatusWaitingRequest.CHECK_OUT,
+                (int) StatusWaitingRequest.ENDED
+            };
         }
     }
 }

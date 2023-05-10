@@ -50,7 +50,7 @@
             callback: onLoad,
             errorCallback: onError
         });
-        if ($("#myMap").length > 0) {
+        if ($("#myMap").length > 0 || $("#predict-render").length > 0) {
             GetMap();
         }
     }
@@ -58,7 +58,6 @@
 <script type="text/javascript">
     function explore() {
         if(window.location.href.indexOf("/Explore") == -1){
-
             if(suggest == null){
                 window.location.href = "@Url.Action("Index", "Explore")?location=" + $("#explore-input").val();
             }

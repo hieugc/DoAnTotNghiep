@@ -12,14 +12,26 @@ using Microsoft.Extensions.Configuration;
 using DoAnTotNghiep.Hubs;
 using Hangfire;
 using DoAnTotNghiep.Modules;
+using Microsoft.ML.Data;
+using Microsoft.Extensions.ML;
+using DoAnTotNghiep.TrainModels;
+using Microsoft.ML;
+
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<DoAnTotNghiepContext>(options => 
     options.UseSqlServer(builder.Configuration.GetConnectionString("DataContext")));
 builder.Services.AddSignalR();
-
-
 builder.Services.AddControllersWithViews();
+
+const string _modelName = "PredictHouse";
+const string _modelPath = @"TrainModels/PredictHouse.zip";
+
+var predict = new PredictHouse();
+//predict.LoadAndMakeNewFile();
+//predict.PrepareData();
+predict.NewTrainAndSave(@"TrainModels/newData_out_put.csv");
+
 
 builder.Services.AddAuthentication(Scheme.Authentication())
     .AddJwtBearer(Scheme.AuthenticationJWT(), options =>
@@ -73,6 +85,9 @@ builder.Services.AddAuthentication(Scheme.Authentication())
 
 //builder.Services.AddHostedService<TimedHostedService>();
 
+builder.Services.AddPredictionEnginePool<NewModelTrainInput, ModelTrainOutput>()
+    .FromFile(modelName: _modelName, filePath: _modelPath, watchForChanges: true);
+
 var app = builder.Build();
 
 
@@ -106,6 +121,12 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+
+var predictionHandler =
+    async (PredictionEnginePool<NewModelTrainInput, ModelTrainOutput> predictionEnginePool, NewModelTrainInput input) =>
+        await Task.FromResult(predictionEnginePool.Predict(modelName: _modelName, input));
+
+app.MapPost("/PredictHouse", predictionHandler);
 
 app.MapControllerRoute(
     name: "default",

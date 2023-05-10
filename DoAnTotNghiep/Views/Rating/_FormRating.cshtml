@@ -10,7 +10,7 @@
             </div>
             <div class="modal-body">
                 <form action="@Url.Action("Create", "Rating")" method="post" id="form-create">
-                    @if (!(string.IsNullOrEmpty(ViewData["isCan"] as string)) && ViewData["isCan"] == "true")
+                    @if (!(string.IsNullOrEmpty(ViewData["isCan"] as string)) && (ViewData["isCan"] as string) == "true")
                     {
                         <div class="mb-3 item-house">
                             <div class="d-flex justify-content-between align-items-center">
@@ -61,7 +61,7 @@
                         <div class="text-danger" id="user-valid"></div>
                     </div>
                     <div class="mb-3">
-                        <label for="contentRating">Cảm nghĩ của bạn về căn hộ</label>
+                        <label for="contentRating">Cảm nghĩ của bạn về chuyến đi</label>
                         <textarea class="form-control" id="contentRating" name="contentRating" rows="5" onchange="checkRatingValid()"></textarea>
                         <div class="text-danger" id="contentRating-valid"></div>
                     </div>
