@@ -29,17 +29,15 @@ class ProfileViewModel(private val repository: ProfileRepository): ViewModel() {
     fun updatePassword(param: PasswordParam){
         viewModelScope.launch {
             passwordLiveData.addSource(repository.updatePassword(param)){
-                Log.e("response", it.toString())
                 when (it) {
                     is ResultResponse.Success -> {
-                        Log.e("SuccessPassword", "${it.data}")
                         passwordLiveData.value = it.data
                     }
                     is ResultResponse.Error ->{
                         AppEvent.showPopUpError(it.message)
                     }
                     else -> {
-                        Log.e("Loading", "hello")
+                        Log.d("Loading", "hello")
                     }
                 }
             }
@@ -50,17 +48,15 @@ class ProfileViewModel(private val repository: ProfileRepository): ViewModel() {
         AppEvent.showPopUp()
         viewModelScope.launch {
             updateProfileLiveData.addSource(repository.updateProfile(body)){
-                Log.e("response", it.toString())
                 when (it) {
                     is ResultResponse.Success -> {
-                        Log.e("SuccessEditProfile", "${it.data}")
                         updateProfileLiveData.value = it.data
                     }
                     is ResultResponse.Error ->{
                         AppEvent.showPopUpError(it.message)
                     }
                     else -> {
-                        Log.e("Loading", "hello")
+                        Log.d("Loading", "hello")
                     }
                 }
             }
@@ -71,17 +67,15 @@ class ProfileViewModel(private val repository: ProfileRepository): ViewModel() {
         AppEvent.showPopUp()
         viewModelScope.launch {
             topUpLiveData.addSource(repository.topUpPoint(param)){
-                Log.e("response", it.toString())
                 when (it) {
                     is ResultResponse.Success -> {
-                        Log.e("Success Topup", "${it.data}")
                         topUpLiveData.value = it.data
                     }
                     is ResultResponse.Error ->{
                         AppEvent.showPopUpError(it.message)
                     }
                     else -> {
-                        Log.e("Loading", "hello")
+                        Log.d("Loading", "hello")
                     }
                 }
             }
@@ -92,7 +86,6 @@ class ProfileViewModel(private val repository: ProfileRepository): ViewModel() {
         AppEvent.showPopUp()
         viewModelScope.launch {
             pointLiveData.addSource(repository.getPoint()){
-                Log.e("response", it.toString())
                 when (it) {
                     is ResultResponse.Success -> {
                         pointLiveData.value = it.data
@@ -101,7 +94,7 @@ class ProfileViewModel(private val repository: ProfileRepository): ViewModel() {
                         AppEvent.showPopUpError(it.message)
                     }
                     else -> {
-                        Log.e("Loading", "hello")
+                        Log.d("Loading", "hello")
                     }
                 }
             }
@@ -112,7 +105,6 @@ class ProfileViewModel(private val repository: ProfileRepository): ViewModel() {
         AppEvent.showPopUp()
         viewModelScope.launch {
             paymentHistoryAllLiveData.addSource(repository.getHistoryAll()){
-                Log.e("response", it.toString())
                 when (it) {
                     is ResultResponse.Success -> {
                         paymentHistoryAllLiveData.value = it.data
@@ -121,7 +113,7 @@ class ProfileViewModel(private val repository: ProfileRepository): ViewModel() {
                         AppEvent.showPopUpError(it.message)
                     }
                     else -> {
-                        Log.e("Loading", "hello")
+                        Log.d("Loading", "hello")
                     }
                 }
             }
@@ -132,7 +124,6 @@ class ProfileViewModel(private val repository: ProfileRepository): ViewModel() {
         AppEvent.showPopUp()
         viewModelScope.launch {
             paymentHistoryReceivedLiveData.addSource(repository.getHistoryReceived()){
-                Log.e("response", it.toString())
                 when (it) {
                     is ResultResponse.Success -> {
                         paymentHistoryReceivedLiveData.value = it.data
@@ -141,7 +132,7 @@ class ProfileViewModel(private val repository: ProfileRepository): ViewModel() {
                         AppEvent.showPopUpError(it.message)
                     }
                     else -> {
-                        Log.e("Loading", "hello")
+                        Log.d("Loading", "hello")
                     }
                 }
             }
@@ -152,7 +143,6 @@ class ProfileViewModel(private val repository: ProfileRepository): ViewModel() {
         AppEvent.showPopUp()
         viewModelScope.launch {
             paymentHistoryUsedLiveData.addSource(repository.getHistoryUsed()){
-                Log.e("response", it.toString())
                 when (it) {
                     is ResultResponse.Success -> {
                         paymentHistoryUsedLiveData.value = it.data
@@ -161,7 +151,7 @@ class ProfileViewModel(private val repository: ProfileRepository): ViewModel() {
                         AppEvent.showPopUpError(it.message)
                     }
                     else -> {
-                        Log.e("Loading", "hello")
+                        Log.d("Loading", "hello")
                     }
                 }
             }
@@ -172,7 +162,6 @@ class ProfileViewModel(private val repository: ProfileRepository): ViewModel() {
         AppEvent.showPopUp()
         viewModelScope.launch {
             userInfoLiveData.addSource(repository.getUserInfo()){
-                Log.e("response", it.toString())
                 when (it) {
                     is ResultResponse.Success -> {
                         userInfoLiveData.value = it.data
@@ -181,7 +170,7 @@ class ProfileViewModel(private val repository: ProfileRepository): ViewModel() {
                         AppEvent.showPopUpError(it.message)
                     }
                     else -> {
-                        Log.e("Loading", "hello")
+                        Log.d("Loading", "hello")
                     }
                 }
             }

@@ -5,9 +5,6 @@ import android.graphics.BitmapFactory
 import android.graphics.PointF
 import android.location.LocationManager
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.homex.BuildConfig
@@ -16,7 +13,24 @@ import com.example.homex.app.HOME
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentMapBinding
 import com.homex.core.model.Home
-import com.microsoft.maps.*
+import com.microsoft.maps.GPSMapLocationProvider
+import com.microsoft.maps.Geopoint
+import com.microsoft.maps.MapAnimationKind
+import com.microsoft.maps.MapElementLayer
+import com.microsoft.maps.MapFlyout
+import com.microsoft.maps.MapIcon
+import com.microsoft.maps.MapImage
+import com.microsoft.maps.MapRenderMode
+import com.microsoft.maps.MapScene
+import com.microsoft.maps.MapStyleSheet
+import com.microsoft.maps.MapStyleSheets
+import com.microsoft.maps.MapToolbarHorizontalAlignment
+import com.microsoft.maps.MapToolbarVerticalAlignment
+import com.microsoft.maps.MapUserInterfaceOptions
+import com.microsoft.maps.MapUserLocation
+import com.microsoft.maps.MapUserLocationTrackingMode
+import com.microsoft.maps.MapUserLocationTrackingState
+import com.microsoft.maps.MapView
 import pub.devrel.easypermissions.EasyPermissions
 import pub.devrel.easypermissions.PermissionRequest
 import java.util.concurrent.TimeUnit
@@ -204,7 +218,6 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), EasyPermissions.Permissi
     }
 
     override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {
-        Log.e("granted", "hello")
         requestingLocationPermission = false
         trackingUserLocation()
     }
@@ -226,17 +239,18 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), EasyPermissions.Permissi
             )
         }
 
-        if (userLocationTrackingState == MapUserLocationTrackingState.PERMISSION_DENIED) {
-            // request for user location permissions and then call startTracking again
-            requestLocationPermission()
-            Log.e("denied", "hello")
-        } else if (userLocationTrackingState == MapUserLocationTrackingState.READY) {
-            // handle the case where location tracking was successfully started
-            userLocation.trackingMode = MapUserLocationTrackingMode.CENTERED_ON_USER
-            Log.e("ready", "hello")
-        } else if (userLocationTrackingState == MapUserLocationTrackingState.DISABLED) {
-            // handle the case where all location providers were disabled
-            Log.d("boo" , "fu")
+        when (userLocationTrackingState) {
+            MapUserLocationTrackingState.PERMISSION_DENIED -> {
+                // request for user location permissions and then call startTracking again
+                requestLocationPermission()
+            }
+            MapUserLocationTrackingState.READY -> {
+                // handle the case where location tracking was successfully started
+                userLocation.trackingMode = MapUserLocationTrackingMode.CENTERED_ON_USER
+            }
+            MapUserLocationTrackingState.DISABLED -> {
+                // handle the case where all location providers were disabled
+            }
         }
     }
 
@@ -249,6 +263,7 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), EasyPermissions.Permissi
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
+        @Suppress("DEPRECATION")
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)

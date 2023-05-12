@@ -6,23 +6,22 @@ import android.os.Binder
 import android.os.IBinder
 import android.util.Log
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.example.homex.app.*
-import com.facebook.stetho.okhttp3.StethoInterceptor
+import com.example.homex.app.CHAT_HUB_URL
+import com.example.homex.app.CONNECT_CHAT
+import com.example.homex.app.NOTIFICATIONS
+import com.example.homex.app.RECEIVE_MESSAGE
 import com.homex.core.CoreApplication
 import com.homex.core.model.MessageRoom
 import com.homex.core.model.Notification
 import com.microsoft.signalr.HubConnection
 import com.microsoft.signalr.HubConnectionBuilder
-import io.reactivex.rxjava3.core.CompletableObserver
-import io.reactivex.rxjava3.disposables.Disposable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import okhttp3.Interceptor
+import kotlinx.coroutines.runBlocking
 import okhttp3.logging.HttpLoggingInterceptor
 import java.util.concurrent.ExecutionException
-import java.util.concurrent.TimeUnit
 
 
 class ChatService: Service() {
@@ -77,14 +76,6 @@ class ChatService: Service() {
                 this@ChatService
     }
 
-    /**
-     * method for clients (activities)
-     */
-
-    fun sendMessage(message: String){
-        hubConnection.invoke("Send", message)
-    }
-
     private fun sendMessageToActivity(messageRoom: MessageRoom){
         scope.launch(Dispatchers.IO){
             val intent = Intent(TAG)
@@ -110,25 +101,14 @@ class ChatService: Service() {
 
     private fun startSignalR() {
         val token = CoreApplication.instance.getToken()
-        Log.e("token", "$token")
         val httpLoggingInterceptor = HttpLoggingInterceptor()
         httpLoggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
-        if (token != null) {
-            hubConnection = HubConnectionBuilder.create(CHAT_HUB_URL)
-//                .setHttpClientBuilderCallback {
-//                    it.writeTimeout(15 * 60 * 1000, TimeUnit.MILLISECONDS)
-//                    it.readTimeout(60 * 1000, TimeUnit.MILLISECONDS)
-//                    it.connectTimeout(20 * 1000, TimeUnit.MILLISECONDS)
-//                }
+        hubConnection = if (token != null) {
+            HubConnectionBuilder.create(CHAT_HUB_URL)
                 .withHeader("Authorization", "Bearer $token")
                 .build()
         }else{
-            hubConnection = HubConnectionBuilder.create(CHAT_HUB_URL)
-//                .setHttpClientBuilderCallback {
-//                    it.writeTimeout(15 * 60 * 1000, TimeUnit.MILLISECONDS)
-//                    it.readTimeout(60 * 1000, TimeUnit.MILLISECONDS)
-//                    it.connectTimeout(20 * 1000, TimeUnit.MILLISECONDS)
-//                }
+            HubConnectionBuilder.create(CHAT_HUB_URL)
                 .build()
         }
 
@@ -156,54 +136,47 @@ class ChatService: Service() {
 
         hubConnection.onClosed {
             if (it != null){
-                Log.e(TAG, "${it.message}. Reconnecting...")
-                try {
-                    hubConnection.start().cache()
-                        .doOnComplete {
-                            Log.e("complete", "hello")
-                            connectToChat()
-                        }
-                        .doOnError { throwable->
-                            Log.e("error", "${it.message}")
-                            throw throwable
-
-                        }
-                        .blockingAwait()
-                }catch (e: InterruptedException){
-                    e.printStackTrace()
-                    return@onClosed
-                }catch (e: ExecutionException){
-                    e.printStackTrace()
-                    return@onClosed
-                }catch (e: Exception){
-                    e.printStackTrace()
-                    return@onClosed
+                Log.d(TAG, "${it.message}. Reconnecting...")
+                runBlocking {
+                    try {
+                        hubConnection.start()
+                            .doOnComplete {
+                                connectToChat()
+                            }
+                            .doOnError { throwable->
+                                throw throwable
+                            }
+                            .blockingAwait()
+                    }catch (e: InterruptedException){
+                        e.printStackTrace()
+                    }catch (e: ExecutionException){
+                        e.printStackTrace()
+                    }catch (e: Exception){
+                        e.printStackTrace()
+                    }
                 }
             }
         }
 
 
-        try {
-            hubConnection.start().cache()
-                .doOnComplete {
-                    Log.e("complete", "hello")
-                    connectToChat()
-                }
-                .doOnError {
-                    Log.e("error", "${it.message}")
-                    throw it
-                }
-                .blockingAwait()
-        }catch (e: InterruptedException){
-            e.printStackTrace()
-            return
-        }catch (e: ExecutionException){
-            e.printStackTrace()
-            return
-        }
-        catch (e: Exception){
-            e.printStackTrace()
-            return
+        runBlocking {
+            try {
+                hubConnection.start()
+                    .doOnComplete {
+                        connectToChat()
+                    }
+                    .doOnError {
+                        throw it
+                    }
+                    .blockingAwait()
+            }catch (e: InterruptedException){
+                e.printStackTrace()
+            }catch (e: ExecutionException){
+                e.printStackTrace()
+            }
+            catch (e: Exception){
+                e.printStackTrace()
+            }
         }
     }
 }

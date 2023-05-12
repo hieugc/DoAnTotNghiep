@@ -1,17 +1,15 @@
 package com.example.homex.adapter
 
 import android.net.Uri
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
 import com.example.homex.R
 import com.example.homex.databinding.AddHomeImageItemBinding
 import com.homex.core.model.ImageBase
 
-class AddImageAdapter(var imgList: MutableList<Pair<Uri, Boolean>>? = arrayListOf(), val onClick: (Int, Int)->Unit, var images: MutableList<ImageBase>? = mutableListOf(), val removeItem: (ImageBase, Int)->Unit): RecyclerView.Adapter<AddImageAdapter.ImageViewHolder>() {
+class AddImageAdapter(var imgList: MutableList<Pair<Uri, Boolean>>? = arrayListOf(), val onClick: (Int, Int)->Unit, var images: MutableList<ImageBase>? = mutableListOf(), private val removeItem: (ImageBase, Int)->Unit): RecyclerView.Adapter<AddImageAdapter.ImageViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
         return ImageViewHolder(
             AddHomeImageItemBinding.bind(
@@ -50,17 +48,16 @@ class AddImageAdapter(var imgList: MutableList<Pair<Uri, Boolean>>? = arrayListO
     }
 
     override fun getItemCount(): Int {
-        if (imgList != null && images != null){
+        return if (imgList != null && images != null){
             if(images!!.size + imgList!!.size >= 5)
-                return 5
+                5
             else
-                return images!!.size + imgList!!.size
+                images!!.size + imgList!!.size
         }else if(imgList == null){
-            return images!!.size
-        }else if(images == null){
-            return imgList!!.size
+            images!!.size
+        }else{
+            imgList!!.size
         }
-        return 0
     }
 
     override fun getItemViewType(position: Int): Int {

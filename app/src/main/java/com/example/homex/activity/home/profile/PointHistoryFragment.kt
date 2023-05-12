@@ -5,7 +5,6 @@ import android.view.View
 import com.example.homex.R
 import com.example.homex.activity.home.HomeActivity
 import com.example.homex.adapter.PaymentHistoryViewPager
-import com.example.homex.adapter.TransHistoryViewPager
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentPointHistoryBinding
 import com.example.homex.extension.thousandSeparator
@@ -13,7 +12,6 @@ import com.example.homex.viewmodel.ProfileViewModel
 import com.google.android.material.tabs.TabLayoutMediator
 import com.homex.core.util.AppEvent
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PointHistoryFragment: BaseFragment<FragmentPointHistoryBinding>(), PointInputDialogFragment.EventListener {
     override val layoutId: Int = R.layout.fragment_point_history

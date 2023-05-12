@@ -1,17 +1,12 @@
 package com.example.homex.activity.home
 
 import android.os.Bundle
-import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.homex.R
 import com.example.homex.activity.home.pending.PendingRequestDetailFragmentArgs
-import com.example.homex.activity.home.profile.CircleRequestFragmentDirections
 import com.example.homex.app.CONTACT_USER
 import com.example.homex.app.ID
 import com.example.homex.base.BaseFragment
@@ -34,6 +29,21 @@ class RequestDetailFragment : BaseFragment<FragmentRequestDetailBinding>() {
     private val chatViewModel: ChatViewModel by viewModel()
     private val prefUtil : PrefUtil by inject()
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        chatViewModel.connectToUser.observe(this){ messageRoom->
+            if (messageRoom != null){
+                messageRoom.idRoom?.let {
+                    findNavController().navigate(
+                        R.id.action_global_messageFragment, bundleOf(
+                            ID to it,
+                            CONTACT_USER to true
+                        )
+                    )
+                }
+            }
+        }
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (activity as HomeActivity).setPropertiesScreen(
@@ -128,21 +138,6 @@ class RequestDetailFragment : BaseFragment<FragmentRequestDetailBinding>() {
                 binding.request = it
             }
             AppEvent.closePopup()
-        }
-
-        chatViewModel.connectToUser.observe(this){ messageRoom->
-            Log.e("messageRoom", "$messageRoom")
-            if (messageRoom != null){
-                messageRoom.idRoom?.let {
-                    findNavController().navigate(
-                        R.id.action_global_messageFragment, bundleOf(
-                            ID to it,
-                            CONTACT_USER to true
-                        )
-                    )
-                }
-                chatViewModel.clearContactUser()
-            }
         }
     }
 

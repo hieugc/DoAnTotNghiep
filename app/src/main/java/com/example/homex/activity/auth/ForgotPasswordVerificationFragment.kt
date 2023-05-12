@@ -27,7 +27,11 @@ class ForgotPasswordVerificationFragment : BaseFragment<FragmentForgotPasswordVe
     }
 
     override fun setViewModel() {
-        viewModel.resendLiveData.observe(viewLifecycleOwner){}
+        viewModel.resendLiveData.observe(viewLifecycleOwner){
+            if (it?.token != null){
+                CoreApplication.instance.saveToken(it.token)
+            }
+        }
         viewModel.otpLiveData.observe(viewLifecycleOwner){
             if(it?.token != null){
                 CoreApplication.instance.saveToken(it.token)
@@ -43,7 +47,7 @@ class ForgotPasswordVerificationFragment : BaseFragment<FragmentForgotPasswordVe
                 binding.resendOTP.text = HtmlCompat.fromHtml(String.format(getString(R.string.resend_otp_html)), HtmlCompat.FROM_HTML_MODE_LEGACY)
                 return@observe
             }
-            binding.resendOTP.text = "Đã gửi mã xác thực (${it}s)"
+            binding.resendOTP.text = getString(R.string.otp_sent, it)
             binding.resendOTP.disable()
         }
     }

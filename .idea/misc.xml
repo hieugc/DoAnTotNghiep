@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
@@ -173,6 +172,7 @@
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/item_rule_util.xml" value="0.33" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/item_trans_history.xml" value="0.5" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/layout_loading.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/layout_snackbar_notification.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/location_shimmer.xml" value="0.365625" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/message_box_item.xml" value="0.253125" />
         <entry key="..\:/Users/loc_m/AndroidStudioProjects/HomeX/app/src/main/res/layout/message_box_shimmer.xml" value="0.365625" />
@@ -207,7 +207,7 @@
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_17" project-jdk-name="jbr-17" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

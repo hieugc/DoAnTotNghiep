@@ -9,7 +9,6 @@ import com.example.homex.databinding.FragmentTransHistoryBinding
 import com.example.homex.viewmodel.RequestViewModel
 import com.google.android.material.tabs.TabLayoutMediator
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class TransHistoryFragment : BaseFragment<FragmentTransHistoryBinding>() {
     override val layoutId: Int = R.layout.fragment_trans_history

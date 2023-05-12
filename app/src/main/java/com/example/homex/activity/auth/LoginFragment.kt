@@ -44,7 +44,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
                 binding.btnContinue.disable()
         }
         binding.btnBack.setOnClickListener {
-            findNavController().navigate(R.id.action_loginFragment_to_getStartedFragment)
+            findNavController().popBackStack()
         }
         binding.btnContinue.setOnClickListener {
             viewModel.login(param = LoginParam(binding.emailInputEdtTxt.text.toString(), binding.passwordInputEdtTxt.text.toString()))
@@ -53,5 +53,10 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
         binding.forgotPassword.setOnClickListener {
             (activity as AuthActivity).redirectToForgotPassword(binding.emailInputEdtTxt.text.toString())
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.passwordInputEdtTxt.text?.clear()
     }
 }

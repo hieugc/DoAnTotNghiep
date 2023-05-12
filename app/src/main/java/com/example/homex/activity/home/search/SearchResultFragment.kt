@@ -15,14 +15,41 @@ import com.example.homex.BuildConfig
 import com.example.homex.R
 import com.example.homex.activity.home.HomeActivity
 import com.example.homex.adapter.SearchHomeAdapter
-import com.example.homex.app.*
+import com.example.homex.app.CITY
+import com.example.homex.app.DISTRICT
+import com.example.homex.app.END_DATE
+import com.example.homex.app.FILTER
+import com.example.homex.app.LOCATION
+import com.example.homex.app.PEOPLE
+import com.example.homex.app.START_DATE
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentSearchResultBinding
 import com.example.homex.viewmodel.HomeViewModel
 import com.homex.core.model.Filter
 import com.homex.core.model.Home
 import com.homex.core.util.AppEvent
-import com.microsoft.maps.*
+import com.microsoft.maps.GPSMapLocationProvider
+import com.microsoft.maps.Geopath
+import com.microsoft.maps.Geopoint
+import com.microsoft.maps.Geoposition
+import com.microsoft.maps.MapAnimationKind
+import com.microsoft.maps.MapElementLayer
+import com.microsoft.maps.MapFlyout
+import com.microsoft.maps.MapIcon
+import com.microsoft.maps.MapImage
+import com.microsoft.maps.MapPolygon
+import com.microsoft.maps.MapPolyline
+import com.microsoft.maps.MapRenderMode
+import com.microsoft.maps.MapScene
+import com.microsoft.maps.MapStyleSheet
+import com.microsoft.maps.MapStyleSheets
+import com.microsoft.maps.MapToolbarHorizontalAlignment
+import com.microsoft.maps.MapToolbarVerticalAlignment
+import com.microsoft.maps.MapUserInterfaceOptions
+import com.microsoft.maps.MapUserLocation
+import com.microsoft.maps.MapUserLocationTrackingMode
+import com.microsoft.maps.MapUserLocationTrackingState
+import com.microsoft.maps.MapView
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import pub.devrel.easypermissions.EasyPermissions
 import pub.devrel.easypermissions.PermissionRequest
@@ -187,7 +214,7 @@ class SearchResultFragment : BaseFragment<FragmentSearchResultBinding>(), EasyPe
                     }
                 }
                 adapter.notifyDataSetChanged()
-                binding.numberOfHomeFoundTV.text = "${homeList.size} kết quả tìm được"
+                binding.numberOfHomeFoundTV.text = getString(R.string.result_found, homeList.size)
             }
             AppEvent.closePopup()
         }
@@ -230,7 +257,7 @@ class SearchResultFragment : BaseFragment<FragmentSearchResultBinding>(), EasyPe
             (mapView.parent as ViewGroup).removeView(mapView)
         binding.mapView.addView(mapView)
         binding.selectedHouse = selected
-        binding.numberOfHomeFoundTV.text = "${homeList.size} kết quả tìm được"
+        binding.numberOfHomeFoundTV.text = getString(R.string.result_found, homeList.size)
     }
 
     override fun setEvent() {
@@ -345,6 +372,7 @@ class SearchResultFragment : BaseFragment<FragmentSearchResultBinding>(), EasyPe
         binding.searchHomeRecView.adapter = adapter
         val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         binding.searchHomeRecView.layoutManager = layoutManager
+        binding.searchHomeRecView.setHasFixedSize(true)
     }
 
 
@@ -389,17 +417,18 @@ class SearchResultFragment : BaseFragment<FragmentSearchResultBinding>(), EasyPe
             )
         }
 
-        if (userLocationTrackingState == MapUserLocationTrackingState.PERMISSION_DENIED) {
-            // request for user location permissions and then call startTracking again
-            requestLocationPermission()
-            Log.e("denied", "hello")
-        } else if (userLocationTrackingState == MapUserLocationTrackingState.READY) {
-            // handle the case where location tracking was successfully started
-            userLocation.trackingMode = MapUserLocationTrackingMode.CENTERED_ON_USER
-            Log.e("ready", "hello")
-        } else if (userLocationTrackingState == MapUserLocationTrackingState.DISABLED) {
-            // handle the case where all location providers were disabled
-            Log.d("boo" , "fu")
+        when (userLocationTrackingState) {
+            MapUserLocationTrackingState.PERMISSION_DENIED -> {
+                // request for user location permissions and then call startTracking again
+                requestLocationPermission()
+            }
+            MapUserLocationTrackingState.READY -> {
+                // handle the case where location tracking was successfully started
+                userLocation.trackingMode = MapUserLocationTrackingMode.CENTERED_ON_USER
+            }
+            MapUserLocationTrackingState.DISABLED -> {
+                // handle the case where all location providers were disabled
+            }
         }
     }
 
@@ -412,6 +441,7 @@ class SearchResultFragment : BaseFragment<FragmentSearchResultBinding>(), EasyPe
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
+        @Suppress("DEPRECATION")
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)

@@ -4,8 +4,10 @@ import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.CompoundButton
 import android.widget.FrameLayout
 import androidx.appcompat.widget.AppCompatCheckBox
@@ -16,7 +18,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.homex.R
 import com.example.homex.app.FILTER
-import com.example.homex.app.HOME
 import com.example.homex.databinding.FragmentFilterBottomSheetBinding
 import com.example.homex.extension.Utilities
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -136,15 +137,12 @@ class FilterBottomSheetFragment : BottomSheetDialogFragment() {
                     option = 3
                 }
             }
-            Log.e("option", "$option")
             var priceStart = 100
             var priceEnd = 1000
             if (priceList.size >= 2){
                 priceStart = priceList[0].toInt()
                 priceEnd = priceList[1].toInt()
             }
-            Log.e("priceStart", "$priceStart")
-            Log.e("priceEnd", "$priceEnd")
             val utils = arrayListOf<Int>()
             for (util in utilList){
                 when(util.id){
@@ -177,7 +175,6 @@ class FilterBottomSheetFragment : BottomSheetDialogFragment() {
                     }
                 }
             }
-            Log.e("utils", "$utils")
             val filter = Filter(option, priceStart, priceEnd, utils)
             findNavController().previousBackStackEntry?.savedStateHandle?.set(FILTER, filter)
             findNavController().popBackStack()
@@ -286,7 +283,6 @@ class FilterBottomSheetFragment : BottomSheetDialogFragment() {
 
             override fun onStopTrackingTouch(slider: RangeSlider) {
                 // Responds to when slider's touch event is being stopped
-                Log.e("value", "${slider.values}")
                 priceList = slider.values
                 binding.minPriceTV.text = getString(R.string.points, slider.values[0].toInt())
                 binding.maxPriceTV.text = getString(R.string.points, slider.values[1].toInt())
@@ -295,7 +291,6 @@ class FilterBottomSheetFragment : BottomSheetDialogFragment() {
 
         binding.priceRangeSlider.addOnChangeListener { rangeSlider, _, _ ->
             // Responds to when slider's value is changed
-            Log.e("value", "${rangeSlider.values}")
             priceList = rangeSlider.values
             binding.minPriceTV.text = getString(R.string.points, rangeSlider.values[0].toInt())
             binding.maxPriceTV.text = getString(R.string.points, rangeSlider.values[1].toInt())

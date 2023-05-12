@@ -1,7 +1,6 @@
 package com.example.homex.activity.home.pending
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
@@ -36,7 +35,6 @@ class PendingRequestDetailFragment : BaseFragment<FragmentPendingRequestDetailBi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         chatViewModel.connectToUser.observe(this){ messageRoom->
-            Log.e("messageRoom", "$messageRoom")
             if (messageRoom != null){
                 messageRoom.idRoom?.let {
                     findNavController().navigate(
@@ -46,7 +44,6 @@ class PendingRequestDetailFragment : BaseFragment<FragmentPendingRequestDetailBi
                         )
                     )
                 }
-//                chatViewModel.clearContactUser()
             }
         }
     }

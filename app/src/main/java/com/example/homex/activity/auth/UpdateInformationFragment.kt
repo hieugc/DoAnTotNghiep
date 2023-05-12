@@ -2,7 +2,6 @@ package com.example.homex.activity.auth
 
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.widget.ArrayAdapter
 import com.example.homex.R
 import com.example.homex.activity.home.HomeActivity
@@ -74,13 +73,9 @@ class UpdateInformationFragment : BaseFragment<FragmentUpdateInformationBinding>
             private var cal = Calendar.getInstance()
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                Log.e("s", s.toString())
-                Log.e("current", current)
                 if (s.toString() != current) {
                     var clean: String = s.toString().replace("[^\\d.]|\\.".toRegex(), "")
                     val cleanC = current.replace("[^\\d.]|\\.".toRegex(), "")
-                    Log.e("cleanS", clean)
-                    Log.e("cleanC", cleanC)
                     val cl = clean.length
                     var sel = cl
                     var i = 2
@@ -101,9 +96,6 @@ class UpdateInformationFragment : BaseFragment<FragmentUpdateInformationBinding>
                         var day = clean.substring(0, 2).toInt()
                         var mon = clean.substring(2, 4).toInt()
                         var year = clean.substring(4, 8).toInt()
-                        Log.e("day", "$day")
-                        Log.e("mon", "$mon")
-                        Log.e("year", "$year")
                         //Add a flag to notify user if their date is wrong
                         //and will be re-format
                         var flag = false
@@ -127,7 +119,6 @@ class UpdateInformationFragment : BaseFragment<FragmentUpdateInformationBinding>
                         // ^ first set year for the line below to work correctly
                         //with leap years - otherwise, date e.g. 29/02/2012
                         //would be automatically corrected to 28/02/2012
-                        Log.e("max", "${cal.getActualMaximum(Calendar.DATE)}")
                         day = if (day > cal.getActualMaximum(Calendar.DATE)) {
                             flag = true
                             cal.getActualMaximum(
@@ -147,7 +138,6 @@ class UpdateInformationFragment : BaseFragment<FragmentUpdateInformationBinding>
                         clean = String.format("%02d%02d%02d", day, mon, year)
                         if (flag)
                             (activity as BaseActivity).displayError("Your date is invalid. Auto formatting...")
-                        Log.e("cleanElse",clean)
                         validTime = true
                     }
 
@@ -178,10 +168,7 @@ class UpdateInformationFragment : BaseFragment<FragmentUpdateInformationBinding>
                         }
                         else -> {clean}
                     }
-                    Log.e("cleanFinal",clean)
-
                     sel = if (sel < 0) 0 else sel
-                    Log.e("sel", "$sel")
                     current = clean
                     binding.dobInputEdtTxt.setText(current)
                     binding.dobInputEdtTxt.setSelection(if (sel < current.length) sel else current.length)

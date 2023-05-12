@@ -1,10 +1,7 @@
 package com.example.homex.activity.home.profile
 
 import android.os.Bundle
-import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -15,7 +12,6 @@ import com.example.homex.app.ID
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentCircleRequestDetailBinding
 import com.example.homex.viewmodel.ChatViewModel
-import com.example.homex.viewmodel.RequestViewModel
 import com.homex.core.param.chat.ContactUserParam
 import com.homex.core.util.PrefUtil
 import org.koin.android.ext.android.inject
@@ -23,17 +19,25 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class CircleRequestDetailFragment : BaseFragment<FragmentCircleRequestDetailBinding>() {
     override val layoutId: Int = R.layout.fragment_circle_request_detail
-    private val viewModel: RequestViewModel by viewModel()
     private val args: CircleRequestDetailFragmentArgs by navArgs()
     private val chatViewModel: ChatViewModel by viewModel()
     private val prefUtil: PrefUtil by inject()
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = FragmentCircleRequestDetailBinding.inflate(layoutInflater)
-        return binding.root
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        chatViewModel.connectToUser.observe(this) { messageRoom ->
+            if (messageRoom != null) {
+                messageRoom.idRoom?.let {
+                    findNavController().navigate(
+                        R.id.action_global_messageFragment, bundleOf(
+                            ID to it,
+                            CONTACT_USER to true
+                        )
+                    )
+                }
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -78,23 +82,6 @@ class CircleRequestDetailFragment : BaseFragment<FragmentCircleRequestDetailBind
                         )
                     )
                 }
-            }
-        }
-    }
-
-    override fun setViewModel() {
-        chatViewModel.connectToUser.observe(this) { messageRoom ->
-            Log.e("messageRoom", "$messageRoom")
-            if (messageRoom != null) {
-                messageRoom.idRoom?.let {
-                    findNavController().navigate(
-                        R.id.action_global_messageFragment, bundleOf(
-                            ID to it,
-                            CONTACT_USER to true
-                        )
-                    )
-                }
-                chatViewModel.clearContactUser()
             }
         }
     }

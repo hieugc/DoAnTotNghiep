@@ -2,15 +2,16 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:paddingBottom="16dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            app:layout_constraintTop_toTopOf="parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -178,11 +179,11 @@
             android:id="@+id/btnSendRating"
             style="@style/ButtonPrimary"
             android:layout_width="match_parent"
-            android:layout_alignParentBottom="true"
+            app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:text="@string/send_rating" />
 
-    </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

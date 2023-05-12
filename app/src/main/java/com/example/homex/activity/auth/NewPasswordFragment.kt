@@ -8,7 +8,11 @@ import com.example.homex.app.EMAIL
 import com.example.homex.base.BaseActivity
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentNewPasswordBinding
-import com.example.homex.extension.*
+import com.example.homex.extension.checkPassword
+import com.example.homex.extension.disable
+import com.example.homex.extension.enable
+import com.example.homex.extension.gone
+import com.example.homex.extension.visible
 import com.example.homex.viewmodel.ProfileViewModel
 import com.homex.core.param.auth.PasswordParam
 import org.koin.androidx.viewmodel.ext.android.viewModel

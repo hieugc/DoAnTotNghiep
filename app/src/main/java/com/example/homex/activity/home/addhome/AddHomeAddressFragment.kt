@@ -7,7 +7,6 @@ import android.location.LocationManager
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
@@ -22,14 +21,31 @@ import com.example.homex.extension.gone
 import com.example.homex.extension.visible
 import com.example.homex.viewmodel.YourHomeViewModel
 import com.homex.core.model.BingLocation
-import com.microsoft.maps.*
+import com.microsoft.maps.GPSMapLocationProvider
+import com.microsoft.maps.Geopoint
+import com.microsoft.maps.MapAnimationKind
+import com.microsoft.maps.MapElementLayer
+import com.microsoft.maps.MapIcon
+import com.microsoft.maps.MapImage
+import com.microsoft.maps.MapRenderMode
+import com.microsoft.maps.MapScene
+import com.microsoft.maps.MapStyleSheet
+import com.microsoft.maps.MapStyleSheets
+import com.microsoft.maps.MapToolbarHorizontalAlignment
+import com.microsoft.maps.MapToolbarVerticalAlignment
+import com.microsoft.maps.MapUserInterfaceOptions
+import com.microsoft.maps.MapUserLocation
+import com.microsoft.maps.MapUserLocationTrackingMode
+import com.microsoft.maps.MapUserLocationTrackingState
+import com.microsoft.maps.MapView
 import com.microsoft.maps.search.MapLocationFinder
 import com.microsoft.maps.search.MapLocationFinderStatus
 import com.microsoft.maps.search.MapLocationOptions
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import pub.devrel.easypermissions.EasyPermissions
 import pub.devrel.easypermissions.PermissionRequest
-import java.util.*
+import java.util.Timer
+import java.util.TimerTask
 import java.util.concurrent.TimeUnit
 
 
@@ -140,7 +156,6 @@ class AddHomeAddressFragment : BaseFragment<FragmentAddHomeAddressBinding>(), Ea
 
 
         mapView.addOnMapCameraChangedListener {
-            Log.e("camera", "${it.changeReason}")
             mPinLayer.elements.clear()
             val pushpin = MapIcon()
             pushpin.location = mapView.center
@@ -148,11 +163,6 @@ class AddHomeAddressFragment : BaseFragment<FragmentAddHomeAddressBinding>(), Ea
             pushpin.normalizedAnchorPoint = PointF(0.5f, 1.0f)
             mPinLayer.elements.add(pushpin)
             locationPin = mapView.center
-            Log.e("lng", "${mapView.center.position.longitude}")
-            Log.e("lat", "${mapView.center.position.latitude}")
-//            viewModel.lat.postValue(mapView.center.position.latitude)
-//            viewModel.lng.postValue(mapView.center.position.longitude)
-            Log.e("center", "${it.camera.location}")
             true
         }
         mapView.onCreate(savedInstanceState)
@@ -208,7 +218,7 @@ class AddHomeAddressFragment : BaseFragment<FragmentAddHomeAddressBinding>(), Ea
             viewModel.showMap.postValue(false)
         }
 
-        binding.cityTV.setOnItemClickListener { parent, view, position, id ->
+        binding.cityTV.setOnItemClickListener { _, _, position, _ ->
             val item = cityList[position]
             viewModel.idCity.postValue(item.id)
             viewModel.idDistrict.postValue(0)
@@ -226,7 +236,7 @@ class AddHomeAddressFragment : BaseFragment<FragmentAddHomeAddressBinding>(), Ea
             findLocation()
         }
 
-        binding.districtTV.setOnItemClickListener { parent, view, position, id ->
+        binding.districtTV.setOnItemClickListener { _, _, position, _ ->
             val item = districtList[position]
             viewModel.idDistrict.postValue(item.id)
             viewModel.idWard.postValue(0)
@@ -240,7 +250,7 @@ class AddHomeAddressFragment : BaseFragment<FragmentAddHomeAddressBinding>(), Ea
             findLocation()
         }
 
-        binding.wardTV.setOnItemClickListener { paren, view, position, id ->
+        binding.wardTV.setOnItemClickListener { _, _, position, _ ->
             val item = wardList[position]
             binding.wardTV.setText(item.name, false)
             viewModel.idWard.postValue(item.id)
@@ -272,29 +282,17 @@ class AddHomeAddressFragment : BaseFragment<FragmentAddHomeAddressBinding>(), Ea
         val district = binding.districtTV.text
         val city = binding.cityTV.text
         val location = binding.homeAddressEdtTxt.text
-        val query = "$location, $ward, $district, Thành phố $city Việt Nam"
-        Log.e("queryLocation", query)
+        val query = "$location, $ward, $district, Thành phố $city, Việt Nam"
         MapLocationFinder.findLocations(query, options){
             if (it.status == MapLocationFinderStatus.SUCCESS){
-                Log.e("location", "${it.locations}")
-                for ((idx, location) in it.locations.withIndex()){
-                    Log.e("location", "${location.address}")
-                    Log.e("location", "${location.entityType}")
-                    Log.e("location", "${location.displayName}")
-                    Log.e("locationAdd", "${location.address.addressLine}")
-                    Log.e("locationAdd", "${location.address.locality}")
-                    Log.e("locationAdd", "${location.address.formattedAddress}")
-                    Log.e("locationAdd", "${location.address.landmark}")
-                    Log.e("locationAdd", "${location.address.neighborhood}")
-                    Log.e("locationAdd", "${location.address.adminDistrict2}")
-                    Log.e("locationAdd", "${location.address.adminDistrict}")
-                    if (location.entityType == "Address"){
-                        mapView.setScene(MapScene.createFromLocationAndZoomLevel(location.point, 18.0), MapAnimationKind.LINEAR)
+                for ((idx, loc) in it.locations.withIndex()){
+                    if (loc.entityType == "Address"){
+                        mapView.setScene(MapScene.createFromLocationAndZoomLevel(loc.point, 18.0), MapAnimationKind.LINEAR)
                         mPinLayer.elements.clear()
                         break
                     }
                     if (idx == it.locations.size - 1){
-                        mapView.setScene(MapScene.createFromLocationAndZoomLevel(location.point, 18.0), MapAnimationKind.LINEAR)
+                        mapView.setScene(MapScene.createFromLocationAndZoomLevel(loc.point, 18.0), MapAnimationKind.LINEAR)
                     }
                 }
             }
@@ -424,7 +422,6 @@ class AddHomeAddressFragment : BaseFragment<FragmentAddHomeAddressBinding>(), Ea
     }
 
     override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {
-        Log.e("granted", "hello")
         requestingLocationPermission = false
         trackingUserLocation()
     }
@@ -446,17 +443,18 @@ class AddHomeAddressFragment : BaseFragment<FragmentAddHomeAddressBinding>(), Ea
             )
         }
 
-        if (userLocationTrackingState == MapUserLocationTrackingState.PERMISSION_DENIED) {
-            // request for user location permissions and then call startTracking again
-            requestLocationPermission()
-            Log.e("denied", "hello")
-        } else if (userLocationTrackingState == MapUserLocationTrackingState.READY) {
-            // handle the case where location tracking was successfully started
-            userLocation.trackingMode = MapUserLocationTrackingMode.CENTERED_ON_USER
-            Log.e("ready", "hello")
-        } else if (userLocationTrackingState == MapUserLocationTrackingState.DISABLED) {
-            // handle the case where all location providers were disabled
-            Log.d("boo" , "fu")
+        when (userLocationTrackingState) {
+            MapUserLocationTrackingState.PERMISSION_DENIED -> {
+                // request for user location permissions and then call startTracking again
+                requestLocationPermission()
+            }
+            MapUserLocationTrackingState.READY -> {
+                // handle the case where location tracking was successfully started
+                userLocation.trackingMode = MapUserLocationTrackingMode.CENTERED_ON_USER
+            }
+            MapUserLocationTrackingState.DISABLED -> {
+                // handle the case where all location providers were disabled
+            }
         }
     }
 
@@ -469,6 +467,7 @@ class AddHomeAddressFragment : BaseFragment<FragmentAddHomeAddressBinding>(), Ea
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
+        @Suppress("DEPRECATION")
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)

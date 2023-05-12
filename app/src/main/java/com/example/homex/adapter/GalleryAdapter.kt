@@ -9,7 +9,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.homex.R
 import com.example.homex.databinding.GalleryItemBinding
 
-class GalleryAdapter(val imgList: List<Uri>? = arrayListOf(), val onClick: (Uri?) -> Unit): RecyclerView.Adapter<GalleryAdapter.GalleryItemViewHolder>() {
+class GalleryAdapter(private val imgList: List<Uri>? = arrayListOf(), val onClick: (Uri?) -> Unit): RecyclerView.Adapter<GalleryAdapter.GalleryItemViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GalleryItemViewHolder {
         return GalleryItemViewHolder(
             GalleryItemBinding.bind(

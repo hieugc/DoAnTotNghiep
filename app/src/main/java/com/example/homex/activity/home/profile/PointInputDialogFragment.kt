@@ -4,32 +4,27 @@ import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
-import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.Window
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
-import androidx.navigation.fragment.findNavController
 import com.example.homex.R
 import com.example.homex.activity.home.HomeActivity
-import com.example.homex.activity.webview.WebviewActivity
-import com.example.homex.databinding.FragmentNotificationDialogBinding
 import com.example.homex.databinding.FragmentPointInputDialogBinding
 import com.example.homex.extension.disable
 import com.example.homex.extension.enable
-import com.example.homex.extension.isValidEmail
 import com.example.homex.viewmodel.ProfileViewModel
 import com.homex.core.param.profile.TopUpPointParam
 import com.homex.core.util.AppEvent
-import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import vn.zalopay.sdk.ZaloPayError
 import vn.zalopay.sdk.ZaloPaySDK
 import vn.zalopay.sdk.listeners.PayOrderListener
 import java.util.*
-import kotlin.collections.ArrayList
 
 class PointInputDialogFragment(private val listener: EventListener) : DialogFragment() {
     private lateinit var binding: FragmentPointInputDialogBinding

@@ -8,14 +8,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.homex.R
 import com.example.homex.adapter.PaymentHistoryAdapter
 import com.example.homex.app.PAYMENT_STATUS
-import com.example.homex.app.REQUEST_STATUS
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentPaymentViewPagerBinding
 import com.example.homex.extension.Payment
 import com.example.homex.viewmodel.ProfileViewModel
 import com.homex.core.util.AppEvent
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PaymentViewPagerFragment : BaseFragment<FragmentPaymentViewPagerBinding>() {
     override val layoutId: Int = R.layout.fragment_payment_view_pager

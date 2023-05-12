@@ -1,5 +1,6 @@
 package com.example.homex.activity.auth
 
+import android.os.Bundle
 import androidx.core.widget.addTextChangedListener
 import com.example.homex.R
 import com.example.homex.base.BaseFragment
@@ -16,6 +17,16 @@ class GetStartedFragment : BaseFragment<FragmentGetStartedBinding>() {
     override val layoutId: Int = R.layout.fragment_get_started
     private val viewModel: AuthViewModel by viewModel()
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel.checkEmailLiveData.observe(this){
+            if(it?.isExisted == true){
+                (activity as AuthActivity).redirectToLogin(binding.emailInputEdtTxt.text.toString())
+            }else if(it?.isExisted == false){
+                (activity as AuthActivity).redirectToSignIn(binding.emailInputEdtTxt.text.toString())
+            }
+        }
+    }
     override fun setView() {
         binding.btnContinue.disable()
     }
@@ -37,13 +48,4 @@ class GetStartedFragment : BaseFragment<FragmentGetStartedBinding>() {
         }
     }
 
-    override fun setViewModel() {
-        viewModel.checkEmailLiveData.observe(viewLifecycleOwner){
-            if(it?.isExisted == true){
-                (activity as AuthActivity).redirectToLogin(binding.emailInputEdtTxt.text.toString())
-            }else if(it?.isExisted == false){
-                (activity as AuthActivity).redirectToSignIn(binding.emailInputEdtTxt.text.toString())
-            }
-        }
-    }
 }

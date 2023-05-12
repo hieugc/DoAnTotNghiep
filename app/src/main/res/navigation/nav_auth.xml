@@ -37,15 +37,6 @@
             app:enterAnim="@anim/slide_in_left"
             app:popEnterAnim="@anim/slide_out_right"
             app:popExitAnim="@anim/slide_in_right"/>
-        <action
-            android:id="@+id/action_loginFragment_to_getStartedFragment"
-            app:destination="@id/getStartedFragment"
-            app:popUpTo="@id/nav_auth"
-            app:popUpToInclusive="true"
-            app:exitAnim="@anim/slide_out_left"
-            app:enterAnim="@anim/slide_in_left"
-            app:popEnterAnim="@anim/slide_out_right"
-            app:popExitAnim="@anim/slide_in_right"/>
     </fragment>
     <fragment
         android:id="@+id/signInFragment"
@@ -55,15 +46,6 @@
         <action
             android:id="@+id/action_signInFragment_to_signInVerificationFragment"
             app:destination="@id/signInVerificationFragment"
-            app:exitAnim="@anim/slide_out_left"
-            app:enterAnim="@anim/slide_in_left"
-            app:popEnterAnim="@anim/slide_out_right"
-            app:popExitAnim="@anim/slide_in_right"/>
-        <action
-            android:id="@+id/action_signInFragment_to_getStartedFragment"
-            app:destination="@id/getStartedFragment"
-            app:popUpTo="@id/nav_auth"
-            app:popUpToInclusive="true"
             app:exitAnim="@anim/slide_out_left"
             app:enterAnim="@anim/slide_in_left"
             app:popEnterAnim="@anim/slide_out_right"

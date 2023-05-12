@@ -161,7 +161,7 @@
     <string name="start_end_date">%s - %s</string>
     <string name="between_dates">%d ngày</string>
     <string name="change_password_success">Đổi mật khẩu thành công</string>
-    <string name="please_fill_in_correctly">Hãy điền thông tin chính xác</string>
+    <string name="please_fill_in_correctly">Hãy điền tất cả thông tin chính xác, đầy đủ</string>
     <string name="create_home_success">Tạo nhà thành công</string>
     <string name="edit_home_success">Sửa thông tin nhà thành công</string>
     <string name="point_you_have">Bạn hiện đang có %d Points</string>
@@ -200,4 +200,8 @@
     <string name="circle_request">Trao đổi xoay vòng</string>
     <string name="new_request">Gợi ý mới</string>
     <string name="view_rating">Xem đánh giá</string>
+    <string name="logout_message">Bạn có chắc muốn đăng xuất khỏi tài khoản này ?</string>
+    <string name="otp_sent">Đã gửi mã xác thực (%1$d giây)</string>
+    <string name="result_found">%1$d kết quả tìm được</string>
+    <string name="search_param">%1$s - %2$s / %3$d người</string>
 </resources>

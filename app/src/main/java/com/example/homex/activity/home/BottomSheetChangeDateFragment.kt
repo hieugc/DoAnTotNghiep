@@ -6,7 +6,6 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,12 +21,20 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.homex.R
 import com.example.homex.adapter.CalendarAdapter
 import com.example.homex.databinding.FragmentBottomSheetChangeDateBinding
-import com.example.homex.extension.*
+import com.example.homex.extension.MILLIS_IN_A_DAY
+import com.example.homex.extension.betweenDays
+import com.example.homex.extension.convertIso8601ToLong
+import com.example.homex.extension.disable
+import com.example.homex.extension.enable
+import com.example.homex.extension.gone
+import com.example.homex.extension.longToDate
+import com.example.homex.extension.visible
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.homex.core.model.CalendarDate
-import java.util.*
+import java.util.Calendar
+import java.util.Date
 
 
 class BottomSheetChangeDateFragment : BottomSheetDialogFragment() {
@@ -55,27 +62,25 @@ class BottomSheetChangeDateFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (args.numberOfPeople != 0){
+        numberOfPeople = if (args.numberOfPeople != 0){
             binding.pickPeopleLayout.visible()
             binding.edtPeople.setText(args.numberOfPeople.toString())
-            numberOfPeople = args.numberOfPeople
+            args.numberOfPeople
         }else{
             binding.pickPeopleLayout.gone()
-            numberOfPeople = 0
+            0
         }
 
 
         binding.edtPeople.addTextChangedListener {
-            if (it?.toString() == "")
-            {
+            numberOfPeople = if (it?.toString() == "") {
                 binding.edtPeople.setText("1")
-                numberOfPeople = 1
-            }
-            else if(it?.toString()?.toInt() == 0){
+                1
+            } else if(it?.toString()?.toInt() == 0){
                 binding.edtPeople.setText("1")
-                numberOfPeople = 1
+                1
             }else{
-                numberOfPeople = it?.toString()?.toInt()?:1
+                it?.toString()?.toInt()?:1
             }
         }
 
@@ -119,16 +124,12 @@ class BottomSheetChangeDateFragment : BottomSheetDialogFragment() {
 
         val arrayList = arrayListOf<Date>()
         arrayList.add(calendar.time)
-        Log.e("arraylist", "$arrayList")
         calendar.add(Calendar.MONTH, 1)
         arrayList.add(calendar.time)
-        Log.e("arraylist", "$arrayList")
         calendar.add(Calendar.MONTH, 1)
         arrayList.add(calendar.time)
-        Log.e("arraylist", "$arrayList")
         calendar.add(Calendar.MONTH, 1)
         arrayList.add(calendar.time)
-        Log.e("arraylist", "$arrayList")
 
         val invalid = args.inValidRangeDates?.toMutableList()?: mutableListOf()
 
@@ -138,7 +139,6 @@ class BottomSheetChangeDateFragment : BottomSheetDialogFragment() {
             invalid
         ){
             date->
-            Log.e("selectedDatesBefore", "$selectedDates")
             if(selectedDates.first == null ||  date.time!! <= selectedDates.first?.time){
                 selectedDates = Pair(date, null)
                 binding.applyButton.disable()
@@ -172,8 +172,6 @@ class BottomSheetChangeDateFragment : BottomSheetDialogFragment() {
                             binding.numberOfDayTV.text = ""
                             adapter.selectedDates = selectedDates
                             adapter.notifyDataSetChanged()
-                            Log.e("selectedDatesAfter", "$selectedDates")
-                            Log.e("date", "$date")
                             return@CalendarAdapter
                         }
                     }
@@ -194,8 +192,6 @@ class BottomSheetChangeDateFragment : BottomSheetDialogFragment() {
                 binding.toDateTV.text = ""
                 binding.numberOfDayTV.text = ""
             }
-            Log.e("selectedDatesAfter", "$selectedDates")
-            Log.e("date", "$date")
             adapter.selectedDates = selectedDates
             adapter.notifyDataSetChanged()
         }
@@ -222,7 +218,6 @@ class BottomSheetChangeDateFragment : BottomSheetDialogFragment() {
                             if((visibleItemCount + pastVisibleItems) >= totalItemCount)
                             {
                                 loading = false
-                                Log.e("Loading", "...")
                                 // Fetch new data
                                 val c = Calendar.getInstance()
                                 c.add(Calendar.YEAR, 1)

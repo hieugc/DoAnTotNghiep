@@ -81,8 +81,8 @@ class MyHomeDetailFragment : BaseFragment<FragmentMyHomeDetailBinding>() {
                     R.id.delete -> {
                         // Handle delete icon press
                         MaterialAlertDialogBuilder(requireContext())
-                            .setTitle("Xóa nhà")
-                            .setMessage("Bạn có thật sự muốn xóa nhà này?")
+                            .setTitle("Xóa căn nhà")
+                            .setMessage("Bạn có thật sự muốn xóa căn nhà này khỏi hệ thống ? Hệ thống sẽ không thể hoàn tác lại thao tác này một khi bạn đã thực hiện.")
                             .setNegativeButton(resources.getString(R.string.cancel)) { _, _ ->
                                 // Respond to negative button press
                             }
@@ -115,6 +115,7 @@ class MyHomeDetailFragment : BaseFragment<FragmentMyHomeDetailBinding>() {
         binding.homeRatingRecView.adapter = ratingAdapter
         val layoutManager = CenterZoomLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false, mShrinkAmount = 0.05f, mShrinkDistance = 0.8f, 1.2)
         binding.homeRatingRecView.layoutManager = layoutManager
+        binding.homeRatingRecView.setHasFixedSize(true)
 
         utilAdapter = UtilAdapter(arrayListOf(), showAll =  false, rule = false)
         binding.utilRecView.adapter = utilAdapter

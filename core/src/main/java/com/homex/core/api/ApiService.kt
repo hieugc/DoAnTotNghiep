@@ -63,7 +63,7 @@ interface ApiService {
     suspend fun updateInformation(@Body param: UpdateInfoParam): Response<ObjectResponse<UserResponse>>
 
     @GET("api/SignUp/ResendOTP")
-    suspend fun resendOTP(): Response<ObjectResponse<JsonObject>>
+    suspend fun resendOTP(): Response<ObjectResponse<Token>>
 
     @POST("api/Forgot/CheckMail")
     suspend fun forgotPassword(@Body param: EmailParam) : Response<ObjectResponse<Token>>
@@ -75,7 +75,7 @@ interface ApiService {
     suspend fun updateNewPassword(@Body param: PasswordParam) : Response<ObjectResponse<JsonObject>>
 
     @GET("api/Forgot/ResendOTP")
-    suspend fun resendOTPForgotPassword() : Response<ObjectResponse<JsonObject>>
+    suspend fun resendOTPForgotPassword() : Response<ObjectResponse<Token>>
 
     //--------------------HOUSE-----------------------------
 

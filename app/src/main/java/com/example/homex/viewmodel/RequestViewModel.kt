@@ -5,10 +5,14 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.JsonObject
-import com.homex.core.model.response.RequestResponse
 import com.homex.core.model.general.ResultResponse
 import com.homex.core.model.response.CircleRequest
-import com.homex.core.param.request.*
+import com.homex.core.model.response.RequestResponse
+import com.homex.core.param.request.CreateRatingParam
+import com.homex.core.param.request.CreateRequestParam
+import com.homex.core.param.request.EditRequestParam
+import com.homex.core.param.request.UpdateRatingParam
+import com.homex.core.param.request.UpdateStatusParam
 import com.homex.core.repository.RequestRepository
 import com.homex.core.util.AppEvent
 import kotlinx.coroutines.launch
@@ -25,17 +29,15 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
         AppEvent.showPopUp()
         viewModelScope.launch {
             messageLiveData.addSource(repository.createNewRequest(param)){
-                Log.e("response", it.toString())
                 when (it) {
                     is ResultResponse.Success -> {
-                        Log.e("SuccessCreateRequest", "${it.data}")
                         messageLiveData.value = it.data
                     }
                     is ResultResponse.Error ->{
                         AppEvent.showPopUpError(it.message)
                     }
                     else -> {
-                        Log.e("Loading", "hello")
+                        Log.d("Loading", "hello")
                     }
                 }
             }
@@ -45,17 +47,15 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
     fun editRequest(param: EditRequestParam){
         viewModelScope.launch {
             messageLiveData.addSource(repository.updateRequest(param)){
-                Log.e("response", it.toString())
                 when (it) {
                     is ResultResponse.Success -> {
-                        Log.e("SuccessEditRequest", "${it.data}")
                         messageLiveData.value = it.data
                     }
                     is ResultResponse.Error ->{
                         AppEvent.showPopUpError(it.message)
                     }
                     else -> {
-                        Log.e("Loading", "hello")
+                        Log.d("Loading", "hello")
                     }
                 }
             }
@@ -65,17 +65,15 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
     fun deleteRequest(body: RequestBody){
         viewModelScope.launch {
             messageLiveData.addSource(repository.deleteRequest(body)){
-                Log.e("response", it.toString())
                 when (it) {
                     is ResultResponse.Success -> {
-                        Log.e("SuccessDeleteRequest", "${it.data}")
                         messageLiveData.value = it.data
                     }
                     is ResultResponse.Error ->{
                         AppEvent.showPopUpError(it.message)
                     }
                     else -> {
-                        Log.e("Loading", "hello")
+                        Log.d("Loading", "hello")
                     }
                 }
             }
@@ -86,17 +84,15 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
         AppEvent.showPopUp()
         viewModelScope.launch {
             requestResponseLiveData.addSource(repository.getRequestById(id)){
-                Log.e("response", it.toString())
                 when (it) {
                     is ResultResponse.Success -> {
-                        Log.e("SuccessGetRequest", "${it.data}")
                         requestResponseLiveData.value = it.data
                     }
                     is ResultResponse.Error ->{
                         AppEvent.showPopUpError(it.message)
                     }
                     else -> {
-                        Log.e("Loading", "hello")
+                        Log.d("Loading", "hello")
                     }
                 }
             }
@@ -106,17 +102,15 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
     fun getRequestHistory(){
         viewModelScope.launch {
             requestSentResponseListLiveDate.addSource(repository.getRequestSent()){
-                Log.e("response", it.toString())
                 when (it) {
                     is ResultResponse.Success -> {
-                        Log.e("SuccessGetHistory", "${it.data}")
                         requestSentResponseListLiveDate.value = it.data
                     }
                     is ResultResponse.Error ->{
                         AppEvent.showPopUpError(it.message)
                     }
                     else -> {
-                        Log.e("Loading", "hello")
+                        Log.d("Loading", "hello")
                     }
                 }
             }
@@ -126,17 +120,15 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
     fun getRequestByHouse(id: Int){
         viewModelScope.launch {
             requestResponseListLiveDate.addSource(repository.getRequestByHouse(id)){
-                Log.e("response", it.toString())
                 when (it) {
                     is ResultResponse.Success -> {
-                        Log.e("SuccessGetByHouse", "${it.data}")
                         requestResponseListLiveDate.value = it.data
                     }
                     is ResultResponse.Error ->{
                         AppEvent.showPopUpError(it.message)
                     }
                     else -> {
-                        Log.e("Loading", "hello")
+                        Log.d("Loading", "hello")
                     }
                 }
             }
@@ -146,17 +138,15 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
     fun getPendingRequest(){
         viewModelScope.launch {
             requestResponseListLiveDate.addSource(repository.getPendingRequest()){
-                Log.e("response", it.toString())
                 when (it) {
                     is ResultResponse.Success -> {
-                        Log.e("SuccessGetPending", "${it.data}")
                         requestResponseListLiveDate.value = it.data
                     }
                     is ResultResponse.Error ->{
                         AppEvent.showPopUpError(it.message)
                     }
                     else -> {
-                        Log.e("Loading", "hello")
+                        Log.d("Loading", "hello")
                     }
                 }
             }
@@ -166,17 +156,15 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
     fun updateStatus(param: UpdateStatusParam){
         viewModelScope.launch {
             messageLiveData.addSource(repository.updateStatus(param)){
-                Log.e("response", it.toString())
                 when (it) {
                     is ResultResponse.Success -> {
-                        Log.e("SuccessUpdateStatus", "${it.data}")
                         messageLiveData.value = it.data
                     }
                     is ResultResponse.Error ->{
                         AppEvent.showPopUpError(it.message)
                     }
                     else -> {
-                        Log.e("Loading", "hello")
+                        Log.d("Loading", "hello")
                     }
                 }
             }
@@ -186,17 +174,15 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
     fun createRating(param: CreateRatingParam){
         viewModelScope.launch {
             messageLiveData.addSource(repository.createRating(param)){
-                Log.e("response", it.toString())
                 when (it) {
                     is ResultResponse.Success -> {
-                        Log.e("SuccessUpdateStatus", "${it.data}")
                         messageLiveData.value = it.data
                     }
                     is ResultResponse.Error ->{
                         AppEvent.showPopUpError(it.message)
                     }
                     else -> {
-                        Log.e("Loading", "hello")
+                        Log.d("Loading", "hello")
                     }
                 }
             }
@@ -206,17 +192,15 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
     fun updateRating(param: UpdateRatingParam){
         viewModelScope.launch {
             messageLiveData.addSource(repository.updateRating(param)){
-                Log.e("response", it.toString())
                 when (it) {
                     is ResultResponse.Success -> {
-                        Log.e("SuccessUpdateStatus", "${it.data}")
                         messageLiveData.value = it.data
                     }
                     is ResultResponse.Error ->{
                         AppEvent.showPopUpError(it.message)
                     }
                     else -> {
-                        Log.e("Loading", "hello")
+                        Log.d("Loading", "hello")
                     }
                 }
             }
@@ -226,17 +210,15 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
     fun getCircleRequest(){
         viewModelScope.launch {
             circleRequestResponseListLiveDate.addSource(repository.getCircleRequest()){
-                Log.e("response", it.toString())
                 when (it) {
                     is ResultResponse.Success -> {
-                        Log.e("SuccessGetPending", "${it.data}")
                         circleRequestResponseListLiveDate.value = it.data
                     }
                     is ResultResponse.Error ->{
                         AppEvent.showPopUpError(it.message)
                     }
                     else -> {
-                        Log.e("Loading", "hello")
+                        Log.d("Loading", "hello")
                     }
                 }
             }

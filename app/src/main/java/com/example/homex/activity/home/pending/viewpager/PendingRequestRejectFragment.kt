@@ -44,7 +44,6 @@ class PendingRequestRejectFragment: BaseFragmentViewPager<FragmentPendingRequest
                         )
                     )
                 }
-//                chatViewModel.clearContactUser()
             }
         }
     }

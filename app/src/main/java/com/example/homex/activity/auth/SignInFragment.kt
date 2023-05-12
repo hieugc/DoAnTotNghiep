@@ -22,7 +22,7 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>() {
 
     override fun setEvent() {
         binding.btnBack.setOnClickListener {
-            findNavController().navigate(R.id.action_signInFragment_to_getStartedFragment)
+            findNavController().popBackStack()
         }
         binding.passwordInputEdtTxt.addTextChangedListener {
             checkPassword()

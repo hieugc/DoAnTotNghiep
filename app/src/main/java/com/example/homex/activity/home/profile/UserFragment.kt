@@ -2,12 +2,9 @@ package com.example.homex.activity.home.profile
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.bumptech.glide.request.RequestOptions
 import com.example.homex.R
 import com.example.homex.activity.auth.AuthActivity
 import com.example.homex.activity.home.HomeActivity
@@ -15,17 +12,14 @@ import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentUserBinding
 import com.example.homex.extension.gone
 import com.example.homex.extension.visible
-import com.example.homex.viewmodel.ProfileViewModel
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.homex.core.util.PrefUtil
 import org.koin.android.ext.android.inject
-import org.koin.androidx.viewmodel.ext.android.viewModel
-
 
 class UserFragment : BaseFragment<FragmentUserBinding>() {
     override val layoutId: Int = R.layout.fragment_user
     private val prefUtil: PrefUtil by inject()
     private var isAuthenticated = true
-    private val viewModel: ProfileViewModel by viewModel()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -40,8 +34,6 @@ class UserFragment : BaseFragment<FragmentUserBinding>() {
     }
 
     override fun setView() {
-        Log.e("profile", "${prefUtil.profile}")
-        Log.e("token", "${prefUtil.token}")
         if(prefUtil.profile == null && prefUtil.token == null){
             binding.userLayout.gone()
             binding.notLoginLayout.visible()
@@ -50,7 +42,7 @@ class UserFragment : BaseFragment<FragmentUserBinding>() {
         else if(prefUtil.profile != null){
             binding.user = prefUtil.profile
             Glide.with(requireContext())
-                .load(prefUtil.profile!!.urlImage)
+                .load(prefUtil.profile?.urlImage)
                 .placeholder(R.drawable.ic_baseline_image_24)
                 .error(R.mipmap.avatar)
                 .into(binding.ivAvatar)
@@ -85,12 +77,23 @@ class UserFragment : BaseFragment<FragmentUserBinding>() {
         binding.btnLogout.setOnClickListener {
             if (!isAuthenticated)
                 return@setOnClickListener
-            prefUtil.clearAllData()
-            val i = Intent(requireContext(), HomeActivity::class.java)
-            activity?.finish()
-            activity?.overridePendingTransition(0, 0)
-            startActivity(i)
-            activity?.overridePendingTransition(0, 0)
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle(getString(R.string.logout))
+                .setMessage(getString(R.string.logout_message))
+                .setNegativeButton(resources.getString(R.string.cancel)) { _, _ ->
+                    // Respond to negative button press
+                }
+                .setPositiveButton(resources.getString(R.string.confirm)) { dialog, _ ->
+                    // Respond to positive button press
+                    dialog.dismiss()
+                    prefUtil.clearAllData()
+                    val i = Intent(requireContext(), HomeActivity::class.java)
+                    activity?.finish()
+                    activity?.overridePendingTransition(0, 0)
+                    startActivity(i)
+                    activity?.overridePendingTransition(0, 0)
+                }
+                .show()
         }
 
         binding.btnCircleRequest.setOnClickListener{

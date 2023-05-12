@@ -1,7 +1,6 @@
 package com.example.homex.activity.home.homepage
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.core.os.bundleOf
 import androidx.core.text.HtmlCompat
@@ -12,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.viewpager2.widget.ViewPager2
 import com.example.homex.R
+import com.example.homex.activity.auth.AuthActivity
 import com.example.homex.activity.home.HomeActivity
 import com.example.homex.adapter.HomeRatingAdapter
 import com.example.homex.adapter.ImageSlideAdapter
@@ -22,18 +22,26 @@ import com.example.homex.app.HOME
 import com.example.homex.app.ID
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentHomeDetailBinding
-import com.example.homex.extension.*
+import com.example.homex.extension.RequestStatus
+import com.example.homex.extension.betweenDays
+import com.example.homex.extension.convertIso8601ToLong
+import com.example.homex.extension.formatIso8601ToFormat
+import com.example.homex.extension.gone
+import com.example.homex.extension.longToDate
+import com.example.homex.extension.visible
 import com.example.homex.utils.CenterZoomLayoutManager
 import com.example.homex.viewmodel.ChatViewModel
 import com.example.homex.viewmodel.YourHomeViewModel
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayoutMediator
 import com.homex.core.model.CalendarDate
 import com.homex.core.param.chat.ContactUserParam
+import com.homex.core.param.request.UpdateStatusParam
 import com.homex.core.util.AppEvent
 import com.homex.core.util.PrefUtil
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.util.*
+import java.util.Calendar
 
 
 class HomeDetailFragment : BaseFragment<FragmentHomeDetailBinding>() {
@@ -43,6 +51,7 @@ class HomeDetailFragment : BaseFragment<FragmentHomeDetailBinding>() {
     private lateinit var rulesAdapter: UtilAdapter
     private lateinit var ratingAdapter: HomeRatingAdapter
     private lateinit var similarHomeAdapter: SimilarHomeAdapter
+    private lateinit var dialog: MaterialAlertDialogBuilder
     private val args: HomeDetailFragmentArgs by navArgs()
     private val viewModel: YourHomeViewModel by viewModel()
     private val chatViewModel: ChatViewModel by viewModel()
@@ -61,7 +70,6 @@ class HomeDetailFragment : BaseFragment<FragmentHomeDetailBinding>() {
                             CONTACT_USER to true
                         ))
                 }
-                //chatViewModel.clearContactUser()
             }
         }
     }
@@ -77,6 +85,21 @@ class HomeDetailFragment : BaseFragment<FragmentHomeDetailBinding>() {
             showBoxChatLayout = Pair(false, null),
         )
         viewModel.getHomeDetails(args.id)
+
+        if (prefUtil.profile == null || prefUtil.token == null){
+            dialog = MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Chưa đăng nhập")
+                .setMessage("Vui lòng đăng nhập để có thể sử dụng các tính năng này")
+                .setNegativeButton(resources.getString(R.string.cancel)) { _, _ ->
+                    // Respond to negative button press
+                }
+                .setPositiveButton(resources.getString(R.string.login)) { dialog, _ ->
+                    // Respond to positive button press
+                    dialog.dismiss()
+                    val intent = AuthActivity.open(requireContext())
+                    startActivity(intent)
+                }
+        }
 
         findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Pair<CalendarDate?, CalendarDate?>>("DATE")?.observe(viewLifecycleOwner){
                 dates->
@@ -153,10 +176,8 @@ class HomeDetailFragment : BaseFragment<FragmentHomeDetailBinding>() {
 
 
                     val first = CalendarDate(cal.time, cal.get(Calendar.DAY_OF_MONTH).toString())
-                    Log.e("first", cal.get(Calendar.DAY_OF_MONTH).toString())
                     cal.add(Calendar.DATE, 7)
                     val second = CalendarDate(cal.time, cal.get(Calendar.DAY_OF_MONTH).toString())
-                    Log.e("second", cal.get(Calendar.DAY_OF_MONTH).toString())
                     selection = Pair(
                         first, second
                     )
@@ -183,6 +204,7 @@ class HomeDetailFragment : BaseFragment<FragmentHomeDetailBinding>() {
         binding.homeRatingRecView.adapter = ratingAdapter
         val layoutManager = CenterZoomLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false, mShrinkAmount = 0.05f, mShrinkDistance = 0.8f, 1.2)
         binding.homeRatingRecView.layoutManager = layoutManager
+        binding.homeRatingRecView.setHasFixedSize(true)
 
         val snapHelper = LinearSnapHelper()
         snapHelper.attachToRecyclerView(binding.homeRatingRecView)
@@ -215,10 +237,8 @@ class HomeDetailFragment : BaseFragment<FragmentHomeDetailBinding>() {
 
         val cal = Calendar.getInstance()
         val first = CalendarDate(cal.time, cal.get(Calendar.DAY_OF_MONTH).toString())
-        Log.e("first", cal.get(Calendar.DAY_OF_MONTH).toString())
         cal.add(Calendar.DATE, 7)
         val second = CalendarDate(cal.time, cal.get(Calendar.DAY_OF_MONTH).toString())
-        Log.e("second", cal.get(Calendar.DAY_OF_MONTH).toString())
         selection = Pair(
             first, second
         )
@@ -253,6 +273,10 @@ class HomeDetailFragment : BaseFragment<FragmentHomeDetailBinding>() {
             findNavController().navigate(action)
         }
         binding.createRequestBtn.setOnClickListener {
+            if (prefUtil.profile == null || prefUtil.token == null){
+                dialog.show()
+                return@setOnClickListener
+            }
             binding.home?.userAccess?.let { userAccess->
                 if (userAccess != ""){
                     binding.home?.let {
@@ -275,6 +299,10 @@ class HomeDetailFragment : BaseFragment<FragmentHomeDetailBinding>() {
 
         }
         binding.contactBtn.setOnClickListener {
+            if (prefUtil.profile == null || prefUtil.token == null){
+                dialog.show()
+                return@setOnClickListener
+            }
             prefUtil.connectionId?.let { it1->
                 binding.home?.userAccess?.let { it2->
                     chatViewModel.contactToUser(

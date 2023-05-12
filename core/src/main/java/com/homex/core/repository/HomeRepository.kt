@@ -6,7 +6,6 @@ import com.homex.core.model.Location
 import com.homex.core.model.LocationSuggestion
 import com.homex.core.model.general.ResultResponse
 import com.homex.core.model.response.SearchHomeResponse
-import retrofit2.http.Query
 
 interface HomeRepository {
     suspend fun getPopularLocation(): LiveData<ResultResponse<ArrayList<Location>>>

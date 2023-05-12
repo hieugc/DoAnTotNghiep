@@ -6,8 +6,6 @@ import com.homex.core.model.BingLocation
 import com.homex.core.model.Home
 import com.homex.core.model.general.ResultResponse
 import com.homex.core.model.response.MyHomeResponse
-import com.homex.core.param.yourhome.IdParam
-import okhttp3.MultipartBody
 import okhttp3.RequestBody
 
 interface YourHomeRepository {

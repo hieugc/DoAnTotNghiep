@@ -7,9 +7,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.homex.R
-import com.example.homex.activity.auth.AuthActivity
 import com.example.homex.activity.home.HomeActivity
-import com.example.homex.app.MainApplication
 import com.example.homex.utils.PopupDialogFragment
 import com.example.homex.utils.PopupHelper
 import com.google.android.material.snackbar.Snackbar

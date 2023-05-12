@@ -1,7 +1,6 @@
 package com.example.homex.activity.home.request
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -14,7 +13,6 @@ import com.example.homex.extension.gone
 import com.example.homex.extension.visible
 import com.example.homex.viewmodel.YourHomeViewModel
 import com.homex.core.model.Home
-import com.homex.core.util.AppEvent
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PickYourHomeFragment : BaseFragment<FragmentPickYourHomeBinding>() {

@@ -3,7 +3,6 @@ package com.example.homex.activity.home.addhome
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.os.Environment
-import android.util.Log
 import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -35,7 +34,8 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 import java.io.FileOutputStream
-import java.util.*
+import java.util.Date
+import java.util.Random
 
 
 class AddHomeFragment : BaseFragment<FragmentAddHomeBinding>() {
@@ -150,44 +150,7 @@ class AddHomeFragment : BaseFragment<FragmentAddHomeBinding>() {
     }
 
     override fun setViewModel() {
-        viewModel.idRemove.observe(viewLifecycleOwner){
-            Log.e("idRemove", "$it")
-        }
-        viewModel.rules.observe(viewLifecycleOwner){
-            Log.e("rules", "$it")
-        }
-        viewModel.utilities.observe(viewLifecycleOwner){
-            Log.e("utilities", "$it")
-        }
-        viewModel.files.observe(viewLifecycleOwner){
-            Log.e("files", "$it")
-        }
-        viewModel.images.observe(viewLifecycleOwner){
-            Log.e("images", "$it")
-        }
-        viewModel.lat.observe(viewLifecycleOwner){
-            Log.e("lat", "$it")
-        }
-        viewModel.lng.observe(viewLifecycleOwner){
-            Log.e("lng", "$it")
-        }
-        viewModel.id.observe(viewLifecycleOwner){
-            Log.e("id", "$it")
-        }
-        viewModel.status.observe(viewLifecycleOwner){
-            Log.e("status", "$it")
-        }
-        viewModel.idCity.observe(viewLifecycleOwner){
-            Log.e("idCity", "$it")
-        }
-        viewModel.idDistrict.observe(viewLifecycleOwner){
-            Log.e("idDistrict", "$it")
-        }
-        viewModel.idWard.observe(viewLifecycleOwner){
-            Log.e("idWard", "$it")
-        }
         viewModel.showMap.observe(viewLifecycleOwner){
-            Log.e("showMap", "$it")
             if (it == true){
                 binding.nextSlideBtn.gone()
                 binding.prevSlideBtn.gone()
@@ -214,7 +177,6 @@ class AddHomeFragment : BaseFragment<FragmentAddHomeBinding>() {
         }
 
         fileViewModel.file.observe(viewLifecycleOwner){ list ->
-            Log.e("images", "$list")
             if(list != null){
                 if(list.size > 0){
                     tmp.clear()
@@ -248,7 +210,6 @@ class AddHomeFragment : BaseFragment<FragmentAddHomeBinding>() {
                                         val file = saveBitmapToSDCard(bitmap)
                                         tmpFiles.add(file)
                                         tmp.add(file)
-                                        Log.e("tmp", "$tmp")
                                         viewModel.files.postValue(tmp)
                                         fileViewModel.tmpFiles.postValue(tmpFiles)
                                         return false
@@ -368,17 +329,11 @@ class AddHomeFragment : BaseFragment<FragmentAddHomeBinding>() {
                 val requestBody = file.asRequestBody(mediaType)
                 val body = MultipartBody.Part.createFormData("files", file.name, requestBody)
                 builder.addPart(body)
-//                builder.addFormDataPart("files", file.name, requestBody)
-//                Log.e("fileName", file.name)
             }
         }
 
 
         if(viewModel.id.value != 0){
-            Log.e("id", "${viewModel.id}")
-            Log.e("status", "${viewModel.status}")
-            Log.e("images", "${viewModel.images}")
-            Log.e("idRemove", "${viewModel.idRemove}")
             builder.addFormDataPart("id", viewModel.id.value.toString())
             viewModel.idRemove.value?.let {
                 for ((index, id) in it.withIndex()){
@@ -395,15 +350,12 @@ class AddHomeFragment : BaseFragment<FragmentAddHomeBinding>() {
     }
 
     override fun onDestroy() {
-        Log.e("destroy", "$tmpFiles")
         fileViewModel.file.postValue(mutableListOf())
         for(item in tmpFiles){
-            Log.e("item", item.path)
             item.delete()
         }
         fileViewModel.tmpFiles.postValue(mutableListOf())
         super.onDestroy()
-        Log.e("destroy", "$tmpFiles")
     }
 
 
@@ -416,7 +368,6 @@ class AddHomeFragment : BaseFragment<FragmentAddHomeBinding>() {
         val random = Random()
         val n = random.nextInt(10000)
         val file = File(dir, "IMG_${date.time}_${n}.jpg")
-        Log.e("filePath", file.path)
         if(file.exists()){
             file.delete()
         }

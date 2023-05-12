@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.os.Environment
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -37,7 +36,10 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
+import java.util.Random
 
 class UpdateProfileFragment : BaseFragment<FragmentUpdateProfileBinding>() {
     override val layoutId: Int = R.layout.fragment_update_profile
@@ -119,7 +121,7 @@ class UpdateProfileFragment : BaseFragment<FragmentUpdateProfileBinding>() {
         if (prefUtil.profile != null) {
             binding.user = prefUtil.profile
             Glide.with(requireContext())
-                .load(prefUtil.profile!!.urlImage)
+                .load(prefUtil.profile?.urlImage)
                 .placeholder(R.drawable.ic_baseline_image_24)
                 .error(R.mipmap.avatar)
                 .into(binding.ivAvatar)
@@ -161,8 +163,6 @@ class UpdateProfileFragment : BaseFragment<FragmentUpdateProfileBinding>() {
                 if (s.toString() != current) {
                     var clean: String = s.toString().replace("[^\\d.]|\\.".toRegex(), "")
                     val cleanC = current.replace("[^\\d.]|\\.".toRegex(), "")
-                    Log.e("cleanS", clean)
-                    Log.e("cleanC", cleanC)
                     val cl = clean.length
                     var sel = cl
                     var i = 2
@@ -182,9 +182,6 @@ class UpdateProfileFragment : BaseFragment<FragmentUpdateProfileBinding>() {
                         var day = clean.substring(0, 2).toInt()
                         var mon = clean.substring(2, 4).toInt()
                         var year = clean.substring(4, 8).toInt()
-                        Log.e("day", "$day")
-                        Log.e("mon", "$mon")
-                        Log.e("year", "$year")
                         //Add a flag to notify user if their date is wrong
                         //and will be re-format
                         var flag = false
@@ -208,7 +205,6 @@ class UpdateProfileFragment : BaseFragment<FragmentUpdateProfileBinding>() {
                         // ^ first set year for the line below to work correctly
                         //with leap years - otherwise, date e.g. 29/02/2012
                         //would be automatically corrected to 28/02/2012
-                        Log.e("max", "${cal.getActualMaximum(Calendar.DATE)}")
                         day = if (day > cal.getActualMaximum(Calendar.DATE)) {
                             flag = true
                             cal.getActualMaximum(
@@ -228,7 +224,6 @@ class UpdateProfileFragment : BaseFragment<FragmentUpdateProfileBinding>() {
                         clean = String.format("%02d%02d%02d", day, mon, year)
                         if (flag)
                             (activity as BaseActivity).displayError("Your date is invalid. Auto formatting...")
-                        Log.e("cleanElse", clean)
                         validTime = true
                     }
 
@@ -267,10 +262,8 @@ class UpdateProfileFragment : BaseFragment<FragmentUpdateProfileBinding>() {
                             clean
                         }
                     }
-                    Log.e("cleanFinal", clean)
 
                     sel = if (sel < 0) 0 else sel
-                    Log.e("sel", "$sel")
                     current = clean
                     binding.dobInputEdtTxt.setText(current)
                     binding.dobInputEdtTxt.setSelection(if (sel < current.length) sel else current.length)
@@ -353,7 +346,6 @@ class UpdateProfileFragment : BaseFragment<FragmentUpdateProfileBinding>() {
         val random = Random()
         val n = random.nextInt(10000)
         val file = File(dir, "IMG_${date.time}_${n}.jpg")
-        Log.e("filePath", file.path)
         if (file.exists()) {
             file.delete()
         }

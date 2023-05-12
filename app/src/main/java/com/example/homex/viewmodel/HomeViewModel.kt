@@ -22,17 +22,15 @@ class HomeViewModel(private val repository: HomeRepository): ViewModel() {
     fun getSuggestion(query: String){
         viewModelScope.launch {
             suggestion.addSource(repository.getLocationSuggestion(query)){
-                Log.e("response", it.toString())
                 when (it) {
                     is ResultResponse.Success -> {
-                        Log.e("SuccessGetSuggestion", "${it.data}")
                         suggestion.value = it.data
                     }
                     is ResultResponse.Error ->{
                         AppEvent.showPopUpError(it.message)
                     }
                     else -> {
-                        Log.e("Loading", "hello")
+                        Log.d("Loading", "hello")
                     }
                 }
             }
@@ -42,17 +40,15 @@ class HomeViewModel(private val repository: HomeRepository): ViewModel() {
     fun getPopularHome(){
         viewModelScope.launch {
             popularHome.addSource(repository.getPopularHome()){
-                Log.e("response", it.toString())
                 when (it) {
                     is ResultResponse.Success -> {
-                        Log.e("SuccessGetLocation", "${it.data}")
                         popularHome.value = it.data
                     }
                     is ResultResponse.Error ->{
                         AppEvent.showPopUpError(it.message)
                     }
                     else -> {
-                        Log.e("Loading", "hello")
+                        Log.d("Loading", "hello")
                     }
                 }
             }
@@ -62,17 +58,15 @@ class HomeViewModel(private val repository: HomeRepository): ViewModel() {
     fun getPopularLocation(){
         viewModelScope.launch {
             popularLocation.addSource(repository.getPopularLocation()){
-                Log.e("response", it.toString())
                 when (it) {
                     is ResultResponse.Success -> {
-                        Log.e("SuccessGetHome", "${it.data}")
                         popularLocation.value = it.data
                     }
                     is ResultResponse.Error ->{
                         AppEvent.showPopUpError(it.message)
                     }
                     else -> {
-                        Log.e("Loading", "hello")
+                        Log.d("Loading", "hello")
                     }
                 }
             }
@@ -95,17 +89,15 @@ class HomeViewModel(private val repository: HomeRepository): ViewModel() {
         AppEvent.showPopUp()
         viewModelScope.launch {
             searchList.addSource(repository.searchHome(idCity, people, idDistrict, startDate, endDate, startPrice, endPrice, utilities, sortBy, page, limit)){
-                Log.e("response", it.toString())
                 when (it) {
                     is ResultResponse.Success -> {
-                        Log.e("SuccessSearchHome", "${it.data}")
                         searchList.value = it.data
                     }
                     is ResultResponse.Error ->{
                         AppEvent.showPopUpError(it.message)
                     }
                     else -> {
-                        Log.e("Loading", "hello")
+                        Log.d("Loading", "hello")
                     }
                 }
             }

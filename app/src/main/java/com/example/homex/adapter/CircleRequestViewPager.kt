@@ -7,7 +7,7 @@ import com.example.homex.activity.home.profile.CircleRequestPagerFragment
 import com.example.homex.app.REQUEST_STATUS
 import com.example.homex.extension.StatusWaitingRequest
 
-class CircleRequestViewPager(private val parentFragment: Fragment) :
+class CircleRequestViewPager(parentFragment: Fragment) :
     FragmentStateAdapter(parentFragment) {
     override fun getItemCount(): Int = 5
 

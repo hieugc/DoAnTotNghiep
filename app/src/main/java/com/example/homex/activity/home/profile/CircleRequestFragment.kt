@@ -1,9 +1,6 @@
 package com.example.homex.activity.home.profile
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import com.example.homex.R
 import com.example.homex.activity.home.HomeActivity
 import com.example.homex.adapter.CircleRequestViewPager
@@ -30,14 +27,6 @@ class CircleRequestFragment : BaseFragment<FragmentCircleRequestBinding>() {
         )
 
         viewModel.getCircleRequest()
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = FragmentCircleRequestBinding.inflate(layoutInflater)
-        return binding.root
     }
 
     override fun setView() {

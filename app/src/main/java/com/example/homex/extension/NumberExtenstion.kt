@@ -3,7 +3,8 @@ package com.example.homex.extension
 import android.content.Context
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
 fun Float.dpToPx(context: Context): Int{
     return (this * context.resources.displayMetrics.density).toInt()

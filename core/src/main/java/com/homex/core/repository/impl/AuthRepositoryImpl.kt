@@ -1,7 +1,6 @@
 package com.homex.core.repository.impl
 
 import androidx.lifecycle.LiveData
-import com.google.gson.JsonObject
 import com.homex.core.api.ApiService
 import com.homex.core.data.NetworkBoundResource
 import com.homex.core.model.CheckEmailExisted
@@ -9,9 +8,11 @@ import com.homex.core.model.Token
 import com.homex.core.model.general.ObjectResponse
 import com.homex.core.model.general.ResultResponse
 import com.homex.core.model.response.UserResponse
-import com.homex.core.param.auth.*
+import com.homex.core.param.auth.EmailParam
+import com.homex.core.param.auth.LoginParam
+import com.homex.core.param.auth.OTPParam
+import com.homex.core.param.auth.UpdateInfoParam
 import com.homex.core.repository.AuthRepository
-import okhttp3.RequestBody
 import retrofit2.Response
 
 class AuthRepositoryImpl(private val api: ApiService): AuthRepository {
@@ -64,17 +65,17 @@ class AuthRepositoryImpl(private val api: ApiService): AuthRepository {
         }.build().asLiveData()
     }
 
-    override suspend fun resendOTPForgotPassword(): LiveData<ResultResponse<JsonObject>> {
-        return object : NetworkBoundResource<ObjectResponse<JsonObject>, JsonObject>(){
-            override fun processResponse(response: ObjectResponse<JsonObject>): JsonObject? = response.data
-            override suspend fun createCall(): Response<ObjectResponse<JsonObject>> = api.resendOTPForgotPassword()
+    override suspend fun resendOTPForgotPassword(): LiveData<ResultResponse<Token>> {
+        return object : NetworkBoundResource<ObjectResponse<Token>, Token>(){
+            override fun processResponse(response: ObjectResponse<Token>): Token? = response.data
+            override suspend fun createCall(): Response<ObjectResponse<Token>> = api.resendOTPForgotPassword()
         }.build().asLiveData()
     }
 
-    override suspend fun resendOTPSignup(): LiveData<ResultResponse<JsonObject>> {
-        return object : NetworkBoundResource<ObjectResponse<JsonObject>, JsonObject>(){
-            override fun processResponse(response: ObjectResponse<JsonObject>): JsonObject? = response.data
-            override suspend fun createCall(): Response<ObjectResponse<JsonObject>> = api.resendOTP()
+    override suspend fun resendOTPSignup(): LiveData<ResultResponse<Token>> {
+        return object : NetworkBoundResource<ObjectResponse<Token>, Token>(){
+            override fun processResponse(response: ObjectResponse<Token>): Token? = response.data
+            override suspend fun createCall(): Response<ObjectResponse<Token>> = api.resendOTP()
         }.build().asLiveData()
     }
 }

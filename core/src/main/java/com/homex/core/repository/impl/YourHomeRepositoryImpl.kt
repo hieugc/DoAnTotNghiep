@@ -10,9 +10,7 @@ import com.homex.core.model.general.ListResponse
 import com.homex.core.model.general.ObjectResponse
 import com.homex.core.model.general.ResultResponse
 import com.homex.core.model.response.MyHomeResponse
-import com.homex.core.param.yourhome.IdParam
 import com.homex.core.repository.YourHomeRepository
-import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response
 

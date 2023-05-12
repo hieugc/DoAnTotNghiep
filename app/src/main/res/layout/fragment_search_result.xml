@@ -210,7 +210,7 @@
             android:clickable="true"
             android:focusable="true"
             app:home="@{selectedHouse}"
-            android:visibility="invisible"
+            goneUnlessOnMotionLayout="@{selectedHouse != null}"
             android:elevation="2dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

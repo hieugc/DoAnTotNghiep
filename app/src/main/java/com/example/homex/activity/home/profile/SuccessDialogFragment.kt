@@ -4,13 +4,13 @@ import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.view.*
-import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.Window
+import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
-import com.example.homex.R
-import com.example.homex.databinding.FragmentPointInputDialogBinding
 import com.example.homex.databinding.FragmentSuccessDialogBinding
-import com.example.homex.extension.disable
 
 class SuccessDialogFragment(private val title: String,private val  content: String)
     : DialogFragment() {

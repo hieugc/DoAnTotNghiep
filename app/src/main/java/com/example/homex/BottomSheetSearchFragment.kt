@@ -21,7 +21,8 @@ import com.example.homex.extension.visible
 import com.example.homex.viewmodel.HomeViewModel
 import com.homex.core.model.LocationSuggestion
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.util.*
+import java.util.Timer
+import java.util.TimerTask
 
 
 class BottomSheetSearchFragment : BaseFragment<FragmentBottomSheetSearchBinding>() {
@@ -66,6 +67,7 @@ class BottomSheetSearchFragment : BaseFragment<FragmentBottomSheetSearchBinding>
 
         binding.rvSuggestion.adapter = adapter
         binding.rvSuggestion.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        binding.rvSuggestion.setHasFixedSize(true)
         binding.searchEdtTxt.addTextChangedListener(object : TextWatcher{
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
             }

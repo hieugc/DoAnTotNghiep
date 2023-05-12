@@ -2,7 +2,8 @@ package com.example.homex.extension
 
 import java.text.DateFormat
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
 const val MILLIS_IN_A_DAY = 1000 * 60 * 60 * 24
 
@@ -52,8 +53,8 @@ fun String?.convertToRelativeDateTime(): String?{
 fun String?.convertToRelativeDate(): String?{
     val date = Date()
     val dateGap = this?.iso8601BetweenDays(date)
-    if (dateGap != null){
-        return when{
+    return if (dateGap != null){
+        when{
             dateGap < 7 ->{
                 this?.formatIso8601ToFormat(format = "EEEE")
             }
@@ -65,7 +66,7 @@ fun String?.convertToRelativeDate(): String?{
             }
         }
     }else{
-        return ""
+        ""
     }
 }
 

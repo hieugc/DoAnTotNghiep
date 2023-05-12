@@ -5,17 +5,19 @@ import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.constraintlayout.motion.widget.MotionLayout
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.bumptech.glide.request.RequestOptions
 import com.example.homex.R
 import com.homex.core.model.HomeStatus
 import com.homex.core.util.AppEvent
 import java.text.DateFormat
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 
 @BindingAdapter(value = ["setVisibility"])
@@ -26,6 +28,22 @@ fun View.setVisibility(visible: Boolean) {
 @BindingAdapter(value = ["setVisibilityGone"])
 fun View.setVisibilityGone(visible: Boolean) {
     visibility = if(visible) View.VISIBLE else View.GONE
+}
+
+@BindingAdapter(value = ["goneUnlessOnMotionLayout"])
+fun View.goneUnlessOnMotionLayout(visible: Boolean) {
+    if (this.parent is MotionLayout) {
+        val layout: MotionLayout = this.parent as MotionLayout
+        val setToVisibility = if (visible) View.VISIBLE else View.GONE
+        val setToAlpha = if (visible) 1f else 0f
+        for (constraintId in layout.constraintSetIds) {
+            val constraint: ConstraintSet? = layout.getConstraintSet(constraintId)
+            if (constraint != null) {
+                constraint.setVisibility(this.id, setToVisibility)
+                constraint.setAlpha(this.id, setToAlpha)
+            }
+        }
+    }
 }
 
 @BindingAdapter(value = ["loadImage"])
@@ -83,15 +101,6 @@ fun AppCompatTextView.getAge(dob: String?, gender: Boolean?){
         }
         text = "$age, $gen"
     }
-//    return if(old != null && gender != null){
-//        "${old ?:""}, ${gender?:""}"
-//    }else if(old != null) {
-//        "${old ?:""}"
-//    }else if(gender != null) {
-//        gender ?:""
-//    }else{
-//        ""
-//    }
 }
 
 @BindingAdapter(value =["status"])

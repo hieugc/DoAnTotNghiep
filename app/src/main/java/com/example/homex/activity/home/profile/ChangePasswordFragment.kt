@@ -1,18 +1,17 @@
 package com.example.homex.activity.home.profile
 
 import android.os.Bundle
-import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.widget.addTextChangedListener
 import androidx.navigation.fragment.findNavController
 import com.example.homex.R
-import com.example.homex.activity.auth.AuthActivity
 import com.example.homex.activity.home.HomeActivity
-import com.example.homex.app.EMAIL
 import com.example.homex.base.BaseActivity
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentChangePasswordBinding
-import com.example.homex.extension.*
+import com.example.homex.extension.checkPassword
+import com.example.homex.extension.disable
+import com.example.homex.extension.enable
 import com.example.homex.viewmodel.ProfileViewModel
 import com.homex.core.param.auth.PasswordParam
 import org.koin.androidx.viewmodel.ext.android.viewModel

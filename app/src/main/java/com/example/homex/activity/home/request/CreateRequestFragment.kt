@@ -1,7 +1,6 @@
 package com.example.homex.activity.home.request
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
@@ -24,7 +23,7 @@ import com.homex.core.util.AppEvent
 import com.homex.core.util.PrefUtil
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.util.*
+import java.util.Calendar
 
 
 class CreateRequestFragment : BaseFragment<FragmentCreateRequestBinding>() {
@@ -83,10 +82,8 @@ class CreateRequestFragment : BaseFragment<FragmentCreateRequestBinding>() {
         else {
             val cal = Calendar.getInstance()
             val first = CalendarDate(cal.time, cal.get(Calendar.DAY_OF_MONTH).toString())
-            Log.e("first", cal.get(Calendar.DAY_OF_MONTH).toString())
             cal.add(Calendar.DATE, 7)
             val second = CalendarDate(cal.time, cal.get(Calendar.DAY_OF_MONTH).toString())
-            Log.e("second", cal.get(Calendar.DAY_OF_MONTH).toString())
             viewModel.startDate.postValue(first)
             viewModel.endDate.postValue(second)
         }

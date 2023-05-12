@@ -9,7 +9,7 @@ import com.example.homex.databinding.ActivitySplashBinding
 import com.homex.core.CoreApplication
 import com.homex.core.util.PrefUtil
 import org.koin.android.ext.android.inject
-import java.util.*
+import java.util.Timer
 import kotlin.concurrent.schedule
 
 class SplashActivity : BaseActivity() {

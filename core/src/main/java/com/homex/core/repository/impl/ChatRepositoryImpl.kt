@@ -5,7 +5,6 @@ import com.google.gson.JsonObject
 import com.homex.core.api.ApiService
 import com.homex.core.data.NetworkBoundResource
 import com.homex.core.model.MessageRoom
-import com.homex.core.model.general.ListResponse
 import com.homex.core.model.general.ObjectResponse
 import com.homex.core.model.general.ResultResponse
 import com.homex.core.model.response.MessageResponse

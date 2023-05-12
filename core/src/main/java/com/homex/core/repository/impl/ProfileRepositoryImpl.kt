@@ -10,7 +10,6 @@ import com.homex.core.model.general.ObjectResponse
 import com.homex.core.model.general.ResultResponse
 import com.homex.core.model.response.PaymentHistory
 import com.homex.core.model.response.PaymentInfoResponse
-import com.homex.core.model.response.RequestResponse
 import com.homex.core.param.auth.PasswordParam
 import com.homex.core.param.profile.TopUpPointParam
 import com.homex.core.repository.ProfileRepository

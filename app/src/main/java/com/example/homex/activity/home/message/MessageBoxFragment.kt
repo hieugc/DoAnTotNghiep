@@ -1,7 +1,6 @@
 package com.example.homex.activity.home.message
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
@@ -76,7 +75,7 @@ class MessageBoxFragment : BaseFragment<FragmentMessageBoxBinding>() {
         binding.messageRecView.adapter = adapter
         val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, true)
         binding.messageRecView.layoutManager = layoutManager
-
+        binding.messageRecView.setHasFixedSize(true)
     }
 
     override fun setEvent() {
@@ -119,14 +118,12 @@ class MessageBoxFragment : BaseFragment<FragmentMessageBoxBinding>() {
             }
         }
         binding.msgInputLayout.setOnClickListener {
-            Log.e("layout", "hello")
         }
     }
 
     override fun setViewModel() {
         viewModel.messages.observe(this){
             if(it != null){
-                Log.e("messagesList", "${it.messages}")
                 userMessages.clear()
                 val users = it.userMessages
                 if(users != null){
@@ -202,15 +199,10 @@ class MessageBoxFragment : BaseFragment<FragmentMessageBoxBinding>() {
             }
         }
 
-        viewModel.seenAll.observe(this){
-            if(it != null){
-                Log.e("seenAll", "hello")
-            }
-        }
+        viewModel.seenAll.observe(this){}
 
         viewModel.newMessage.observe(this){
             if (it != null){
-                Log.e("newMessage", "${it.messages}")
                 val messages = it.messages
                 if (messages != null){
                     val date = messages[0].createdDate
@@ -241,11 +233,7 @@ class MessageBoxFragment : BaseFragment<FragmentMessageBoxBinding>() {
             }
         }
 
-        viewModel.sendMessage.observe(this){
-            if (it != null){
-                Log.i("sendMessage", "Success")
-            }
-        }
+        viewModel.sendMessage.observe(this){}
     }
 
 }

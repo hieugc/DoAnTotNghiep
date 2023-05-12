@@ -3,7 +3,6 @@ package com.example.homex.activity.home.message
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.View
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -30,6 +29,23 @@ class MessageFragment : BaseFragment<FragmentMessageBinding>() {
     private lateinit var adapter: MessageBoxAdapter
     private var page = 0
     private var isShimmer = true
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel.newMessage.observe(this){
+            if (it != null){
+                for ((index, chat) in boxChatList.withIndex()){
+                    if (chat.idRoom == it.idRoom){
+                        boxChatList.removeAt(index)
+                        adapter.notifyItemRemoved(index)
+                        break
+                    }
+                }
+                boxChatList.add(0, it)
+                adapter.notifyItemInserted(0)
+            }
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -77,7 +93,6 @@ class MessageFragment : BaseFragment<FragmentMessageBinding>() {
     override fun setViewModel() {
         viewModel.chatRoom.observe(this){
             if (it != null){
-                Log.e("page", "$page")
                 if(page == 1){
                     boxChatList.clear()
                 }
@@ -108,22 +123,6 @@ class MessageFragment : BaseFragment<FragmentMessageBinding>() {
                 binding.messageShimmer.gone()
                 isShimmer = false
                 binding.messageBoxRecView.gone()
-            }
-        }
-
-        viewModel.newMessage.observe(this){
-            if (it != null){
-                Log.e("newBox", "${it.messages}")
-                for ((index, chat) in boxChatList.withIndex()){
-                    if (chat.idRoom == it.idRoom){
-                        boxChatList.removeAt(index)
-                        adapter.notifyItemRemoved(index)
-                        break
-                    }
-                }
-                boxChatList.add(0, it)
-                adapter.notifyItemInserted(0)
-                viewModel.newMessage.postValue(null)
             }
         }
     }

@@ -19,7 +19,7 @@ import com.example.homex.databinding.FragmentBottomSheetDialogSelectImageBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.homex.core.util.AppEvent
 import java.io.File
-import java.util.*
+import java.util.Date
 
 
 class BottomSheetDialogSelectImage : BottomSheetDialogFragment(){

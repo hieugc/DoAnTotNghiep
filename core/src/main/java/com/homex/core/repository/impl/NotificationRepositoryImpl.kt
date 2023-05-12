@@ -7,7 +7,6 @@ import com.homex.core.data.NetworkBoundResource
 import com.homex.core.model.general.ObjectResponse
 import com.homex.core.model.general.ResultResponse
 import com.homex.core.model.response.GetNotificationResponse
-import com.homex.core.param.notification.UpdateSeenNotificationParam
 import com.homex.core.repository.NotificationRepository
 import retrofit2.Response
 

@@ -1,9 +1,7 @@
 package com.example.homex.activity.home.profile
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.homex.R
@@ -32,14 +30,6 @@ class CircleRequestPagerFragment : BaseFragment<FragmentCircleRequestPagerBindin
         arguments?.takeIf { it.containsKey(REQUEST_STATUS) }?.apply {
             requestType = getInt(REQUEST_STATUS)
         }
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = FragmentCircleRequestPagerBinding.inflate(layoutInflater)
-        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
