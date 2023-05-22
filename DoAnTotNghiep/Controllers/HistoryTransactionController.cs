@@ -14,6 +14,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using QRCoder;
 using System.Drawing;
+using DoAnTotNghiep.Service;
 
 namespace DoAnTotNghiep.Controllers
 {
@@ -24,17 +25,26 @@ namespace DoAnTotNghiep.Controllers
         private readonly DoAnTotNghiepContext _context;
         private readonly IConfiguration _configuration;
         private IHubContext<ChatHub> _signalContext;
+        private readonly ITransactionService _transactionService;
+        private readonly IUserService _userService;
+        private readonly INotificationService _notificationService;
 
         public HistoryTransactionController(ILogger<HistoryTransactionController> logger, 
                     DoAnTotNghiepContext context, 
                     IConfiguration configuration, 
                     IHostEnvironment environment, 
-                    IHubContext<ChatHub> signalContext) : base(environment)
+                    IHubContext<ChatHub> signalContext,
+                    ITransactionService transactionService,
+                    IUserService userService,
+                    INotificationService notificationService) : base(environment)
         {
             _logger = logger;
             this._context = context;
             this._configuration = configuration;
             _signalContext = signalContext;
+            _transactionService = transactionService;
+            _userService = userService;
+            _notificationService = notificationService;
         }
 
         [HttpGet("/Payment/Form")]
@@ -94,24 +104,20 @@ namespace DoAnTotNghiep.Controllers
                     {
                         try
                         {
-                            var user = this._context.Users.Where(m => m.Id == IdUser).FirstOrDefault();
+                            var user = this._userService.GetById(IdUser);
                             if (user != null)
                             {
-                                this._context.HistoryTransactions.Add(transaction);
-                                this._context.SaveChanges();
+                                this._transactionService.Save(transaction);
                                 tran.Commit();
 
-                                //gửi zalo
                                 Uri url = RequestAPI.CreateOrderZaloRequest();
                                 Dictionary<string, string> model = new ZaloViewModel().CreateOrder(user, transaction, this.GetWebsitePath(), key1, AppId);
 
                                 var response = await RequestAPI.Post<ZaloResponseCreateOrder>(url, new FormUrlEncodedContent(model));
                                 if (response != null)
                                 {
-                                    Console.WriteLine(JsonConvert.SerializeObject(response));
                                     if (response.returncode == 1)
                                     {
-                                        //timer CHECK API orderSTATUS
                                         await TimerCheckOrderZaloAsync(transaction, key1, AppId);
                                         if (isWeb)
                                         {
@@ -132,12 +138,6 @@ namespace DoAnTotNghiep.Controllers
                                             Status = 200,
                                             Data = response
                                         });
-                                        /*
-                                        return Json(new
-                                        {
-                                            Status = 200,
-                                            Data = response
-                                        });*/
                                     }
                                 }
 
@@ -151,7 +151,7 @@ namespace DoAnTotNghiep.Controllers
                         catch (Exception ex)
                         {
                             tran.Rollback();
-                            Console.WriteLine(ex);
+                            FileSystem.WriteExceptionFile(ex.ToString(), "ZaloPay_user_id_" + IdUser.ToString());
                         }
                     }
                 }
@@ -164,7 +164,6 @@ namespace DoAnTotNghiep.Controllers
         }
         private async Task TimerCheckOrderZaloAsync(HistoryTransaction transaction, string key1, string appid)
         {
-            //chỉnh time start => request.startDate - 1
             CancellationTokenSource source = new CancellationTokenSource();
             CancellationToken token = source.Token;
             DoAnTotNghiepContext inputContext = new DoAnTotNghiepContext(this._context.GetConfig());
@@ -194,9 +193,6 @@ namespace DoAnTotNghiep.Controllers
         [HttpPost("/Transaction/CallBack")]
         public async Task<IActionResult> CallBackZaloAsync([FromBody] dynamic cbdata)
         {
-            //gửi notification signalR
-            //lưu notification
-
             ChatHub chatHub = new ChatHub(this._signalContext);
             chatHub.SendPaymentAll(TargetSignalR.Payment(), Convert.ToString(cbdata["data"]) + " - " + Convert.ToString(cbdata["mac"])).Wait(TimeSpan.FromMinutes(5));
             string? key2 = this._configuration.GetConnectionString(ZaloPay.ZaloKey2);
@@ -211,43 +207,30 @@ namespace DoAnTotNghiep.Controllers
                     var reqMac = Convert.ToString(cbdata["mac"]);
                     var mac = HmacHelper.Compute(ZaloPayHMAC.HMACSHA256, key2, dataStr);
 
-
-                    Console.WriteLine("mac = {0}", mac);
-                    // kiểm tra callback hợp lệ (đến từ ZaloPay server)
                     if (!reqMac.Equals(mac))
                     {
-                        // callback không hợp lệ
                         result["returncode"] = -1;
                         result["returnmessage"] = "mac not equal";
                     }
                     else
                     {
-                        // thanh toán thành công
-                        // merchant cập nhật trạng thái cho đơn hàng
                         var dataJson = JsonConvert.DeserializeObject<Dictionary<string, object>>(dataStr);
-                        Console.WriteLine("update order's status = success where apptransid = {0}", dataJson["apptransid"]);
-
                         HistoryTransaction? historyTransaction = JsonConvert.DeserializeObject<HistoryTransaction>(dataJson["item"]);
                         if(historyTransaction != null)
                         {
-                            HistoryTransaction? model = this._context.HistoryTransactions.Where(m => m.Id == historyTransaction.Id).FirstOrDefault();
+                            HistoryTransaction? model = this._transactionService.GetById(historyTransaction.Id);
                             if(model != null)
                             {
                                 if(model.Status != (int)StatusTransaction.VALID)
                                 {
                                     model.Status = (int)StatusTransaction.VALID;
-                                    this._context.HistoryTransactions.Update(model);
-                                    this._context.SaveChanges();
+                                    this._transactionService.Update(model);
 
-                                    if (!this._context.Entry(model).Reference(m => m.Users).IsLoaded)
+                                    model.IncludeAll(this._context);
+                                    if (model.Users != null)
                                     {
-                                        this._context.Entry(model).Reference(m => m.Users).Load();
-                                        if(model.Users != null)
-                                        {
-                                            model.Users.Point += model.Amount;
-                                            this._context.Users.Update(model.Users);
-                                            this._context.SaveChanges();
-                                        }
+                                        model.Users.Point += model.Amount;
+                                        this._userService.UpdateUser(model.Users);
                                     }
 
                                     //signalR => notification
@@ -262,9 +245,7 @@ namespace DoAnTotNghiep.Controllers
                                         IsSeen = false,
                                         ImageUrl = NotificationImage.Coin
                                     };
-                                    this._context.Notifications.Add(notification);
-                                    this._context.SaveChanges();
-
+                                    this._notificationService.SaveNotification(notification);
                                     await chatHub.SendNotification(Crypto.EncodeKey(model.IdUser.ToString(), Crypto.Salt(this._configuration)),
                                         TargetSignalR.Notification(), new NotificationViewModel(notification, this.GetWebsitePath()));
                                 }
@@ -301,7 +282,6 @@ namespace DoAnTotNghiep.Controllers
             return Ok(result);
         }
 
-
         [HttpGet("/api/Payment/All")]
         public IActionResult ApiGetAll(int year = 2023)
         {
@@ -319,29 +299,11 @@ namespace DoAnTotNghiep.Controllers
         }
         private IActionResult GetTransaction(int? Status, int year = 2023)
         {
-            int IdUser = this.GetIdUser();
-            List<TransactionViewModel> transaction = new List<TransactionViewModel>();
-            if(Status.HasValue)
-            {
-                transaction.AddRange(this._context.HistoryTransactions
-                                            .Where(m => m.Status == Status && m.IdUser == IdUser && m.CreatedDate.Year == year)
-                                            .OrderBy(m => m.CreatedDate)
-                                            .Select(m => new TransactionViewModel(m))
-                                            .ToList());
-            }
-            else
-            {
-                transaction.AddRange(this._context.HistoryTransactions
-                                            .Where(m => m.IdUser == IdUser && m.CreatedDate.Year == year)
-                                            .OrderBy(m => m.CreatedDate)
-                                            .Select(m => new TransactionViewModel(m))
-                                            .ToList());
-            }
             return Json(new
             {
                 Status = 200,
-                Data = transaction
-            });
+                Data = this._transactionService.GetTransaction((int)StatusTransaction.VALID, this.GetIdUser(), year)
+            }) ;
         }
 
         [HttpGet("/Statistics/Payment/All")]
@@ -358,6 +320,12 @@ namespace DoAnTotNghiep.Controllers
         public IActionResult GetUsed(int year = 2023)
         {
             return this.GetTransaction((int)StatusTransaction.USED, year);
+        }
+
+        [HttpGet("/Payment/Detail")]
+        public IActionResult GetById(int Id)
+        {
+            return PartialView("~/Views/HistoryTransaction/_item.cshtml", this._transactionService.GetById(Id));
         }
     }
 }

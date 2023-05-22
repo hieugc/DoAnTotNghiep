@@ -27,17 +27,12 @@ function confirmDeleteHouse(bool) {
                     listHouse = listHouse.filter(function (model) {
                         return model.id != Id;
                     })
-                    reloadPage();
-                }
-                else if (result.status >= 500) {
-                    showNotification("Thao tác thất bại", result.message, 0);
-                }
-                else {
-                    showNotification("Thao tác thất bại", result.message, 0);
+                    $(`.house-id-${Id}`).remove();
+//                    reloadPage();
                 }
             },
             error: function (error) {
-                console.log(error);
+                showNotification("Thao tác thất bại", error.responseJSON.message, 0);
             }
         });
     }

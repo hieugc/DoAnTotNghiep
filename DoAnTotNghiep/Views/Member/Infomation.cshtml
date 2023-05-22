@@ -23,9 +23,10 @@
                         <img src="@Model.Image.Data" alt="avt" />
                     </div>
                 }
-                <div>
-                    <label for="image-avt" class="btn btn-sm btn-primary">Chỉnh sửa ảnh</label>
-                    <input name="image-avt" id="image-avt" hidden type="file" onchange="changeAvt(this)" accept="@AcceptType.Image" />
+                <div class="changeImage">
+                    <label for="image-avt" class="btn btn-sm btn-outline-primary">Chỉnh sửa ảnh</label>
+                    <label id="saveImagebtn" class="btn btn-sm btn-primary" onclick="SaveImage()" style="display: none;">Lưu ảnh</label>
+                    <input name="image-avt" id="image-avt" hidden type="file" onchange="changeAvt(this)" accept="@AcceptType.Image" onclick="this.value = null;" />
                 </div>
             </div>
         </div>
@@ -33,15 +34,15 @@
         <form id="InfoForm" action="@Url.Action("UpdateInfo", "User")" method="post" class="row">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="infomation-details-frame mb-3 col-md-6">
-                <label asp-for="FirstName" class="form-label">Họ <small>&</small> Tên đệm</label>
-                <input type="text" class="form-control" asp-for="FirstName" placeholder="Nguyễn Văn">
-                <span asp-validation-for="FirstName" class="text-danger"></span>
+                <label asp-for="LastName" class="form-label">Họ <small>&</small> Tên đệm</label>
+                <input type="text" class="form-control" asp-for="LastName" placeholder="Nguyễn Văn">
+                <span asp-validation-for="LastName" class="text-danger"></span>
             </div>
 
             <div class="infomation-details-frame mb-3 col-md-6">
-                <label asp-for="LastName" class="form-label">Tên</label>
-                <input type="text" class="form-control" asp-for="LastName" placeholder="A">
-                <span asp-validation-for="LastName" class="text-danger"></span>
+                <label asp-for="FirstName" class="form-label">Tên</label>
+                <input type="text" class="form-control" asp-for="FirstName" placeholder="A">
+                <span asp-validation-for="FirstName" class="text-danger"></span>
             </div>
 
             <div class="infomation-details-frame mb-3 col-md-6">

@@ -45,20 +45,6 @@ namespace DoAnTotNghiep.Controllers
             _configuration = configuration;
             _signalContext = signalContext;
         }
-
-        //[HttpGet("/Admin/Report")]
-        //public IActionResult Index()
-        //{
-        //    var report = this._context.UserReports
-        //                                .OrderBy(m => m.IdHouse)
-        //                                .Include(m => m.Houses)
-        //                                .Where(m => m.IsResponsed == false)
-        //                                .ToList();
-        //    return View();
-        //}
-
-        //create
-        //HINH ANH + TIEU DE + ID NHA + NOI DUNG
         [HttpPost("/AdminReport/Create")]
         public async Task<IActionResult> CreateReportAsync([FromBody] AdminReportViewModel model)
         {
@@ -176,6 +162,9 @@ namespace DoAnTotNghiep.Controllers
                 Message = "Khởi tạo không thành công"
             });
         }
+
+
+
 
         //Update status
         private IActionResult UpdateStatus(int IdAdminReport, int Status)

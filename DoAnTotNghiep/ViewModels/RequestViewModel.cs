@@ -43,24 +43,19 @@ namespace DoAnTotNghiep.ViewModels
     }
     public class DetailRequestViewModel: EditRequestViewModel
     {
-        public DetailRequestViewModel(Request request, User? user, byte[] salt, string host) : base(request)
+        public DetailRequestViewModel(Request request, bool isOwner, byte[] salt, string host) : base(request)
         {
-            if(user != null)
-            {
-                this.isOwner = (user.Id == request.IdUser);
-            }
             if(request.Users != null)
             {
                 this.User = new UserMessageViewModel(request.Users, salt, host);
             }
             this.Status = request.Status;
-            //this.IsCanCancel = (this.Status == (int)Enum.StatusRequest.WAIT_FOR_SWAP);
+            this.isOwner = isOwner;
         }
         public DetailRequestViewModel() { }
         public UserMessageViewModel User { get; set; } = new UserMessageViewModel();
         public int Status { get; set; }
         public bool isOwner { get; set; } = false;
-        //public bool IsCanCancel { get; set; } = false;
     }
     public class UpdateStatusViewModel
     {
@@ -69,6 +64,16 @@ namespace DoAnTotNghiep.ViewModels
     }
     public class DetailRequest
     {
+
+        public DetailRequest() { }
+        public DetailRequest(DetailHouseViewModel house, DetailRequestViewModel request, DetailHouseViewModel? swapHouse, DetailRatingViewModel? userRating, DetailRatingViewModel? myRating)
+        {
+            House = house;
+            Request = request;
+            SwapHouse = swapHouse;
+            UserRating = userRating;
+            MyRating = myRating;
+        }
 
         public DetailHouseViewModel House { get; set; } = new DetailHouseViewModel();
         public DetailRequestViewModel Request { get; set; } = new DetailRequestViewModel();

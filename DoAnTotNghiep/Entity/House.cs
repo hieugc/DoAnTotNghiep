@@ -52,7 +52,7 @@ namespace DoAnTotNghiep.Entity
             this.Status = data.Status;
             this.Bed = data.Bed;
         }
-        public void IncludeLocation(DoAnTotNghiepContext context)
+        public void IncludeAll(DoAnTotNghiepContext context)
         {
             if(this.Citys == null && !context.Entry(this).Reference(m => m.Citys).IsLoaded)
                 context.Entry(this).Reference(m => m.Citys).Load();
@@ -66,6 +66,12 @@ namespace DoAnTotNghiep.Entity
                 context.Entry(this).Collection(m => m.FeedBacks).Load();
             if (this.FileOfHouses == null && !context.Entry(this).Collection(m => m.FileOfHouses).IsLoaded)
                 context.Entry(this).Collection(m => m.FileOfHouses).Load();
+            if (this.RulesInHouses == null && !context.Entry(this).Collection(m => m.RulesInHouses).IsLoaded)
+                context.Entry(this).Collection(m => m.RulesInHouses).Load();
+            if (this.UtilitiesInHouses == null && !context.Entry(this).Collection(m => m.UtilitiesInHouses).IsLoaded)
+                context.Entry(this).Collection(m => m.UtilitiesInHouses).Load();
+            if (this.Users == null && !context.Entry(this).Reference(m => m.Users).IsLoaded)
+                context.Entry(this).Reference(m => m.Users).Load();
         }
 
 

@@ -30,6 +30,7 @@ using System.Xml;
 using Azure.Core;
 using DoAnTotNghiep.Hubs;
 using Microsoft.AspNetCore.SignalR;
+using DoAnTotNghiep.Service;
 
 namespace DoAnTotNghiep.Controllers
 {
@@ -39,28 +40,48 @@ namespace DoAnTotNghiep.Controllers
         private readonly DoAnTotNghiepContext _context;
         private readonly IConfiguration _configuration;
         private readonly IHubContext<ChatHub> _signalContext;
+        private readonly IFeedBackService _feedBackService;
+        private readonly IRequestService _requestService;
+        private readonly IFileService _fileService;
+        private readonly IHouseService _houseService;
+        private readonly IUserService _userService;
+        private readonly INotificationService _notificationService;
 
-        public RatingController(DoAnTotNghiepContext context
-                        , IConfiguration configuration
-                        , IHostEnvironment environment
-                        , IHubContext<ChatHub> signalContext) : base(environment)
+        public RatingController(
+                                DoAnTotNghiepContext context, 
+                                IConfiguration configuration, 
+                                IHostEnvironment environment, 
+                                IHubContext<ChatHub> signalContext,
+                                IFeedBackService feedBackService,
+                                IRequestService requestService,
+                                IFileService fileService,
+                                IHouseService houseService,
+                                IUserService userService,
+                                INotificationService notificationService) : base(environment)
         {
             _context = context;
             _configuration = configuration;
             _signalContext = signalContext;
+            _feedBackService = feedBackService;
+            _requestService = requestService;
+            _fileService = fileService;
+            _houseService = houseService;
+            _userService = userService;
+            _notificationService = notificationService;
         }
 
         [HttpGet("/Rating/Form")]
         public IActionResult FormCreateRating(int IdRequest, int? IdRating)
         {
-            var request = this._context.Requests.Where(m => m.Id == IdRequest).FirstOrDefault();
+            var request = this._requestService.GetRequestById(IdRequest);
             if (request == null) return NotFound();
-            bool isCan = ((request.IdUser == this.GetIdUser()) || (request.IdUser != this.GetIdUser()) && request.Type == 2);
+            int idUser = this.GetIdUser();
+            bool isCan = ((request.IdUser == idUser) || (request.IdUser != idUser) && request.Type == 2);
 
             ViewData["isCan"] = isCan ? "true" : "false";
             if(IdRating != null)
             {
-                var rating = this._context.FeedBacks.Where(m => m.Id == IdRating.Value).FirstOrDefault();
+                var rating = this._feedBackService.GetRatingById(IdRating.Value);
                 if(rating != null)
                 {
                     EditRatingViewModel editRating = new EditRatingViewModel(rating);
@@ -75,99 +96,58 @@ namespace DoAnTotNghiep.Controllers
             if (ModelState.IsValid)
             {
                 int IdUser = this.GetIdUser();
-                    var request = this._context.Requests
-                                            .Include(m => m.CheckOuts)
-                                            .Where(m => m.Id == feedBack.IdRequest
-                                                        && (m.Status == (int)StatusRequest.CHECK_OUT || 
-                                                            m.Status == (int)StatusRequest.CHECK_IN
-                                                            && m.CheckOuts != null
-                                                            && m.CheckOuts.Any(c => c.IdUser == IdUser)))
-                                            .FirstOrDefault();
+                var request = this._requestService.GetRequestByFeedBack(feedBack.IdRequest, IdUser);
                 if(request != null)
                 {
-                    if (!this._context.Entry(request).Reference(m => m.Houses).IsLoaded)
-                    {
-                        this._context.Entry(request).Reference(m => m.Houses).Load();
-                    }
+                    request.IncludeAll(this._context);
                     if(request.Houses != null)
                     {
-                        if (!this._context.Entry(request.Houses).Reference(m => m.Users).IsLoaded)
-                        {
-                            this._context.Entry(request.Houses).Reference(m => m.Users).Load();
-                        }
+                        request.Houses.IncludeAll(this._context);
                         if(request.Houses.Users != null)
                         {
-                            this._context.Entry(request).Reference(m => m.Users).Load();
-
                             if (request.Users != null)
                             {
+                                string host = this.GetWebsitePath();
                                 if (request.IdUser == IdUser)
                                 {
                                     using (var transaction = this._context.Database.BeginTransaction())
                                     {
                                         try
                                         {
-                                            //nhà người chủ
-                                            request.Houses.Rating = Math.Ceiling(((request.Houses.Rating * request.Houses.NumberOfRating) + (feedBack.RatingHouse == null ? 0 : feedBack.RatingHouse.Value)) / (request.Houses.NumberOfRating + 1) * 10) / 10;
+                                            FeedBack model = new FeedBack();
+                                            model.Create(feedBack, IdUser, request.Houses.Users.Id, request.Houses.Id);
+                                            this._feedBackService.Save(model);
+
+                                            List<int> intsHouse = this._houseService.CalRating(request.Houses.Id);
+                                            request.Houses.Rating = Math.Ceiling((double)intsHouse.First()/ intsHouse.Last());
                                             request.Houses.NumberOfRating += 1;
-                                            this._context.Houses.Update(request.Houses);
-                                            this._context.SaveChanges();
+                                            this._houseService.UpdateHouse(request.Houses);
 
-                                            //gửi thông báo
-                                            Notification notification = new Notification()
-                                            {
-                                                IdType = request.Id,
-                                                IdUser = request.Houses.Users.Id,
-                                                Title = NotificationType.RatingTitle,
-                                                Content = request.Houses.Name + " có đánh giá mới",
-                                                CreatedDate = DateTime.Now,
-                                                IsSeen = false,
-                                                ImageUrl = NotificationImage.Alert,
-                                                Type = NotificationType.RATING
-                                            };
-                                            this._context.Notifications.Add(notification);
-                                            this._context.SaveChanges();
-
-                                            ChatHub chatHub = new ChatHub(this._signalContext);
-                                            await chatHub.SendNotification(
-                                                group: Crypto.EncodeKey(notification.IdUser.ToString(), Crypto.Salt(this._configuration)),
-                                                target: TargetSignalR.Notification(),
-                                                model: new NotificationViewModel(notification, this.GetWebsitePath()));
-
-                                            //người chủ
-                                            request.Houses.Users.UserRating = Math.Ceiling(((request.Houses.Users.UserRating * request.Houses.Users.NumberUserRating) + feedBack.RatingUser) / (request.Houses.Users.NumberUserRating + 1) * 10) / 10;
+                                            List<int> ints = this._userService.CalRate(request.Houses.Users.Id);
+                                            request.Houses.Users.UserRating = Math.Ceiling((double)ints.First() / ints.Last());
                                             request.Houses.Users.NumberUserRating += 1;
-                                            this._context.Users.Update(request.Houses.Users);
-                                            this._context.SaveChanges();
+                                            this._userService.UpdateUser(request.Houses.Users);
 
-                                            //tồn tại hoặc trao đổi = tiền thì đổi status request
-                                            if(request.IdSwapHouse != null)
-                                            {
-                                                this._context.Entry(request).Collection(m => m.FeedBacks).Load();
-                                            }
-                                            if(request.IdSwapHouse == null || request.FeedBacks != null && request.FeedBacks.Count() > 0)
+                                            if(request.IdSwapHouse == null || request.IdSwapHouse != null && request.FeedBacks != null && request.FeedBacks.Count() > 1)
                                             {
                                                 request.Status = (int)StatusRequest.ENDED;
                                                 request.UpdatedDate = DateTime.Now;
-                                                this._context.Requests.Update(request);
-                                                this._context.SaveChanges();
+                                                this._requestService.UpdateRequest(request);
                                             }
-
-                                            //thêm vào
-                                            FeedBack model = new FeedBack();
-                                            model.Create(feedBack, 
-                                                            IdUser, 
-                                                            request.Houses.Users.Id, 
-                                                            request.Houses.Id);
-                                            this._context.FeedBacks.Add(model);
-                                            this._context.SaveChanges();
-
                                             //tăng điểm người dùng
                                             request.Users.BonusPoint += (int)Math.Floor(Math.Abs(request.Point) * 0.1);
-                                            this._context.Users.Update(request.Users);
-                                            this._context.SaveChanges();
+                                            this._userService.UpdateUser(request.Users);
 
+                                            //gửi thông báo
+                                            Notification notification = new Notification().FeedBackNotification(request, request.Houses.Users.Id);
+                                            this._notificationService.SaveNotification(notification);
                                             transaction.Commit();
+
+                                            await new ChatHub(this._signalContext).SendNotification(
+                                                group: Crypto.EncodeKey(notification.IdUser.ToString(),
+                                                Crypto.Salt(this._configuration)),
+                                                target: TargetSignalR.Notification(),
+                                                model: new NotificationViewModel(notification, host));
                                             return Json(new
                                             {
                                                 Status = 200,
@@ -188,68 +168,45 @@ namespace DoAnTotNghiep.Controllers
                                 }
                                 else if(request.Houses.Users.Id == IdUser)
                                 {
-                                    if(request.IdSwapHouse != null)
-                                    {
-                                        this._context.Entry(request).Reference(m => m.SwapHouses).Load();
-                                    }
                                     using (var transaction = this._context.Database.BeginTransaction())
                                     {
                                         try
                                         {
+                                            FeedBack model = new FeedBack();
+                                            model.Create(feedBack, request.Houses.Users.Id, request.Users.Id, request.SwapHouses == null ? null : request.SwapHouses.Id);
+                                            this._feedBackService.Save(model);
+
                                             if (request.SwapHouses != null)
                                             {
-                                                request.SwapHouses.Rating = Math.Ceiling(((request.SwapHouses.Rating * request.SwapHouses.NumberOfRating) + (feedBack.RatingHouse == null ? 0 : feedBack.RatingHouse.Value)) / (request.SwapHouses.NumberOfRating + 1) * 10) / 10;
-                                                request.SwapHouses.NumberOfRating += 1;
-                                                this._context.Houses.Update(request.SwapHouses);
-                                                this._context.SaveChanges();
+                                                List<int> intsHouse = this._houseService.CalRating(request.SwapHouses.Id);
+                                                request.SwapHouses.Rating = Math.Ceiling((double)intsHouse.First() / intsHouse.Last());
+                                                request.Houses.Users.NumberUserRating += 1;
+                                                this._houseService.UpdateHouse(request.SwapHouses);
                                             }
+                                            List<int> ints = this._userService.CalRate(request.Users.Id);
+                                            request.Users.UserRating = Math.Ceiling((double)ints.First() / ints.Last());
+                                            request.Houses.Users.NumberUserRating += 1;
+                                            this._userService.UpdateUser(request.Users);
 
-                                            //gửi thông báo
-                                            Notification notification = new Notification()
-                                            {
-                                                IdType = request.Id,
-                                                IdUser = request.IdUser,
-                                                Title = NotificationType.RatingTitle,
-                                                Content = "Bạn có đánh giá mới",
-                                                CreatedDate = DateTime.Now,
-                                                IsSeen = false,
-                                                ImageUrl = NotificationImage.Alert,
-                                                Type = NotificationType.RATING
-                                            };
-                                            this._context.Notifications.Add(notification);
-                                            this._context.SaveChanges();
-
-                                            ChatHub chatHub = new ChatHub(this._signalContext);
-                                            await chatHub.SendNotification(
-                                                group: Crypto.EncodeKey(notification.IdUser.ToString(), Crypto.Salt(this._configuration)),
-                                                target: TargetSignalR.Notification(),
-                                                model: new NotificationViewModel(notification, this.GetWebsitePath()));
-
-                                            request.Users.UserRating = Math.Ceiling(((request.Users.UserRating * request.Users.NumberUserRating) + feedBack.RatingUser) / (request.Users.NumberUserRating + 1) * 10) / 10;
-                                            request.Users.NumberUserRating += 1;
-                                            this._context.Users.Update(request.Users);
-                                            this._context.SaveChanges();
-
-                                            this._context.Entry(request).Collection(m => m.FeedBacks).Load();
                                             if (request.FeedBacks != null && request.FeedBacks.Count() > 0)
                                             {
                                                 request.Status = (int)StatusRequest.ENDED;
                                                 request.UpdatedDate = DateTime.Now;
-                                                this._context.Requests.Update(request);
-                                                this._context.SaveChanges();
+                                                this._requestService.UpdateRequest(request);
                                             }
-
-                                            FeedBack model = new FeedBack();
-                                            model.Create(feedBack, request.Houses.Users.Id, request.Users.Id, request.SwapHouses == null ? null : request.SwapHouses.Id);
-                                            this._context.FeedBacks.Add(model);
-                                            this._context.SaveChanges();
+                                            //gửi thông báo
+                                            Notification notification = new Notification().FeedBackNotification(request, request.IdUser);
+                                            this._notificationService.SaveNotification(notification);
 
                                             //tăng điểm người dùng
                                             request.Houses.Users.BonusPoint += (int) Math.Floor(Math.Abs(request.Point) * 0.1);
-                                            this._context.Users.Update(request.Houses.Users);
-                                            this._context.SaveChanges();
-
+                                            this._userService.UpdateUser(request.Houses.Users);
                                             transaction.Commit();
+
+                                            await new ChatHub(this._signalContext).SendNotification(
+                                                group: Crypto.EncodeKey(notification.IdUser.ToString(), Crypto.Salt(this._configuration)),
+                                                target: TargetSignalR.Notification(),
+                                                model: new NotificationViewModel(notification, host));
                                             return Json(new
                                             {
                                                 Status = 200,
@@ -303,53 +260,41 @@ namespace DoAnTotNghiep.Controllers
             if (ModelState.IsValid)
             {
                 int IdUser = this.GetIdUser();
-                var model = this._context.FeedBacks.Where(m => m.Id == feedBack.Id && m.IdUser == IdUser).FirstOrDefault();
+                var model = this._feedBackService.GetRatingById(IdUser, feedBack.Id);
                 if(model != null)
                 {
-                    this._context.Entry(model).Reference(m => m.Houses).Load();
-                    this._context.Entry(model).Reference(m => m.UserRated).Load();
-                    using (var Context = this._context)
+                    model.IncludeAll(this._context);
+                    using (var transaction = this._context.Database.BeginTransaction())
                     {
-                        using (var transaction = Context.Database.BeginTransaction())
+                        try
                         {
-                            try
+                            model.Update(feedBack);
+                            this._feedBackService.Update(model);
+                            if (model.Houses != null)
                             {
-                                if(model.Houses != null)
-                                {
-                                    model.Houses.Rating = Math.Ceiling(
-                                                    ((model.Houses.Rating * model.Houses.NumberOfRating - model.Rating) + (feedBack.RatingHouse == null ? 0 : feedBack.RatingHouse.Value))
-                                                                / (model.Houses.NumberOfRating) * 10
-                                                    ) / 10;
-                                    Context.Houses.Update(model.Houses);
-                                    Context.SaveChanges();
-                                }
-
-                                if (model.UserRated != null)
-                                {
-                                    model.UserRated.UserRating = Math.Ceiling(
-                                                    ((model.UserRated.UserRating * model.UserRated.NumberUserRating - model.RatingUser) + feedBack.RatingUser)
-                                                        / (model.UserRated.NumberUserRating) * 10
-                                                    ) / 10;
-                                    Context.Users.Update(model.UserRated);
-                                    Context.SaveChanges();
-                                }
-                                
-                                model.Update(feedBack);
-                                Context.FeedBacks.Update(model);
-                                Context.SaveChanges();
-
-                                transaction.Commit();
-                                return Json(new
-                                {
-                                    Status = 200,
-                                    Message = "ok"
-                                });
+                                List<int> ints = this._houseService.CalRating(model.Houses.Id);
+                                model.Houses.Rating = Math.Ceiling((double)ints.First() / ints.Last());
+                                this._houseService.UpdateHouse(model.Houses);
                             }
-                            catch (Exception ex)
+
+                            if (model.UserRated != null)
                             {
-                                Console.WriteLine(ex);
-                                transaction.Rollback();
+                                List<int> ints = this._userService.CalRate(model.UserRated.Id);
+                                model.UserRated.UserRating = Math.Ceiling((double)ints.First() / ints.Last());
+                                this._userService.UpdateUser(model.UserRated);
                             }
+
+                            transaction.Commit();
+                            return Json(new
+                            {
+                                Status = 200,
+                                Message = "ok"
+                            });
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex);
+                            transaction.Rollback();
                         }
                     }
                     return BadRequest(new
@@ -382,32 +327,11 @@ namespace DoAnTotNghiep.Controllers
             return this.Edit(feedBack);
         }
 
-
-        //Detail
-        private List<DetailRatingWithUser> GetRatingByHouse(List<FeedBack> feedBacks)
-        {
-            List<DetailRatingWithUser> model = new List<DetailRatingWithUser>();
-
-            string host = this.GetWebsitePath();
-            byte[] salt = Crypto.Salt(this._configuration);
-            foreach(var item in feedBacks)
-            {
-                this._context.Entry(item).Reference(m => m.Users).Load();
-                if(item.Users != null)
-                {
-                    DetailRatingViewModel rating = new DetailRatingViewModel(item);
-                    UserInfo user = new UserInfo(item.Users, salt, host);
-                    model.Add(new DetailRatingWithUser() { User = user, FeedBack = rating });
-                }
-            }
-
-            return model;
-        }
         [HttpGet("/Rating/GetByHouse")]        
         public IActionResult RatingByHouse(int Id)
         {
             ListRating listRating = new ListRating();
-            List<FeedBack> model = this.GetFeedBack(Id);
+            List<FeedBack> model = this._feedBackService.GetRatingByHouse(Id);
             listRating.OverView = new FrameRating()
             {
                 OneStar = model.Where(m => m.Rating == 1).ToList().Count(),
@@ -416,7 +340,7 @@ namespace DoAnTotNghiep.Controllers
                 FourStar = model.Where(m => m.Rating == 4).ToList().Count(),
                 FiveStar = model.Where(m => m.Rating == 5).ToList().Count()
             };
-            listRating.Rating = this.GetRatingByHouse(model);
+            listRating.Rating = this._feedBackService.GetRatingByHouse(model, this.GetWebsitePath(), Crypto.Salt(this._configuration));
             return PartialView("./Views/Rating/_ListRating.cshtml", listRating);
         }
         [HttpGet("/api/Rating/GetByHouse")]
@@ -425,38 +349,13 @@ namespace DoAnTotNghiep.Controllers
             return Json(new
             {
                 Status = 200,
-                Data = this.GetRatingByHouse(this.GetFeedBack(Id))
+                Data = this._feedBackService.GetRatingByHouse(this._feedBackService.GetRatingByHouse(Id), this.GetWebsitePath(), Crypto.Salt(this._configuration))
             });
-        }
-
-
-        private List<FeedBack> GetFeedBack(int IdHouse)
-        {
-            List<FeedBack> model = new List<FeedBack>();
-
-            var house = this._context.Houses
-                                    .Where(m => m.Id == IdHouse
-                                            && m.Status == (int)StatusHouse.VALID)
-                                    .FirstOrDefault();
-
-            if (house != null)
-            {
-                this._context.Entry(house)
-                            .Collection(m => m.FeedBacks)
-                            .Query()
-                            .Load();
-                if(house.FeedBacks != null)
-                {
-                    model.AddRange(house.FeedBacks.ToList());
-                }
-            }
-
-            return model;
         }
         [HttpGet("/Rating/FrameRate")]
         public IActionResult GetFrameRate(int IdHouse)
         {
-            List<FeedBack> model = this.GetFeedBack(IdHouse);
+            List<FeedBack> model = this._feedBackService.GetRatingByHouse(IdHouse);
             return Json(new
             {
                 Status = 200,
@@ -471,27 +370,5 @@ namespace DoAnTotNghiep.Controllers
             });
         }
 
-        //private List<DetailRatingWithHouse> GetRatingByRequest(int IdRequest)
-        //{
-        //    List<DetailRatingWithHouse> model = new List<DetailRatingWithHouse>();
-        //    int IdUser = this.GetIdUser();
-        //    var feedBack = this._context.FeedBacks
-        //                            .Where(m => m.IdRequest == IdRequest
-        //                                    && m.IdUser == IdUser)
-        //                            .FirstOrDefault();
-
-        //    if (feedBack != null)
-        //    {
-        //        this._context.Entry(feedBack)
-        //                    .Reference(m => m.Houses)
-        //                    .Query()
-        //                    .Load();
-
-        //    }
-
-        //    return model;
-        //}
-        //Delete
-        //cho xóa không?
     }
 }

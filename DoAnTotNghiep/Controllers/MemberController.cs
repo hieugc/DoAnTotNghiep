@@ -25,6 +25,8 @@ using Microsoft.AspNetCore.Routing;
 using System.Security.Cryptography.X509Certificates;
 using NuGet.Protocol;
 using System.Xml.Linq;
+using DoAnTotNghiep.Service;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace DoAnTotNghiep.Controllers
 {
@@ -35,71 +37,76 @@ namespace DoAnTotNghiep.Controllers
         private readonly IConfiguration _configuration;
         private IHubContext<ChatHub> _signalContext;
 
-        public MemberController(DoAnTotNghiepContext context, IConfiguration configuration, IHubContext<ChatHub> signalContext, IHostEnvironment environment) : base(environment)
+        private readonly IFeedBackService _feedBackService;
+        private readonly IRequestService _requestService;
+        private readonly IFileService _fileService;
+        private readonly IHouseService _houseService;
+        private readonly IUserService _userService;
+        private readonly IRuleService _ruleService;
+        private readonly IUtilitiesService _utilitiesService;
+        private readonly ICircleRequestService _circleRequestService;
+        private readonly IMessageService _messageService;
+
+        public MemberController(DoAnTotNghiepContext context, 
+                                IConfiguration configuration, 
+                                IHubContext<ChatHub> signalContext, 
+                                IHostEnvironment environment,
+                                IFeedBackService feedBackService,
+                                IRequestService requestService,
+                                IFileService fileService,
+                                IHouseService houseService,
+                                IUserService userService,
+                                IMessageService messageService,
+                                IRuleService ruleService,
+                                IUtilitiesService utilitiesService,
+                                ICircleRequestService circleRequestService) : base(environment)
         {
             _context = context;
             _configuration = configuration;
             _signalContext = signalContext;
+            _feedBackService = feedBackService;
+            _requestService = requestService;
+            _fileService = fileService;
+            _houseService = houseService;
+            _userService = userService;
+            _ruleService = ruleService;
+            _utilitiesService = utilitiesService;
+            _circleRequestService = circleRequestService;
+            _messageService = messageService;
         }
 
         public IActionResult Infomation()
         {
             ViewData["active"] = 0;
             int IdUser = this.GetIdUser();
-            var user = this._context.Users.Where(m => m.Id == IdUser).FirstOrDefault();
+            var user = this._userService.GetById(IdUser);
             if (user == null)
             {
                 return View(new UpdateUserInfo());
             }
+            user.InCludeAll(this._context);
             this.SetViewData(new DoAnTotNghiepContext(this._context.GetConfig()), IdUser, Crypto.Salt(this._configuration));
             return View(new UpdateUserInfo(user, this.GetWebsitePath()));
         }
-        private ListDetailHouses GetHouseInMemberPage(Pagination pagination, int? IdHouse)
+
+        private ListDetailHouses GetHouseInMemberPage(Pagination pagination, int? IdHouse, byte[] salt, string host, int IdUser)
         {
-            int IdUser = this.GetIdUser();
             List<House> listHouse = new List<House>();
             if(IdHouse != null)
             {
-                listHouse.AddRange(this._context.Houses.Where(m => m.IdUser == IdUser && m.Id == IdHouse.Value).ToList());
-                listHouse.AddRange(this._context.Houses.Where(m => m.IdUser == IdUser && m.Id != IdHouse.Value).ToList());
+                var all = this._houseService.GetListHouseByUser(IdUser);
+                listHouse.AddRange(all.Where(m=>m.Id == IdHouse.Value).ToList());
+                listHouse.AddRange(all.Where(m => m.Id != IdHouse.Value).ToList());
             }
             else
             {
-                listHouse.AddRange(this._context.Houses.Where(m => m.IdUser == IdUser).ToList());
+                listHouse.AddRange(this._houseService.GetListHouseByUser(IdUser));
             }
             pagination.Total = (int)Math.Ceiling((double)(listHouse.Count() / pagination.Limit));
             int skip = pagination.Page - 1 < 0 ? 0: pagination.Page - 1;
-            byte[] salt = Crypto.Salt(this._configuration);
-            string host = this.GetWebsitePath();
-
-            List<DetailHouseViewModel> detailHouseViewModels = new List<DetailHouseViewModel>();
-            foreach (var item in listHouse.Skip(skip).Take(pagination.Limit))
-            {
-                this._context.Entry(item).Reference(m => m.Users).Load();
-                this._context.Entry(item).Collection(m => m.RulesInHouses).Query().Load();
-                this._context.Entry(item).Collection(m => m.UtilitiesInHouses).Query().Load();
-                //this._context.Entry(item).Collection(m => m.Requests).Query().Where(m => m.Status == (int)StatusRequest.WAIT_FOR_SWAP).Load();
-                //this._context.Entry(item).Collection(m => m.FileOfHouses).Query().Load();
-                //this._context.Entry(item).Collection(m => m.FeedBacks).Query().Load();
-
-                item.IncludeLocation(this._context);
-                DetailHouseViewModel model = new DetailHouseViewModel(item, salt, item.Users, host);
-                if (item.FileOfHouses != null)
-                {
-                    foreach (var f in item.FileOfHouses)
-                    {
-                        this._context.Entry(f).Reference(m => m.Files).Load();
-                        if(f.Files != null)
-                        {
-                            model.Images.Add(new ImageBase(f.Files, host));
-                        }
-                    }
-                }
-                detailHouseViewModels.Add(model);
-            }
             return new ListDetailHouses()
             {
-                Houses  = detailHouseViewModels,
+                Houses  = this._houseService.GetListDetailHouseWithManyImages(listHouse.Skip(skip).Take(pagination.Limit).ToList(), this._fileService, host, salt),
                 Pagination = pagination
             };
         }
@@ -107,9 +114,12 @@ namespace DoAnTotNghiep.Controllers
         {
             ViewData["active"] = 1;//xác định tab active
 
-            var listUtilities = this._context.Utilities.ToList();
-            var listRules = this._context.Rules.ToList();
-            ListDetailHouses detailHouseViewModels = this.GetHouseInMemberPage(pagignation, IdHouse);
+            var listUtilities = this._utilitiesService.All();
+            var listRules = this._ruleService.All();
+            int IdUser = this.GetIdUser();
+            byte[] salt = Crypto.Salt(this._configuration);
+            ListDetailHouses detailHouseViewModels = this.GetHouseInMemberPage(pagignation, IdHouse, salt, this.GetWebsitePath(), IdUser);
+
             ViewData["IdRequest"] = IdRequest;
             ViewData["IdHouse"] = IdHouse;
 
@@ -122,17 +132,16 @@ namespace DoAnTotNghiep.Controllers
                     Rules = listRules
                 }
             };
-            int IdUser = this.GetIdUser();
             if (IdUser != 0)
             {
-                this.SetViewData(new DoAnTotNghiepContext(this._context.GetConfig()), IdUser, Crypto.Salt(this._configuration));
+                this.SetViewData(new DoAnTotNghiepContext(this._context.GetConfig()), IdUser, salt);
             }
             return View(model);
         }
         [HttpGet("/api/House/GetMyHome")]
         public IActionResult ApiHouse(Pagination pagination)
         {
-            ListDetailHouses model = this.GetHouseInMemberPage(pagination, null);
+            ListDetailHouses model = this.GetHouseInMemberPage(pagination, null, Crypto.Salt(this._configuration), this.GetWebsitePath(), this.GetIdUser());
             return Json(new
                 {
                     Status = 200,
@@ -142,385 +151,93 @@ namespace DoAnTotNghiep.Controllers
         [HttpGet("/House/GetMyHome")]
         public IActionResult GetMyHome(Pagination pagination)
         {
-            ListDetailHouses model = this.GetHouseInMemberPage(pagination, null);
+            ListDetailHouses model = this.GetHouseInMemberPage(pagination, null, Crypto.Salt(this._configuration), this.GetWebsitePath(), this.GetIdUser());
             return Json(new
             {
                 Status = 200,
                 Data = model
             });
         }
-        public IActionResult Requested()
-        {
-            ViewData["active"] = 2;
-            List<DetailRequest> model = this.GetAllRequestsSent();
-            int IdUser = this.GetIdUser();
-            if (IdUser != 0)
-            {
-                this.SetViewData(new DoAnTotNghiepContext(this._context.GetConfig()), IdUser, Crypto.Salt(this._configuration));
-            }
-            return View(model);
-        }
         [HttpGet("/api/Request/GetRequestReceived")]
         public IActionResult ApiGetListRequestReceived(int? Status)
         {
+            int IdUser = this.GetIdUser();
+            byte[] salt = Crypto.Salt(this._configuration);
+            string host = this.GetWebsitePath();
+            var houses = this._houseService.GetListHouseByUser(IdUser);
             return Json(new
             {
                 Status = 200,
-                Data = this.GetAllRequestsReceived(Status)
+                Data = this._requestService.GetValidRequestByUser(houses, this._fileService, this._houseService, this._feedBackService, Status, salt, host, IdUser)
             });
         }
-        private List<DetailRequest> GetAllRequestsReceived(int? Status)
+        public IActionResult Requested()
         {
+            ViewData["active"] = 2;
             int IdUser = this.GetIdUser();
-            var houses = this._context.Houses
-                                        .Where(m => m.IdUser == IdUser && m.Status == (int)StatusHouse.VALID)
-                                        .ToList();
-            List<DetailRequest> model = new List<DetailRequest>();
-            DoAnTotNghiepContext Context = this._context;
-
             byte[] salt = Crypto.Salt(this._configuration);
             string host = this.GetWebsitePath();
-
-            foreach (var item in houses)
+            List<DetailRequest> model = this._requestService.GetValidRequestByUser(
+                this._requestService.GetAllSent(IdUser),
+                this._fileService, this._houseService, this._feedBackService, null, salt, host, IdUser
+                );
+            
+            if (IdUser != 0)
             {
-                this._context.Entry(item).Collection(m => m.Requests).Query().Where(m => m.Status != (int)StatusRequest.DISABLE).Load();
-                if (item.Requests != null)
-                {
-                    foreach (var itemRequest in item.Requests)
-                    {
-                        if (itemRequest != null)
-                        {
-                            DetailRequest? request = this.CreateDetailRequest(itemRequest, Status);
-                            if (request != null)
-                            {
-                                model.Add(request);
-                            }
-                        }
-                    }
-                }
+                this.SetViewData(new DoAnTotNghiepContext(this._context.GetConfig()), IdUser, salt);
             }
-            return model;
+            return View(model);
         }
         public IActionResult RequestValidReceived(int? IdRequest)
         {
             ViewData["active"] = 3;
             List<DetailRequest> model = new List<DetailRequest>();
             int IdUser = this.GetIdUser();
+            byte[] salt = Crypto.Salt(this._configuration);
+            string host = this.GetWebsitePath();
             List<Request> listRequest = new List<Request>();
             if(IdRequest != null)
             {
-                listRequest.AddRange(this._context.Requests
-                                                .Include(m => m.Houses)
-                                                .Where(m => m.Id == IdRequest.Value && 
-                                                            (m.Status == (int)StatusRequest.ACCEPT
-                                                                || m.Status == (int)StatusRequest.CHECK_IN
-                                                                || m.Status == (int)StatusRequest.CHECK_OUT
-                                                                || m.Status == (int)StatusRequest.ENDED)
-                                                            && (m.IdUser == IdUser || m.Houses != null && m.Houses.IdUser == IdUser))
-                                                .ToList());
-
-                listRequest.AddRange(this._context.Requests
-                                                .Include(m => m.Houses)
-                                                .Where(m => m.Id != IdRequest.Value &&
-                                                            (m.Status == (int)StatusRequest.ACCEPT
-                                                                || m.Status == (int)StatusRequest.CHECK_IN
-                                                                || m.Status == (int)StatusRequest.CHECK_OUT
-                                                                || m.Status == (int)StatusRequest.ENDED)
-                                                            && (m.IdUser == IdUser || m.Houses != null && m.Houses.IdUser == IdUser))
-                                                .ToList());
+                var all = this._requestService.GetValidReceivedRequestByUser(IdUser);
+                listRequest.AddRange(all.Where(m => m.Id == IdRequest.Value).ToList());
+                listRequest.AddRange(all.Where(m => m.Id != IdRequest.Value).ToList());
             }
             else
             {
-                listRequest.AddRange(this._context.Requests
-                                                .Include(m => m.Houses)
-                                                .Where(m => (m.Status == (int)StatusRequest.ACCEPT
-                                                                || m.Status == (int)StatusRequest.CHECK_IN
-                                                                || m.Status == (int)StatusRequest.CHECK_OUT
-                                                                || m.Status == (int)StatusRequest.ENDED)
-                                                            && (m.IdUser == IdUser || m.Houses != null && m.Houses.IdUser == IdUser))
-                                                .ToList());
+                listRequest.AddRange(this._requestService.GetValidReceivedRequestByUser(IdUser));
             }
             ViewData["IdRequest"] = IdRequest;
-
-            byte[] salt = Crypto.Salt(this._configuration);
-            string host = this.GetWebsitePath();
-
-            foreach (var itemRequest in listRequest)
-            {
-                if (itemRequest != null)
-                {
-                    DetailRequest? request = this.CreateDetailRequest(itemRequest, null);
-                    if (request != null)
-                    {
-                        model.Add(request);
-                    }
-                }
-            }
+            model.AddRange(this._requestService.GetValidRequestByUser(listRequest, this._fileService, this._houseService, this._feedBackService, null, salt, host, IdUser));
             if (IdUser != 0)
             {
-                this.SetViewData(new DoAnTotNghiepContext(this._context.GetConfig()), IdUser, Crypto.Salt(this._configuration));
+                this.SetViewData(new DoAnTotNghiepContext(this._context.GetConfig()), IdUser, salt);
             }
             return View(model);
-        }
-        private List<DetailRequest> GetAllRequestsSent()
-        {
-            int IdUser = this.GetIdUser();
-            var requests = this._context.Requests
-                                        .Where(m => m.IdUser == IdUser && m.Status != (int)StatusRequest.DISABLE).ToList();
-            List<DetailRequest> model = new List<DetailRequest>();
-            DoAnTotNghiepContext Context = this._context;
-            foreach (var item in requests)
-            {
-                if (item != null)
-                {
-                    DetailRequest? request = this.CreateDetailRequest(item, null);
-                    if (request != null)
-                    {
-                        model.Add(request);
-                    }
-                }
-            }
-
-            return model;
-        }
-        private DetailRequest? CreateDetailRequest(Request item, int? Status)
-        {
-            byte[] salt = Crypto.Salt(this._configuration);
-            string host = this.GetWebsitePath();
-            int IdUser = this.GetIdUser();
-            if (item.Houses == null || !this._context.Entry(item).Reference(m => m.Houses).IsLoaded)
-            {
-                this._context.Entry(item).Reference(m => m.Houses).Query().Load();
-            }
-            if (item.Houses != null)
-            {
-                this._context.Entry(item.Houses).Reference(m => m.Users).Query().Load();
-                this._context.Entry(item.Houses).Collection(m => m.FileOfHouses).Query().Load();
-                this._context.Entry(item).Collection(m => m.FeedBacks).Query().Where(m => m.IdUser == IdUser).Load();
-                this._context.Entry(item).Collection(m => m.CheckOuts).Query().Where(m => m.IdUser == IdUser).Load();
-                this._context.Entry(item).Collection(m => m.CheckIns).Query().Where(m => m.IdUser == IdUser).Load();
-
-                item.CheckStatus(item);
-                if (Status != null && item.Status != Status) return null;
-
-                if (item.Houses.Users != null)
-                {
-                    this._context.Entry(item.Houses.Users).Reference(m => m.Files).Query().Load();
-                    DetailHouseViewModel house = this.CreateDetailsHouse(item.Houses);
-                    DetailHouseViewModel? swapHouse = null;
-                    DetailRatingViewModel? userRating= null;
-                    DetailRatingViewModel? myRating = null;
-                    FeedBack? userFeedBack = this._context.FeedBacks
-                                                                .Where(m => m.IdUser != IdUser && m.IdRequest == item.Id)
-                                                                .FirstOrDefault();
-                    if (userFeedBack != null)
-                    {
-                        userRating = new DetailRatingViewModel(userFeedBack);
-                    }
-                    if (item.FeedBacks != null)
-                    {
-                        FeedBack? myFeedBack = item.FeedBacks.Where(m => m.IdUser == IdUser).FirstOrDefault();
-                        if (myFeedBack != null)
-                        {
-                            myRating = new DetailRatingViewModel(myFeedBack);
-                            item.Status = (int)StatusRequest.ENDED;
-                        }
-                    }
-                    this._context.Entry(item).Reference(m => m.Users).Query().Load();
-                    if (item.IdSwapHouse != null)
-                    {
-                        this._context.Entry(item).Reference(m => m.SwapHouses).Query().Load();
-                        if (item.SwapHouses != null)
-                        {
-                            this._context.Entry(item.SwapHouses).Reference(m => m.Users).Query().Load();
-                            this._context.Entry(item.SwapHouses).Collection(m => m.FileOfHouses).Query().Load();
-                            swapHouse = this.CreateDetailsHouse(item.SwapHouses);
-                        }
-                    }
-                    User? inputUser = null;
-                    if (item.IdUser != IdUser)
-                    {
-                        inputUser = item.Houses.Users;
-                    }
-                    else
-                    {
-                        inputUser = item.Users;
-                    }
-                    DetailRequestViewModel request = new DetailRequestViewModel(item, inputUser, salt, host);
-                    return new DetailRequest()
-                    {
-                        Request = request,
-                        SwapHouse = swapHouse,
-                        House = house,
-                        UserRating = userRating,
-                        MyRating = myRating
-                    };
-                }
-            }
-            return null;
-        }
-        private DetailHouseViewModel CreateDetailsHouse(House house)
-        {
-            byte[] salt = Crypto.Salt(this._configuration);
-            string host = this.GetWebsitePath();
-            if (house.Users != null)
-            {
-                this._context.Entry(house.Users).Collection(m => m.Houses).Query().Where(m => m.Status == (int)StatusHouse.VALID).Load();
-            }
-            house.IncludeLocation(this._context);
-            DetailHouseViewModel model = new DetailHouseViewModel(house, salt, house.Users, host);
-            DoAnTotNghiepContext Context = this._context;
-            if (house.FileOfHouses != null)
-            {
-                foreach (var f in house.FileOfHouses)
-                {
-                    Context.Entry(f).Reference(m => m.Files).Load();
-                    if (f.Files != null)
-                    {
-                        model.Images.Add(new ImageBase(f.Files, host));
-                        break;
-                    }
-                }
-            }
-            return model;
         }
         public IActionResult WaitingRequest()
         {
             ViewData["active"] = 4;
-            List<CircleRequestViewModel> model = this.GetSuggest();
+
             int IdUser = this.GetIdUser();
+            List<CircleRequestViewModel> model = this._circleRequestService.GetSuggest(IdUser, this._userService, Crypto.Salt(this._configuration), GetWebsitePath());
             if (IdUser != 0)
             {
                 this.SetViewData(new DoAnTotNghiepContext(this._context.GetConfig()), IdUser, Crypto.Salt(this._configuration));
             }
             return View(model);
         }
-
-
-        //Get Suggestion
-        private List<CircleRequestViewModel> GetSuggest()
-        {
-            int IdUser = this.GetIdUser();
-            var circle = this._context.CircleExchangeHouseOfUsers
-                                        .Include(m => m.CircleExchangeHouse)
-                                        .Where(m => m.IdUser == IdUser
-                                                        && m.CircleExchangeHouse != null
-                                                        && m.CircleExchangeHouse.Status != (int)StatusWaitingRequest.DISABLE)
-                                        .Select(m => m.CircleExchangeHouse)
-                                        .ToList();
-
-            List<CircleRequestViewModel> model = new List<CircleRequestViewModel>();
-            byte[] salt = Crypto.Salt(this._configuration);
-            string host = this.GetWebsitePath();
-            foreach (var item in circle)
-            {
-                if (item != null)
-                {
-                    this._context.Entry(item).Collection(m => m.RequestInCircles).Query().Load();
-                    this._context.Entry(item).Collection(m => m.FeedBacks).Query().Load();
-                    if (item.RequestInCircles != null)
-                    {
-                        var rq = from rqc in item.RequestInCircles
-                                 join crq in this._context.WaitingRequests on rqc.IdWaitingRequest equals crq.Id
-                                 select crq.Node(rqc, crq);
-                        if (rq != null)
-                        {
-                            rq = rq.ToList();
-                            foreach (var itemRQ in rq)
-                            {
-                                this._context.Entry(itemRQ).Reference(m => m.Houses).Load();
-                            }
-                            WaitingRequest? myNode = rq.Where(m => m.IdUser == IdUser).FirstOrDefault();
-                            if (myNode != null)
-                            {
-                                if (myNode.Houses != null)
-                                {
-                                    myNode.Houses.IncludeLocation(this._context);
-                                    var inputMyNode = this.CircleRequestDetail(myNode, salt, host);
-                                    WaitingRequest? prevNode = rq.Where(m => m.IdUser != IdUser && m.IdCity == myNode.Houses.IdCity.Value).FirstOrDefault();
-                                    if (prevNode != null && inputMyNode != null)
-                                    {
-                                        prevNode.Houses.IncludeLocation(this._context);
-                                        var inputPrevNode = this.CircleRequestDetail(prevNode, salt, host);
-                                        WaitingRequest? nextNode = rq.Where(m => m.IdUser != IdUser && myNode.IdCity == m.Houses.IdCity.Value).FirstOrDefault();
-                                        if (nextNode != null && inputPrevNode != null)
-                                        {
-                                            nextNode.Houses.IncludeLocation(this._context);
-                                            var inputNextNode = this.CircleRequestDetail(nextNode, salt, host);
-
-                                            if (inputNextNode != null)
-                                            {
-                                                CircleRequestViewModel node = new CircleRequestViewModel(inputPrevNode, inputMyNode, inputNextNode, item, IdUser);
-                                                //var feedBacks = this._context.FeedBacks.Select(m => new DetailRatingViewModel(m)).ToList();
-                                                //node.Rating.AddRange(feedBacks);
-                                                model.Add(node);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            return model;
-        }
-        private CircleRequestDetail? CircleRequestDetail(WaitingRequest request, byte[] salt, string host)
-        {
-            //lấy nhà
-            if (request.Houses != null)
-            {
-                //lấy imagehouse
-                this._context.Entry(request.Houses).Collection(m => m.FileOfHouses).Query().Load();
-                if (request.Houses.FileOfHouses != null)
-                {
-                    var fImage = request.Houses.FileOfHouses.FirstOrDefault();
-                    if (fImage != null)
-                    {
-                        this._context.Entry(fImage).Reference(m => m.Files).Load();
-                        if (fImage != null)
-                        {
-                            ImageBase HouseImage = new ImageBase(fImage.Files, host);
-
-                            //lấy người dùng
-                            this._context.Entry(request).Reference(m => m.Users).Load();
-                            if (request.Users != null)
-                            {
-                                this._context.Entry(request.Users).Reference(m => m.Files).Load();
-                                UserInfo user = new UserInfo(request.Users, salt, host);
-                                var numberSwap = from u in this._context.Users
-                                                 join h in this._context.Houses on u.Id equals h.IdUser
-                                                 join rq in this._context.Requests on h.Id equals rq.IdHouse
-                                                 where u.Id == request.Users.Id && rq.Status >= (int)StatusRequest.CHECK_IN
-                                                 select rq;
-                                user.NumberSwap = (numberSwap == null ? 0 : numberSwap.ToList().Count());
-
-                                //this._context.Entry(request.Houses).Collection(m => m.Requests).Query().Where(m => m.Status == (int)StatusRequest.WAIT_FOR_SWAP).Load();
-                                //this._context.Entry(request.Houses).Collection(m => m.FeedBacks).Query().Load();
-                                //this._context.Entry(request).Reference(m => m.Houses).Load();
-                                request.Houses.IncludeLocation(this._context);
-                                return new CircleRequestDetail(new DetailHouseViewModel(request.Houses, salt, null, null), request, user, HouseImage);
-                            }
-                        }
-                    }
-                }
-            }
-            return null;
-        }
-
-        public IActionResult History()
+        public IActionResult History(string? action = null)
         {
             ViewData["active"] = 5;
             int IdUser = this.GetIdUser();
-            List<HouseSelector> house = this._context.Houses
-                                    .Where(m => m.IdUser == IdUser
-                                                && m.Status == (int)StatusHouse.VALID)
-                                    .Select(m => new HouseSelector(m))
-                                    .ToList();
-            District? district = this._context.Districts.FirstOrDefault();
-            double lat = district == null ? 0 : district.Lat;
-            double lng = district == null ? 0 : district.Lng;
-            HistoryViewModel model = new HistoryViewModel(house, lat, lng);
+            List<HouseSelector> house = this._houseService.GetListHouseByUser(IdUser)
+                                            .Select(m => new HouseSelector(m))
+                                            .ToList();
+            HistoryViewModel model = new HistoryViewModel(house, 0, 0);
+            if (!string.IsNullOrEmpty(action))
+            {
+                ViewData["action"] = action;
+            }
             if (IdUser != 0)
             {
                 this.SetViewData(new DoAnTotNghiepContext(this._context.GetConfig()), IdUser, Crypto.Salt(this._configuration));
@@ -541,7 +258,7 @@ namespace DoAnTotNghiep.Controllers
         private IActionResult Point()
         {
             int IdUser = this.GetIdUser();
-            var user = this._context.Users.Where(m => m.Id == IdUser).FirstOrDefault();
+            var user = this._userService.GetById(IdUser);
             int Point = 0;
             if (user != null) Point += (user.Point + user.BonusPoint);
 
@@ -552,186 +269,126 @@ namespace DoAnTotNghiep.Controllers
                 Data = Point
             });
         }
-
         [HttpGet("/api/GetNumberOfHouse")]
         public IActionResult GetNumberOfHouse(Pagination pagination)
         {
-            ListDetailHouses detailHouseViewModels = this.GetHouseInMemberPage(pagination, null);
+            ListDetailHouses model = this.GetHouseInMemberPage(pagination, null, Crypto.Salt(this._configuration), this.GetWebsitePath(), this.GetIdUser());
             return Json(new
             {
                 Status = 200,
                 Message = "So nha",
-                Data = detailHouseViewModels.Pagination.Total
+                Data = model.Pagination.Total
             });
         }
+
         public async Task<IActionResult> Messages(string? connection)
         {
             int IdUser = this.GetIdUser();
             Dictionary<int, RoomChatViewModel> model = new Dictionary<int, RoomChatViewModel>();
             byte[] salt = Crypto.Salt(this._configuration);
+            string host = this.GetWebsitePath();
 
-            //seftaccess
-            using (var Context = this._context)
+            var mainUser = this._userService.GetById(IdUser);
+            if (mainUser == null)
             {
-                if (!string.IsNullOrEmpty(connection))
+                return NotFound();
+            }
+            else
+            {
+                mainUser.InCludeAll(this._context);
+                ViewData["userAccess"] = new UserMessageViewModel(mainUser, salt, host);
+            }
+
+            if (!string.IsNullOrEmpty(connection))
+            {
+                string IdStr = Crypto.DecodeKey(connection, salt);
+                int Id = 0;
+                if (!int.TryParse(IdStr, out Id))
                 {
-                    string IdStr = Crypto.DecodeKey(connection, salt);
-                    int Id = 0;
-                    if(!int.TryParse(IdStr, out Id))
-                    {
-                            return this.NotFound();
-                    }
-                    if(Id != IdUser)
-                    {
-                        var user = this._context.Users.FirstOrDefault(m => m.Id == Id);
-                        if (user == null) return this.NotFound();
-                        var rooms = from r in this._context.ChatRooms
-                                    join ur in this._context.UsersInChatRooms on r.Id equals ur.IdChatRoom
-                                    join ur2 in this._context.UsersInChatRooms on r.Id equals ur2.IdChatRoom
-                                    where ur.IdUser == Id && ur2.IdUser == IdUser
-                                    select r;
+                    return this.NotFound();
+                }
+                if (Id != IdUser)
+                {
+                    var user = this._userService.GetById(Id);
+                    if (user == null) return this.NotFound();
+                    var rooms = this._messageService.GetRoomWithTwoMembers(Id, IdUser);
 
-                        if (rooms.Any())
+                    if (rooms.Count() > 0)
+                    {
+                        foreach (var room in rooms)
                         {
-                            List<ChatRoom?> chats = rooms.ToList();
-                            foreach (var room in chats)
+                            RoomChatViewModel keyValuePair = this._messageService.CreateDictionary(room, 20, 0, salt, host, IdUser);
+                            if (model.ContainsKey(keyValuePair.IdRoom))
                             {
-                                if (room != null)
-                                {
-                                    KeyValuePair<int, RoomChatViewModel> keyValuePair = this.CreateDictionary(room, Context, 20, salt, IdUser);
-                                    if (model.ContainsKey(keyValuePair.Key))
-                                    {
-                                        model.Remove(keyValuePair.Key);
-                                    }
-                                    model.Add(keyValuePair.Key, keyValuePair.Value);
-                                }
+                                model.Remove(keyValuePair.IdRoom);
                             }
+                            model.Add(keyValuePair.IdRoom, keyValuePair);
                         }
-                        else
+                    }
+                    else
+                    {
+                        using (var transaction = await this._context.Database.BeginTransactionAsync())
                         {
-                            using (var transaction = await Context.Database.BeginTransactionAsync())
+                            try
                             {
-                                try
-                                {
-                                    ChatRoom chatRoom = new ChatRoom() { UpdatedDate = DateTime.Now };
-                                    Context.Add(chatRoom);
-                                    Context.SaveChanges();
+                                ChatRoom chatRoom = new ChatRoom() { UpdatedDate = DateTime.Now };
+                                this._messageService.Save(
+                                    chatRoom,
+                                    new List<int>() { Id, IdUser}
+                                );
 
-                                    List<UsersInChatRoom> newList = new List<UsersInChatRoom>()
+                                transaction.Commit();
+                                if (user.IdFile != null && user.IdFile.Value != 0)
                                 {
-                                    new UsersInChatRoom()
-                                    {
-                                        IdChatRoom = chatRoom.Id,
-                                        IdUser = IdUser
+                                    user.InCludeAll((this._context));
+                                }
+
+                                model.Add(chatRoom.Id, new RoomChatViewModel()
+                                {
+                                    IdRoom = chatRoom.Id,
+                                    UserMessages = new List<UserMessageViewModel>() {
+                                        new UserMessageViewModel(user, salt, host)
                                     },
-                                    new UsersInChatRoom()
-                                    {
-                                        IdChatRoom = chatRoom.Id,
-                                        IdUser = Id
-                                    }
-                                };
+                                    Messages = new List<MessageViewModel>()
+                                });
 
-                                    Context.AddRange(newList);
-                                    Context.SaveChanges();
+                                ChatHub chatHub = new ChatHub(this._signalContext);
+                                string userAccess = Crypto.EncodeKey(user.Id.ToString(), salt);
+                                await chatHub.ConnectToGroup((TargetSignalR.Connect() + "-" + userAccess), chatRoom.Id.ToString(), userAccess);
 
-                                    transaction.Commit();
-                                    if (user.IdFile != null && user.IdFile.Value != 0)
-                                    {
-                                        Context.Entry(user).Reference(m => m.Files).Load();
-                                    }
-
-                                    model.Add(chatRoom.Id, new RoomChatViewModel()
-                                    {
-                                        IdRoom = chatRoom.Id,
-                                        UserMessages = new List<UserMessageViewModel>() {
-                                        new UserMessageViewModel(user, salt, this.GetWebsitePath())
-                                    },
-                                        Messages = new List<MessageViewModel>()
-                                    });
-
-                                    ChatHub chatHub = new ChatHub(this._signalContext);
-
-                                    string userAccess = Crypto.EncodeKey(user.Id.ToString(), salt);
-                                    await chatHub.ConnectToGroup((TargetSignalR.Connect() + "-" + userAccess), chatRoom.Id.ToString(), userAccess);
-
-                                }
-                                catch (Exception ex)
-                                {
-                                    Console.WriteLine(ex);
-                                    transaction.Rollback();
-                                }
                             }
-                        }
-                    }
-                }
-                if(model.Keys.Count() < 20)
-                {
-                    var chatRooms = Context.UsersInChatRooms
-                                             .Include(m => m.ChatRooms).OrderByDescending(m => m.ChatRooms.UpdatedDate)
-                                             .Where(m => m.IdUser == IdUser)
-                                             .Take(20)
-                                             .Select(m => m.ChatRooms).ToList();
-                    int number = 20;
-                    if (model.Count() > 0) number = 0;
-                    if (chatRooms != null && chatRooms.Count() > 0)
-                    {
-                        foreach (var room in chatRooms)
-                        {
-                            if (room != null && !model.ContainsKey(room.Id))
+                            catch (Exception ex)
                             {
-                                KeyValuePair<int, RoomChatViewModel> keyValuePair = this.CreateDictionary(room, Context, number, salt, IdUser);
-                                model.Add(keyValuePair.Key, keyValuePair.Value);
-                                if (number == 10) number = 0;
+                                Console.WriteLine(ex);
+                                transaction.Rollback();
                             }
                         }
                     }
-                }
-                var mainUser = Context.Users.Where(m => m.Id == IdUser).FirstOrDefault();
-                if (mainUser == null)
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    ViewData["userAccess"] = new UserMessageViewModel(mainUser, salt, this.GetWebsitePath());
                 }
             }
+            if (model.Keys.Count() < 20)
+            {
+                var chatRooms = this._messageService.GetByUser(IdUser, 20, 0);
+                int number = 20;
+                if (model.Count() > 0) number = 0;
+                foreach (var room in chatRooms)
+                {
+                    if (room != null && !model.ContainsKey(room.Id))
+                    {
+                        RoomChatViewModel keyValuePair = this._messageService.CreateDictionary(room, number, 0, salt, host, IdUser);
+                        model.Add(keyValuePair.IdRoom, keyValuePair);
+                        if (number == 10) number = 0;
+                    }
+                }
+            }
+
+
             ViewData["active"] = 6;
             if (IdUser != 0)
             {
-                this.SetViewData(new DoAnTotNghiepContext(this._context.GetConfig()), IdUser, Crypto.Salt(this._configuration));
+                this.SetViewData(new DoAnTotNghiepContext(this._context.GetConfig()), IdUser, salt);
             }
             return View(model);
-        }
-        private KeyValuePair<int, RoomChatViewModel> CreateDictionary(ChatRoom room, DoAnTotNghiepContext Context, int number, byte[] salt, int IdUser)
-        {
-            Context.Entry(room).Collection(m => m.Messages).Query()
-                .OrderByDescending(m => m.CreatedDate).Take(number).Load();
-            var userInChatRoom = Context.UsersInChatRooms
-                        .Include(m => m.Users).ThenInclude(u => u.Files)
-                        .Where(m => m.IdChatRoom == room.Id && m.IdUser != IdUser)
-                        .ToList();
-            List<UserMessageViewModel> users = new List<UserMessageViewModel>();
-            string host = this.GetWebsitePath();
-            foreach (UsersInChatRoom item in userInChatRoom)
-            {
-                if (item != null)
-                {
-                    users.Add(new UserMessageViewModel(item, salt, host));
-                }
-            }
-            RoomChatViewModel roomChat = new RoomChatViewModel()
-            {
-                IdRoom = room.Id,
-                Messages = (room.Messages == null || number == 0) ? new List<MessageViewModel>() : 
-                                        room.Messages.OrderByDescending(m => m.CreatedDate).Take(number).Select(m => new MessageViewModel(
-                                                m.IdReply == null ? 0 : m.IdReply.Value,
-                                                ((m.Status == (int)StatusMessage.SEEN) || m.IdUser == IdUser),
-                                                Crypto.EncodeKey(m.IdUser.ToString(), salt),
-                                                m.Content, m.Id, m.CreatedDate)).ToList(),
-                UserMessages = users
-            };
-            return new KeyValuePair<int, RoomChatViewModel>(roomChat.IdRoom, roomChat);
         }
         public IActionResult ReportMail()
         {
@@ -751,16 +408,16 @@ namespace DoAnTotNghiep.Controllers
         }
         private IActionResult UpdateInfoMember(UpdateUserInfo model)
         {
-            using (var Context = this._context)
+            if (ModelState.IsValid)
             {
-                using (var Transaction = Context.Database.BeginTransaction())
+                using (var Transaction = this._context.Database.BeginTransaction())
                 {
                     if (ModelState.IsValid)
                     {
                         try
                         {
                             int IdUser = this.GetIdUser();
-                            var user = Context.Users.Where(m => m.Id == IdUser).FirstOrDefault();
+                            var user = this._userService.GetById(IdUser);
                             if (user == null)
                             {
                                 return BadRequest(new
@@ -771,8 +428,7 @@ namespace DoAnTotNghiep.Controllers
                             }
                             if (user.Email != model.Email)
                             {
-                                var checkEmail = Context.Users.Where(m => m.Id != IdUser && m.Email.Contains(model.Email)).ToList();
-                                if (checkEmail.Any())
+                                if (this._userService.IsExistEmail(model.Email, IdUser))
                                 {
                                     return BadRequest(new
                                     {
@@ -781,69 +437,18 @@ namespace DoAnTotNghiep.Controllers
                                     });
                                 }
                             }
-
                             if (model.Image != null)
                             {
-                                if (user.IdFile == null)
-                                {
-                                    Entity.File? file = this.SaveFile(model.Image);
-                                    if (file != null)
-                                    {
-                                        Context.Files.Add(file);
-                                        Context.SaveChanges();
-                                        user.IdFile = file.Id;
-                                    }
-                                }
-                                else
-                                {
-                                    var file = Context.Files.Where(m => m.Id == user.IdFile).FirstOrDefault();
-                                    if (file != null)
-                                    {
-                                        Entity.File? saveFile = this.SaveFile(model.Image);
-                                        if (saveFile != null)
-                                        {
-                                            this.DeleteFile(file);
-                                            file.PathFolder = saveFile.PathFolder;
-                                            file.FileName = saveFile.FileName;
-                                            Context.Files.Update(file);
-                                            Context.SaveChanges();
-                                        }
-                                    }
-                                }
+                                user = this._fileService.UpdateFileUser(user, model.Image, this.environment.ContentRootPath);
                             }
+
                             if (model.File != null)
                             {
-                                if (user.IdFile == null)
-                                {
-                                    Entity.File? file = this.SaveFile(model.File);
-                                    if (file != null)
-                                    {
-                                        Context.Files.Add(file);
-                                        Context.SaveChanges();
-                                        user.IdFile = file.Id;
-                                    }
-                                }
-                                else
-                                {
-                                    var file = Context.Files.Where(m => m.Id == user.IdFile.Value).FirstOrDefault();
-                                    if (file != null)
-                                    {
-                                        Entity.File? saveFile = this.SaveFile(model.File);
-                                        if (saveFile != null)
-                                        {
-                                            this.DeleteFile(file);
-                                            file.PathFolder = saveFile.PathFolder;
-                                            file.FileName = saveFile.FileName;
-                                            Context.Files.Update(file);
-                                            Context.SaveChanges();
-                                        }
-                                    }
-                                }
+                                user = this._fileService.UpdateFileUser(user, model.File, this.environment.ContentRootPath);
                             }
 
                             user.UpdateInfoUser(model);
-                            Context.Users.Update(user);
-                            Context.SaveChanges();
+                            this._userService.UpdateUser(user);
 
                             Transaction.Commit();
 
@@ -877,14 +482,11 @@ namespace DoAnTotNghiep.Controllers
             });
         }
 
-        //Update Password
         [HttpGet("/User/UpdatePassword")]
         public IActionResult UpdatePassword()
         {
             return PartialView("./Views/Member/_UpdatePassword.cshtml", new UpdatePasswordViewModel());
         }
-
-        //Update Password
         [HttpPost("/User/UpdatePassword")]
         public IActionResult UpdatePassword([FromBody] UpdatePasswordViewModel model)
         {
@@ -900,7 +502,7 @@ namespace DoAnTotNghiep.Controllers
             if (ModelState.IsValid)
             {
                 int IdUser = this.GetIdUser();
-                var user = this._context.Users.Where(m => m.Id == IdUser).FirstOrDefault();
+                var user = this._userService.GetById(IdUser);
                 if (user == null)
                 {
                     return BadRequest(new
@@ -913,8 +515,7 @@ namespace DoAnTotNghiep.Controllers
                 string password = Crypto.HashPass(model.Password, salt);
                 user.Password = password;
                 user.Salt = Crypto.SaltStr(salt);
-                this._context.Users.Update(user);
-                this._context.SaveChanges();
+                this._userService.UpdateUser(user);
                 return Json(new
                 {
                     Status = 200,
@@ -927,34 +528,6 @@ namespace DoAnTotNghiep.Controllers
                 Message = this.ModelErrors()
             });
         }
-
-        [HttpGet("/Request/All")]
-        [AllowAnonymous]
-        public IActionResult GetAll()
-        {
-            var request = this._context.Requests.Where(m => m.Status != (int)StatusRequest.DISABLE).ToList();
-            List<DetailRequest> model = new List<DetailRequest>();
-            DoAnTotNghiepContext Context = this._context;
-
-            byte[] salt = Crypto.Salt(this._configuration);
-            string host = this.GetWebsitePath();
-
-            foreach (var item in request)
-            {
-                DetailRequest? itemAdd = this.CreateDetailRequest(item, null);
-                if (itemAdd != null)
-                {
-                    model.Add(itemAdd);
-                }
-            }
-            return Json(new
-            {
-                Status = 200,
-                Data = model
-            });
-        }
-
-
         [HttpGet("/api/User/Info")]
         public IActionResult MyProfile()
         {
@@ -971,11 +544,11 @@ namespace DoAnTotNghiep.Controllers
             }
             return this.ProfileUser(IdUser);
         }
-
         private IActionResult ProfileUser(int IdUser)
         {
-            var user = this._context.Users.Include(m => m.Files).Include(m => m.Houses).Where(m => m.Id == IdUser).FirstOrDefault();
+            var user = this._userService.GetById(IdUser);
             if (user == null) return BadRequest(new { Status = 400, Message = "Không tìm thấy người dùng" });
+            UserInfo.GetEntityRelated(user, this._context);
             UserInfo userInfo = new UserInfo(user, Crypto.Salt(this._configuration), this.GetWebsitePath());
             return Json(new {Status = 200, Data = userInfo });
         }
@@ -986,26 +559,11 @@ namespace DoAnTotNghiep.Controllers
             {
                 return NotFound();
             }
-            var user = this._context.Users.Include(m => m.Files).Where(m => m.Id == IdAnotherUser).FirstOrDefault();
+            var user = this._userService.GetById(IdAnotherUser);
             if(user == null) return NotFound();
-
             byte[] salt = Crypto.Salt(this._configuration);
             string host = this.GetWebsitePath();
-            UserInfo info = new UserInfo(user, salt, host);
-            //lấy danh sách nhà
-            var houses = this._context.Houses.Include(m => m.FileOfHouses)
-                                            .Where(m => m.IdUser == user.Id).ToList();
-            List<DetailHouseViewModel> ListHouse = new List<DetailHouseViewModel>();
-            foreach (var house in houses)
-            {
-                if(house != null)
-                {
-                    var item = this.CreateDetailsHouse(house);
-                    if(item != null) ListHouse.Add(item);
-                }
-            }
-            //lấy danh sách feedbacks
-            var feedBacks = this._context.FeedBacks.Include(m => m.Users).ThenInclude(u => u.Files).Where(m => m.IdUserRated == IdAnotherUser).Select(m => new DetailRatingWithUser(m, salt, host)).ToList();
+            UserInfo.GetEntityRelated(user, this._context);
             int IdUser = this.GetIdUser();
             ViewData["isSelf"] = IdAnotherUser == IdUser ? "true": "false";
             
@@ -1013,7 +571,12 @@ namespace DoAnTotNghiep.Controllers
             {
                 this.SetViewData(new DoAnTotNghiepContext(this._context.GetConfig()), IdUser, Crypto.Salt(this._configuration));
             }
-            return View(new UserProfile(info, ListHouse, feedBacks));
+            return View(new UserProfile(
+                                new UserInfo(user, salt, host), 
+                                this._houseService.GetListDetailHouseWithOneImage(
+                                this._houseService.GetListHouseByUser(IdAnotherUser),
+                                this._fileService, host, salt), 
+                                this._feedBackService.GetRatingById(IdAnotherUser, host, salt)));
         }
     }
 }

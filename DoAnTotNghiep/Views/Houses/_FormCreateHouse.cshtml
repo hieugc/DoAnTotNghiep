@@ -28,9 +28,10 @@
                     <div class="mb-3">
                         <label for="houseName">Tên gợi nhớ cho căn nhà</label>
                         <input type="text" name="houseName" id="houseName" class="form-control" onchange="getNameHouse(this)"/>
+                        <span class="text-danger" id="houseName-validate"></span>
                     </div>
                     <div class="mb-3">
-                        <label for="typeOfHouse">Loại nhà</label>
+                        <label for="typeOfHouse">Loại nhà <small class="text-danger" id="option-frame-validate"></small></label>
                         <div class="option-frame">
                             <div class="option" onclick="getOptionHouse(this, 1)"><i class="fa-solid fa-house"></i><span>Nhà</span></div>
                             <div class="option" onclick="getOptionHouse(this, 2)"><i class="fa-solid fa-building"></i><span>Căn hộ</span></div>
@@ -39,6 +40,7 @@
                     <div class="mb-3">
                         <label for="HouseDesc">Giới thiệu nhà của bạn</label>
                         <textarea name="houseDesc" id="houseDesc" rows="3" class="form-control" onchange="getDescHouse(this)"></textarea>
+                        <span class="text-danger" id="houseDesc-validate"></span>
                     </div>
                 </div>
                 <div class="handle-step">
@@ -52,30 +54,41 @@
                     <div class="mb-3 col-md-6">
                         <label for="numUser">Số người có thể ở</label>
                         <input type="number" name="numUser" id="numUser" class="form-control" onchange="getPeopleHouse(this)" />
+                        <span class="text-danger" id="numUser-validate"></span>
+                    </div>
+                    <div class="mb-3 col-md-6">
+                        <label for="numSquare">Diện tích nhà</label>
+                        <input type="number" name="numSquare" id="numSquare" class="form-control" onchange="getSquareHouse(this)" />
+                        <span class="text-danger" id="numSquare-validate"></span>
                     </div>
                     <div class="mb-3 col-md-6">
                         <label for="numSleep">Số phòng ngủ</label>
                         <input type="number" name="numSleep" id="numSleep" class="form-control" onchange="getSleepHouse(this)" />
+                        <span class="text-danger" id="numSleep-validate"></span>
+                    </div>
+                    <div class="mb-3 col-md-6">
+                        <label for="numBed">Số giường</label>
+                        <input type="number" name="numBed" id="numBed" class="form-control" onchange="getBedHouse(this)" />
+                        <span class="text-danger" id="numBed-validate"></span>
                     </div>
                     <div class="mb-3 col-md-6">
                         <label for="numBath">Số phòng tắm</label>
                         <input type="number" name="numBath" id="numBath" class="form-control" onchange="getBathHouse(this)" />
+                        <span class="text-danger" id="numBath-validate"></span>
                     </div>
                     <div class="mb-3 col-md-6">
-                        <label for="numSquare">Diện tích căn phòng</label>
-                        <input type="number" name="numSquare" id="numSquare" class="form-control" onchange="getSquareHouse(this)"/>
-                    </div>
-                    <div class="mb-3 col-12">
                         <label for="location">Địa chỉ nhà</label>
                         <div class="input-group">
                             <input type="text" name="location" id="location" class="form-control" placeholder="Địa chỉ" onchange="getLocationHouse(this)" onfocus="getLocationHouse(this)"/>
                             <span class="btn btn-sm rounded btn-primary input-group-text" id="btnBingMaps" onclick="hideMainForm()" data-bs-target="#BingMapModal" data-bs-toggle="modal"><i class="fa-solid fa-map-location-dot"></i></span>
                         </div>
+                        <span class="text-danger" id="location-validate"></span>
                     </div>
                     <div class="mb-3 col-12 ">
                         <label for="numPrice">Giá bạn mong muốn trao đổi</label>
                         <input type="number" name="numPrice" id="numPrice" class="form-control" placeholder="200 Point/ngày" onchange="getPriceHouse(this)"/>
-                        <span class="suggest"><small>Giá gợi ý từ hệ thống: <strong>200 Point/ngày</strong></small></span>
+                        <div class="form suggest"></div>
+                        <div class="text-danger" id="numPrice-validate"></div>
                     </div>
                 </div>
                 <div class="handle-step">
@@ -119,6 +132,7 @@
             <div class="modal-body sighide">
                 <h3>Hình ảnh nhà của bạn</h3>
                 <p>Hãy thêm hình ảnh đẹp về căn nhà để thu hút người khác trao đổi.</p>
+                <span class="text-danger" id="input-picture-validate"></span>
                 <div class="body">
                     <div class="input-picture">
                         <label for="input-picture" id="input-picture-label"><i class="fa-solid fa-camera"></i><span><small>Nhấn để thêm hình ảnh bạn mong muốn</small></span></label>
@@ -188,8 +202,8 @@
     </div>
 </div>
 @Html.AntiForgeryToken()
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" integrity="sha512-nMNlpuaDPrqlEls3IX/Q56H36qvBASwb3ipuo3MxeWbsQB1881ox0cRv7UPTgBlriqoynt35KjEwgGUeUXIPnw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js" integrity="sha512-2ImtlRlf2VVmiGZsjm9bEyhjGW4dU7B6TNwh/hx/iSByxNENtj3WVE6o/9Lj4TJeVXPi4bnOIMXFIJJAeufa0A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script type="text/javascript">
     var key = "@key";
 </script>

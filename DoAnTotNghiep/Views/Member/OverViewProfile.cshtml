@@ -17,7 +17,7 @@
         }
     </div>
     <div class="info">
-        <div class="name"><strong>@Model.User.FirstName @Model.User.LastName</strong></div>
+        <div class="name"><strong>@Model.User.LastName @Model.User.FirstName</strong></div>
         <div class="rate">
             <div class="frame-start">
                 <span class="fa fa-star @if(Model.User.UserRating >= 1){@Html.Raw("checked")}"></span>

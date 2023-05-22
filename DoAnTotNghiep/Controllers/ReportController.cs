@@ -49,8 +49,6 @@ namespace DoAnTotNghiep.Controllers
                     ViewData["name"] = user.FirstName + " " + user.LastName;
                     return PartialView("~/Views/PartialView/_FormReport.cshtml", UserAccess);
                 }
-
-               
             }
             return NotFound();
         }
@@ -238,6 +236,7 @@ namespace DoAnTotNghiep.Controllers
                             }
                         }
                     }
+                    report.Users.InCludeAll(this._context);
                     model.Add(new DetailReportViewModel()
                     {
                         Content = report.Content,

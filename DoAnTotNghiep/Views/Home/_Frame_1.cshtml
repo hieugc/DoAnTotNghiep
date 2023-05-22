@@ -1,0 +1,19 @@
+﻿@model List<PopularCityViewModel>
+@using DoAnTotNghiep.Enum;
+
+@if (Model.Count() > 0)
+{
+    @foreach (var item in Model)
+    {
+        <div class="img-container">
+            <img src="@item.ImageUrl" alt="city-@item.Id" style="width:100%;">
+            <div class="content">
+                <h2><a href="@Url.Action("Index", "Explore", new {IdCity = item.Id})">@item.Name</a></h2>
+            </div>
+        </div>
+    }
+}
+else
+{
+    <div class="text-danger">Chưa có dữ liệu về thành phố</div>
+}

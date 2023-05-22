@@ -1,18 +1,16 @@
 ﻿@model DoAnTotNghiep.ViewModels.DetailHouseViewModel
 @using DoAnTotNghiep.Enum;
-@{
-    int count = 1;
-}
 
-<div class="card mb-3 status-@Model.Status">
+<div class="card mb-3 status-@Model.Status house-id-@Model.Id">
     <div class="row g-0">
         <div class="col-md-8">
             @if(Model.Images.Any())
             {
                 foreach(var item in Model.Images)
                 {
-                    if(item != null && count ++ == 1){
+                    if(item != null){
                         <img src="@item.Data" class="img-fluid rounded-start" alt="hình ảnh nhà">
+                        break;
                     }
                 }
             }
@@ -26,8 +24,7 @@
                 <div class="body-head">
                     <h5 class="card-title">@Model.Name</h5>
                     <div>
-                        <div class="rating"><span>@Model.Rating (@Model.NumberRating)</span><i class="fa-solid fa-star"></i></div>
-                        <div class="point"><strong>@Model.Price p/ngày</strong></div>
+                        <div class="rating"><span>@Model.Rating (@Model.NumberRating)</span><i class="fa-solid fa-star"></i> <strong>@Model.Price p/ngày</strong></div>
                     </div>
                 </div>
                 <div class="body-detail">
@@ -50,7 +47,7 @@
                         }
                     </div>
                 </div>
-                <p class="card-text">@Model.Location</p>
+                <p class="attribute"><i class="fa-solid fa-map-location-dot px-2"></i><span>@Model.Location, @Model.WardName, @Model.DistrictName, @Model.CityName</span></p>
                 <p class="card-control">
                     <a href="@Url.Action("HouseOverView", "Houses", new{Id = Model.Id})" class="btn btn-primary" title="Xem chi tiết" target="_blank">Chi tiết</a>
                     @if (Model.Status != (int)StatusHouse.SWAPPING)

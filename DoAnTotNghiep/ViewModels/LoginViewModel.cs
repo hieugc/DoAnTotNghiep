@@ -1,5 +1,7 @@
-﻿using DoAnTotNghiep.Entity;
+﻿using DoAnTotNghiep.Data;
+using DoAnTotNghiep.Entity;
 using DoAnTotNghiep.Modules;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Drawing.Printing;
@@ -56,6 +58,18 @@ namespace DoAnTotNghiep.ViewModels
             if (user.Houses != null)
             {
                 this.NumberOfHouses = user.Houses.Count;
+            }
+        }
+
+        public static void GetEntityRelated(User user, DoAnTotNghiepContext context)
+        {
+            if(!context.Entry(user).Collection(m => m.Houses).IsLoaded)
+            {
+                context.Entry(user).Collection(m => m.Houses).Load();
+            }
+            if (!context.Entry(user).Reference(m => m.Files).IsLoaded)
+            {
+                context.Entry(user).Reference(m => m.Files).Load();
             }
         }
 

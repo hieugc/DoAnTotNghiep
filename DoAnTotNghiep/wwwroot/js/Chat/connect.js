@@ -42,26 +42,21 @@ connection.on("ReceiveMessages", function (message) {
         showNotification(userName, message.messages[0].message, 1);
     }
 });
+connection.on("all", function (message) {
+    console.log(message);
+});
 connection.on("Notification", function (model) {
     console.log(model);
     showNewSignal("#tag_notification #dropdownMenuNotification");
     $("#tag_notification .alert-frame").prepend(itemNoti(model));
     showNotification(model.title, model.content, 1);
-    if (model.type == 0) {//request
+    if (model.type == 0) {
         if (window.location.href.indexOf("Member/House") != -1) {
-            //update number request in house
             updateRequestInHouse();
-        }
-        else if (window.location.href.indexOf("Member/Requested") != -1) {
-
-        }
-        else if (window.location.href.indexOf("Member/History") != -1) {
-
         }
     }
     else if (model.type == 6) {
         if (window.location.href.indexOf("Member/History") != -1) {
-            //show successfull
             if ($("#renderQRCode").length > 0) {
                 $("#renderQRCode").html(notiPaymentSuccess());
             }
@@ -161,7 +156,7 @@ function htmlChatNotification(user, chat, idRoom) {
     }
     str += `<div class="content"><strong>${user.userName}</strong><small> đã gửi tin nhắn</small>
             <div style="margin: 6px 0;" class="message-${idRoom}"><small><strong>${notiUserName(user, chat.idSend)}</strong></small>: ${chat.message}</div >
-            <small class="time">${chat.createdDate}</small></div>`;
+            <small class="time">${chat.createdDate.split("T")[1].split(".")[0]} ${dateFormat(chat.createdDate.split("T")[0])}</small></div>`;
     if (!chat.isSeen) {
         str += `<div class="status"><i class="fa-solid fa-circle"></i></div>`;
     }
@@ -226,14 +221,17 @@ function updateNoti(data) {
     prependNewNotification(".dropdown-item" + tag_message);
 }
 function returnFunction(model) {
-    if (model.type == 0 || model.type == 1) { //request
+    if (model.type == 0 || model.type == 1) {//request
         return `requestView(${model.idType}, ${model.id})`;
     }
     else if (model.type == 2) { //admin report
         return window.location.origin + "/Report/";
     }
-    else if (model.type == 4) { //circle swap
+    else if (model.type == 4) {
         return window.location.origin + "/Request/Suggest";
+    }
+    else if (model.type == 6) {
+        return `paymentView(${model.idType}, ${model.id})`;
     }
 }
 function itemNoti(model) {
@@ -334,6 +332,28 @@ function requestView(idType, id) {
         }
     )
 }
+function paymentView(idType, id) {
+    $.get(
+        window.location.origin + "/Payment/Detail?Id=" + idType,
+        function (data) {
+            updatePopupNotification(id);
+            $("#renderModal").html(createModal(data));
+            $("#Notification-itemModal div.control").remove();
+            $("#NotificationModalToggleClick").click();
+        }
+    )
+}
+function circleRequestView(idType, id) {
+    $.get(
+        window.location.origin + "/CircleRequest/Detail?Id=" + idType,
+        function (data) {
+            updatePopupNotification(id);
+            $("#renderModal").html(createModal(data));
+            $("#Notification-itemModal div.control").remove();
+            $("#NotificationModalToggleClick").click();
+        }
+    )
+}
 function updatePointUser() {
     $.get(
         window.location.origin + "/User/Point",
@@ -349,7 +369,6 @@ function updatePointUser() {
         }
     )
 }
-
 function updatePopupNotification(id) {
     $.ajax({
         url: window.location.origin + "/Notification/Seen",
@@ -361,7 +380,10 @@ function updatePopupNotification(id) {
             //nếu đúng
             console.log(result);
             if (result.status == 200) {
-                $(`#alert-noti-${id} .status`).remove();
+                $(`.alert-noti-${id} .status`).remove();
+                if ($(`.status`).length == 0) {
+                    hideNewSignal("#tag_notification #dropdownMenuNotification");
+                }
             }
         },
         error: function (error) {
@@ -369,7 +391,6 @@ function updatePopupNotification(id) {
         }
     });
 }
-
 function updateAllPopupNotification() {
     $.ajax({
         url: window.location.origin + "/Notification/SeenAll",
@@ -380,7 +401,8 @@ function updateAllPopupNotification() {
             //nếu đúng
             console.log(result);
             if (result.status == 200) {
-                $(`#alert-noti-${id} .status`).remove();
+                $(`.status`).remove();
+                hideNewSignal("#tag_notification #dropdownMenuNotification");
             }
         },
         error: function (error) {
@@ -388,5 +410,3 @@ function updateAllPopupNotification() {
         }
     });
 }
-//scroll notification
-//scroll chat

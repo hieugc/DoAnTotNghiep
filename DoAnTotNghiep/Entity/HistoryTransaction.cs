@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using DoAnTotNghiep.Data;
+using DoAnTotNghiep.Enum;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DoAnTotNghiep.Entity
@@ -7,6 +9,29 @@ namespace DoAnTotNghiep.Entity
     public class HistoryTransaction
     {
         public HistoryTransaction() { }
+
+        public HistoryTransaction RequestTransaction(Request request, User user, int idUser) 
+        { 
+            return new HistoryTransaction()
+            {
+                Amount = request.Point,
+                IdUser = IdUser,
+                CreatedDate = DateTime.Now,
+                Status = (int)StatusTransaction.USED,
+                Content = "Bạn thanh toán "
+                            + request.Point + ""
+                            + " điểm trao đổi nhà "
+                            + request.Houses.Name + " của "
+                            + user.FirstName + " " + user.LastName
+                            + " vào lúc" + DateTime.Now.ToString("hh:mm:ss dd/MM/yyyy")
+            };
+        }
+
+        public void IncludeAll(DoAnTotNghiepContext context)
+        {
+            if (this.Users == null && !context.Entry(this).Reference(m => m.Users).IsLoaded)
+                context.Entry(this).Reference(m => m.Users).Load();
+        }
 
         [Key]
         [Column("id")]

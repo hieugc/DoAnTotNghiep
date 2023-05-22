@@ -4,23 +4,6 @@
     ViewData["Title"] = "Lịch sử giao dịch";
     Layout = "_LayoutMember";
 }
-
-
-@*
-    + modal lịch sử nạp tiền
-            => lọc theo time
-            => số tiền + mã giao dịch
-    + tab hiển thị giao dịch đã trao đổi
-
-    + chart -> việc trao đổi theo thời gian
-            => lọc theo nhà
-            => gồm 2 đường:
-                => tiền trả
-                => tiền vào
-                => có chi tiết => modal việc trao đổi
-*@
-
-
 <div class="house">
     <div class="house-head">
         <h2>Thống kê giao dịch</h2>
@@ -31,7 +14,7 @@
     <div class="nav nav-tabs mb-2">
         <div class="nav-link active" onclick="selectTab(0)">Thống kê tài khoản</div>
         <div class="nav-link" onclick="selectTab(1)">Trao đổi</div>
-        <div class="nav-link" onclick="selectTab(2)">Xu hướng</div>
+        @*<div class="nav-link" onclick="selectTab(2)">Xu hướng</div>*@
     </div>
     <div class="statistic">
         <div class="head-tab">
@@ -72,82 +55,16 @@
         </div>
         <div class="head-tab tab-hide">
         </div>
-        @*<div class="statistic-img" style="width: 100%; height: 100%;">
-        <canvas id="statistic-render"></canvas>
-        <div class="predict-render">
-        <div class="tab-animation">
-        <div id="predict-render">
-        </div>
-        <div class="loading-box">
-        <div class="loader"></div>
-        </div>
-        </div>
-        <div class="tab-control">
-        <div class="city-option">
-        <label for="predictCity">Thành phố/Tỉnh: </label>
-        <select id="predictCity" class="form-select" onchange="setDistrictSelector()">
-        </select>
-        </div>
-        <div class="district-option">
-        <label for="predictDistrict">Quận/Huyện: </label>
-        <select id="predictDistrict" class="form-select" disabled onchange="setMap()">
-        </select>
-        </div>
-        <div class="distance-option">
-        <label for="predictDistance" title="Khoảng cách so với trung tâm thành phố">Khoảng cách:</label>
-        <input class="form-control" type="number" id="predictDistance" />
-        </div>
-        <div class="people-option">
-            <label for="predictPeople" title="Số người có thể ở">Số người:</label>
-            <input class="form-control" type="number" id="predictPeople" />
-        </div>
-        <div class="rating-option">
-            <label for="predictRating" title="Đánh giá">Đánh giá:</label>
-            <input class="form-control" type="text" id="predictRating" />
-        </div>
-        <div class="area-option">
-            <label for="predictArea" title="Diện tích căn nhà">Diện tích:</label>
-            <input class="form-control" type="number" id="predictArea" />
-        </div>
-        <div class="btn btn-primary" onclick="getPredict()">Dự đoán</div>
-    </div>
-</div>
-        </div>*@
+        
 <div class="statistic-img" style="width: 100%; height: 100%;">
     <canvas id="statistic-render"></canvas>
     <div class="predict-render">
         <div class="tab-animation">
-            <div id="predict-house">
-                <h5>Giá nhà hệ thống dự đoán:</h5>
-                <h2 class="value"></h2>
-            </div>
             <div class="loading-box">
                 <div class="loader"></div>
             </div>
         </div>
         <div class="tab-control">
-            <div class="city-option">
-                <label for="predictCity">Thành phố/Tỉnh: </label>
-                <select id="predictCity" class="form-select" onchange="setDistrictSelector()">
-                </select>
-            </div>
-            <div class="distance-option">
-                <label for="predictDistance" title="Khoảng cách so với trung tâm thành phố">Khoảng cách:</label>
-                <input class="form-control" type="number" id="predictDistance" />
-            </div>
-            <div class="people-option">
-                <label for="predictPeople" title="Số người có thể ở">Số người:</label>
-                <input class="form-control" type="number" id="predictPeople" />
-            </div>
-            <div class="rating-option">
-                <label for="predictRating" title="Đánh giá">Đánh giá:</label>
-                <input class="form-control" type="text" id="predictRating" />
-            </div>
-            <div class="area-option">
-                <label for="predictArea" title="Diện tích căn nhà">Diện tích:</label>
-                <input class="form-control" type="number" id="predictArea" />
-            </div>
-            <div class="btn btn-primary" onclick="getPredict()">Dự đoán</div>
         </div>
     </div>
 </div>
@@ -155,46 +72,18 @@
 </div>
 
 @section Scripts{
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.2.1/dist/chart.umd.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.3.0/chart.umd.min.js" integrity="sha512-TJ7U6JRJx5IpyvvO9atNnBzwJIoZDaQnQhb0Wmw32Rj5BQHAmJG16WzaJbDns2Wk5VG6gMt4MytZApZG47rCdg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <script src="~/js/Transaction/create.js" type="text/javascript"></script>
     <script src="~/js/Transaction/statistics.js" type="text/javascript"></script>
     <script type="text/javascript">
         var now = @DateTime.Now.Year;
         zaloTransaction();
-        //init City -> xem GetLocation.js
-        //initCitySelect2("#predictCity", getDataFormat(dataLocation, "Thành phố/Tỉnh"), "Chọn thành phố");
-        //initCitySelect2("#predictDistrict", getDataFormat([], "Quận/Huyện"), "Chọn quận/huyện");
-        //getDistrictPoint($("#predictCity").val());
-        var map = null;
-        var lat = @Model.Lat;
-        var lng = @Model.Lng;
-        function GetMap() {
-            map = new Microsoft.Maps.Map('#predict-render', {
-                zoom: 12,
-                center: new Microsoft.Maps.Location(lat, lng),
-                customMapStyle: StyleMap()
-            });
-            var geoDataRequestOptions = {
-                entityType: 'PopulatedPlace'
-            };
-            Microsoft.Maps.loadModule('Microsoft.Maps.SpatialDataService', function () {
-                Microsoft.Maps.SpatialDataService.GeoDataAPIManager.getBoundary(
-                    map.getCenter(),
-                    geoDataRequestOptions,
-                    map,
-                    function (data) {
-                        if (data.results && data.results.length > 0) {
-                            map.entities.push(data.results[0].Polygons);
-                        }
-                    });
-            });
-        }
     </script>
-}
-
-@section History{
-    
+    @if(!string.IsNullOrEmpty(ViewData["action"] as string))
+    {
+        <script type="text/javascript">
+            renderTransactionForm();
+        </script>
+    }
 }

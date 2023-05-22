@@ -16,7 +16,8 @@ using Microsoft.ML.Data;
 using Microsoft.Extensions.ML;
 using DoAnTotNghiep.TrainModels;
 using Microsoft.ML;
-
+using DoAnTotNghiep.Service;
+using DoAnTotNghiep.Job;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<DoAnTotNghiepContext>(options => 
@@ -24,14 +25,21 @@ builder.Services.AddDbContext<DoAnTotNghiepContext>(options =>
 builder.Services.AddSignalR();
 builder.Services.AddControllersWithViews();
 
-const string _modelName = "PredictHouse";
-const string _modelPath = @"TrainModels/PredictHouse.zip";
-
-var predict = new PredictHouse();
-//predict.LoadAndMakeNewFile();
-//predict.PrepareData();
-predict.NewTrainAndSave(@"TrainModels/newData_out_put.csv");
-
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IHouseService, HouseService>();
+builder.Services.AddScoped<IFileService, FileService>();
+builder.Services.AddScoped<IFeedBackService, FeedBackService>();
+builder.Services.AddScoped<IRuleService, RuleService>();
+builder.Services.AddScoped<IUtilitiesService, UtilitiesService>();
+builder.Services.AddScoped<ILocationService, LocationService>();
+builder.Services.AddScoped<IRequestService, RequestService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<ITransactionService, TransactionService>();
+builder.Services.AddScoped<ICheckInService, CheckInService>();
+builder.Services.AddScoped<ICheckOutService, CheckOutService>();
+builder.Services.AddScoped<IMessageService, MessageService>();
+builder.Services.AddScoped<ICircleRequestService, CircleRequestService>();
+builder.Services.AddScoped<ICircleFeedBackService, CircleFeedBackService>();
 
 builder.Services.AddAuthentication(Scheme.Authentication())
     .AddJwtBearer(Scheme.AuthenticationJWT(), options =>
@@ -75,7 +83,8 @@ builder.Services.AddAuthentication(Scheme.Authentication())
             // filter by auth type
             string? authorization = context.Request.Headers[HeaderNames.Authorization];
             string? url = context.Request.Path.Value;
-            if (!string.IsNullOrEmpty(authorization) && authorization.StartsWith("Bearer") || !string.IsNullOrEmpty(url) && url.Contains("api"))
+            if (!string.IsNullOrEmpty(authorization) && authorization.StartsWith("Bearer") 
+            || !string.IsNullOrEmpty(url) && url.Contains("api"))
                 return Scheme.AuthenticationJWT();
 
             // otherwise always check for cookie auth
@@ -83,10 +92,8 @@ builder.Services.AddAuthentication(Scheme.Authentication())
         };
     });
 
-//builder.Services.AddHostedService<TimedHostedService>();
 
-builder.Services.AddPredictionEnginePool<NewModelTrainInput, ModelTrainOutput>()
-    .FromFile(modelName: _modelName, filePath: _modelPath, watchForChanges: true);
+builder.Services.AddHostedService<ScheduleBackgroundService>();
 
 var app = builder.Build();
 
@@ -120,13 +127,6 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
-
-
-var predictionHandler =
-    async (PredictionEnginePool<NewModelTrainInput, ModelTrainOutput> predictionEnginePool, NewModelTrainInput input) =>
-        await Task.FromResult(predictionEnginePool.Predict(modelName: _modelName, input));
-
-app.MapPost("/PredictHouse", predictionHandler);
 
 app.MapControllerRoute(
     name: "default",

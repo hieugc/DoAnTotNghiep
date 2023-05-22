@@ -1,4 +1,5 @@
-﻿using DoAnTotNghiep.ViewModels;
+﻿using DoAnTotNghiep.Data;
+using DoAnTotNghiep.ViewModels;
 using Newtonsoft.Json.Linq;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -32,6 +33,18 @@ namespace DoAnTotNghiep.Entity
             this.RateUser = feedBack.RatingUser;
             this.UpdatedDate = DateTime.Now;
         }
+
+
+        public void IncludeAll(DoAnTotNghiepContext context)
+        {
+            if (this.UserRating == null && !context.Entry(this).Reference(m => m.UserRating).IsLoaded)
+                context.Entry(this).Reference(m => m.UserRating).Load();
+            if (this.UserRated == null && !context.Entry(this).Reference(m => m.UserRated).IsLoaded)
+                context.Entry(this).Reference(m => m.UserRated).Load();
+            if (this.Houses == null && !context.Entry(this).Reference(m => m.Houses).IsLoaded)
+                context.Entry(this).Reference(m => m.Houses).Load();
+        }
+
 
         [Key]
         [Column("id")]

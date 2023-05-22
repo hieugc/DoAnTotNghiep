@@ -1,7 +1,6 @@
 ﻿@using DoAnTotNghiep.Enum;
 @model DoAnTotNghiep.ViewModels.CircleRequestViewModel
 
-
 <div class="card card-@Model.Id mb-3 status status-request-@Model.MyNode.Status">
     <div class="row g-0">
         <div class="col-md-12">
@@ -25,7 +24,7 @@
                         {
                             <img src="~/Image/user.svg" alt="avt" />
                         }
-                        <span class="name">@Model.NextNode.User.FirstName @Model.NextNode.User.LastName</span>
+                        <span class="name">@Model.NextNode.User.LastName @Model.NextNode.User.FirstName</span>
                     </span>
                     <span> ở <strong>@Model.NextNode.House.CityName</strong> bạn sẽ chuyển đến:</span>
                 </p>
@@ -59,7 +58,7 @@
                             {
                                 <img src="~/Image/user.svg" alt="avt" />
                             }
-                            <span class="name">@Model.PrevNode.User.FirstName @Model.PrevNode.User.LastName</span>
+                            <span class="name">@Model.PrevNode.User.LastName @Model.PrevNode.User.FirstName</span>
                         </span>
                         <span class="tooltiptext">
                             <span class="card">
@@ -72,7 +71,7 @@
                                     <img src="~/Image/user.svg" alt="avt" />
                                 }
                                 <span class="container">
-                                    <span><b>@Model.PrevNode.User.FirstName @Model.PrevNode.User.LastName</b></span>
+                                    <span><b>@Model.PrevNode.User.LastName @Model.PrevNode.User.FirstName</b></span>
                                     <span class="rate">
                                         <span class="frame-start">
                                             <span class="fa fa-star @if(Model.PrevNode.User.UserRating >= 1){@Html.Raw("checked")}"></span>
@@ -95,6 +94,12 @@
                     <label class="">Thời gian:</label>
                     <span class="value">@Model.StartDate.ToString("dd/MM/yyyy") <span>-</span> @Model.EndDate.ToString("dd/MM/yyyy")</span>
                 </div>
+                @if (Model.Status == (int)StatusWaitingRequest.INIT){
+                    <div class="mb-3">
+                        <label class="">Tình trạng:</label>
+                        <span class="value">Chờ người khác chấp nhận</span>
+                    </div>
+                }
                 @if (Model.MyNode.Status == (int)StatusWaitingRequest.INIT)
                 {
                     <div class="control">
@@ -105,14 +110,17 @@
                 else if (Model.MyNode.Status == (int)StatusWaitingRequest.ACCEPT)
                 {
                     <div class="control">
-                        <button class="btn btn-danger" onclick="deleteRequest(@Model.Id, '@Html.Raw("Bạn muốn hủy yêu cầu này chứ?")')">Hủy yêu cầu</button>
+                        @if (DateTime.Compare(DateTime.Now, Model.StartDate.AddHours(-12)) < 0)
+                        {
+                            <button class="btn btn-outline-secondary" onclick="deleteRequest(@Model.Id, '@Html.Raw("Bạn muốn xóa gợi ý này chứ?")')">Xóa</button>
+                        }
                         @if (Model.Status == (int)StatusWaitingRequest.ACCEPT)
                         {
                             <button class="btn btn-primary" onclick="updateStatus(@Model.MyNode.IdRequest, @((int)StatusWaitingRequest.CHECK_IN), @Model.Id)">Check In</button>
                         }
                     </div>
                 }
-                else if (Model.MyNode.Status == (int)StatusWaitingRequest.CHECK_IN)
+                else if (Model.MyNode.Status == (int)StatusWaitingRequest.CHECK_IN && DateTime.Compare(DateTime.Now, Model.EndDate.AddHours(-6)) >= 0)
                 {
                     <div class="control" onclick="updateStatus(@Model.MyNode.IdRequest, @((int)StatusWaitingRequest.CHECK_OUT), @Model.Id)">
                         <button class="btn btn-primary">Check Out</button>

@@ -12,7 +12,7 @@
     <div class="result-tab">
         <div>
             <span>Kết quả tìm kiếm:</span>
-            <span><strong>@Model.Pagination.Total</strong></span>
+            <span><strong>@ViewData["count_item"]</strong></span>
         </div>
         <div class="attribute" data-bs-toggle="modal" data-bs-target="#filterModal">
             <i class="fa-sharp fa-solid fa-filter"></i><span>Tùy chỉnh</span>
@@ -32,7 +32,7 @@
                 }
                 <div class="house-img-container">
                     <h2>@item.Name</h2>
-                    <p class="attribute"><i class="fa-solid fa-map-location-dot"></i><span>@item.Location</span></p>
+                    <p class="attribute"><i class="fa-solid fa-map-location-dot"></i><span>@item.Location, @item.WardName, @item.DistrictName, @item.CityName</span></p>
                     <div class="list-attribute">
                         <p class="attribute"><span>@item.Rating (@item.NumberRating)</span><i class="fa-solid fa-star"></i></p>
                         <p class="attribute"><i class="fa-solid fa-users"></i><span>@item.People</span></p>

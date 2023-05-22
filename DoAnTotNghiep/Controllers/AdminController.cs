@@ -24,67 +24,53 @@ using Newtonsoft.Json.Linq;
 using static System.Net.WebRequestMethods;
 using System.Composition;
 using DoAnTotNghiep.TrainModels;
+using DoAnTotNghiep.Service;
 
 namespace DoAnTotNghiep.Controllers
 {
+    [Authorize(Roles = Role.Admin)]
     public class AdminController: BaseController
     {
         private readonly DoAnTotNghiepContext _context;
         private readonly IConfiguration _configuration;
+        private readonly IFeedBackService _feedBackService;
+        private readonly IRequestService _requestService;
+        private readonly IFileService _fileService;
+        private readonly IHouseService _houseService;
+        private readonly IUserService _userService;
+        private readonly IRuleService _ruleService;
+        private readonly IUtilitiesService _utilitiesService;
+        private readonly ICircleRequestService _circleRequestService;
 
         public AdminController(DoAnTotNghiepContext context, 
-                                    IConfiguration configuration,
-                                    IHostEnvironment environment): base(environment)
+                                IConfiguration configuration,
+                                IHostEnvironment environment,
+                                IFeedBackService feedBackService,
+                                IRequestService requestService,
+                                IFileService fileService,
+                                IHouseService houseService,
+                                IUserService userService,
+                                IRuleService ruleService,
+                                IUtilitiesService utilitiesService,
+                                ICircleRequestService circleRequestService) : base(environment)
         {
             _context = context;
             _configuration = configuration;
+            _feedBackService = feedBackService;
+            _requestService = requestService;
+            _fileService = fileService;
+            _houseService = houseService;
+            _userService = userService;
+            _ruleService = ruleService;
+            _utilitiesService = utilitiesService;
+            _circleRequestService = circleRequestService;
         }
 
-        //Dash board
-        //Danh sách report người dùng 
-        //hiển thị số người báo cáo thôi => xem chi tiết load thêm
-        /*
-        [HttpGet("/Admin")]    
-        public IActionResult UserReport()
+        public IActionResult Index()
         {
-            var houses = this._context.Houses
-                                        .Include(m => m.UserReports)
-                                        .Where(m => m.UserReports != null 
-                                            && m.UserReports.Any(rp => rp.IsResponsed == false))
-                                        .ToList();
-            List<ReportItem> reportList = new List<ReportItem>();
 
-            string host = this.GetWebsitePath();
-            byte[] salt = Crypto.Salt(this._configuration);
-            //House house, byte[] salt, User? user = null, string? host = null
-
-            foreach (var item in houses)
-            {
-                if (item.UserReports != null)
-                {
-                    this._context.Entry(item).Reference(m => m.Users).Load();
-                    //this._context.Entry(item).Collection(m => m.RulesInHouses).Query().Load();
-                    //this._context.Entry(item).Collection(m => m.UtilitiesInHouses).Query().Load();
-                    //this._context.Entry(item).Reference(m => m.Citys).Query().Load();
-                    //this._context.Entry(item).Reference(m => m.Districts).Query().Load();
-                    //this._context.Entry(item).Reference(m => m.Wards).Query().Load();
-                    //this._context.Entry(item).Collection(m => m.Requests).Query().Load();
-                    if(item.Users != null)
-                    {
-                        this._context.Entry(item.Users).Reference(m => m.Houses).Load();
-                    }
-                    this._context.Entry(item).Collection(m => m.FileOfHouses).Query().Load();
-                    DetailHouseViewModel detailHouse = new DetailHouseViewModel(item, salt, item.Users, host);
-                    reportList.Add(new ReportItem() { 
-                        House = detailHouse, 
-                        NumberReport = item.UserReports.Count() 
-                    });
-                }
-            }
-
-            return View(reportList);
+            return View();
         }
-        */
 
         [HttpGet("/PredictSquare")]
         [AllowAnonymous]
@@ -92,14 +78,31 @@ namespace DoAnTotNghiep.Controllers
         {
             return Json(new PredictHouse().GetSquare());
         }
+        public IActionResult OverViewProfile(string? UserAccess)
+        {
+            int IdAnotherUser = 0;
+            if (!int.TryParse(Crypto.DecodeKey(UserAccess, Crypto.Salt(this._configuration)), out IdAnotherUser))
+            {
+                return NotFound();
+            }
+            var user = this._userService.GetById(IdAnotherUser);
+            if (user == null) return NotFound();
+            byte[] salt = Crypto.Salt(this._configuration);
+            string host = this.GetWebsitePath();
+            UserInfo.GetEntityRelated(user, this._context);
+            int IdUser = this.GetIdUser();
+            ViewData["isSelf"] = "false";
 
-
-        //Danh sách người dùng
-        //Danh sách report đang chờ phản hồi
-
-        //Danh sách nhà chờ duyệt
-        //Danh sách tiện ích
-        //Danh sách rule
-        //Cập nhật danh sách địa chỉ
+            if (IdUser != 0)
+            {
+                this.SetViewData(new DoAnTotNghiepContext(this._context.GetConfig()), IdUser, Crypto.Salt(this._configuration));
+            }
+            return View(new UserProfile(
+                                new UserInfo(user, salt, host),
+                                this._houseService.GetListDetailHouseWithOneImage(
+                                this._houseService.GetListHouseByUser(IdAnotherUser),
+                                this._fileService, host, salt),
+                                this._feedBackService.GetRatingById(IdAnotherUser, host, salt)));
+        }
     }
 }

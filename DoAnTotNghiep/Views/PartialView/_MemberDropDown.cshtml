@@ -1,43 +1,67 @@
-﻿<div class="dropdown-menu" aria-labelledby="dropdownMenuMember">
-    <div class="tab-attr">
+﻿@{
+    string? role = ViewData["userRole"] as string;
+}
+@if(!string.IsNullOrEmpty(role) && role == DoAnTotNghiep.Enum.Role.Admin)
+{
+
+    <div class="dropdown-menu" aria-labelledby="dropdownMenuMember">
+        <div class="tab-attr">
+            <div>
+                <a href="@Url.Action("Index", "Admin")"><span>Dashboard</span></a>
+            </div>
+        </div>
+        <div class="dropdown-divider"></div>
         <div>
-            <a href="@Url.Action("Infomation", "Member")"><i class="fa-solid fa-circle-info"></i><span>Thông tin tài khoản</span></a>
+            <div>
+                <a class="dropdown-item text-danger" href="@Url.Action("Logout", "Authorize")">Đăng xuất <i class="fa-solid fa-arrow-right-from-bracket"></i></a>
+            </div>
         </div>
     </div>
-    <div class="tab-attr">
+}
+else
+{
+
+    <div class="dropdown-menu" aria-labelledby="dropdownMenuMember">
+        <div class="tab-attr">
+            <div>
+                <a href="@Url.Action("Infomation", "Member")"><i class="fa-solid fa-circle-info"></i><span>Thông tin tài khoản</span></a>
+            </div>
+        </div>
+        <div class="tab-attr">
+            <div>
+                <a href="@Url.Action("House", "Member")"><i class="fa-solid fa-house"></i><span>Danh sách căn hộ</span></a>
+            </div>
+        </div>
+        <div class="tab-attr">
+            <div>
+                <a href="@Url.Action("Requested", "Member")"><i class="fa-solid fa-bullhorn"></i><span>Yêu cầu đã gửi</span></a>
+            </div>
+        </div>
+        <div class="tab-attr">
+            <div>
+                <a href="@Url.Action("RequestValidReceived", "Member")"><i class="fa-solid fa-bullhorn"></i><span>Đang thực hiện</span></a>
+            </div>
+        </div>
+        <div class="tab-attr">
+            <div>
+                <a href="@Url.Action("WaitingRequest", "Member")"><i class="fa-solid fa-lightbulb"></i><span>Gợi ý trao đổi</span></a>
+            </div>
+        </div>
+        <div class="tab-attr">
+            <div>
+                <a href="@Url.Action("History", "Member")"><i class="fa-solid fa-clock-rotate-left"></i><span>Lịch sử giao dịch</span></a>
+            </div>
+        </div>
+        <div class="tab-attr">
+            <div>
+                <a href="@Url.Action("Messages", "Member")"><i class="fa-solid fa-comment-dots"></i><span>Tin nhắn</span></a>
+            </div>
+        </div>
+        <div class="dropdown-divider"></div>
         <div>
-            <a href="@Url.Action("House", "Member")"><i class="fa-solid fa-house"></i><span>Danh sách căn hộ</span></a>
+            <div>
+                <a class="dropdown-item text-danger" href="@Url.Action("Logout", "Authorize")">Đăng xuất <i class="fa-solid fa-arrow-right-from-bracket"></i></a>
+            </div>
         </div>
     </div>
-    <div class="tab-attr">
-        <div>
-            <a href="@Url.Action("Requested", "Member")"><i class="fa-solid fa-bullhorn"></i><span>Yêu cầu đã gửi</span></a>
-        </div>
-    </div>
-    <div class="tab-attr">
-        <div>
-            <a href="@Url.Action("RequestValidReceived", "Member")"><i class="fa-solid fa-bullhorn"></i><span>Đang thực hiện</span></a>
-        </div>
-    </div>
-    <div class="tab-attr">
-        <div>
-            <a href="@Url.Action("WaitingRequest", "Member")"><i class="fa-solid fa-lightbulb"></i><span>Gợi ý trao đổi</span></a>
-        </div>
-    </div>
-    <div class="tab-attr">
-        <div>
-            <a href="@Url.Action("History", "Member")"><i class="fa-solid fa-clock-rotate-left"></i><span>Lịch sử giao dịch</span></a>
-        </div>
-    </div>
-    <div class="tab-attr">
-        <div>
-            <a href="@Url.Action("Messages", "Member")"><i class="fa-solid fa-comment-dots"></i><span>Tin nhắn</span></a>
-        </div>
-    </div>
-    <div class="dropdown-divider"></div>
-    <div>
-        <div>
-            <a class="dropdown-item text-danger" href="@Url.Action("Logout", "Authorize")">Đăng xuất <i class="fa-solid fa-arrow-right-from-bracket"></i></a>
-        </div>
-    </div>
-</div>
+}

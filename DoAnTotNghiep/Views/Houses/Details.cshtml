@@ -3,9 +3,9 @@
 @{
     ViewData["Title"] = "Chi tiết nhà";
     Layout = "_Layout";
-    string key = (ViewData["key"] as string) ?? string.Empty;
     bool isAuthorize = (ViewData["isAuthorize"] == null ? false: ViewData["isAuthorize"] == "false" ? false : true);
     bool isOwner = (ViewData["isOwner"] == null ? false : ViewData["isOwner"] == "false" ? false : true);
+    string? role = ViewData["userRole"] as string;
 }
 
 <div class="Banner">
@@ -18,7 +18,7 @@
         <div class="carousel-inner">
             @for (var item = 0; item < Model.Images.Count(); item++)
             {
-                <div class="carousel-item active">
+                <div class="carousel-item @if(item == 0){@Html.Raw("active")}">
                     <img src="@(Model.Images.ElementAt(item)?.Data)" class="d-block w-100" alt="Step @(item + 1)">
                 </div>
             }
@@ -47,11 +47,13 @@
         <div class="content">
             <section id="tab1">
                 <div class="general">
-                    <div>@Model.Name
-                    </div>
+                    <div>@Model.Name</div>
                     <div>
-                        <div class="rating"><span>@Model.Rating (@Model.NumberRating)</span><i class="fa-solid fa-star"></i></div>
-                        <div class="point"><strong>@Model.Price (p/ngày)</strong></div>
+                        <div class="rating">
+                            <span>@Model.Rating (@Model.NumberRating)</span><i class="fa-solid fa-star"></i>
+                            <strong class="point">@Model.Price (p/ngày)</strong>
+                        </div>
+                        <div class="predict"></div>
                     </div>
                 </div>
                 <div class="">
@@ -125,7 +127,7 @@
                         <div class="avt"><img src="~/Image/user.svg" alt="avt-user" /></div>
                     }
                     <div class="info">
-                        <h5><span class="name">@(Model.User.FirstName + " " + Model.User.LastName)</span></h5>
+                        <h5><span class="name">@(Model.User.LastName + " " + Model.User.FirstName)</span></h5>
                         <div class="rating"><span>@Model.User.UserRating</span><i class="fa-solid fa-star"></i></div>
                     </div>
                 }
@@ -149,13 +151,19 @@
                 </div>
             </div>
         </div>
-        @if (isAuthorize && !isOwner)
+        @if ((!string.IsNullOrEmpty(role) && role == Role.Admin))
         {
             <div class="bot">
+                <div><a href="@Url.Action("OverViewProfile", "Admin", new {UserAccess = Model.User?.UserAccess})" class="btn btn-primary mb-3" style="display: block;">Thông tin người dùng</a></div>
+            </div>
+        }
+        else if (isAuthorize && !isOwner)
+        {
+            <div class="bot">
+                <div><a href="@Url.Action("OverViewProfile", "Member", new {UserAccess = Model.User?.UserAccess})" class="btn btn-primary mb-3" style="display: block;">Thông tin người dùng</a></div>
                 <div><a href="@Url.Action("Messages", "Member", new {connection = Model.User?.UserAccess})" class="btn btn-primary" style="display: block;">Liên hệ</a></div>
-                <div><a href="@Url.Action("OverViewProfile", "Member", new {connection = Model.User?.UserAccess})" class="btn btn-primary" style="display: block;">Thông tin người dùng</a></div>
                 <div><button class="btn btn-success" onclick="getRequestFormByHouseId(@Model.Id)">Yêu cầu trao đổi</button></div>
-                <div><button class="btn btn-danger" type="button" onclick="renderReportForm('@(Model.User?.UserAccess)')">Báo cáo</button></div>
+                <div><button class="btn btn-danger" type="button" onclick="renderReportForm('@(Model.User?.UserAccess)')">Báo cáo</button></div>                
             </div>
         }
     </div>
@@ -164,10 +172,6 @@
 <div id="renderModal"></div>
 
 @section Scripts{
-    <!--BingMap-->
-    <!--script type='text/javascript'
-        src='https://www.bing.com/api/maps/mapcontrol?callback=GetMap&key=@key'
-        async defer></!--script-->
     <script type="text/javascript">
         var lat = @Model.Lat;
         var lng = @Model.Lng;
@@ -180,7 +184,7 @@
                 center: loc,
                 customMapStyle: StyleMap()
             });
-            var pin = createFontPushpin(loc, '\uF3C5', 'FontAwesome', 45, '#2c3e59', houseItem, e);
+            var pin = createFontPushpin(loc, '\uF3C5', 'FontAwesome', 45, '#2c3e59', houseItem, 1);
             map.entities.push(pin);
             var infobox = new Microsoft.Maps.Infobox(loc, {
                     htmlContent: infoboxTemplate("@Html.Raw(Model.Name)", 1, "@Html.Raw(Model.Location + ", " + Model.WardName + ", " + Model.DistrictName + ", " + Model.CityName)")
@@ -227,9 +231,17 @@
                 subTitle: "@Html.Raw(Model.Location)"
             });
         }
-
+        $(document).ready(function(){
+            $.get(
+                window.location.origin + "/PredictByHouse?Id=@Model.Id", 
+                function (data) {
+                    if(data.data > 0){
+                        $(".predict").html(`<div>Giá gợi ý từ hệ thống: <strong class="point">${data.data}</strong></div>`);
+                    }
+                }
+            );
+        });
     </script>
-    <script src="~/js/House/detail.js" type="text/javascript" async defer></script>
     <script src="~/js/Report/index.js" type="text/javascript" async defer></script>
     <script src="~/js/Request/create.js" type="text/javascript"></script>
     <script src="~/js/Request/getFormByHouseId.js" type="text/javascript"></script>

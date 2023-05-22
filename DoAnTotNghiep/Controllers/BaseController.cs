@@ -104,16 +104,18 @@ namespace DoAnTotNghiep.Controllers
                 option.Expires = DateTime.Now.AddHours(8);
             Response.Cookies.Append(key, value, option);
         }
-
         protected void SetViewData(DoAnTotNghiepContext _context, int IdUser, byte[] salt)
         {
-            var user = _context.Users.Include(m => m.Files).Include(m => m.Houses).Where(m => m.Id == IdUser).FirstOrDefault();
+            var user = _context.Users.Include(m => m.Files)
+                                    .Include(m => m.Houses)
+                                    .Where(m => m.Id == IdUser).FirstOrDefault();
             if (user != null)
             {
                 ViewData["UserInfoData"] = new UserInfo(user, salt, this.GetWebsitePath());
+                ViewData["userName"] = user.LastName + " " + user.FirstName;
+                ViewData["userRole"] = user.Role == 1? DoAnTotNghiep.Enum.Role.Admin : DoAnTotNghiep.Enum.Role.Member;
             }
         }
-
         protected void RemoveCookie(string key)
         {
             Response.Cookies.Delete(key);
@@ -123,7 +125,6 @@ namespace DoAnTotNghiep.Controllers
             Request.Cookies.TryGetValue(key, out var cookie);
             return cookie;
         }
-
         protected string GetWebsitePath() => this.HttpContext.Request.Scheme + "://" + this.HttpContext.Request.Host;
         protected string ModelErrors()
         {
@@ -142,75 +143,15 @@ namespace DoAnTotNghiep.Controllers
         //lưu hình ảnh
         protected Entity.File? SaveFile(ImageBase imageBase)
         {
-            try
-            {
-                string[] arr = imageBase.Data.Split("base64,");
-                string ext = imageBase.Name.Split(".").Last();
-                var bytes = Convert.FromBase64String(arr[1]);
-
-                string folder = Path.Combine("Uploads", DateTime.Now.ToString("yyyy"), DateTime.Now.ToString("MM"));
-
-                string uploadsFolder = Path.Combine(this.environment.ContentRootPath, "wwwroot", folder);
-                Console.WriteLine(uploadsFolder);
-                if (!Directory.Exists(uploadsFolder))
-                {
-                    Directory.CreateDirectory(uploadsFolder);
-                }
-                string ImagePath = Guid.NewGuid().ToString() + "." + ext;
-                string filePath = Path.Combine(uploadsFolder, ImagePath);
-                System.IO.File.WriteAllBytes(filePath, bytes);
-                return new Entity.File() { FileName = ImagePath, PathFolder = folder };
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                return null;
-            }
+            return FileSystem.SaveFileWithBase64(imageBase, this.environment.ContentRootPath);
         }
         protected Entity.File? SaveFile(IFormFile file)
         {
-            try
-            {
-                string folder = Path.Combine("Uploads", DateTime.Now.ToString("yyyy"), DateTime.Now.ToString("MM"));
-
-                string uploadsFolder = Path.Combine(this.environment.ContentRootPath, "wwwroot", folder);
-                Console.WriteLine(uploadsFolder);
-                if (!Directory.Exists(uploadsFolder))
-                {
-                    Directory.CreateDirectory(uploadsFolder);
-                }
-                string ImagePath = Guid.NewGuid().ToString() + ".png";
-                string filePath = Path.Combine(uploadsFolder, ImagePath);
-                using (FileStream fs = new FileStream(filePath, FileMode.Create))
-                {
-                    file.CopyTo(fs);
-                }
-                return new Entity.File() { FileName = ImagePath, PathFolder = folder };
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                return null;
-            }
+            return FileSystem.SaveFileWithFormFile(file, this.environment.ContentRootPath);
         }
         protected bool DeleteFile(Entity.File file)
         {
-            try
-            {
-                string uploadsFolder = Path.Combine(this.environment.ContentRootPath, "wwwroot", file.PathFolder);
-                string filePath = Path.Combine(uploadsFolder, file.FileName);
-                if (!Directory.Exists(filePath))
-                {
-                    return false;
-                }
-                System.IO.File.Delete(filePath);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                return false;
-            }
+            return FileSystem.DeleteFile(file, this.environment.ContentRootPath);
         }
 
     }

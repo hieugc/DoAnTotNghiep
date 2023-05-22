@@ -46,7 +46,9 @@ function getUtilities() {
     }
 
     if (utilities.length > 0) {
-        return "&utilitest=[" + utilities.join(", ") + "]";
+        return '&'+ utilities.map(function (el, idx) {
+            return 'utilities[' + idx + ']=' + el;
+        }).join('&');
     }
     return "";
 }
@@ -201,7 +203,6 @@ function hideInfobox(e) {
     }
     $(".house-card.selected").removeClass("selected");
 }
-
 function showInfobox(index) {
     if (infobox != null) {
         infobox.setMap(null);
@@ -209,6 +210,9 @@ function showInfobox(index) {
     }
     let location = map.entities._primitives[index].entity.subtitle;
     let title = map.entities._primitives[index].entity.title;
+    map.setView({
+        center: map.entities._primitives[index].getLocation()
+    });
     infobox = new Microsoft.Maps.Infobox(map.entities._primitives[index].getLocation(), {
         htmlContent: infoboxTemplate(title, index, location)
     });

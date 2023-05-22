@@ -174,12 +174,23 @@ function create(data) {
         error: function (error) {
             console.log(error);
             if (error.status == 400) {
-                $("#messageRequestModal .modal-body > .mb-3").last().append(`<div>
+                if (error.responseJSON.status == 402) {
+                    $("#renderModal .modal-body .errors").last().html(`
                             <label class="">Lý do không thể tạo</label>
                             <div class="contain-issue bg-danger">
-                                ${error.message}
+                                ${error.responseJSON.message}
                             </div>
-                        </div>`);
+                            <a href="/Member/History?action=true" class="btn btn-primary mt-3">Nạp thêm tiền</a>
+                            `);
+                }
+                else {
+                    $("#renderModal .modal-body .errors").last().html(`
+                            <label class="">Lý do không thể tạo</label>
+                            <div class="contain-issue bg-danger">
+                                ${error.responseJSON.message}
+                            </div>
+                            `);
+                }
             }
         }
     });

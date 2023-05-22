@@ -51,7 +51,7 @@ namespace DoAnTotNghiep.ViewModels
     {
         [Required(ErrorMessage = "Hãy điền email")]
         [MaxLength(320, ErrorMessage = "Email tối đa 320 ký tự")]
-        [EmailAddress]
+        [EmailAddress(ErrorMessage = "Email không hợp lệ")]
         public string Email { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Hãy điền mật khẩu")]
@@ -65,6 +65,7 @@ namespace DoAnTotNghiep.ViewModels
         [Compare(nameof(Password), ErrorMessage = "Mật khẩu không trùng khớp")]
         public string ConfirmPassword { get; set; } = string.Empty;
     }
+
 
     public class TokenModel
     {
@@ -90,7 +91,7 @@ namespace DoAnTotNghiep.ViewModels
     {
         [Required(ErrorMessage = "Hãy điền email")]
         [MaxLength(320, ErrorMessage = "Email tối đa 320 ký tự")]
-        [EmailAddress]
+        [EmailAddress(ErrorMessage = "Email không hợp lệ")]
         public string Email { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Hãy điền mật khẩu")]

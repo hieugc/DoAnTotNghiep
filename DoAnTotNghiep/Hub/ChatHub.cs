@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using DoAnTotNghiep.ViewModels;
 using DoAnTotNghiep.Enum;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DoAnTotNghiep.Hubs
 {
@@ -51,6 +52,12 @@ namespace DoAnTotNghiep.Hubs
         public async Task RemoveFromGroup(string ConnectionId, int IdRoom)
         {
             await this._context.Groups.RemoveFromGroupAsync(ConnectionId, IdRoom.ToString());
+        }
+
+        [HttpGet("/ChatHub/SendAll")]
+        public async Task SendAll()
+        {
+            await this._context.Clients.All.SendAsync("all", "SEND ALL");
         }
     }
 }

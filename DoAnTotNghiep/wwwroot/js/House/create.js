@@ -20,6 +20,7 @@ function initData(id) {
         price: null,
         utilities: [],
         rules: [],
+        bed: null,
         images: [null, null, null, null]
     };
     if (id != undefined) data.id = id;
@@ -50,7 +51,7 @@ function nextStep(step, element) {
         if (element.classList.value.indexOf("btn-no-drop") == -1) {
             element.classList.add("btn-no-drop");
         }
-        runBackStep(getStep());
+        runBackStep(step);
     }
 }
 function prevStep(step) {
@@ -63,7 +64,6 @@ function prevStep(step) {
     houseModal.getElementsByClassName("modal-body")[step].classList.add("sighide");
     houseModal.getElementsByClassName("modal-body")[step - 1].classList.remove("sighide");
 }
-
 function isDataPass() {
     if (data.name != null
         && data.option != null
@@ -77,11 +77,13 @@ function isDataPass() {
         && data.lng != null
         && data.location != null
         && data.price != null
+        && data.bed != null
         && data.images.join("").length > 1
     ) return true;
     return false;
 }
 function finish() {
+    runBackStep(getStep());
     if (isDataPass()) {
         getOption();
         if (data.id != undefined) {
@@ -105,18 +107,13 @@ function finish() {
                         reloadPage();
                         houseModal.getElementsByClassName("progress-bar")[0].style.width = "100%";
                         setTimeout(function () {
-                            $("#houseModalToggleClose").click();//click => refresh form
+                            $("#houseModalToggleClose").click();
                         }, 500);
-                    }
-                    else if (result.status == 500) {
-                        alert(result.messages);
-                    }
-                    else {
-                        //xử lý lỗi input không pass từ server gửi về
                     }
                 },
                 error: function (error) {
-                    console.log(error);
+                    showNotification("Thao tác thất bại", error.responseJSON.message, 0);
+                    runBackStep(getStep());
                 }
             });
         }
@@ -129,10 +126,8 @@ function finish() {
                 contentType: "application/json",
                 type: "POST",
                 success: function (result) {
-                    //nếu đúng
                     console.log(result);
                     if (result.status == 200) {
-                        //thêm item
                         listHouse.push(result.data);
                         reloadPage();
                         houseModal.getElementsByClassName("progress-bar")[0].style.width = "100%";
@@ -140,21 +135,14 @@ function finish() {
                             $("#houseModalToggleClose").click();//click => refresh form
                         }, 500);
                     }
-                    else if (result.status == 500) {
-                        alert(result.messages);
-                    }
-                    else {
-                        //xử lý lỗi input không pass từ server gửi về
-                    }
                 },
                 error: function (error) {
                     console.log(error);
+                    showNotification("Thao tác thất bại", error.responseJSON.message, 0);
+                    runBackStep(getStep());
                 }
             });
         }
-    }
-    else {
-        console.log("ok");
     }
 }
 function refreshHouseModal() {
@@ -267,11 +255,12 @@ function getPeopleHouse(element) {
             houseModal.getElementsByClassName("handle-step")[1].children[1].classList.add("btn-no-drop");
         }
     }
+    getPredict();
 }
 function getSleepHouse(element) {
     if (element.value.length > 0 && element.value > 0) {
         data.bedRoom = element.value;
-        if (passStep(2)) {
+        if (passStep(3)) {
             houseModal.getElementsByClassName("handle-step")[1].children[1].classList.remove("btn-no-drop");
         }
     }
@@ -285,7 +274,7 @@ function getSleepHouse(element) {
 function getBathHouse(element) {
     if (element.value.length > 0 && element.value > 0) {
         data.bathRoom = element.value;
-        if (passStep(2)) {
+        if (passStep(3)) {
             houseModal.getElementsByClassName("handle-step")[1].children[1].classList.remove("btn-no-drop");
         }
     }
@@ -299,7 +288,7 @@ function getBathHouse(element) {
 function getSquareHouse(element) {
     if (element.value.length > 0 && element.value > 0) {
         data.square = element.value;
-        if (passStep(2)) {
+        if (passStep(3)) {
             houseModal.getElementsByClassName("handle-step")[1].children[1].classList.remove("btn-no-drop");
         }
     }
@@ -309,10 +298,12 @@ function getSquareHouse(element) {
             houseModal.getElementsByClassName("handle-step")[1].children[1].classList.add("btn-no-drop");
         }
     }
+    getPredict();
 }
 function getLocationHouse(element) {
     if (data.location == null) {
         $("#btnBingMaps").click();
+        $("#location-validate").html(null);
     }
     else {
         if (element.value.length > 0) {
@@ -320,19 +311,36 @@ function getLocationHouse(element) {
             if (passStep(3)) {
                 houseModal.getElementsByClassName("handle-step")[1].children[1].classList.remove("btn-no-drop");
             }
+            $("#location-validate").html(null);
         }
         else {
             data.location = null;
             if (houseModal.getElementsByClassName("handle-step")[1].children[1].classList.value.indexOf("btn-no-drop") == -1) {
                 houseModal.getElementsByClassName("handle-step")[1].children[1].classList.add("btn-no-drop");
             }
+
+            $("#location-validate").html("Hãy điền địa chỉ nhà");
+        }
+    }
+}
+function getBedHouse(element) {
+    if (element.value.length > 0 && element.value > 0) {
+        data.bed = element.value;
+        if (passStep(3)) {
+            houseModal.getElementsByClassName("handle-step")[1].children[1].classList.remove("btn-no-drop");
+        }
+    }
+    else {
+        data.bed = null;
+        if (houseModal.getElementsByClassName("handle-step")[1].children[1].classList.value.indexOf("btn-no-drop") != -1) {
+            houseModal.getElementsByClassName("handle-step")[1].children[1].classList.add("btn-no-drop");
         }
     }
 }
 function getPriceHouse(element) {
     if (element.value.length > 0 && element.value > 0) {
         data.price = element.value;
-        if (passStep(2)) {
+        if (passStep(3)) {
             houseModal.getElementsByClassName("handle-step")[1].children[1].classList.remove("btn-no-drop");
         }
     }
@@ -428,7 +436,7 @@ function houseItem(data) {
                                     
                                 </div>
                             </div>
-                            <p class="card-text">${data.location}</p>
+                            <p class="attribute"><i class="fa-solid fa-map-location-dot px-2"></i><span>${data.location}, ${data.wardName}, ${data.districtName}, ${data.cityName}</span></p>
                             <p class="card-control">
                                 <a href="${(window.location.origin + "/House/Details?Id=" + data.id)}" class="btn btn-primary" title="Xem chi tiết">Chi tiết</a>
                                 <button type="button" class="btn btn-warning" onclick="editHouse(${data.id})">Chỉnh sửa</button>
@@ -457,7 +465,7 @@ function getStep() {
     }
     if (data.people == null || data.bedRoom == null || data.bathRoom == null
         || data.square == null || data.location == null || data.price == null
-        || data.idCity == 0) {
+        || data.bed == null || data.idCity == 0) {
         return 2;
     }
 
@@ -467,8 +475,112 @@ function getStep() {
     return 4;
 }
 function runBackStep(step) {
-}
+    let isBack = false;
+    if (step == 1) {
+        if (data.name == null) {
+            isBack = true;
+            $("#houseName-validate").html("Hãy thêm tên gợi nhớ cho nhà của bạn");
+        }
+        else {
+            $("#houseName-validate").html(null);
+        }
+        if (data.option == null) {
+            isBack = true;
+            $("#option-frame-validate").html("Hãy chọn loại nhà");
+        }
+        else {
+            $("#option-frame-validate").html(null);
+        }
+        if (data.description == null) {
+            isBack = true;
+            $("#houseDesc-validate").html("Hãy thêm mô tả nhà");
+        }
+        else {
+            $("#houseDesc-validate").html(null);
+        }
+    }
+    else if (step == 2) {
+        if (data.people == null) {
+            isBack = true;
+            $("#numUser-validate").html("Hãy thêm số người có thể ở");
+        }
+        else {
+            $("#numUser-validate").html(null);
+        }
+        if (data.bedRoom == null) {
+            isBack = true;
+            $("#numSleep-validate").html("Hãy thêm số phòng ngủ");
+        }
+        else {
+            $("#numSleep-validate").html(null);
+        }
+        if (data.bathRoom == null) {
+            isBack = true;
+            $("#numBath-validate").html("Hãy thêm số phòng tắm");
+        }
+        else {
+            $("#numBath-validate").html(null);
+        }
+        if (data.square == null) {
+            isBack = true;
+            $("#numSquare-validate").html("Hãy thêm diện tích nhà");
+        }
+        else {
+            $("#numSquare-validate").html(null);
+        }
+        if (data.location == null) {
+            isBack = true;
+            $("#location-validate").html("Hãy điền địa chỉ nhà");
+        }
+        else {
+            $("#location-validate").html(null);
+        }
+        if (data.price == null) {
+            isBack = true;
+            $("#numPrice-validate").html("Hãy thêm giá mong muốn trao đổi");
+        }
+        else {
+            $("#numPrice-validate").html(null);
+        }
 
+        if (data.bed == null) {
+            isBack = true;
+            $("#numBed-validate").html("Hãy thêm số giường trao đổi");
+        }
+        else {
+            $("#numBed-validate").html(null);
+        }
+    }
+    else if (step == 4) {
+        if (data.images.join("").length <= 1) {
+            isBack = true;
+            $("input-picture-validate").html("Hãy thêm hình ảnh cho căn nhà");
+        }
+        else {
+            $("#input-picture-validate").html(null);
+        }
+    }
+    if (isBack) {
+        $(".modal-body.sigshow").removeClass("sigshow");
+        $(".modal-body.sighide").removeClass("sighide");
+        $(".modal-body").addClass("sighide");
+        $(".modal-body")[step - 1].classList.add("sigshow");
+    }
+}
+function distanceTo(lat1, lon1, lat2, lon2) {
+    let rlat1 = Math.PI * lat1 / 180;
+    let rlat2 = Math.PI * lat2 / 180;
+    let theta = lon1 - lon2;
+    let rtheta = Math.PI * theta / 180;
+    let dist =
+        Math.sin(rlat1) * Math.sin(rlat2) + Math.cos(rlat1) *
+        Math.cos(rlat2) * Math.cos(rtheta);
+    dist = Math.acos(dist);
+    dist = dist * 180 / Math.PI;
+    dist = dist * 60 * 1.1515;
+
+    return dist;
+}
 function checkAddress() {
     if ($("#map-location").val().length == 0) {
         $("#map-location-validate").html("Hãy điền địa chỉ nhà");
@@ -477,5 +589,29 @@ function checkAddress() {
     else {
         $("#map-location-validate").html("");
         return true;
+    }
+}
+function getPredict() {
+    if (data.people != null && data.square != null && data.lat != 0 && data.lng != 0 && data.idCity != 0) {
+        let objSend = {
+            idCity: data.idCity,
+            lat: data.lat,
+            lng: data.lng,
+            capacity: data.people,
+            area: data.area,
+            rating: 0
+        }
+        $.ajax({
+            url: window.location.origin + "/Predict?" + Object.keys(objSend).map(function (key) { return key + '=' + objSend[key]; }).join('&'),
+            type: "GET",
+            dataType: "json",
+            contentType: "application/json",
+            success: function (data) {
+                $(".form.suggest").html(`<small>Giá gợi ý từ hệ thống: <strong>${data.data} Point/ngày</strong></small>`);
+            },
+            error: function (e) {
+                console.log(e);
+            }
+        });
     }
 }

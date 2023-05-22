@@ -1,4 +1,5 @@
 ﻿using DoAnTotNghiep.Entity;
+using DoAnTotNghiep.Enum;
 using DoAnTotNghiep.Modules;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Mvc;
@@ -11,6 +12,16 @@ namespace DoAnTotNghiep.ViewModels
     public class MessageViewModel
     {
         public MessageViewModel() { }
+
+        public MessageViewModel(Message message, byte[] salt, int IdUser)
+        {
+            this.IdReply = (message.IdReply == null ? 0 : message.IdReply.Value);
+            this.IsSeen = ((message.Status == (int) StatusMessage.SEEN) || message.IdUser == IdUser);
+            this.IdSend = Crypto.EncodeKey(message.IdUser.ToString(), salt);
+            this.Message = message.Content;
+            this.CreatedDate = message.CreatedDate;
+            this.Id = message.Id;
+        }
 
         public MessageViewModel(int IdReply, bool IsSeen, string IdSend, string Message, int Id, DateTime CreatedDate)
         {
@@ -28,19 +39,6 @@ namespace DoAnTotNghiep.ViewModels
         public string IdSend { get; set; } = string.Empty;
         public int Id { get; set; } = 0;
         public DateTime CreatedDate { get; set; } = DateTime.Now;
-    }
-
-    public class MessageSendViewModel
-    {
-        public MessageSendViewModel(int IdReply, bool IsSeen, string IdSend, string Message, int Id, DateTime CreatedDate, int IdRoom)
-        {
-            this.Message = new MessageViewModel(IdReply, IsSeen, IdSend, Message, Id, CreatedDate);
-            this.IdRoom = IdRoom;
-        }
-
-        public MessageViewModel Message { get; set; } = new MessageViewModel();
-        public UserMessageViewModel UserMessage { get; set; } = new UserMessageViewModel();
-        public int IdRoom { get; set; } = 0;
     }
 
     public class UserMessageViewModel
@@ -84,12 +82,6 @@ namespace DoAnTotNghiep.ViewModels
     {
         public int IdRoom { get; set; } = 0;
         public Pagination Pagination { get; set; } = new Pagination();
-    }
-    
-    public class RoomConnectViewModel
-    {
-        public int? IdRoom { get; set; } = 0;
-        public string ConnectionId { get; set; } = string.Empty;
     }
     public class ConnectRoom
     {

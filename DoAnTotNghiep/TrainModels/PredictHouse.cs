@@ -57,7 +57,6 @@ namespace DoAnTotNghiep.TrainModels
                 }
             }
         }
-
         public void PrepareData()
         {
             var dataFrame = DataFrame.LoadCsv(@"TrainModels/newData_out_put.csv");
@@ -363,6 +362,12 @@ namespace DoAnTotNghiep.TrainModels
             Console.WriteLine($"*       Root Mean Squared Error:      {metrics.RootMeanSquaredError:#.##}");
 
             return new ViewModelTrained(metrics.RSquared, metrics.RootMeanSquaredError);
+        }
+        public float GetPredict(NewModelTrainInput input)
+        {
+            var predictionFunction = this._mLContext.Model.CreatePredictionEngine<NewModelTrainInput, ModelTrainOutput>(this.trainedModel);
+            var prediction = predictionFunction.Predict(input);
+            return prediction.Price;
         }
         private void ToDataTable(IDataView? dataView)
         {

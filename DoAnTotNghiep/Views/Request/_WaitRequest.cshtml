@@ -1,0 +1,101 @@
+﻿@model DoAnTotNghiep.ViewModels.NotifyRequest
+@using DoAnTotNghiep.Enum;
+@{
+    DateTime now = DateTime.Now;
+}
+
+<div class="card card-@Model.Request.Id mb-3">
+    <div class="row g-0">
+        <div class="col-md-12">
+            <div class="user">
+                @if (string.IsNullOrEmpty(Model.Request.User.ImageUrl))
+                {
+                    <div class="avt"><img src="~/Image/user.svg" alt="avatar" /></div>
+                }
+                else
+                {
+                    <div class="avt"><img src="@Model.Request.User.ImageUrl" alt="avatar" /></div>
+                }
+                <div class="name">@Model.Request.User.UserName</div>
+            </div>
+            <span class="status">@StatusRequestStr.getStatus(Model.Request.Status)</span>
+        </div>
+
+        <div class="d-flex col-12">
+            @if (Model.SwapHouse != null)
+            {
+                <div class="request-info">
+                    <p>Nhà sẽ được nhận: </p>
+                    <div class="house-result">
+                        <div class="house-card">
+                            @if (Model.SwapHouse.Images.Count() == 0)
+                            {
+                                <img src="~/Image/house-demo.png" alt="Mike" style="width:100%">
+                            }
+                            else
+                            {
+                                @foreach (var img in Model.SwapHouse.Images)
+                                {
+                                    if (img != null)
+                                    {
+                                        <img src="@img.Data" alt="Mike" style="width:100%">
+                                        break;
+                                    }
+                                }
+                            }
+                            <div class="house-img-container">
+                                <h2>@Model.SwapHouse.Name</h2>
+                                <p class="attribute"><i class="fa-solid fa-map-location-dot"></i><span>@Model.SwapHouse.Location, @Model.SwapHouse.WardName, @Model.SwapHouse.DistrictName, @Model.SwapHouse.DistrictName</span></p>
+                                <div class="list-attribute">
+                                    <p class="attribute"><span>@Model.SwapHouse.Rating (@Model.SwapHouse.NumberRating)</span><i class="fa-solid fa-star"></i></p>
+                                    <p class="attribute"><i class="fa-solid fa-users"></i><span>@Model.SwapHouse.People</span></p>
+                                    <p class="attribute"><i class="fa-solid fa-bed"></i><span>@Model.SwapHouse.BedRoom</span></p>
+                                </div>
+                                <p>
+                                    <button class="Model-button">
+                                        <span>@Model.SwapHouse.Price (point/ngày)</span>
+                                    </button>
+                                </p>
+                            </div>
+                            <a target="_blank" href='@Url.Action("Details", "Houses", new {Id = Model.SwapHouse.Id})' class="finding">
+                                <i class="fa-sharp fa-solid fa-magnifying-glass"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="request-info">
+                    <img src="~/Image/dollar_coin.svg" alt="Tiền" class="img-coin">
+                </div>
+            }
+            <div class="request-info">
+                <p>Thông tin yêu cầu</p>
+                <div class="mb-3">
+                    <label class="">Thời gian:</label>
+                    <span class="value">@Model.Request.StartDate.ToString("dd/MM/yyyy") <span>-</span> @Model.Request.EndDate.ToString("dd/MM/yyyy")</span>
+                </div>
+                <div class="mb-3">
+                    <label class="">Phương thức trao đổi: </label>
+                    <span class="value">@(Model.Request.Type == 1 ? "Trao đổi bằng điểm" : "Trao đổi bằng nhà")</span>
+                </div>
+                <div class="mb-3">
+                    <label class="">Điểm trao đổi:</label>
+                    <span class="contain-price">
+                        @(Model.Request.Price < 0 ? "Bạn sẽ trả " + Model.Request.Price.ToString() :
+                            "Bạn sẽ nhận " + Model.Request.Price.ToString()) (Point/ngày)
+                    </span>
+                </div>
+                <div class="waitcontrol">
+                    <a href="@Url.Action("Messages", "Member", new {Connection = Model.Request.User.UserAccess})" class="btn btn-primary" target="_blank">Liên hệ</a>
+                    @if (Model.Request.Status == (int)StatusRequest.WAIT_FOR_SWAP)
+                    {
+                        <button type="button" class="btn btn-success" onclick="updateStatus(@Model.Request.Id, @((int) StatusRequest.ACCEPT))">Chấp nhận</button>
+                        <button type="button" class="btn btn-danger" onclick="updateStatus(@Model.Request.Id, @((int) StatusRequest.REJECT))">Từ chối</button>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

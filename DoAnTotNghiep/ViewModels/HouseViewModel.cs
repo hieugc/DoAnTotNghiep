@@ -62,7 +62,6 @@ namespace DoAnTotNghiep.ViewModels
                 rules.AddRange(house.RulesInHouses.Where(m => m.Status == true).Select(m => m.IdRules));
             }
             List<int> utilities = new List<int>();
-
             if (house.UtilitiesInHouses != null)
             {
                 utilities.AddRange(house.UtilitiesInHouses.Where(m => m.Status == true).Select(m => m.IdUtilities));
@@ -127,8 +126,6 @@ namespace DoAnTotNghiep.ViewModels
         public int NumberRating { get; set; } = 0;
         public int Request { get; set; } = 0;
         public string UserAccess { get; set; } = string.Empty;
-        public string? CityName { get; set; } = string.Empty;
-        public string? DistrictName { get; set; } = string.Empty;
         public UserInfo? User { get; set; }
         public List<RangeDate> InValidRangeDates { get; set; } = new List<RangeDate>();
         //list Url
@@ -141,6 +138,7 @@ namespace DoAnTotNghiep.ViewModels
             : base(house, salt, user, host) 
         {
         }
+
         public List<Utilities> AllUtilities { get; set; } = new List<Utilities>();
         public List<Rules> AllRules { get; set; } = new List<Rules>();
     }
@@ -237,7 +235,7 @@ namespace DoAnTotNghiep.ViewModels
                 this.Rules = createHouseViewModel.Rules;
                 this.Files = null;
                 this.Images = createHouseViewModel.Images;
-                this.Bed = mobileCreateHouseViewModel?.Bed;
+                this.Bed = createHouseViewModel.Bed;
             }
         }
         public string Name { get; set; } = string.Empty;

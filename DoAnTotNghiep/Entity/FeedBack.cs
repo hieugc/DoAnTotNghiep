@@ -1,4 +1,5 @@
-﻿using DoAnTotNghiep.ViewModels;
+﻿using DoAnTotNghiep.Data;
+using DoAnTotNghiep.ViewModels;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -26,6 +27,16 @@ namespace DoAnTotNghiep.Entity
             this.Content = model.Content;
             this.Rating = model.RatingHouse == null ? 0 : model.RatingHouse.Value;
             this.RatingUser = model.RatingUser;
+        }
+
+        public void IncludeAll(DoAnTotNghiepContext context)
+        {
+            if (this.Users == null && !context.Entry(this).Reference(m => m.Users).IsLoaded)
+                context.Entry(this).Reference(m => m.Users).Load();
+            if (this.UserRated == null && !context.Entry(this).Reference(m => m.UserRated).IsLoaded)
+                context.Entry(this).Reference(m => m.UserRated).Load();
+            if (this.Houses == null && !context.Entry(this).Reference(m => m.Houses).IsLoaded)
+                context.Entry(this).Reference(m => m.Houses).Load();
         }
 
         [Key]

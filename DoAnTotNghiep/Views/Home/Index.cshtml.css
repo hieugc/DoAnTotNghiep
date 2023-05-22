@@ -32,6 +32,9 @@
 .suggest .list .card-text {
     margin-bottom: 12px;
 }
+.suggest.new-request .list > .card {
+    min-width: 400px;
+}
 .suggest .list .mb-3{
     display: flex;
     gap: 12px;
@@ -58,7 +61,13 @@
     margin: 0 auto;
     width: 100%;
 }
-
+.frame_1 .img-container h2 a{
+    text-decoration: none;
+    color: white;
+}
+.frame_1 .img-container h2 a:hover{
+    color: var(--bs-primary);
+}
 .list > .img-container .content {
     position: absolute;
     bottom: 0;
@@ -252,7 +261,8 @@
     color: white;
     text-decoration: none;
 }
-
+/*
+    
 .frame_3 {
     margin-top: 32px;
     padding-top: 24px;
@@ -271,6 +281,7 @@
 .carousel-caption{
     position: static;
 }
+*/
 
 
 

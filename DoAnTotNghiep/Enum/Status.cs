@@ -42,7 +42,8 @@
     {
         VALID,
         PENDING,
-        SWAPPING
+        SWAPPING,
+        DISABLE
     }
     enum StatusAdminReport
     {

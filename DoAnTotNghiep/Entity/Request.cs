@@ -1,6 +1,9 @@
-﻿using DoAnTotNghiep.Enum;
+﻿using DoAnTotNghiep.Data;
+using DoAnTotNghiep.Enum;
 using DoAnTotNghiep.ViewModels;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.Extensions.Hosting;
 using Microsoft.VisualBasic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -21,23 +24,39 @@ namespace DoAnTotNghiep.Entity
             this.EndDate = model.EndDate;
         }
 
-        public void CheckStatus(Request request)
+        public void CheckStatus(Request request, int IdUser)
         {
-
-            if (request.CheckOuts != null && request.CheckOuts.Count() > 0 && request.Status == (int)StatusRequest.CHECK_IN)
+            if (request.CheckOuts != null && request.CheckOuts.Any(m => m.IdUser == IdUser) && request.Status == (int)StatusRequest.CHECK_IN)
             {
                 this.Status = (int)StatusRequest.CHECK_OUT;
             }
-            else if (request.CheckIns != null && request.CheckIns.Count() > 0 && request.Status == (int)StatusRequest.ACCEPT)
+            else if (request.CheckIns != null && request.CheckIns.Any(m => m.IdUser == IdUser) && request.Status == (int)StatusRequest.ACCEPT)
             {
                 this.Status = (int)StatusRequest.CHECK_IN;
             }
-            else if (request.FeedBacks != null && request.FeedBacks.Count() > 0 && request.Status == (int)StatusRequest.CHECK_OUT)
+            else if (request.FeedBacks != null && request.FeedBacks.Any(m => m.IdUser == IdUser) && request.Status == (int)StatusRequest.CHECK_OUT)
             {
                 this.Status = (int)StatusRequest.ENDED;
             }
         }
-
+        public void IncludeAll(DoAnTotNghiepContext context)
+        {
+            if(this.Houses == null && !context.Entry(this).Reference(m => m.Houses).IsLoaded)
+                context.Entry(this).Reference(m => m.Houses).Load();
+            if (this.FeedBacks == null && !context.Entry(this).Collection(m => m.FeedBacks).IsLoaded)
+                context.Entry(this).Collection(m => m.FeedBacks).Load();
+            if (this.CheckOuts == null && !context.Entry(this).Collection(m => m.CheckOuts).IsLoaded)
+                context.Entry(this).Collection(m => m.CheckOuts).Load();
+            if (this.CheckIns == null && !context.Entry(this).Collection(m => m.CheckIns).IsLoaded)
+                context.Entry(this).Collection(m => m.CheckIns).Load();
+            if (this.Users == null && !context.Entry(this).Reference(m => m.Users).IsLoaded)
+                context.Entry(this).Reference(m => m.Users).Load();
+            if (this.IdSwapHouse != null)
+            {
+                if (this.SwapHouses == null && !context.Entry(this).Reference(m => m.SwapHouses).IsLoaded)
+                    context.Entry(this).Reference(m => m.SwapHouses).Load();
+            }
+        }
 
         [Key]
         [Column("id")]

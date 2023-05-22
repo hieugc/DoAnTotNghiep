@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
@@ -29,16 +29,8 @@
     <PackageReference Include="Portable.BouncyCastle" Version="1.9.0" />
     <PackageReference Include="QRCoder" Version="1.4.3" />
   </ItemGroup>
-  <ItemGroup Label="MLModel">
-    <None Include="MLModel.consumption.cs">
-      <DependentUpon>MLModel.mbconfig</DependentUpon>
-    </None>
-    <None Include="MLModel.training.cs">
-      <DependentUpon>MLModel.mbconfig</DependentUpon>
-    </None>
-    <None Include="MLModel.zip">
-      <DependentUpon>MLModel.mbconfig</DependentUpon>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+  <ItemGroup>
+    <Folder Include="Exception\" />
+	<Folder Include="Job\" />
   </ItemGroup>
 </Project>

@@ -4,11 +4,6 @@
 <script src="~/js/Chat/connect.js" type="text/javascript"></script>
 
 <script type="text/javascript">
-    //Tóm tắt => lúc start => lấy cái connectionId
-    // then => gửi /api/ConnectAllRoom
-    // khi liên hệ người dùng mới => /api/Message/ContactToUser
-    // 
-    //Connect-userAcess tiếp nhận cái phòng mới => để gửi yêu cầu kết nối
     connection.on("@(DoAnTotNghiep.Enum.TargetSignalR.Connect() + "-" + (Model == null ? string.Empty : Model.UserAccess))", function (message) {
         connectServerWithRoom(connection.connectionId, message);
     });

@@ -61,7 +61,8 @@ function configData(temp_data) {
     $("#numSleep").val(temp_data.bedRoom);
     $("#numBath").val(temp_data.bathRoom);
     $("#numSquare").val(temp_data.square);
-    $("#location").val(temp_data.location);
+    $("#numBed").val(temp_data.bed);
+    $("#location").val(temp_data.location + ", " + temp_data.wardName + ", " + temp_data.districtName + ", " + temp_data.cityName);
     $("#numPrice").val(temp_data.price);
     for (e in temp_data.utilities) {
         document.getElementById("list-utilities").getElementsByClassName("option")[temp_data.utilities[e] - 1].classList.add("option-selected");
@@ -74,9 +75,13 @@ function configData(temp_data) {
     houseModal.getElementsByClassName("handle-step")[3].children[1].classList.remove("btn-no-drop");
     data = temp_data;
     $("#houseModalToggleClick").click();
-    $("#city-select").val(temp_data.idCity);
+    //$("#city-select").val(temp_data.idCity);
+    //$("#district-select").val(temp_data.idDistrict);
+    $("#ward-select").val(temp_data.idWard);
     $("#mapAddress").html("<strong>Địa chỉ nhà: </strong>" + temp_data.location);
     loc = new Microsoft.Maps.Location(temp_data.lat, temp_data.lng);
-    //reloadMap(temp_data.location);
+    reloadMap(temp_data.location);
     //thêm thêm cái edit house
+    $("#map-location").val(temp_data.location);
+    getPredict();
 }

@@ -1,4 +1,6 @@
-﻿using DoAnTotNghiep.ViewModels;
+﻿using DoAnTotNghiep.Data;
+using DoAnTotNghiep.Modules;
+using DoAnTotNghiep.ViewModels;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -15,6 +17,36 @@ namespace DoAnTotNghiep.Entity
             this.Gender = model.Gender;
             this.PhoneNumber = model.PhoneNumber;
             this.Email = model.Email;
+        }
+        public void UpdateInfoUser(RegisterInfoViewModel model)
+        {
+            this.BirthDay = model.BirthDay;
+            this.LastName = model.LastName;
+            this.FirstName = model.FirstName;
+            this.Gender = model.Gender;
+            this.PhoneNumber = model.PhoneNumber;
+        }
+        public void InCludeAll(DoAnTotNghiepContext context)
+        {
+            if (this.Houses == null && !context.Entry(this).Collection(m => m.Houses).IsLoaded) context.Entry(this).Collection(m => m.Houses).Load();
+            if (this.Files == null && !context.Entry(this).Reference(m => m.Files).IsLoaded) context.Entry(this).Reference(m => m.Files).Load();
+        }
+        public static User CreateUserByRegister(string email, string password, string salt)
+        {
+            return new User
+            {
+                Email = email,
+                Password = password,
+                Salt = salt,
+                PhoneNumber = string.Empty,
+                FirstName = string.Empty,
+                LastName = string.Empty,
+                Point = 0,
+                BonusPoint = 0,
+                IdFile = null,
+                BirthDay = DateTime.UtcNow,
+                Gender = false
+            };
         }
 
         [Key]

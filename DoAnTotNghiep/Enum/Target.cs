@@ -21,5 +21,7 @@
         public const string ExecuteCheckOut = "ExecuteCheckOut";
         public const string ExecuteCheckTransaction = "ExecuteCheckTransaction";
         public const string ExecuteCreateWaiting = "ExecuteCreateWaiting";
+        public const string ExecuteCheckInCircleRequest = "ExecuteCheckInCircleRequest";
+        public const string ExecuteCheckOutCircleRequest = "ExecuteCheckOutCircleRequest";
     }
 }

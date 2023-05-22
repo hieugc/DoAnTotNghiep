@@ -70,5 +70,49 @@ namespace DoAnTotNghiep.Modules
             Uri geocodeRequest = new Uri(string.Format("https://sandbox.zalopay.com.vn/v001/tpe/getstatusbyapptransid"));
             return geocodeRequest;
         }
+
+
+        public static async Task<List<double>> GetLocation(string protocol, string key, string query)
+        {
+            Uri localRequest = RequestAPI.GeoCodeRequest(protocol, query, key);
+            var localResult = await RequestAPI.Get<string>(localRequest);
+            double lat = 0;
+            double lng = 0;
+            if (!string.IsNullOrEmpty(localResult) && localResult.IndexOf("coordinates") != -1)
+            {
+                var split = localResult.Split("\"coordinates\":[")[1].Split("]")[0].Trim();
+                double.TryParse(split.Split(",")[0], out lat);
+                double.TryParse(split.Split(",")[1], out lng);
+            }
+
+            return new List<double>() { lat, lng };
+        }
+        public static async Task<List<double>> GetLocation(string protocol, string key, string city, string district, string ward, string address)
+        {
+            Uri localRequest = RequestAPI.GeoCodeRequest(protocol, city, district, ward, address, key);
+            var localResult = await RequestAPI.Get<string>(localRequest);
+            double lat = 0;
+            double lng = 0;
+            if (!string.IsNullOrEmpty(localResult) && localResult.IndexOf("coordinates") != -1)
+            {
+                var split = localResult.Split("\"coordinates\":[")[1].Split("]")[0].Trim();
+                double.TryParse(split.Split(",")[0], out lat);
+                double.TryParse(split.Split(",")[1], out lng);
+            }
+
+            return new List<double>() { lat, lng };
+        }
+        public static async Task<string> GetLocationInString(string protocol, string key, string query)
+        {
+            Uri localRequest = RequestAPI.GeoCodeRequest(protocol, query, key);
+            var localResult = await RequestAPI.Get<string>(localRequest);
+            string? res = string.Empty;
+            if (!string.IsNullOrEmpty(localResult) && localResult.IndexOf("adminDistrict") != -1)
+            {
+                res = localResult.Split("adminDistrict")[1].Split("\",")[0].Replace("\"", "").Replace(":", "").Trim();
+            }
+
+            return res;
+        }
     }
 }

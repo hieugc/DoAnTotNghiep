@@ -26,6 +26,107 @@ namespace DoAnTotNghiep.Entity
             return notification;
         }
 
+        public Notification WaitingRequestNotification(House house, Request request, User user)
+        {
+            return new Notification()
+            {
+                Title = NotificationType.RequestTitle,
+                Content = "Bạn vừa tạo yêu cầu đổi nhà "
+                                            + house.Name
+                                            + " của "
+                                            + user.FirstName
+                                            + " "
+                                            + user.LastName,
+                CreatedDate = DateTime.Now,
+                Type = NotificationType.REQUEST,
+                IdUser = house.Users.Id,
+                IdType = request.Id,
+                IsSeen = false,
+                ImageUrl = NotificationImage.Alert
+            };
+        }
+        public Notification RejectRequestNotification(House house, Request request, int idSend)
+        {
+            return new Notification()
+            {
+                Title = NotificationType.RequestTitle,
+                CreatedDate = DateTime.Now,
+                Type = NotificationType.REQUEST,
+                IdUser = idSend,
+                IdType = request.Id,
+                IsSeen = false,
+                ImageUrl = NotificationImage.Alert,
+                Content = "Yêu cầu của bạn đến nhà "
+                                        + house.Name
+                                        + " bị từ chối"
+            };
+        }
+        public Notification AcceptRequestNotification(House house, Request request, int idSend)
+        {
+            return new Notification()
+            {
+                Title = NotificationType.RequestTitle,
+                CreatedDate = DateTime.Now,
+                Type = NotificationType.REQUEST,
+                IdUser = idSend,
+                IdType = request.Id,
+                IsSeen = false,
+                ImageUrl = NotificationImage.Alert,
+                Content = "Yêu cầu của bạn đến nhà "
+                                        + house.Name
+                                        + " đã được chấp nhận"
+            };
+        }
+
+        public Notification CheckInRequestNotification(House house, Request request, int idSend)
+        {
+            return new Notification()
+            {
+                Title = NotificationType.RequestTitle,
+                CreatedDate = DateTime.Now,
+                Type = NotificationType.REQUEST,
+                IdUser = idSend,
+                IdType = request.Id,
+                IsSeen = false,
+                ImageUrl = NotificationImage.Alert,
+                Content = "Bạn đã check-in "
+                                + house.Name
+                                + " hệ thống đã gửi thông tin đến email của bạn"
+            };
+        }
+
+        public Notification CheckOutRequestNotification(House house, Request request, int idSend)
+        {
+            return new Notification()
+            {
+                Title = NotificationType.RequestTitle,
+                CreatedDate = DateTime.Now,
+                Type = NotificationType.REQUEST,
+                IdUser = idSend,
+                IdType = request.Id,
+                IsSeen = false,
+                ImageUrl = NotificationImage.Alert,
+                Content = "Bạn đã check-out "
+                            + house.Name
+                            + " hãy viết cảm nhận của mình sau chuyển đi và nhận thưởng từ hệ thống"
+            };
+        }
+
+        public Notification FeedBackNotification(Request request, int idSend)
+        {
+            return new Notification()
+            {
+                IdType = request.Id,
+                IdUser = idSend,
+                Title = NotificationType.RatingTitle,
+                Content = "Bạn có đánh giá mới",
+                CreatedDate = DateTime.Now,
+                IsSeen = false,
+                ImageUrl = NotificationImage.Alert,
+                Type = NotificationType.RATING
+            };
+        }
+
         public Notification Request(Request request)
         {
             Notification notification = new Notification()

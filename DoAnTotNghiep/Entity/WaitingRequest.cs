@@ -1,4 +1,6 @@
-﻿using DoAnTotNghiep.Enum;
+﻿using DoAnTotNghiep.Data;
+using DoAnTotNghiep.Enum;
+using DoAnTotNghiep.Job;
 using DoAnTotNghiep.Modules;
 using Microsoft.VisualBasic;
 using System.ComponentModel.DataAnnotations;
@@ -24,13 +26,11 @@ namespace DoAnTotNghiep.Entity
                 IdWard = null
             };
         }
-
         public WaitingRequest Node(RequestInCircleExchangeHouse requestInCircleExchangeHouse, WaitingRequest request)
         {
             request.Status = requestInCircleExchangeHouse.Status;
             return request;
         }
-
         public WaitingRequestForSearch? CreateModelByRequest(Request model)
         {
             if (model.Houses == null || model.SwapHouses == null || model.Houses.IdCity == null || model.SwapHouses.IdCity == null) return null;
@@ -50,6 +50,14 @@ namespace DoAnTotNghiep.Entity
             };
 
             return new WaitingRequestForSearch(request, request.IdCity, model.SwapHouses.IdCity.Value, model.StartDate, model.EndDate);
+        }
+
+        public void IncludeAll(DoAnTotNghiepContext context)
+        {
+            if(this.Houses == null && !context.Entry(this).Reference(m => m.Houses).IsLoaded)
+                context.Entry(this).Reference(m => m.Houses).Load();
+            if (this.Users == null && !context.Entry(this).Reference(m => m.Users).IsLoaded)
+                context.Entry(this).Reference(m => m.Users).Load();
         }
 
         [Key]

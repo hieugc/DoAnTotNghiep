@@ -1,4 +1,10 @@
-﻿.container-fluid{
+﻿.attribute{
+    cursor: pointer;
+}
+.attribute:hover {
+    color: var(--bs-primary);
+}
+.container-fluid {
     position: relative;
     display: flex;
 }

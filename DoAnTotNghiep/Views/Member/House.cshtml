@@ -4,7 +4,6 @@
 @{
     ViewData["Title"] = "Danh sách nhà";
     Layout = "_LayoutMember";
-    ViewData["userName"] = Model.Houses.Houses.FirstOrDefault()?.User?.FirstName + Model.Houses.Houses.FirstOrDefault()?.User?.LastName;
     int? IdRequest = ViewData["IdRequest"] as int?;
     int? IdHouse = ViewData["IdHouse"] as int?;
 }

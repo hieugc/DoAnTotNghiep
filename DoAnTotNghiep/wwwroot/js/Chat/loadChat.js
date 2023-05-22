@@ -57,7 +57,7 @@ function appendMessage(idTag, object) {
             }
             else {
                 if (prev == userAccess.userAccess) {
-                    res += selfMessage(userAccess.urlImage, userAccess.userName, show);
+                    res += selfMessage(userAccess.urlImage, (userAccess.firstName + " " + userAccess.lastName), show);
                 }
                 else {
                     res += otherMessage(object.userMessages[0].imageUrl, object.userMessages[0].userName, show);
@@ -68,7 +68,7 @@ function appendMessage(idTag, object) {
         }
         if (show.length > 0) {
             if (prev == userAccess.userAccess) {
-                res += selfMessage(userAccess.urlImage, userAccess.userName, show);
+                res += selfMessage(userAccess.urlImage, (userAccess.firstName + " " + userAccess.lastName), show);
             }
             else {
                 res += otherMessage(object.userMessages[0].imageUrl, object.userMessages[0].userName, show);
@@ -291,10 +291,9 @@ function SendMessage(idRoom) {
 //scroll message
 function scrollLoad(element, idRoom) {
     let top = element.scrollTop.toFixed();
-    if (chatRoom[idRoom]["isLoad"] != true && top == 0) {
+    if (chatRoom[idRoom]["isLoad"] != true && top < 0) {
         chatRoom[idRoom]["isLoad"] = true;
         getAndLoadMessage(idRoom);
-        console.log("croll");
     }
 }
 function getAndLoadMessage(idRoom) {
@@ -302,7 +301,7 @@ function getAndLoadMessage(idRoom) {
         let data = {
             idRoom: idRoom,
             pagination: {
-                page: chatRoom[idRoom].messages.length,
+                page: (Math.ceil(chatRoom[idRoom].messages.length / 20) + 1),
                 limit: 20,
             }
         };
@@ -337,7 +336,7 @@ function getAndLoadMessage(idRoom) {
                         }
                         else {
                             if (prev == userAccess.userAccess) {
-                                $(`#message-${idRoom} .list-message`).append(selfMessage(userAccess.urlImage, userAccess.userName, show));
+                                $(`#message-${idRoom} .list-message`).append(selfMessage(userAccess.urlImage, (userAccess.firstName + " " + userAccess.lastName), show));
                             }
                             else {
                                 $(`#message-${idRoom} .list-message`).append(otherMessage(result.data[idRoom].userMessages[0].imageUrl, result.data[idRoom].userMessages[0].userName, show));
@@ -348,7 +347,7 @@ function getAndLoadMessage(idRoom) {
                     }
                     if (show.length > 0) {
                         if (prev == userAccess.userAccess) {
-                            $(`#message-${idRoom} .list-message`).append(selfMessage(userAccess.urlImage, userAccess.userName, show));
+                            $(`#message-${idRoom} .list-message`).append(selfMessage(userAccess.urlImage, (userAccess.firstName + " " + userAccess.lastName), show));
                         }
                         else {
                             $(`#message-${idRoom} .list-message`).append(otherMessage(result.data[idRoom].userMessages[0].imageUrl, result.data[idRoom].userMessages[0].userName, show));
@@ -358,7 +357,7 @@ function getAndLoadMessage(idRoom) {
 
 
                     //xác định isFull?
-                    if (result.data[idRoom].messages.length > 0 && result.data[idRoom].messages.length < 20) {
+                    if (result.data[idRoom].messages.length < 20) {
                         chatRoom[idRoom]["isFull"] = true;
                     }
 
@@ -391,9 +390,10 @@ function prependNewMessage(tag) {
 
 function scrollLoadUser(element) {
     let top = element.scrollTop.toFixed();
+    console.log(top);
     if (chatRoom["isLoadUser"] != true && top >= element.style.height) {
         let data = {
-            page: chatRoom.length,
+            page: (Math.ceil(chatRoom.length / 10) + 1),
             limit: 10
         };
         chatRoom["isLoadUser"] = true;

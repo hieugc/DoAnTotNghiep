@@ -32,4 +32,9 @@
         public const string ZaloKey1 = "ZaloKey1";
         public const string ZaloKey2 = "ZaloKey2";
     }
+
+    public static class BingMaps
+    {
+        public const string Key = "BingMapsKey";
+    }
 }

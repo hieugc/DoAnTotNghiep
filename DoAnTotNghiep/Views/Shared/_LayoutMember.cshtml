@@ -10,6 +10,8 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description"
+          content="Đồ án tốt nghiệp 2023">
     <title>@ViewData["Title"]</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
@@ -29,7 +31,7 @@
         <div class="container-lg">
             <div class="d-flex justify-content-between">
                 <div>
-                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><img src="~/Image/logo.png" class="logo" alt="logo" /></a>
+                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><img src="~/Image/tiny-logo.png" class="logo" alt="logo"/></a>
                 </div>
                 <div class="nav-left">
                     <div class="lg-device">
@@ -53,7 +55,13 @@
                             </a>
 
                             <div class="dropdown-menu" aria-labelledby="dropdownMenuNotification">
-                                <div class="title"><h5>Thông báo</h5></div>
+                                <div class="title">
+                                    <h5>Thông báo</h5>
+                                    <a class="btn btn-sm btn-primary" href="@Url.Action("Index", "Notification")" id="dropdownMenuNotification" aria-expanded="false">
+                                        Xem tất cả
+                                    </a>
+
+                                </div>
                                 <div class="alert-frame">
                                 </div>
                             </div>
@@ -101,7 +109,7 @@
                     }
                 </div>
                 <div class="name">
-                    <span>@userInfo?.FirstName @userInfo?.LastName</span>
+                    <span> @(userInfo?.LastName) @(userInfo?.FirstName)</span>
                     <span class="point">@userInfo?.Point Point</span>
                 </div>
             </div>
@@ -174,10 +182,8 @@
             document.getElementsByClassName("info-frame")[0].getElementsByClassName("tab-attr")[@ViewData["active"]].classList.add("tab-attr-active");
         });
     </script>
-    @{
-        await Html.RenderPartialAsync("~/Views/PartialView/_BingMap.cshtml");
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-    @await RenderSectionAsync("History", required: false)
+
+    @(Html.Partial("~/Views/PartialView/_BingMap.cshtml"))
+    @(Html.Partial("_ValidationScriptsPartial"))
 </body>
 </html>

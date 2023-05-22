@@ -177,7 +177,6 @@ function getDataWard() {
 
                         let model = JSON.stringify(data.data).replaceAll("name", "text");
 
-
                         if ($("#ward-select").length > 0) {
                             changeDataForSelect2("#ward-select", [{ "id": -1, "text": "Phường / Xã" }].concat(JSON.parse(model)));
                         }
@@ -262,7 +261,9 @@ function showMainForm() {
             data.lat = loc.latitude;
             data.lng = loc.longitude;
         }
+        getPredict();
     }
+    $("#location-validate").html(null);
     $("#houseModalToggle").show();
 }
 function reloadMap(address) {
@@ -316,6 +317,20 @@ function getLocation(temp_address) {
                         + ", " + dataLocation[$("#city-select").val()].name;
                     reloadMap(temp_address);
                     $("#mapAddress").html("<strong>Địa chỉ nhà: </strong>" + temp_address);
+                    if ($("#city-select").val() != -1) {
+                        data.idCity = $("#city-select").val();
+                        if ($("#district-select").val() != -1) {
+                            data.idDistrict = $("#district-select").val();
+                            if ($("#ward-select").val() != -1) {
+                                data.idWard = $("#ward-select").val();
+                            }
+                        }
+                    }   
+                    if (loc != null) {
+                        data.lat = loc.latitude;
+                        data.lng = loc.longitude;
+                    }
+                    getPredict();
                 }
                 else {
                     alert("Bạn hãy thử lại");

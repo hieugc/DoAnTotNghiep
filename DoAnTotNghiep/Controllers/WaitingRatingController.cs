@@ -30,6 +30,7 @@ using System.Xml;
 using Azure.Core;
 using DoAnTotNghiep.Hubs;
 using Microsoft.AspNetCore.SignalR;
+using DoAnTotNghiep.Service;
 
 namespace DoAnTotNghiep.Controllers
 {
@@ -39,29 +40,42 @@ namespace DoAnTotNghiep.Controllers
         private readonly DoAnTotNghiepContext _context;
         private readonly IConfiguration _configuration;
         private readonly IHubContext<ChatHub> _signalContext;
+        private readonly IHouseService _houseService;
+        private readonly IUserService _userService;
+        private readonly ICircleRequestService _circleRequestService;
+        private readonly ICircleFeedBackService _circleFeedBackService;
+        private readonly INotificationService _notificationService;
 
-        public WaitingRatingController(DoAnTotNghiepContext context
-                        , IConfiguration configuration
-                        , IHostEnvironment environment
-                        , IHubContext<ChatHub> signalContext) : base(environment)
+        public WaitingRatingController(
+                                        DoAnTotNghiepContext context, 
+                                        IConfiguration configuration, 
+                                        IHostEnvironment environment, 
+                                        IHubContext<ChatHub> signalContext,
+                                        IHouseService houseService,
+                                        IUserService userService,
+                                        ICircleRequestService circleRequestService,
+                                        ICircleFeedBackService circleFeedBackService,
+                                        INotificationService notificationService) : base(environment)
         {
             _context = context;
             _configuration = configuration;
             _signalContext = signalContext;
+            _houseService = houseService;
+            _userService = userService;
+            _circleRequestService = circleRequestService;
+            _circleFeedBackService = circleFeedBackService;
+            _notificationService = notificationService;
         }
 
         [HttpGet("/CircleRating/Form")]
         public IActionResult FormCreateRating(int IdRequest, int? IdWaitingRating)
         {
-            var request = this._context.CircleExchangeHouses
-                                .Where(m => m.Id == IdRequest && m.Status != (int) StatusWaitingRequest.DISABLE)
-                                .FirstOrDefault();
+            var request = this._circleRequestService.GetById(IdRequest);
             if (request == null) return NotFound();
 
             if(IdWaitingRating != null)
             {
-                var rating = this._context.FeedBackOfCircles
-                                            .Where(m => m.Id == IdWaitingRating.Value).FirstOrDefault();
+                var rating = this._circleFeedBackService.GetById(IdWaitingRating.Value);
                 if(rating != null)
                 {
                     EditRatingViewModel editRating = new EditRatingViewModel(rating);
@@ -75,119 +89,77 @@ namespace DoAnTotNghiep.Controllers
             if (ModelState.IsValid)
             {
                 int IdUser = this.GetIdUser();
-                var request = (from cr in this._context.CircleExchangeHouses
-                               join cru in this._context.CircleExchangeHouseOfUsers on cr.Id equals cru.IdCircleExchangeHouse
-                               join wr in this._context.RequestsInCircleExchangeHouses on cr.Id equals wr.IdCircleExchangeHouse
-                               where cru.IdUser == IdUser && cr.Id == feedBack.IdRequest
-                               select wr)
-                                            .FirstOrDefault();
+                var request = this._circleRequestService.GetWaitingRequestById(feedBack.IdRequest, IdUser);
                 if(request != null)
                 {
-                    if (!this._context.Entry(request).Reference(m => m.WaitingRequests).IsLoaded)
-                    {
-                        this._context.Entry(request).Reference(m => m.WaitingRequests).Load();
-                    }
-
+                    request.InCludeAll(this._context);
                     if(request.WaitingRequests != null)
                     {
-
-                        var rq = (from cr in this._context.CircleExchangeHouses
-                                  join rcr in this._context.RequestsInCircleExchangeHouses on cr.Id equals rcr.IdCircleExchangeHouse
-                                  join wr in this._context.WaitingRequests on rcr.IdWaitingRequest equals wr.Id
-                                  join h in this._context.Houses on wr.IdHouse equals h.Id
-                                  where cr.Id == feedBack.IdRequest && h.IdCity == request.WaitingRequests.IdCity
-                                  select wr).FirstOrDefault();
-                        if(rq != null)
+                        request.WaitingRequests.IncludeAll(this._context);
+                        if (request.WaitingRequests.Houses != null)
                         {
-
-                            if (!this._context.Entry(rq).Reference(m => m.Houses).IsLoaded)
+                            request.WaitingRequests.Houses.IncludeAll(this._context);
+                            if (request.WaitingRequests.Houses.Users != null)
                             {
-                                this._context.Entry(rq).Reference(m => m.Houses).Load();
-                            }
-                            if (rq.Houses != null)
-                            {
-                                if (!this._context.Entry(rq.Houses).Reference(m => m.Users).IsLoaded)
+                                if (request.WaitingRequests.Users != null)
                                 {
-                                    this._context.Entry(rq.Houses).Reference(m => m.Users).Load();
-                                }
-                                if (rq.Houses.Users != null)
-                                {
-                                    this._context.Entry(request.WaitingRequests).Reference(m => m.Users).Load();
-
-
-                                    if (request.WaitingRequests.Users != null)
+                                    using (var transaction = this._context.Database.BeginTransaction())
                                     {
-                                        using (var transaction = this._context.Database.BeginTransaction())
+                                        try
                                         {
-                                            try
+                                            this._circleFeedBackService.Save(new FeedBackOfCircle().Create(feedBack, IdUser, request.WaitingRequests.Houses.Users.Id, request.WaitingRequests.Houses.Id));
+
+                                            request.Status = (int)StatusWaitingRequest.ENDED;
+                                            this._circleRequestService.Update(request);
+
+                                            //nhà người chủ
+                                            List<int> intsHouse = this._houseService.CalRating(request.WaitingRequests.Houses.Id);
+                                            request.WaitingRequests.Houses.Rating = Math.Ceiling((double)intsHouse.First() / intsHouse.Last()) ;
+                                            request.WaitingRequests.Houses.NumberOfRating += 1;
+                                            this._houseService.UpdateHouse(request.WaitingRequests.Houses);
+                                            //người chủ
+                                            List<int> ints = this._userService.CalRate(request.WaitingRequests.Houses.Users.Id);
+                                            request.WaitingRequests.Houses.Users.UserRating = Math.Ceiling((double)ints.First() / ints.Last()) ;
+                                            request.WaitingRequests.Houses.Users.NumberUserRating += 1;
+                                            this._userService.UpdateUser(request.WaitingRequests.Houses.Users);
+
+                                            Notification notification = new Notification()
                                             {
-                                                //nhà người chủ
-                                                rq.Houses.Rating = Math.Ceiling(((rq.Houses.Rating * rq.Houses.NumberOfRating) + (feedBack.RatingHouse == null ? 0 : feedBack.RatingHouse.Value)) / (rq.Houses.NumberOfRating + 1) * 10) / 10;
-                                                rq.Houses.NumberOfRating += 1;
-                                                this._context.Houses.Update(rq.Houses);
-                                                this._context.SaveChanges();
-                                                //người chủ
-                                                rq.Houses.Users.UserRating = Math.Ceiling(((rq.Houses.Users.UserRating * rq.Houses.Users.NumberUserRating) + feedBack.RatingUser) / (rq.Houses.Users.NumberUserRating + 1) * 10) / 10;
-                                                rq.Houses.Users.NumberUserRating += 1;
-                                                this._context.Users.Update(rq.Houses.Users);
-                                                this._context.SaveChanges();
-                                                request.Status = (int)StatusWaitingRequest.ENDED;
-
-                                                this._context.RequestsInCircleExchangeHouses.Update(request);
-                                                this._context.SaveChanges();
-
-                                                //gửi thông báo
-                                                Notification notification = new Notification()
-                                                {
-                                                    IdType = rq.Id,
-                                                    IdUser = rq.Houses.Users.Id,
-                                                    Title = NotificationType.RatingTitle,
-                                                    Content = rq.Houses.Name + " có đánh giá mới",
-                                                    CreatedDate = DateTime.Now,
-                                                    IsSeen = false,
-                                                    ImageUrl = NotificationImage.Alert,
-                                                    Type = NotificationType.CIRCLE_RATING
-                                                };
-                                                this._context.Notifications.Add(notification);
-                                                this._context.SaveChanges();
-
-                                                ChatHub chatHub = new ChatHub(this._signalContext);
-                                                await chatHub.SendNotification(
-                                                    group: Crypto.EncodeKey(notification.IdUser.ToString(), Crypto.Salt(this._configuration)),
-                                                    target: TargetSignalR.Notification(),
-                                                    model: new NotificationViewModel(notification, this.GetWebsitePath()));
-
-
-                                                //thêm vào
-                                                FeedBackOfCircle model = new FeedBackOfCircle().Create(feedBack,
-                                                                IdUser,
-                                                                rq.Houses.Users.Id,
-                                                                rq.Houses.Id);
-                                                this._context.FeedBackOfCircles.Add(model);
-                                                this._context.SaveChanges();
-
-                                                transaction.Commit();
-                                                return Json(new
-                                                {
-                                                    Status = 200,
-                                                    Message = "ok"
-                                                });
-                                            }
-                                            catch (Exception ex)
+                                                IdType = request.WaitingRequests.Id,
+                                                IdUser = request.WaitingRequests.Houses.Users.Id,
+                                                Title = NotificationType.RatingTitle,
+                                                Content = request.WaitingRequests.Houses.Name + " có đánh giá mới",
+                                                CreatedDate = DateTime.Now,
+                                                IsSeen = false,
+                                                ImageUrl = NotificationImage.Alert,
+                                                Type = NotificationType.CIRCLE_RATING
+                                            };
+                                            this._notificationService.SaveNotification(notification);
+                                            transaction.Commit();
+                                            await new ChatHub(this._signalContext).SendNotification(
+                                                group: Crypto.EncodeKey(notification.IdUser.ToString(), Crypto.Salt(this._configuration)),
+                                                target: TargetSignalR.Notification(),
+                                                model: new NotificationViewModel(notification, this.GetWebsitePath()));
+                                            return Json(new
                                             {
-                                                Console.WriteLine(ex);
-                                                transaction.Rollback();
-                                            }
+                                                Status = 200,
+                                                Message = "ok"
+                                            });
                                         }
-                                        return BadRequest(new
+                                        catch (Exception ex)
                                         {
-                                            Status = 500,
-                                            Message = "Không lưu được"
-                                        });
+                                            Console.WriteLine(ex);
+                                            transaction.Rollback();
+                                        }
                                     }
+                                    return BadRequest(new
+                                    {
+                                        Status = 500,
+                                        Message = "Không lưu được"
+                                    });
                                 }
                             }
-                        }                    
+                        }
                     }
                 }
                 return BadRequest(new
@@ -221,53 +193,42 @@ namespace DoAnTotNghiep.Controllers
             if (ModelState.IsValid)
             {
                 int IdUser = this.GetIdUser();
-                var model = this._context.FeedBackOfCircles.Where(m => m.Id == feedBack.Id && m.IdUserRated == IdUser).FirstOrDefault();
+                var model = this._circleFeedBackService.GetByCircleRequest(IdUser, feedBack.Id);
                 if(model != null)
                 {
-                    this._context.Entry(model).Reference(m => m.Houses).Load();
-                    this._context.Entry(model).Reference(m => m.UserRated).Load();
-                    using (var Context = this._context)
+                    model.IncludeAll(this._context);
+                    using (var transaction = this._context.Database.BeginTransaction())
                     {
-                        using (var transaction = Context.Database.BeginTransaction())
+                        try
                         {
-                            try
-                            {
-                                if(model.Houses != null)
-                                {
-                                    model.Houses.Rating = Math.Ceiling(
-                                                    ((model.Houses.Rating * model.Houses.NumberOfRating - model.RateHouse) + (feedBack.RatingHouse == null ? 0 : feedBack.RatingHouse.Value))
-                                                                / (model.Houses.NumberOfRating) * 10
-                                                    ) / 10;
-                                    Context.Houses.Update(model.Houses);
-                                    Context.SaveChanges();
-                                }
+                            model.Update(feedBack);
+                            this._circleFeedBackService.Update(model);
 
-                                if (model.UserRated != null)
-                                {
-                                    model.UserRated.UserRating = Math.Ceiling(
-                                                    ((model.UserRated.UserRating * model.UserRated.NumberUserRating - model.RateUser) + feedBack.RatingUser)
-                                                        / (model.UserRated.NumberUserRating) * 10
-                                                    ) / 10;
-                                    Context.Users.Update(model.UserRated);
-                                    Context.SaveChanges();
-                                }
-                                
-                                model.Update(feedBack);
-                                Context.FeedBackOfCircles.Update(model);
-                                Context.SaveChanges();
-
-                                transaction.Commit();
-                                return Json(new
-                                {
-                                    Status = 200,
-                                    Message = "ok"
-                                });
-                            }
-                            catch (Exception ex)
+                            if (model.Houses != null)
                             {
-                                Console.WriteLine(ex);
-                                transaction.Rollback();
+                                List<int> ints = this._houseService.CalRating(model.Houses.Id);
+                                model.Houses.Rating = Math.Ceiling((double)ints.First() / ints.Last()) ;
+                                this._houseService.UpdateHouse(model.Houses);
                             }
+
+                            if (model.UserRated != null)
+                            {
+                                List<int> ints = this._userService.CalRate(model.UserRated.Id);
+                                model.UserRated.UserRating = Math.Ceiling((double)ints.First() / ints.Last()) ;
+                                this._userService.UpdateUser(model.UserRated);
+                            }
+
+                            transaction.Commit();
+                            return Json(new
+                            {
+                                Status = 200,
+                                Message = "ok"
+                            });
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex);
+                            transaction.Rollback();
                         }
                     }
                     return BadRequest(new
@@ -299,93 +260,5 @@ namespace DoAnTotNghiep.Controllers
         {
             return this.Edit(feedBack);
         }
-
-        /*
-        //Detail
-        private List<DetailRatingWithUser> GetRatingByHouse(List<FeedBack> feedBacks)
-        {
-            List<DetailRatingWithUser> model = new List<DetailRatingWithUser>();
-
-            string host = this.GetWebsitePath();
-            byte[] salt = Crypto.Salt(this._configuration);
-            foreach(var item in feedBacks)
-            {
-                this._context.Entry(item).Reference(m => m.Users).Load();
-                if(item.Users != null)
-                {
-                    DetailRatingViewModel rating = new DetailRatingViewModel(item);
-                    UserInfo user = new UserInfo(item.Users, salt, host);
-                    model.Add(new DetailRatingWithUser() { User = user, FeedBack = rating });
-                }
-            }
-
-            return model;
-        }
-        [HttpGet("/Rating/GetByHouse")]        
-        public IActionResult RatingByHouse(int Id)
-        {
-            ListRating listRating = new ListRating();
-            List<FeedBack> model = this.GetFeedBack(Id);
-            listRating.OverView = new FrameRating()
-            {
-                OneStar = model.Where(m => m.Rating == 1).ToList().Count(),
-                TwoStar = model.Where(m => m.Rating == 2).ToList().Count(),
-                ThreeStar = model.Where(m => m.Rating == 3).ToList().Count(),
-                FourStar = model.Where(m => m.Rating == 4).ToList().Count(),
-                FiveStar = model.Where(m => m.Rating == 5).ToList().Count()
-            };
-            listRating.Rating = this.GetRatingByHouse(model);
-            return PartialView("./Views/Rating/_ListRating.cshtml", listRating);
-        }
-        [HttpGet("/api/Rating/GetByHouse")]
-        public IActionResult ApiRatingByHouse(int Id)
-        {
-            return Json(new
-            {
-                Status = 200,
-                Data = this.GetRatingByHouse(this.GetFeedBack(Id))
-            });
-        }
-
-        private List<FeedBack> GetFeedBack(int IdHouse)
-        {
-            List<FeedBack> model = new List<FeedBack>();
-
-            var house = this._context.Houses
-                                    .Where(m => m.Id == IdHouse
-                                            && m.Status == (int)StatusHouse.VALID)
-                                    .FirstOrDefault();
-
-            if (house != null)
-            {
-                this._context.Entry(house)
-                            .Collection(m => m.FeedBacks)
-                            .Query()
-                            .Load();
-                if(house.FeedBacks != null)
-                {
-                    model.AddRange(house.FeedBacks.ToList());
-                }
-            }
-
-            return model;
-        }
-        [HttpGet("/Rating/FrameRate")]
-        public IActionResult GetFrameRate(int IdHouse)
-        {
-            List<FeedBack> model = this.GetFeedBack(IdHouse);
-            return Json(new
-            {
-                Status = 200,
-                Data = new FrameRating()
-                {
-                    OneStar = model.Where(m => m.Rating == 1).ToList().Count(),
-                    TwoStar = model.Where(m => m.Rating == 2).ToList().Count(),
-                    ThreeStar = model.Where(m => m.Rating == 3).ToList().Count(),
-                    FourStar = model.Where(m => m.Rating == 4).ToList().Count(),
-                    FiveStar = model.Where(m => m.Rating == 5).ToList().Count()
-                }
-            });
-        }*/
     }
 }

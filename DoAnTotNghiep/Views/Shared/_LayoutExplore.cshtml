@@ -26,7 +26,7 @@
         <div class="container-lg">
             <div class="d-flex justify-content-between">
                 <div>
-                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><img src="~/Image/logo.png" class="logo" alt="logo" /></a>
+                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><img src="~/Image/tiny-logo.png" class="logo" alt="logo" width="150px" /></a>
                 </div>
                 <div class="nav-left">
                     @if (userInfo == null)
@@ -55,7 +55,13 @@
                                 </a>
 
                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuNotification">
-                                    <div class="title"><h5>Thông báo</h5></div>
+                                    <div class="title">
+                                        <h5>Thông báo</h5>
+                                        <a class="btn btn-sm btn-primary" href="@Url.Action("Index", "Notification")" id="dropdownMenuNotification" aria-expanded="false">
+                                            Xem tất cả
+                                        </a>
+
+                                    </div>
                                     <div class="alert-frame">
                                     </div>
                                 </div>
@@ -98,23 +104,19 @@
         @RenderBody()
     </main>
     <div id="renderModal"></div>
-
     @(Html.Partial("~/Views/PartialView/_Footer.cshtml"))
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/Nav/nav.js" type="text/javascript"></script>
-
     @if (userInfo != null)
     {
         @(Html.Partial("~/Views/PartialView/_Authorized.cshtml", userInfo))
     }
 
     @await RenderSectionAsync("Scripts", required: false)
-    @{
-        await Html.RenderPartialAsync("~/Views/PartialView/_BingMap.cshtml");
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    @(Html.Partial("~/Views/PartialView/_BingMap.cshtml"))
+    @(Html.Partial("_ValidationScriptsPartial"))
 </body>
 </html>
