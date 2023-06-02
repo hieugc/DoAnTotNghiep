@@ -256,7 +256,7 @@
     <string name="no_home_txt_others">Người dùng này hiện tại\nchưa có nhà trong hệ thống</string>
     <string name="add_home">Thêm nhà</string>
     <string name="available_point">Points khả dụng</string>
-    <string name="point_equivalence">1000 VND = 1000 points \n (Tối thiếu 1000 points)</string>
+    <string name="point_equivalence">1 points = 1000 VND \n (Tối thiếu 1 point)</string>
     <string name="payment_method">Phương thức thanh toán:</string>
     <string name="use_email_to_register">Sử dụng email này để đăng ký vào hệ thống</string>
     <string name="enter_your_details">Điền các thông tin cá nhân của bạn</string>

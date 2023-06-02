@@ -48,6 +48,11 @@ class CircleRequestPagerFragment : BaseFragment<FragmentCircleRequestPagerBindin
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.getCircleRequest()
+    }
+
     override fun setView() {
         adapter = CircleRequestAdapter(
             requestList,
