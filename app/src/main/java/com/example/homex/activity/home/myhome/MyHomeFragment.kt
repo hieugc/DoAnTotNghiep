@@ -2,6 +2,7 @@ package com.example.homex.activity.home.myhome
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.isGone
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.homex.R
@@ -13,6 +14,7 @@ import com.example.homex.extension.gone
 import com.example.homex.extension.visible
 import com.example.homex.viewmodel.YourHomeViewModel
 import com.homex.core.model.Home
+import com.homex.core.util.AppEvent
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -41,6 +43,25 @@ class MyHomeFragment : BaseFragment<FragmentMyHomeBinding>() {
             binding.mainHomeRecView.visibility = View.INVISIBLE
         }
         viewModel.getMyHomes(page)
+        initSwipeLayout()
+    }
+
+    private fun initSwipeLayout(){
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            if (!isShimmer){
+                AppEvent.showPopUp()
+                isShimmer = true
+                binding.homeShimmer.startShimmer()
+                binding.homeShimmer.visible()
+                homeList.clear()
+                binding.mainHomeRecView.visibility = View.INVISIBLE
+                page = 0
+                viewModel.getMyHomes(page)
+                binding.swipeRefreshLayout.isRefreshing = false
+            } else {
+                binding.swipeRefreshLayout.isRefreshing = false
+            }
+        }
     }
 
     override fun setView() {
@@ -98,6 +119,8 @@ class MyHomeFragment : BaseFragment<FragmentMyHomeBinding>() {
                 binding.mainHomeRecView.gone()
                 binding.noHomeTxt.visible()
             }
+            if (binding.homeShimmer.isGone)
+                AppEvent.closePopup()
         }
     }
 }

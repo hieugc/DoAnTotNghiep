@@ -194,7 +194,7 @@ class HomeActivity : BaseActivity() {
 
     fun setSearchParam(location: String?, startDate: String, endDate: String, people: Int){
         binding.locationTV.text = location
-        binding.dateTV.text = "$startDate - $endDate / $people người"
+        binding.dateTV.text = getString(R.string.search_param, startDate, endDate, people)
     }
 
     private fun setViewModel(){
@@ -250,7 +250,6 @@ class HomeActivity : BaseActivity() {
 
     override fun onDestroy() {
         for(item in tmpFiles){
-            Log.e("itemActivity", item.path)
             item.delete()
         }
         super.onDestroy()
@@ -264,11 +263,6 @@ class HomeActivity : BaseActivity() {
             intent.setClass(mContext, ChatService::class.java)
             bindService(intent, mConnection, Context.BIND_AUTO_CREATE)
         }
-//        Timer().scheduleAtFixedRate(object : TimerTask(){
-//            override fun run() {
-//                Log.e("connectionStatus", "${mService?.hubConnection?.connectionState}")
-//            }
-//        }, 0, 5000)
     }
 
     override fun onStop() {
@@ -305,12 +299,10 @@ class HomeActivity : BaseActivity() {
             mService = binder.service
             mBound = true
             binder.service.hubConnection.connectionState?.let{ state ->
-                Log.e("connectionStatus", "$state")
                 if (state == HubConnectionState.CONNECTED){
                     binder.service.hubConnection.connectionId?.let {
                         val mediaType = "application/json".toMediaType()
                         val body: RequestBody = "\"$it\"".toRequestBody(mediaType)
-                        Log.e("connectionId", it)
                         CoreApplication.instance.saveConnectionId(it)
                         chatViewModel.connectAllRoom(body)
                     }
@@ -333,12 +325,10 @@ class HomeActivity : BaseActivity() {
             if (connect == true){
                 mService?.apply {
                     hubConnection.connectionState?.let{ state ->
-                        Log.e("connectionStatus", "$state")
                         if (state == HubConnectionState.CONNECTED){
                             hubConnection.connectionId?.let {
                                 val mediaType = "application/json".toMediaType()
                                 val body: RequestBody = "\"$it\"".toRequestBody(mediaType)
-                                Log.e("connectionId", it)
                                 CoreApplication.instance.saveConnectionId(it)
                                 chatViewModel.connectAllRoom(body)
                             }
@@ -362,7 +352,7 @@ class HomeActivity : BaseActivity() {
 
             val snackbar: Snackbar = Snackbar.make(findViewById(R.id.rootView), "", Snackbar.LENGTH_LONG)
 
-            val customSnackView: View = layoutInflater.inflate(R.layout.layout_snackbar_notification, null)
+            val customSnackView: View = layoutInflater.inflate(R.layout.layout_snackbar_notification, binding.rootView)
             val tvTitle = customSnackView.findViewById<TextView>(R.id.tvTitle)
             val tvContent = customSnackView.findViewById<TextView>(R.id.tvContent)
             tvTitle.text = notification.title
@@ -374,7 +364,7 @@ class HomeActivity : BaseActivity() {
             snackbar.view.setBackgroundColor(Color.TRANSPARENT)
 
             val snackbarLayout: Snackbar.SnackbarLayout =
-                snackbar.getView() as Snackbar.SnackbarLayout
+                snackbar.view as Snackbar.SnackbarLayout
 
             snackbarLayout.setPadding(0, 0, 0, 0)
 

@@ -46,6 +46,46 @@ class AddHomeFragment : BaseFragment<FragmentAddHomeBinding>() {
     private val tmpFiles = mutableListOf<File>()
     private val tmp = mutableListOf<File>()
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel.idCity.observe(this){
+            if (it != null && it != 0){
+                predictHouse()
+            }
+        }
+
+        viewModel.lng.observe(this){
+            if (it != null && it != 0.0){
+                predictHouse()
+            }
+        }
+        viewModel.lat.observe(this){
+            if (it != null && it != 0.0){
+                predictHouse()
+            }
+        }
+        viewModel.square.observe(this){
+            if (it != null && it != 0){
+                predictHouse()
+            }
+        }
+        homeViewModel.predictLiveData.observe(this){
+            if (it != null)
+                viewModel.predict.postValue(it)
+        }
+    }
+
+    private fun predictHouse(){
+        val idCity = viewModel.idCity.value?:return
+        val lat = viewModel.lat.value?:return
+        val lng = viewModel.lng.value?:return
+        val area = viewModel.square.value?:return
+        val rating = 0.0
+        if (idCity != 0 && lat != 0.0 && lng != 0.0 && area != 0){
+            homeViewModel.predictHouse(idCity, lat, lng, rating, area)
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         (activity as HomeActivity).setPropertiesScreen(
             showLogo = false,
@@ -127,14 +167,6 @@ class AddHomeFragment : BaseFragment<FragmentAddHomeBinding>() {
                 }
             }
         })
-
-        binding.btnNextSlide.setOnClickListener {
-            binding.addHomeViewPager.currentItem = binding.addHomeViewPager.currentItem + 1
-        }
-
-        binding.btnPreviousSlide.setOnClickListener {
-            binding.addHomeViewPager.currentItem = binding.addHomeViewPager.currentItem - 1
-        }
 
         binding.nextSlideBtn.setOnClickListener {
             if(!checkInput(binding.addHomeViewPager.currentItem)){

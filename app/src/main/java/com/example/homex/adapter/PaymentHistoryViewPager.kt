@@ -7,7 +7,7 @@ import com.example.homex.activity.home.profile.PaymentViewPagerFragment
 import com.example.homex.app.PAYMENT_STATUS
 import com.example.homex.extension.Payment
 
-class PaymentHistoryViewPager(private val parentFragment: Fragment) :
+class PaymentHistoryViewPager(parentFragment: Fragment) :
     FragmentStateAdapter(parentFragment) {
     override fun getItemCount(): Int = 3
 

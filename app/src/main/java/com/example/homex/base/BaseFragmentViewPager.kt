@@ -10,7 +10,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 abstract class BaseFragmentViewPager<ViewBinding: ViewDataBinding>: BaseFragment<ViewBinding>() {
     abstract val requestType: Int
-    var isShimmer = true
     val viewModel: RequestViewModel by viewModel()
     val requestList = arrayListOf<RequestResponse>()
     lateinit var adapter: RequestItemAdapter

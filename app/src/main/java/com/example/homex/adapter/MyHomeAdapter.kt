@@ -7,7 +7,7 @@ import com.example.homex.R
 import com.example.homex.databinding.MyHomeItemBinding
 import com.homex.core.model.Home
 
-class MyHomeAdapter(var homeList: ArrayList<Home>?, val onClick: (Int)->Unit): RecyclerView.Adapter<MyHomeAdapter.MyHomeViewHolder>() {
+class MyHomeAdapter(private var homeList: ArrayList<Home>?, val onClick: (Int)->Unit): RecyclerView.Adapter<MyHomeAdapter.MyHomeViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyHomeViewHolder {
         return MyHomeViewHolder(

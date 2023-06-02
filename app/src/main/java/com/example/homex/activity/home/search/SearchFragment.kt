@@ -70,13 +70,13 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
         findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Int>("NOP")?.observe(viewLifecycleOwner){
             ppl->
             viewModel.people.postValue(ppl)
-            binding.numberOfPeopleTV.text = "$ppl người"
+            binding.numberOfPeopleTV.text = getString(R.string.people, ppl)
         }
 
         findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<LocationSuggestion>(SUGGEST)?.observe(viewLifecycleOwner){
             suggest->
             if (suggest.districtName == null){
-                val loc = "${suggest.cityName?:""}"
+                val loc = if (suggest.cityName == null) "" else suggest.cityName
                 viewModel.location.postValue(loc)
                 binding.searchEdtTxt.text = loc
                 viewModel.idDistrict.postValue(null)

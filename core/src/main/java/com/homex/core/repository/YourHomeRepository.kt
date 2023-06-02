@@ -38,4 +38,6 @@ interface YourHomeRepository {
     suspend fun getDistrict(id: Int): LiveData<ResultResponse<ArrayList<BingLocation>>>
 
     suspend fun getWard(id: Int): LiveData<ResultResponse<ArrayList<BingLocation>>>
+
+    suspend fun predictHouse(idCity: Int, lat: Double, lng: Double, rating: Double, area: Int): LiveData<ResultResponse<Int>>
 }

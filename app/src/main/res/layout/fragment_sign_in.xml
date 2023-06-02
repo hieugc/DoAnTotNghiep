@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
@@ -58,7 +57,7 @@
         <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Sử dụng email này để đăng ký vào hệ thống"
+            android:text="@string/use_email_to_register"
             android:textColor="#991E1E1E"
             android:textSize="16sp"
             android:id="@+id/smallTxt"
@@ -137,7 +136,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/ivCheck1"
                 android:src="@drawable/ic_uncheck_circle"
-                android:paddingEnd="8dp"
+                android:layout_marginEnd="8dp"
                 />
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
@@ -160,7 +159,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/ivCheck2"
                 android:src="@drawable/ic_uncheck_circle"
-                android:paddingEnd="8dp"
+                android:layout_marginEnd="8dp"
                 />
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"

@@ -1,6 +1,7 @@
 package com.example.homex.activity.home.addhome
 
 import android.net.Uri
+import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import androidx.fragment.app.activityViewModels
@@ -26,6 +27,64 @@ class AddHome4Fragment : BaseFragment<FragmentAddHome4Binding>() {
     private val viewModel: AddHomeViewModel by viewModels({requireParentFragment()})
     private val fileViewModel: FileViewModel by activityViewModels()
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        fileViewModel.file.observe(this){
+            if (it != null) {
+                imgList.clear()
+                imgList.addAll(it)
+                adapter.notifyDataSetChanged()
+                if (imgList.isNotEmpty()){
+                    binding.homeImageRecView.visible()
+                    binding.finishBtn.enable()
+                }
+                Handler(Looper.getMainLooper()).post {
+                    when(imgList.size + fileList.size){
+                        5->{
+                            binding.btnAddImage.gone()
+                        }
+                        0->{
+                            binding.homeImageRecView.gone()
+                            binding.finishBtn.disable()
+                            binding.btnAddImage.text = getString(R.string.upload_image)
+                        }
+                        else->{
+                            binding.btnAddImage.visible()
+                            binding.btnAddImage.text = getString(R.string.upload_image_2, (imgList.size + fileList.size))
+                        }
+                    }
+                }
+            }
+        }
+
+        viewModel.images.observe(this){
+            if (it != null){
+                fileList.clear()
+                fileList.addAll(it)
+                adapter.notifyDataSetChanged()
+                if(it.isNotEmpty()){
+                    binding.homeImageRecView.visible()
+                    binding.finishBtn.enable()
+                }
+                Handler(Looper.getMainLooper()).post {
+                    when(imgList.size + fileList.size){
+                        5->{
+                            binding.btnAddImage.gone()
+                        }
+                        0->{
+                            binding.homeImageRecView.gone()
+                            binding.finishBtn.disable()
+                            binding.btnAddImage.text = getString(R.string.upload_image)
+                        }
+                        else->{
+                            binding.btnAddImage.visible()
+                            binding.btnAddImage.text = getString(R.string.upload_image_2, (imgList.size + fileList.size))
+                        }
+                    }
+                }
+            }
+        }
+    }
     override fun setView() {
         adapter = AddImageAdapter(
             mutableListOf(),
@@ -60,64 +119,6 @@ class AddHome4Fragment : BaseFragment<FragmentAddHome4Binding>() {
         }
         binding.finishBtn.setOnClickListener {
             (parentFragment as AddHomeFragment).createHome()
-        }
-    }
-
-    override fun setViewModel() {
-        fileViewModel.file.observe(viewLifecycleOwner){
-            if (it != null) {
-                imgList.clear()
-                imgList.addAll(it)
-                adapter.notifyDataSetChanged()
-                if (imgList.isNotEmpty()){
-                    binding.homeImageRecView.visible()
-                    binding.finishBtn.enable()
-                }
-                Handler(Looper.getMainLooper()).post {
-                    when(imgList.size + fileList.size){
-                        5->{
-                            binding.btnAddImage.gone()
-                        }
-                        0->{
-                            binding.homeImageRecView.gone()
-                            binding.finishBtn.disable()
-                            binding.btnAddImage.text = getString(R.string.upload_image)
-                        }
-                        else->{
-                            binding.btnAddImage.visible()
-                            binding.btnAddImage.text = getString(R.string.upload_image_2, (imgList.size + fileList.size))
-                        }
-                    }
-                }
-            }
-        }
-
-        viewModel.images.observe(viewLifecycleOwner){
-            if (it != null){
-                fileList.clear()
-                fileList.addAll(it)
-                adapter.notifyDataSetChanged()
-                if(it.isNotEmpty()){
-                    binding.homeImageRecView.visible()
-                    binding.finishBtn.enable()
-                }
-                Handler(Looper.getMainLooper()).post {
-                    when(imgList.size + fileList.size){
-                        5->{
-                            binding.btnAddImage.gone()
-                        }
-                        0->{
-                            binding.homeImageRecView.gone()
-                            binding.finishBtn.disable()
-                            binding.btnAddImage.text = getString(R.string.upload_image)
-                        }
-                        else->{
-                            binding.btnAddImage.visible()
-                            binding.btnAddImage.text = getString(R.string.upload_image_2, (imgList.size + fileList.size))
-                        }
-                    }
-                }
-            }
         }
     }
 

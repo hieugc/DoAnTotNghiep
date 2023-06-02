@@ -1,56 +1,38 @@
 package com.example.homex.activity.home.search
 
-import android.app.Dialog
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.CompoundButton
-import android.widget.FrameLayout
 import androidx.appcompat.widget.AppCompatCheckBox
 import androidx.appcompat.widget.AppCompatRadioButton
-import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.homex.R
 import com.example.homex.app.FILTER
 import com.example.homex.databinding.FragmentFilterBottomSheetBinding
-import com.example.homex.extension.Utilities
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.example.homex.extension.Utilities.AIR_CONDITIONER
+import com.example.homex.extension.Utilities.BATHTUB
+import com.example.homex.extension.Utilities.COMPUTER
+import com.example.homex.extension.Utilities.FRIDGE
+import com.example.homex.extension.Utilities.PARKING_LOT
+import com.example.homex.extension.Utilities.POOL
+import com.example.homex.extension.Utilities.TV
+import com.example.homex.extension.Utilities.WASHING_MACHINE
+import com.example.homex.extension.Utilities.WIFI
+import com.example.homex.utils.CustomBottomSheet
 import com.google.android.material.slider.RangeSlider
 import com.homex.core.model.Filter
 
 
-class FilterBottomSheetFragment : BottomSheetDialogFragment() {
-    private lateinit var binding: FragmentFilterBottomSheetBinding
+class FilterBottomSheetFragment : CustomBottomSheet<FragmentFilterBottomSheetBinding>() {
+    override val layoutId: Int
+        get() = R.layout.fragment_filter_bottom_sheet
     private lateinit var previousChecked: AppCompatRadioButton
     private var utilList = arrayListOf<AppCompatCheckBox>()
     private var priceList : List<Float> = listOf()
     private val navArgs: FilterBottomSheetFragmentArgs by navArgs()
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        dialog?.window?.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-        dialog?.window?.navigationBarColor = ContextCompat.getColor(requireContext(), R.color.white)
-
-        binding = FragmentFilterBottomSheetBinding.inflate(layoutInflater)
-
+    override fun setView() {
         binding.deleteFilterTxt.text = HtmlCompat.fromHtml(resources.getString(R.string.delete_filter), HtmlCompat.FROM_HTML_MODE_LEGACY)
-
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         val f = navArgs.filter
         if (f != null){
             when(f.option){
@@ -121,6 +103,9 @@ class FilterBottomSheetFragment : BottomSheetDialogFragment() {
             previousChecked = binding.closestRB
             previousChecked.isChecked = true
         }
+    }
+
+    override fun setEvent() {
         binding.applyButton.setOnClickListener {
             var option = 0
             when(previousChecked.id){
@@ -147,31 +132,31 @@ class FilterBottomSheetFragment : BottomSheetDialogFragment() {
             for (util in utilList){
                 when(util.id){
                     R.id.wifiCB->{
-                        utils.add(Utilities.WIFI.ordinal + 1)
+                        utils.add(WIFI.ordinal + 1)
                     }
                     R.id.computerCB->{
-                        utils.add(Utilities.COMPUTER.ordinal + 1)
+                        utils.add(COMPUTER.ordinal + 1)
                     }
                     R.id.smartTVCB->{
-                        utils.add(Utilities.TV.ordinal + 1)
+                        utils.add(TV.ordinal + 1)
                     }
                     R.id.bathTubCB->{
-                        utils.add(Utilities.BATHTUB.ordinal + 1)
+                        utils.add(BATHTUB.ordinal + 1)
                     }
                     R.id.parkingLotCB->{
-                        utils.add(Utilities.PARKING_LOT.ordinal + 1)
+                        utils.add(PARKING_LOT.ordinal + 1)
                     }
                     R.id.airConditionerCB->{
-                        utils.add(Utilities.AIR_CONDITIONER.ordinal + 1)
+                        utils.add(AIR_CONDITIONER.ordinal + 1)
                     }
                     R.id.washingMachineCB->{
-                        utils.add(Utilities.WASHING_MACHINE.ordinal + 1)
+                        utils.add(WASHING_MACHINE.ordinal + 1)
                     }
                     R.id.fridgeCB->{
-                        utils.add(Utilities.FRIDGE.ordinal + 1)
+                        utils.add(FRIDGE.ordinal + 1)
                     }
                     R.id.poolCB->{
-                        utils.add(Utilities.POOL.ordinal + 1)
+                        utils.add(POOL.ordinal + 1)
                     }
                 }
             }
@@ -336,22 +321,5 @@ class FilterBottomSheetFragment : BottomSheetDialogFragment() {
     private fun updateRadioButton(compoundButton: CompoundButton){
         previousChecked.isChecked = false
         previousChecked = compoundButton as AppCompatRadioButton
-    }
-
-
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dialog : BottomSheetDialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
-        dialog.setOnShowListener {
-            val d: BottomSheetDialog = it as BottomSheetDialog
-            val bottomSheet : FrameLayout? =
-                d.findViewById(com.google.android.material.R.id.design_bottom_sheet)
-            bottomSheet?.apply {
-                BottomSheetBehavior.from(bottomSheet).state = BottomSheetBehavior.STATE_EXPANDED
-                dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-                dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-            }
-
-        }
-        return dialog
     }
 }

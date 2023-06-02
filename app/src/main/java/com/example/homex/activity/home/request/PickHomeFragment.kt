@@ -2,6 +2,7 @@ package com.example.homex.activity.home.request
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.isGone
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.homex.R
@@ -14,6 +15,7 @@ import com.example.homex.extension.gone
 import com.example.homex.extension.visible
 import com.example.homex.viewmodel.YourHomeViewModel
 import com.homex.core.model.Home
+import com.homex.core.util.AppEvent
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -42,6 +44,26 @@ class PickHomeFragment : BaseFragment<FragmentPickHomeBinding>() {
         }
         arguments?.getString(USER_ACCESS)?.let {
             yourHomeViewModel.getHomeByUser(it)
+        }
+        initSwipeLayout()
+    }
+
+    private fun initSwipeLayout(){
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            if (!isShimmer){
+                AppEvent.showPopUp()
+                isShimmer = true
+                binding.homeShimmer.startShimmer()
+                binding.homeShimmer.visible()
+                homeList.clear()
+                binding.pickHomeRecView.visibility = View.INVISIBLE
+                arguments?.getString(USER_ACCESS)?.let {
+                    yourHomeViewModel.getHomeByUser(it)
+                }
+                binding.swipeRefreshLayout.isRefreshing = false
+            } else {
+                binding.swipeRefreshLayout.isRefreshing = false
+            }
         }
     }
 
@@ -86,6 +108,8 @@ class PickHomeFragment : BaseFragment<FragmentPickHomeBinding>() {
                 binding.pickHomeRecView.gone()
                 binding.appCompatTextView28.visible()
             }
+            if (binding.homeShimmer.isGone)
+                AppEvent.closePopup()
         }
     }
 }

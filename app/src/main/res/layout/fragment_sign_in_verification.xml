@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -45,7 +44,7 @@
     <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Chúng tôi đã gửi mã xác thực cho bạn qua email.\nHãy kiểm tra hộp thư của bạn"
+        android:text="@string/verification_sent"
         android:textColor="#991E1E1E"
         android:textSize="16sp"
         android:id="@+id/smallTxt"

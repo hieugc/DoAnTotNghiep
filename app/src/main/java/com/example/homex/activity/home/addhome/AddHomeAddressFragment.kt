@@ -135,7 +135,7 @@ class AddHomeAddressFragment : BaseFragment<FragmentAddHomeAddressBinding>(), Ea
 
         userLocation = mapView.userLocation
 
-        val pinBitmap = BitmapFactory.decodeResource(resources, R.mipmap.loc_pin)
+        val pinBitmap = BitmapFactory.decodeResource(resources, R.mipmap.pin)
         val mapImage = MapImage(pinBitmap)
         locationPin = mapView.center
 

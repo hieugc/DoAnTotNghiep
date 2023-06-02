@@ -8,11 +8,47 @@
         android:layout_height="match_parent"
         android:background="@color/background_gray">
 
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/swipeRefreshLayout"
+            app:layout_constraintTop_toTopOf="parent">
+
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvTransHis"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
-            tools:listitem="@layout/item_trans_history" />
+            tools:listitem="@layout/item_trans_history"
+            android:orientation="vertical"
+            android:nestedScrollingEnabled="true"
+            android:overScrollMode="never"
+            android:clipToPadding="false"
+            android:paddingBottom="16dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:itemCount="3"/>
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:id="@+id/noRequestLayout"
+            android:visibility="gone">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@mipmap/request"
+                />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/no_request"
+                android:textColor="@color/gray7"/>
+
+        </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

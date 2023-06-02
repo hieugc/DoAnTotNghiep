@@ -4,14 +4,12 @@ import com.google.gson.JsonObject
 import com.homex.core.model.*
 import com.homex.core.model.general.ListResponse
 import com.homex.core.model.general.ObjectResponse
-import com.homex.core.model.general.ResultResponse
 import com.homex.core.model.response.*
 import com.homex.core.param.auth.*
 import com.homex.core.param.chat.ConnectToRoomParam
 import com.homex.core.param.chat.ContactUserParam
 import com.homex.core.param.chat.GetMessagesParam
 import com.homex.core.param.chat.SendMessageParam
-import com.homex.core.param.notification.UpdateSeenNotificationParam
 import com.homex.core.param.profile.TopUpPointParam
 import com.homex.core.param.request.*
 import okhttp3.RequestBody
@@ -121,6 +119,9 @@ interface ApiService {
     suspend fun getWard(
         @Query("IdDistrict") id: Int
     ): Response<ListResponse<BingLocation>>
+
+    @GET("Predict")
+    suspend fun predictHouse(@Query("idCity") idCity: Int, @Query("lat") lat: Double, @Query("lng") lng: Double, @Query("rating") rating: Double, @Query("area") area: Int): Response<ObjectResponse<Int>>
 
     //--------------------MESSAGE-----------------------------
 

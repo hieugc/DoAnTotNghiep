@@ -13,5 +13,6 @@ class Request(
     val endDate: String? = null,
     val id: Int? = null,
     val status: Int? = null,
-    val user: UserMessage? = null
+    val user: UserMessage? = null,
+    val isOwner: Boolean? = null
 ): Parcelable

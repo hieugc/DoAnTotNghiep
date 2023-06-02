@@ -156,7 +156,8 @@ class PendingRequestDetailFragment : BaseFragment<FragmentPendingRequestDetailBi
                 }
 
                 getString(R.string.rate)->{
-
+                    val action = RequestFragmentDirections.actionRequestFragmentToRateBottomSheetFragment(binding.request)
+                    findNavController().navigate(action)
                 }
             }
         }

@@ -1,20 +1,64 @@
 package com.example.homex.extension
 
+import android.content.Context
+import android.graphics.drawable.Drawable
+import androidx.core.content.ContextCompat
+import com.example.homex.R
+
 enum class Utilities{
-    WIFI,
-    COMPUTER,
-    TV,
-    BATHTUB,
-    PARKING_LOT,
-    AIR_CONDITIONER,
-    WASHING_MACHINE,
-    FRIDGE,
-    POOL
+    WIFI{
+        override fun getDrawable(context: Context): Drawable? = ContextCompat.getDrawable(context, R.drawable.ic_wifi)
+        override fun getString(context: Context): String = context.getString(R.string.wifi)
+    },
+    COMPUTER{
+        override fun getDrawable(context: Context): Drawable? = ContextCompat.getDrawable(context, R.drawable.ic_computer)
+        override fun getString(context: Context): String = context.getString(R.string.computer)
+    },
+    TV{
+        override fun getDrawable(context: Context): Drawable? = ContextCompat.getDrawable(context, R.drawable.ic_tv)
+        override fun getString(context: Context): String = context.getString(R.string.smart_tv)
+    },
+    BATHTUB{
+        override fun getDrawable(context: Context): Drawable? = ContextCompat.getDrawable(context, R.drawable.ic_bath)
+        override fun getString(context: Context): String = context.getString(R.string.bath_tub)
+    },
+    PARKING_LOT{
+        override fun getDrawable(context: Context): Drawable? = ContextCompat.getDrawable(context, R.drawable.ic_parking_lot)
+        override fun getString(context: Context): String = context.getString(R.string.pool)
+    },
+    AIR_CONDITIONER{
+        override fun getDrawable(context: Context): Drawable? = ContextCompat.getDrawable(context, R.drawable.ic_air_conditioning)
+        override fun getString(context: Context): String = context.getString(R.string.air_conditioner)
+    },
+    WASHING_MACHINE{
+        override fun getDrawable(context: Context): Drawable? = ContextCompat.getDrawable(context, R.drawable.ic_wash_machine)
+        override fun getString(context: Context): String = context.getString(R.string.washing_machine)
+    },
+    FRIDGE{
+        override fun getDrawable(context: Context): Drawable? = ContextCompat.getDrawable(context, R.drawable.ic_fridge)
+        override fun getString(context: Context): String = context.getString(R.string.fridge)
+    },
+    POOL{
+        override fun getDrawable(context: Context): Drawable? = ContextCompat.getDrawable(context, R.drawable.ic_pool)
+        override fun getString(context: Context): String = context.getString(R.string.pool)
+    };
+
+    abstract fun getDrawable(context: Context): Drawable?
+    abstract fun getString(context: Context): String
 }
 
 enum class Rules{
-    NO_SMOKING,
-    NO_PET
+    NO_SMOKING{
+        override fun getDrawable(context: Context): Drawable? = ContextCompat.getDrawable(context, R.drawable.ic_no_smoking)
+        override fun getString(context: Context): String = context.getString(R.string.no_smoking)
+    },
+    NO_PET{
+        override fun getDrawable(context: Context): Drawable? = ContextCompat.getDrawable(context, R.drawable.ic_no_pet)
+        override fun getString(context: Context): String = context.getString(R.string.no_pet)
+    };
+
+    abstract fun getDrawable(context: Context): Drawable?
+    abstract fun getString(context: Context): String
 }
 
 enum class RequestStatus{

@@ -1,6 +1,5 @@
 package com.example.homex.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -23,7 +22,6 @@ class ImageSlideAdapter(var imgList: List<ImageBase>? = listOf()): RecyclerView.
 
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
         val url = imgList?.get(position)
-        Log.e("url", url?.data.toString())
         Glide.with(holder.itemView.context)
             .asBitmap()
             .placeholder(R.drawable.ic_baseline_image_24)

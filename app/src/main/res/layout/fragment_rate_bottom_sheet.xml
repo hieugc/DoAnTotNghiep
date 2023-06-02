@@ -33,8 +33,8 @@
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/closeBtn"
                     style="@style/AppTheme.Icon"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
                     android:src="@drawable/ic_close"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -43,7 +43,7 @@
                     android:id="@+id/materialDivider5"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="8dp"
                     app:dividerColor="@color/divider"
                     app:layout_constraintTop_toBottomOf="@id/closeBtn" />
 
@@ -66,14 +66,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:paddingStart="8dp">
+                    android:layout_marginStart="8dp">
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tvTitle"
                         style="@style/HomeTitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Nhà của hiếu"
                         android:textStyle="bold" />
 
                     <androidx.appcompat.widget.AppCompatTextView
@@ -81,8 +80,7 @@
                         style="@style/MediumText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:text="Ngõ 157 xyz abc, Phường xxTiền Giang " />
+                        android:layout_marginTop="5dp"/>
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tvPeople"
@@ -92,8 +90,7 @@
                         android:layout_marginTop="5dp"
                         android:drawableStart="@drawable/ic_ppl"
                         android:drawablePadding="8dp"
-                        android:gravity="center"
-                        android:text="4 người" />
+                        android:gravity="center" />
 
                 </LinearLayout>
             </LinearLayout>
@@ -155,24 +152,17 @@
 
             </LinearLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/AppTheme.TextInputLayout"
+            <EditText
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="170dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="8dp"
-                android:hint="@string/home_comment_hint">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/edtComment"
-                    style="@style/CommentEditText"
-                    android:layout_width="match_parent"
-                    android:layout_height="170dp"
-                    android:gravity="top|left"
-                    android:inputType="textMultiLine" />
-            </com.google.android.material.textfield.TextInputLayout>
-
+                style="@style/CommentEditText"
+                android:hint="@string/home_comment_hint"
+                android:gravity="top|start"
+                android:id="@+id/edtComment"
+                android:inputType="textMultiLine"/>
         </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatButton

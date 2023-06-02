@@ -79,4 +79,11 @@ class YourHomeRepositoryImpl(private val api: ApiService): YourHomeRepository {
             override suspend fun createCall(): Response<ListResponse<BingLocation>> = api.getWard(id)
         }.build().asLiveData()
     }
+
+    override suspend fun predictHouse(idCity: Int, lat: Double, lng: Double, rating: Double, area: Int): LiveData<ResultResponse<Int>> {
+        return object : NetworkBoundResource<ObjectResponse<Int>, Int>(){
+            override fun processResponse(response: ObjectResponse<Int>) = response.data
+            override suspend fun createCall(): Response<ObjectResponse<Int>> = api.predictHouse(idCity, lat, lng, rating, area)
+        }.build().asLiveData()
+    }
 }

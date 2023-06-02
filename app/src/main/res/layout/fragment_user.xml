@@ -14,7 +14,6 @@
         android:fillViewport="true"
         android:fitsSystemWindows="true">
 
-        <!-- TODO: Update blank fragment layout -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -118,56 +117,6 @@
                     app:layout_constraintGuide_percent="0.5" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/notLoginLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/secondary"
-                android:visibility="gone"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/userLayout">
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/ivAvatar1"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:scaleType="fitXY"
-                    app:srcCompat="@mipmap/avatar"
-                    android:layout_marginStart="32dp"
-                    android:layout_marginTop="20dp"
-                    app:cardCornerRadius="80dp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"/>
-
-                <androidx.appcompat.widget.AppCompatButton
-                    style="@style/ButtonPrimary"
-                    android:id="@+id/goToAuthBtn"
-                    app:layout_constraintStart_toEndOf="@id/ivAvatar1"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/ivAvatar1"
-                    app:layout_constraintBottom_toBottomOf="@id/ivAvatar1"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:text="@string/signup_signin"
-                    />
-
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginBottom="16dp"
-                    android:text="Hãy đăng nhập ngay để đột phá mọi trải nghiệm ngay nào!"
-                    android:textColor="@color/gray_light_2"
-                    android:textSize="14sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="@+id/ivAvatar1"
-                    app:layout_constraintTop_toBottomOf="@id/ivAvatar1"
-                    app:layout_constraintEnd_toEndOf="parent"/>
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
             <LinearLayout
                 android:id="@+id/llProfileNoLogin"
                 android:visibility="gone"
@@ -210,7 +159,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/notLoginLayout">
+                app:layout_constraintTop_toBottomOf="@+id/llProfileNoLogin">
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btnMyProfile"

@@ -36,14 +36,14 @@
             android:layout_weight="3"
             android:layout_marginStart="12dp"
             android:gravity="center_vertical"
-            android:text="@{request.request.user.userName}" />
+            android:text="@{request.request.isOwner == false ? request.request.user.userName : request.house.user.fullName}" />
 
         <androidx.appcompat.widget.AppCompatTextView
             style="@style/MediumText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="2"
-            android:gravity="right"
+            android:gravity="end"
             android:padding="4dp"
             requestStatus="@{request.request.status}"/>
     </LinearLayout>
@@ -181,7 +181,6 @@
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/requestTxt"
             app:layout_constraintStart_toStartOf="@id/requestTxt"
-            android:text="Đánh giá và nhận ngay 20 Points"
             style="@style/SmallText"
             setVisibilityGone="@{request.request.status.equals(RequestStatus.REVIEWING.ordinal())}"
             android:textColor="@color/primary"/>
@@ -189,9 +188,9 @@
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnRate"
             style="@style/FlexLongButtonPrimary"
+            endDate="@{request.request.endDate}"
             requestStatus="@{request.request.status}"
             startDate="@{request.request.startDate}"
-            endDate="@{request.request.endDate}"
             android:layout_width="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

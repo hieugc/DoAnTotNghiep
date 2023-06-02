@@ -13,17 +13,17 @@
         <action
             android:id="@+id/action_getStartedFragment_to_loginFragment"
             app:destination="@id/loginFragment"
-            app:exitAnim="@anim/slide_out_left"
             app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_out_right"
-            app:popExitAnim="@anim/slide_in_right"/>
+            app:popExitAnim="@anim/slide_in_right" />
         <action
             android:id="@+id/action_getStartedFragment_to_signInFragment"
             app:destination="@id/signInFragment"
-            app:exitAnim="@anim/slide_out_left"
             app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_out_right"
-            app:popExitAnim="@anim/slide_in_right"/>
+            app:popExitAnim="@anim/slide_in_right" />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
@@ -33,10 +33,10 @@
         <action
             android:id="@+id/action_loginFragment_to_forgotPasswordFragment"
             app:destination="@id/forgotPasswordFragment"
-            app:exitAnim="@anim/slide_out_left"
             app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_out_right"
-            app:popExitAnim="@anim/slide_in_right"/>
+            app:popExitAnim="@anim/slide_in_right" />
     </fragment>
     <fragment
         android:id="@+id/signInFragment"
@@ -46,43 +46,43 @@
         <action
             android:id="@+id/action_signInFragment_to_signInVerificationFragment"
             app:destination="@id/signInVerificationFragment"
-            app:exitAnim="@anim/slide_out_left"
             app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_out_right"
-            app:popExitAnim="@anim/slide_in_right"/>
+            app:popExitAnim="@anim/slide_in_right" />
     </fragment>
     <fragment
         android:id="@+id/signInVerificationFragment"
         android:name="com.example.homex.activity.auth.SignInVerificationFragment"
         android:label="SignInVerificationFragment"
-        tools:layout="@layout/fragment_sign_in_verification" >
+        tools:layout="@layout/fragment_sign_in_verification">
         <action
             android:id="@+id/action_signInVerificationFragment_to_updateInformationFragment"
             app:destination="@id/updateInformationFragment"
-            app:exitAnim="@anim/slide_out_left"
             app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_out_right"
-            app:popExitAnim="@anim/slide_in_right"/>
+            app:popExitAnim="@anim/slide_in_right" />
     </fragment>
     <fragment
         android:id="@+id/updateInformationFragment"
         android:name="com.example.homex.activity.auth.UpdateInformationFragment"
         android:label="UpdateInformationFragment"
-        tools:layout="@layout/fragment_update_information"/>
+        tools:layout="@layout/fragment_update_information" />
     <fragment
         android:id="@+id/newPasswordFragment"
         android:name="com.example.homex.activity.auth.NewPasswordFragment"
         android:label="fragment_new_password"
-        tools:layout="@layout/fragment_new_password" >
+        tools:layout="@layout/fragment_new_password">
         <action
             android:id="@+id/action_newPasswordFragment_to_loginFragment"
             app:destination="@id/loginFragment"
-            app:popUpTo="@id/loginFragment"
-            app:popUpToInclusive="true"
-            app:exitAnim="@anim/slide_out_left"
             app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_out_right"
-            app:popExitAnim="@anim/slide_in_right"/>
+            app:popExitAnim="@anim/slide_in_right"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/forgotPasswordFragment"
@@ -92,10 +92,10 @@
         <action
             android:id="@+id/action_forgotPasswordFragment_to_forgotPasswordVerificationFragment"
             app:destination="@id/forgotPasswordVerificationFragment"
-            app:exitAnim="@anim/slide_out_left"
             app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_out_right"
-            app:popExitAnim="@anim/slide_in_right"/>
+            app:popExitAnim="@anim/slide_in_right" />
     </fragment>
     <fragment
         android:id="@+id/forgotPasswordVerificationFragment"
@@ -105,9 +105,9 @@
         <action
             android:id="@+id/action_forgotPasswordVerificationFragment_to_newPasswordFragment"
             app:destination="@id/newPasswordFragment"
-            app:exitAnim="@anim/slide_out_left"
             app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_out_right"
-            app:popExitAnim="@anim/slide_in_right"/>
+            app:popExitAnim="@anim/slide_in_right" />
     </fragment>
 </navigation>

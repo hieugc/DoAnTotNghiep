@@ -14,7 +14,7 @@ import com.example.homex.extension.visible
 import com.homex.core.model.MessageRoom
 import kotlin.collections.ArrayList
 
-class MessageBoxAdapter(var messageBoxList: ArrayList<MessageRoom>?, private val onClick: (MessageRoom)->Unit, var userAccess : String? = null): RecyclerView.Adapter<MessageBoxAdapter.MessageBoxViewHolder>() {
+class MessageBoxAdapter(private var messageBoxList: ArrayList<MessageRoom>?, private val onClick: (MessageRoom, Int)->Unit, var userAccess : String? = null): RecyclerView.Adapter<MessageBoxAdapter.MessageBoxViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageBoxViewHolder {
         return MessageBoxViewHolder(
             MessageBoxItemBinding.bind(
@@ -37,7 +37,7 @@ class MessageBoxAdapter(var messageBoxList: ArrayList<MessageRoom>?, private val
         }
         if (item?.messages?.isNotEmpty() == true){
             if (item.messages?.get(0)?.idSend == userAccess){
-                holder.binding.lastMsg.text = "Bạn: ${item.messages?.get(0)?.message}"
+                holder.binding.lastMsg.text = holder.itemView.context.getString(R.string.your_message, item.messages?.get(0)?.message)
             }else{
                 holder.binding.lastMsg.text = item.messages?.get(0)?.message
             }
@@ -50,7 +50,7 @@ class MessageBoxAdapter(var messageBoxList: ArrayList<MessageRoom>?, private val
         }
         holder.binding.root.setOnClickListener {
             if (item != null) {
-                onClick.invoke(item)
+                onClick.invoke(item, position)
             }
         }
     }

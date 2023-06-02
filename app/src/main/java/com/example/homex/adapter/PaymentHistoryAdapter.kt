@@ -1,24 +1,16 @@
 package com.example.homex.adapter
 
-import android.content.Context
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.homex.R
 import com.example.homex.databinding.ItemPaymentHistoryBinding
-import com.example.homex.databinding.ItemTransHistoryBinding
-import com.example.homex.extension.RequestStatus
-import com.example.homex.extension.RequestType
 import com.example.homex.extension.formatIso8601ToFormat
 import com.example.homex.extension.thousandSeparator
 import com.homex.core.model.response.PaymentHistory
-import com.homex.core.model.response.RequestResponse
 
-class PaymentHistoryAdapter(
-    private val mContext: Context
-) : RecyclerView.Adapter<PaymentHistoryAdapter.PaymentHistoryViewHolder>() {
+class PaymentHistoryAdapter : RecyclerView.Adapter<PaymentHistoryAdapter.PaymentHistoryViewHolder>() {
 
     private val paymentHistory: ArrayList<PaymentHistory> = ArrayList()
 
@@ -32,7 +24,7 @@ class PaymentHistoryAdapter(
         )
     }
 
-    public fun setList(paymentHistory: ArrayList<PaymentHistory>) {
+    fun setList(paymentHistory: ArrayList<PaymentHistory>) {
         this.paymentHistory.clear()
         this.paymentHistory.addAll(paymentHistory.reversed())
         notifyDataSetChanged()
@@ -43,16 +35,16 @@ class PaymentHistoryAdapter(
         holder.binding.tvContent.text = item.content
         holder.binding.tvDate.text = item.createdDate.formatIso8601ToFormat("HH:mm - dd/MM/yyyy")
         if(item.status){
-            holder.binding.tvAmount.text = "-" + item.amount.thousandSeparator()
+            holder.binding.tvAmount.text = holder.itemView.context.getString(R.string.minus_point, item.amount.thousandSeparator())
             holder.binding.tvAmount.setTextColor(Color.parseColor("#FF0000"))
         } else {
-            holder.binding.tvAmount.text = "+" + item.amount.thousandSeparator()
+            holder.binding.tvAmount.text = holder.itemView.context.getString(R.string.add_point, item.amount.thousandSeparator())
             holder.binding.tvAmount.setTextColor(Color.parseColor("#008000"))
         }
     }
 
     override fun getItemCount(): Int {
-        return paymentHistory.size ?: 0
+        return paymentHistory.size
     }
 
     class PaymentHistoryViewHolder(val binding: ItemPaymentHistoryBinding) :

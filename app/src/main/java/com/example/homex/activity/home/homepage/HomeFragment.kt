@@ -3,6 +3,7 @@ package com.example.homex.activity.home.homepage
 import android.os.Bundle
 import android.view.View
 import androidx.core.os.bundleOf
+import androidx.core.view.isGone
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
@@ -19,6 +20,7 @@ import com.example.homex.utils.CenterZoomLayoutManager
 import com.example.homex.viewmodel.HomeViewModel
 import com.homex.core.model.Home
 import com.homex.core.model.Location
+import com.homex.core.util.AppEvent
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -31,6 +33,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
     private val viewModel: HomeViewModel by viewModel()
     private var isHomeShimmer = true
     private var isLocationShimmer = true
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel.getPopularHome()
+        viewModel.getPopularLocation()
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -52,8 +60,30 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
             showBottomNav = true,
             showBoxChatLayout = Pair(false, null),
         )
-        viewModel.getPopularHome()
-        viewModel.getPopularLocation()
+        initSwipeLayout()
+    }
+
+    private fun initSwipeLayout(){
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            if (!isHomeShimmer && !isLocationShimmer){
+                AppEvent.showPopUp()
+                isHomeShimmer = true
+                isLocationShimmer = true
+                binding.homeShimmer.startShimmer()
+                binding.homeShimmer.visible()
+                binding.locationShimmer.startShimmer()
+                binding.locationShimmer.visible()
+                homeList.clear()
+                locationList.clear()
+                binding.popularHomeRecView.visibility = View.INVISIBLE
+                binding.popularLocationRecView.visibility = View.INVISIBLE
+                viewModel.getPopularHome()
+                viewModel.getPopularLocation()
+                binding.swipeRefreshLayout.isRefreshing = false
+            } else {
+                binding.swipeRefreshLayout.isRefreshing = false
+            }
+        }
     }
 
     override fun setView() {
@@ -65,7 +95,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
             }
         binding.popularLocationRecView.setHasFixedSize(true)
         binding.popularLocationRecView.adapter = adapter
-        binding.popularLocationRecView.layoutManager = CenterZoomLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false, 0f, 1f, 1.3)
+        binding.popularLocationRecView.layoutManager = CenterZoomLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false, 0.05f, 1f, 1.2)
         val snapHelper2 = LinearSnapHelper()
         snapHelper2.attachToRecyclerView(binding.popularLocationRecView)
 
@@ -79,7 +109,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
             )
         binding.popularHomeRecView.setHasFixedSize(true)
         binding.popularHomeRecView.adapter = homeAdapter
-        binding.popularHomeRecView.layoutManager = CenterZoomLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false, 0f, 1f, 1.2)
+        binding.popularHomeRecView.layoutManager = CenterZoomLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false, 0.05f, 0.9f, 1.2)
         //Add snap helper to recyclerview to make it focus at 1 item
         val snapHelper = LinearSnapHelper()
         snapHelper.attachToRecyclerView(binding.popularHomeRecView)
@@ -116,6 +146,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                 isHomeShimmer = false
                 binding.popularHomeRecView.gone()
             }
+            if(binding.homeShimmer.isGone && binding.locationShimmer.isGone)
+                AppEvent.closePopup()
         }
 
         viewModel.popularLocation.observe(viewLifecycleOwner){ list->
@@ -141,6 +173,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                 isLocationShimmer = false
                 binding.popularLocationRecView.gone()
             }
+            if(binding.homeShimmer.isGone && binding.locationShimmer.isGone)
+                AppEvent.closePopup()
         }
     }
 }

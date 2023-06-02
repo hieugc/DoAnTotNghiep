@@ -1,20 +1,18 @@
 package com.example.homex.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.GridView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.homex.R
 import com.example.homex.databinding.MonthGridItemBinding
-import com.example.homex.extension.longToDate
 import com.homex.core.model.CalendarDate
 import com.homex.core.model.DateRange
-import java.util.*
-import kotlin.collections.ArrayList
+import java.util.Calendar
+import java.util.Date
 
 
-class CalendarAdapter(val monthList: ArrayList<Date> = arrayListOf(), var selectedDates: Pair<CalendarDate?, CalendarDate?> = Pair(null, null), val invalid: MutableList<DateRange>? = null, val onClick: (CalendarDate)->Unit): RecyclerView.Adapter<CalendarAdapter.MonthViewHolder>() {
+class CalendarAdapter(val monthList: ArrayList<Date> = arrayListOf(), var selectedDates: Pair<CalendarDate?, CalendarDate?> = Pair(null, null), private val invalid: MutableList<DateRange>? = null, val onClick: (CalendarDate)->Unit): RecyclerView.Adapter<CalendarAdapter.MonthViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MonthViewHolder {
         return MonthViewHolder(
             MonthGridItemBinding.bind(
@@ -30,19 +28,11 @@ class CalendarAdapter(val monthList: ArrayList<Date> = arrayListOf(), var select
 
         val calendar = Calendar.getInstance()
         calendar.time = date
-        Log.e("year", "${calendar.get(Calendar.YEAR)}")
-        Log.e("month", "${calendar.get(Calendar.MONTH)}")
-        Log.e("dayOfMonth", "${calendar.get(Calendar.DAY_OF_MONTH)}")
-        Log.e("dayOfWeek", "${calendar.get(Calendar.DAY_OF_WEEK)}")
-        Log.e("maxDay", "${calendar.getActualMaximum(Calendar.DATE)}")
-        holder.binding.monthTV.text = "Tháng ${calendar.get(Calendar.MONTH) + 1}, ${calendar.get(Calendar.YEAR)}"
+        holder.binding.monthTV.text = holder.itemView.context.getString(R.string.month, calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.YEAR))
         val arrayList = arrayListOf<CalendarDate>()
         val daysInMonth = calendar.getActualMaximum(Calendar.DATE)
         calendar.set(Calendar.DAY_OF_MONTH, 1)
         val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK) - 2
-        Log.e("dayOfWeek", "$dayOfWeek")
-        Log.e("daysInMonth", "$daysInMonth")
-
 
         for(i in 1..42){
             if(i <= dayOfWeek || i > daysInMonth + dayOfWeek){
@@ -58,8 +48,6 @@ class CalendarAdapter(val monthList: ArrayList<Date> = arrayListOf(), var select
             cal.clear()
             cal.set(Calendar.YEAR, calendar.get(Calendar.YEAR))
             cal.set(Calendar.MONTH, calendar.get(Calendar.MONTH))
-            Log.e("click", "${it.dateOfMonth}/${calendar.get(Calendar.MONTH) + 1}/${calendar.get(Calendar.YEAR)}")
-            it.time?.time?.longToDate()?.let { it1 -> Log.e("convert", it1) }
             onClick.invoke(it)
 
         }

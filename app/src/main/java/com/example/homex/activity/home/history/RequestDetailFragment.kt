@@ -1,4 +1,4 @@
-package com.example.homex.activity.home
+package com.example.homex.activity.home.history
 
 import android.os.Bundle
 import android.view.View
@@ -6,6 +6,7 @@ import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.homex.R
+import com.example.homex.activity.home.HomeActivity
 import com.example.homex.activity.home.pending.PendingRequestDetailFragmentArgs
 import com.example.homex.app.CONTACT_USER
 import com.example.homex.app.ID
@@ -107,11 +108,17 @@ class RequestDetailFragment : BaseFragment<FragmentRequestDetailBinding>() {
                 }
 
                 getString(R.string.rate)->{
-                    val action = RequestDetailFragmentDirections.actionRequestDetailFragmentToRateBottomSheetFragment(binding.request)
+                    val action =
+                        RequestDetailFragmentDirections.actionRequestDetailFragmentToRateBottomSheetFragment(
+                            binding.request
+                        )
                     findNavController().navigate(action)
                 }
                 getString(R.string.view_rating)->{
-                    val action = RequestDetailFragmentDirections.actionRequestDetailFragmentToRateBottomSheetFragment(binding.request)
+                    val action =
+                        RequestDetailFragmentDirections.actionRequestDetailFragmentToRateBottomSheetFragment(
+                            binding.request
+                        )
                     findNavController().navigate(action)
                 }
             }
@@ -119,7 +126,7 @@ class RequestDetailFragment : BaseFragment<FragmentRequestDetailBinding>() {
 
         binding.contactBtn.setOnClickListener {
             prefUtil.connectionId?.let { it1->
-                binding.request?.request?.user?.userAccess?.let { it2->
+                binding.request?.house?.user?.userAccess?.let { it2->
                     chatViewModel.contactToUser(
                         ContactUserParam(
                             connectionId =  it1,
