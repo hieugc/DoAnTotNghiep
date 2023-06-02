@@ -668,7 +668,7 @@
         android:name="com.example.homex.activity.home.search.BottomSheetSearchFragment"
         android:label="fragment_bottom_sheet_search"
         tools:layout="@layout/fragment_bottom_sheet_search" />
-    <dialog
+    <fragment
         android:id="@+id/mapFragment"
         android:name="com.example.homex.activity.home.MapFragment"
         android:label="fragment_map"

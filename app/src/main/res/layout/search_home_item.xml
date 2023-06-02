@@ -18,10 +18,12 @@
 <!--    android:background="@drawable/shadow_layout">-->
 <androidx.cardview.widget.CardView android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardCornerRadius="8dp"
+    app:cardCornerRadius="10dp"
+    app:cardElevation="6dp"
+    android:layout_marginTop="6dp"
+    android:layout_marginBottom="10dp"
     android:layout_marginStart="16dp"
     android:layout_marginEnd="16dp"
-    android:layout_marginBottom="16dp"
     >
 
     <androidx.constraintlayout.widget.ConstraintLayout

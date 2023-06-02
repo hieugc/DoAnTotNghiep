@@ -3,6 +3,8 @@ package com.example.homex.activity.auth
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.WindowManager
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.findNavController
@@ -20,6 +22,9 @@ class AuthActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        window.statusBarColor = ContextCompat.getColor(this, R.color.white)
+        window.navigationBarColor = ContextCompat.getColor(this, R.color.white)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_auth)
     }
 

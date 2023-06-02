@@ -203,7 +203,8 @@
             android:id="@+id/homePredictTxt"
             android:layout_marginStart="8dp"
             app:layout_constraintStart_toEndOf="@+id/appCompatTextView40"
-            app:layout_constraintTop_toBottomOf="@id/homePriceInputLayout" />
+            app:layout_constraintTop_toTopOf="@id/appCompatTextView40"
+            app:layout_constraintBottom_toBottomOf="@id/appCompatTextView40"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>

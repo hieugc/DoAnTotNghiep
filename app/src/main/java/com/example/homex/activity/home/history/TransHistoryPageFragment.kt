@@ -2,11 +2,14 @@ package com.example.homex.activity.home.history
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.homex.R
 import com.example.homex.activity.home.HomeActivity
 import com.example.homex.adapter.RequestItemAdapter
+import com.example.homex.app.CONTACT_USER
+import com.example.homex.app.ID
 import com.example.homex.app.REQUEST_STATUS
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentTransHistoryPageBinding
@@ -37,6 +40,18 @@ class TransHistoryPageFragment : BaseFragment<FragmentTransHistoryPageBinding>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel.getRequestHistory()
+        chatViewModel.connectToUser.observe(this){ messageRoom->
+            if (messageRoom != null){
+                messageRoom.idRoom?.let {
+                    findNavController().navigate(
+                        R.id.action_global_messageFragment, bundleOf(
+                            ID to it,
+                            CONTACT_USER to true
+                        )
+                    )
+                }
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -130,7 +145,7 @@ class TransHistoryPageFragment : BaseFragment<FragmentTransHistoryPageBinding>()
                             .show()
                     }
                     RequestStatus.REJECTED.ordinal -> {
-                        val userAccess = it.request?.user?.userAccess
+                        val userAccess = it.house?.user?.userAccess
                         prefUtil.connectionId?.let { connectionId->
                             userAccess?.let {
                                 chatViewModel.contactToUser(param = ContactUserParam(

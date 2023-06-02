@@ -5,12 +5,14 @@ import android.graphics.BitmapFactory
 import android.graphics.PointF
 import android.location.LocationManager
 import android.os.Bundle
+import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
 import com.example.homex.BuildConfig
 import com.example.homex.R
 import com.example.homex.app.HOME
+import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentMapBinding
-import com.example.homex.utils.CustomBottomSheet
 import com.homex.core.model.Home
 import com.microsoft.maps.GPSMapLocationProvider
 import com.microsoft.maps.Geopoint
@@ -35,7 +37,7 @@ import pub.devrel.easypermissions.PermissionRequest
 import java.util.concurrent.TimeUnit
 
 
-class MapFragment : CustomBottomSheet<FragmentMapBinding>(), EasyPermissions.PermissionCallbacks {
+class MapFragment : BaseFragment<FragmentMapBinding>(), EasyPermissions.PermissionCallbacks {
     override val layoutId: Int
         get() = R.layout.fragment_map
 
@@ -46,6 +48,18 @@ class MapFragment : CustomBottomSheet<FragmentMapBinding>(), EasyPermissions.Per
     private lateinit var userLocation: MapUserLocation
     private lateinit var mapImage: MapImage
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        (activity as HomeActivity).setPropertiesScreen(
+            showLogo = false,
+            showBottomNav = false,
+            showTitleApp = Pair(true, "Bản đồ"),
+            showMessage = false,
+            showMenu = false,
+            showBoxChatLayout = Pair(false, null),
+            showSearchLayout = false
+        )
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -157,7 +171,7 @@ class MapFragment : CustomBottomSheet<FragmentMapBinding>(), EasyPermissions.Per
 
     override fun setEvent() {
         binding.btnBack.setOnClickListener {
-            dismiss()
+            findNavController().popBackStack()
         }
     }
 
