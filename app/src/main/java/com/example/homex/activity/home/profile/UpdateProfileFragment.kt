@@ -313,7 +313,7 @@ class UpdateProfileFragment : BaseFragment<FragmentUpdateProfileBinding>() {
             if (email.isEmpty()
                 || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
             ) {
-                AppEvent.showPopUpError(getString(R.string.email))
+                AppEvent.showPopUpError(getString(R.string.error_invalid_email))
                 return false
             }
             if (phoneNumber.isEmpty()) {
@@ -321,7 +321,7 @@ class UpdateProfileFragment : BaseFragment<FragmentUpdateProfileBinding>() {
                 return false
             }
             if (dob.isEmpty() || !validTime) {
-                AppEvent.showPopUpError(getString(R.string.dob))
+                AppEvent.showPopUpError(getString(R.string.error_invalid_dob))
                 return false
             }
         } catch (e: Exception) {

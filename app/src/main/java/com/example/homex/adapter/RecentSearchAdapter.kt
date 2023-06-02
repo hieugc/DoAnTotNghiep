@@ -13,7 +13,7 @@ import com.homex.core.model.LocationSuggestion
 private const val LOCATION_ITEM = 1
 private const val HOME_ITEM = 2
 
-class RecentSearchAdapter(val searchList: ArrayList<LocationSuggestion>?, val recentSearch: Boolean = true, val onClick: (LocationSuggestion)->Unit, val deleteOnClick: (Int)->Unit): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class RecentSearchAdapter(private val searchList: ArrayList<LocationSuggestion>?, val recentSearch: Boolean = true, val onClick: (LocationSuggestion)->Unit, val deleteOnClick: (Int)->Unit): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         if (viewType == LOCATION_ITEM){
             return RecentSearchLocationViewHolder(RecentSearchLocationItemBinding.bind(
@@ -33,10 +33,11 @@ class RecentSearchAdapter(val searchList: ArrayList<LocationSuggestion>?, val re
         }
         else{
             val tmp = holder as RecentSearchLocationViewHolder
+            val ctx = holder.itemView.context
             if (item?.districtName == null){
-                tmp.binding.locationNameTV.text = "${item?.cityName?:""}"
+                tmp.binding.locationNameTV.text = if (item?.cityName == null) "" else item.cityName
             }else{
-                tmp.binding.locationNameTV.text = "${item.districtName}, ${item.cityName?:""}"
+                tmp.binding.locationNameTV.text = if (item.cityName == null) ctx.getString(R.string.city_district, item.districtName, "") else ctx.getString(R.string.city_district, item.districtName, item.cityName)
             }
             tmp.binding.root.setOnClickListener {
                 item?.let(onClick)

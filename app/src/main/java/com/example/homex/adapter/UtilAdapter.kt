@@ -2,7 +2,6 @@ package com.example.homex.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.homex.R
 import com.example.homex.databinding.ItemRuleUtilBinding
@@ -21,120 +20,28 @@ class UtilAdapter(var itemList: List<Int>?, val rule: Boolean = false, var showA
     override fun onBindViewHolder(holder: UtilViewHolder, position: Int) {
         val item = itemList?.get(position)
         if(holder.itemViewType == 1){
-            when(item){
-                Rules.NO_SMOKING.ordinal + 1 -> {
-                    holder.binding.root.text = holder.itemView.resources.getString(R.string.no_smoking)
-                    holder.binding.root.setCompoundDrawablesWithIntrinsicBounds(
-                        ContextCompat.getDrawable(holder.itemView.context, R.drawable.ic_no_smoking),
-                        null,
-                        null,
-                        null
-                    )
-                    holder.binding.root.requestLayout()
-                }
-                Rules.NO_PET.ordinal + 1 -> {
-                    holder.binding.root.text = holder.itemView.resources.getString(R.string.no_pet)
-                    holder.binding.root.setCompoundDrawablesWithIntrinsicBounds(
-                        ContextCompat.getDrawable(holder.itemView.context, R.drawable.ic_no_pet),
-                        null,
-                        null,
-                        null
-                    )
-                    holder.binding.root.requestLayout()
-                }
+            if (item != null){
+                val rule = Rules.values()[item - 1]
+                holder.binding.root.text = rule.getString(holder.itemView.context)
+                holder.binding.root.setCompoundDrawablesWithIntrinsicBounds(
+                    rule.getDrawable(holder.itemView.context),
+                    null,
+                    null,
+                    null
+                )
+                holder.binding.root.requestLayout()
             }
         }else{
-            when(item){
-                Utilities.WIFI.ordinal + 1 -> {
-                    holder.binding.root.text = holder.itemView.resources.getString(R.string.wifi)
-                    holder.binding.root.setCompoundDrawablesWithIntrinsicBounds(
-                        ContextCompat.getDrawable(holder.itemView.context, R.drawable.ic_wifi),
-                        null,
-                        null,
-                        null
-                    )
-                    holder.binding.root.requestLayout()
-                }
-                Utilities.COMPUTER.ordinal + 1 -> {
-                    holder.binding.root.text = holder.itemView.resources.getString(R.string.computer)
-                    holder.binding.root.setCompoundDrawablesWithIntrinsicBounds(
-                        ContextCompat.getDrawable(holder.itemView.context, R.drawable.ic_computer),
-                        null,
-                        null,
-                        null
-                    )
-                    holder.binding.root.requestLayout()
-                }
-                Utilities.TV.ordinal + 1 -> {
-                    holder.binding.root.text = holder.itemView.resources.getString(R.string.smart_tv)
-                    holder.binding.root.setCompoundDrawablesWithIntrinsicBounds(
-                        ContextCompat.getDrawable(holder.itemView.context, R.drawable.ic_tv),
-                        null,
-                        null,
-                        null
-                    )
-                    holder.binding.root.requestLayout()
-                }
-                Utilities.BATHTUB.ordinal + 1 -> {
-                    holder.binding.root.text = holder.itemView.resources.getString(R.string.bath_tub)
-                    holder.binding.root.setCompoundDrawablesWithIntrinsicBounds(
-                        ContextCompat.getDrawable(holder.itemView.context, R.drawable.ic_bath),
-                        null,
-                        null,
-                        null
-                    )
-                    holder.binding.root.requestLayout()
-                }
-                Utilities.PARKING_LOT.ordinal + 1 -> {
-                    holder.binding.root.text = holder.itemView.resources.getString(R.string.parking_lot)
-                    holder.binding.root.setCompoundDrawablesWithIntrinsicBounds(
-                        ContextCompat.getDrawable(holder.itemView.context, R.drawable.ic_parking_lot),
-                        null,
-                        null,
-                        null
-                    )
-                    holder.binding.root.requestLayout()
-                }
-                Utilities.AIR_CONDITIONER.ordinal + 1 -> {
-                    holder.binding.root.text = holder.itemView.resources.getString(R.string.air_conditioner)
-                    holder.binding.root.setCompoundDrawablesWithIntrinsicBounds(
-                        ContextCompat.getDrawable(holder.itemView.context, R.drawable.ic_air_conditioning),
-                        null,
-                        null,
-                        null
-                    )
-                    holder.binding.root.requestLayout()
-                }
-                Utilities.WASHING_MACHINE.ordinal + 1 -> {
-                    holder.binding.root.text = holder.itemView.resources.getString(R.string.washing_machine)
-                    holder.binding.root.setCompoundDrawablesWithIntrinsicBounds(
-                        ContextCompat.getDrawable(holder.itemView.context, R.drawable.ic_wash_machine),
-                        null,
-                        null,
-                        null
-                    )
-                    holder.binding.root.requestLayout()
-                }
-                Utilities.FRIDGE.ordinal + 1 -> {
-                    holder.binding.root.text = holder.itemView.resources.getString(R.string.fridge)
-                    holder.binding.root.setCompoundDrawablesWithIntrinsicBounds(
-                        ContextCompat.getDrawable(holder.itemView.context, R.drawable.ic_fridge),
-                        null,
-                        null,
-                        null
-                    )
-                    holder.binding.root.requestLayout()
-                }
-                Utilities.POOL.ordinal + 1 -> {
-                    holder.binding.root.text = holder.itemView.resources.getString(R.string.pool)
-                    holder.binding.root.setCompoundDrawablesWithIntrinsicBounds(
-                        ContextCompat.getDrawable(holder.itemView.context, R.drawable.ic_pool),
-                        null,
-                        null,
-                        null
-                    )
-                    holder.binding.root.requestLayout()
-                }
+            if (item != null){
+                val util = Utilities.values()[item - 1]
+                holder.binding.root.text = util.getString(holder.itemView.context)
+                holder.binding.root.setCompoundDrawablesWithIntrinsicBounds(
+                    util.getDrawable(holder.itemView.context),
+                    null,
+                    null,
+                    null
+                )
+                holder.binding.root.requestLayout()
             }
         }
     }

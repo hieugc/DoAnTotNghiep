@@ -41,15 +41,9 @@ class NotificationAdapter(
         holder.binding.notificationImg.loadImage(item?.imageUrl)
     }
 
-    public fun setList(notificationList: ArrayList<Notification>) {
-        this.notificationList?.clear()
-        this.notificationList?.addAll(notificationList)
-        notifyDataSetChanged()
-    }
-
-    public fun add(notification: Notification) {
+    fun add(notification: Notification) {
         this.notificationList?.add(0, notification)
-        notifyDataSetChanged()
+        notifyItemInserted(0)
     }
 
     override fun getItemCount(): Int {

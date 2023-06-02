@@ -1,4 +1,4 @@
-package com.example.homex.activity.home.profile
+package com.example.homex.activity.home.history
 
 import android.os.Bundle
 import com.example.homex.R

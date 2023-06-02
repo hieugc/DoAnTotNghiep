@@ -19,7 +19,7 @@ class LocationAdapter(context: Context, private val resource: Int, private val o
         val tvLocationName = v?.findViewById<TextView>(R.id.textView2)
         tvLocationName?.text = item.name
 
-        return v?:super.getDropDownView(position, convertView, parent)
+        return v?:super.getDropDownView(position, null, parent)
     }
 
 
@@ -32,6 +32,6 @@ class LocationAdapter(context: Context, private val resource: Int, private val o
         val tvLocationName = v?.findViewById<TextView>(R.id.textView2)
         tvLocationName?.text = item.name
 
-        return v?:super.getDropDownView(position, convertView, parent)
+        return v?:super.getDropDownView(position, null, parent)
     }
 }

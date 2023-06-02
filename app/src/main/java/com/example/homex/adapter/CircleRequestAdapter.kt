@@ -5,7 +5,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.homex.R
 import com.example.homex.databinding.ItemCircleRequestBinding
-import com.example.homex.extension.dpToPx
 import com.homex.core.model.response.CircleRequest
 
 class CircleRequestAdapter(
@@ -27,11 +26,6 @@ class CircleRequestAdapter(
     override fun onBindViewHolder(holder: CircleRequestViewHolder, position: Int) {
         val item = requestList?.get(position)
         holder.binding.request = item
-        if (position == requestList?.size!! - 1) {
-            val lastParams = holder.itemView.layoutParams as ViewGroup.MarginLayoutParams
-            lastParams.bottomMargin = 16f.dpToPx(holder.itemView.context)
-            holder.itemView.requestLayout()
-        }
         holder.binding.root.setOnClickListener {
             item?.let(onClick)
         }

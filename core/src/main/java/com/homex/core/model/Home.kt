@@ -49,8 +49,12 @@ data class Home(
             else->""
         }
     }
-    fun getHomeLocation(): String{
-        return if (districtName == null || districtName == "") cityName?:"" else "${districtName?:""}, ${cityName?:""}"
+    private fun getHomeLocation(): String{
+        return if (districtName == null || districtName == "") cityName?:"" else "${districtName}, ${cityName?:""}"
+    }
+
+    fun getFullLocation(): String{
+        return "${location?:""} ${getHomeLocation()}"
     }
 }
 

@@ -22,7 +22,7 @@
             android:drawableStart="@drawable/ic_user"
             android:drawablePadding="12dp"
             android:gravity="center_vertical"
-            android:text="Phạm Minh Hiếu" />
+             />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvStatus"
@@ -30,7 +30,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="right"
+            android:gravity="end"
             android:padding="4dp"
             android:text="@string/swapped"
             android:textColor="@color/green" />
@@ -66,7 +66,6 @@
                 style="@style/HomeTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Nhà của hiếu"
                 android:textStyle="bold" />
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -74,8 +73,7 @@
                 style="@style/MediumText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:text="Phương thức: Trao đổi bằng điểm" />
+                android:layout_marginTop="5dp"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -102,8 +100,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:drawableStart="@drawable/ic_from_date"
-                        android:gravity="center"
-                        android:text="03/10/2022" />
+                        android:gravity="center" />
                 </LinearLayout>
 
                 <com.google.android.material.divider.MaterialDivider
@@ -131,8 +128,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:drawableStart="@drawable/ic_to_date"
-                        android:gravity="center"
-                        android:text="10/10/2022" />
+                        android:gravity="center" />
                 </LinearLayout>
             </LinearLayout>
 

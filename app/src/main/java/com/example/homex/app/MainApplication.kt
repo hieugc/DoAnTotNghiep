@@ -4,7 +4,6 @@ import com.example.homex.application.appModules
 import com.homex.core.CoreApplication
 import org.koin.core.module.Module
 
-@Suppress("unused")
 class MainApplication : CoreApplication() {
 
     override fun addModules(): List<Module> {

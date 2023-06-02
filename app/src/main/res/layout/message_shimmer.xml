@@ -3,17 +3,18 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_marginEnd="64dp"
     android:layout_marginBottom="8dp"
     android:layout_marginStart="8dp">
 
-    <de.hdodenhof.circleimageview.CircleImageView
+    <androidx.cardview.widget.CardView
         android:layout_width="30dp"
         android:layout_height="30dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:background="@color/grey_light"
+        app:cardBackgroundColor="@color/grey_light"
+        app:cardCornerRadius="15dp"
+        app:cardElevation="0dp"
         android:id="@+id/userAvatar"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -32,7 +33,6 @@
             android:layout_height="wrap_content"
             android:background="@color/grey_light"
             android:padding="12dp"
-            tools:text="bạn ơi, nhà của bạn có"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"

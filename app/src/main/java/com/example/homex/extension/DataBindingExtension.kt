@@ -99,7 +99,7 @@ fun AppCompatTextView.getAge(dob: String?, gender: Boolean?){
             text = "$age"
             return
         }
-        text = "$age, $gen"
+        text = context.getString(R.string.age_gen, age, gen)
     }
 }
 
@@ -345,7 +345,7 @@ fun AppCompatButton.setCircleRequestPrimary(myStatus: Int?, fullStatus: Int?, st
                 this.text = context.getString(R.string.accept_request)
                 this.enable()
             } else {
-                this.text = "Đã chấp nhận"
+                this.text = context.getString(R.string.status_accepted)
                 this.disable()
             }
         }
@@ -393,7 +393,7 @@ fun AppCompatButton.setCircleRequestSecondary(myStatusSecondary: Int?, fullStatu
                 this.enable()
                 this.text = context.getString(R.string.reject_request)
             } else {
-                this.text = "Đã từ chối"
+                this.text = context.getString(R.string.status_rejected)
                 this.disable()
             }
         }
@@ -437,8 +437,7 @@ fun AppCompatButton.setRequestSecondary(requestStatus: Int?){
 fun AppCompatTextView.setRequestText(requestStatus: Int?){
     when(requestStatus){
         RequestStatus.WAITING.ordinal->{
-            this.visibility = View.GONE
-            this.text = ""
+            this.text = context.getString(R.string.request_waiting)
         }
         RequestStatus.ACCEPTED.ordinal->{
             this.text = context.getString(R.string.request_accepted)
@@ -453,6 +452,28 @@ fun AppCompatTextView.setRequestText(requestStatus: Int?){
             this.text = context.getString(R.string.request_reviewing)
         }
         RequestStatus.DONE.ordinal->{
+            this.visibility = View.GONE
+            this.text = ""
+        }
+    }
+}
+
+@BindingAdapter(value=["circleRequestText"])
+fun AppCompatTextView.setCircleRequestText(requestStatus: Int?){
+    when(requestStatus){
+        StatusWaitingRequest.INIT.ordinal->{
+            this.text = context.getString(R.string.request_waiting)
+        }
+        StatusWaitingRequest.ACCEPT.ordinal->{
+            this.text = context.getString(R.string.request_accepted)
+        }
+        StatusWaitingRequest.CHECK_IN.ordinal->{
+            this.text = context.getString(R.string.request_checkin)
+        }
+        StatusWaitingRequest.CHECK_OUT.ordinal->{
+            this.text = context.getString(R.string.request_reviewing)
+        }
+        else->{
             this.visibility = View.GONE
             this.text = ""
         }
@@ -546,5 +567,5 @@ fun AppCompatTextView.setCircleRequestStatus(requestStatus: Int?){
 
 @BindingAdapter(value =["userToYourHouse"])
 fun AppCompatTextView.setUserToYourHouse(userName: String?){
-    this.text = userName + " sẽ đến nhà của bạn"
+    this.text = context.getString(R.string.user_come_to_yours, userName)
 }

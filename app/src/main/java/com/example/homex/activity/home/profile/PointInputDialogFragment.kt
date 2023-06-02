@@ -117,7 +117,7 @@ class PointInputDialogFragment(private val listener: EventListener) : DialogFrag
         ))
     }
 
-    public interface EventListener{
+    interface EventListener{
         fun onPaymentSuccess()
     }
 

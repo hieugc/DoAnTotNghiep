@@ -3,8 +3,8 @@ package com.example.homex.extension
 import java.util.regex.Pattern
 
 val EMAIL_ADDRESS_PATTERN: Pattern = Pattern.compile(
-    "([a-zA-Z0-9]([\\+\\.\\_\\%\\-\\+][a-zA-Z0-9])*){1,256}" +
-            "\\@" +
+    "([a-zA-Z0-9]([+._%\\-][a-zA-Z0-9])*){1,256}" +
+            "@" +
             "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,64}" +
             "(" +
             "\\." +

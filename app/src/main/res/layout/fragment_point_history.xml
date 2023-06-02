@@ -30,14 +30,14 @@
                 style="@style/LargeText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="1200" />
+                 />
 
             <androidx.appcompat.widget.AppCompatTextView
                 style="@style/MediumText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
-                android:text="Points khả dụng" />
+                android:text="@string/available_point" />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnTopUp"

@@ -22,7 +22,6 @@ import com.example.homex.app.HOME
 import com.example.homex.app.ID
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentHomeDetailBinding
-import com.example.homex.extension.RequestStatus
 import com.example.homex.extension.betweenDays
 import com.example.homex.extension.convertIso8601ToLong
 import com.example.homex.extension.formatIso8601ToFormat
@@ -36,7 +35,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayoutMediator
 import com.homex.core.model.CalendarDate
 import com.homex.core.param.chat.ContactUserParam
-import com.homex.core.param.request.UpdateStatusParam
 import com.homex.core.util.AppEvent
 import com.homex.core.util.PrefUtil
 import org.koin.android.ext.android.inject
@@ -202,7 +200,7 @@ class HomeDetailFragment : BaseFragment<FragmentHomeDetailBinding>() {
     override fun setView() {
         ratingAdapter = HomeRatingAdapter(arrayListOf())
         binding.homeRatingRecView.adapter = ratingAdapter
-        val layoutManager = CenterZoomLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false, mShrinkAmount = 0.05f, mShrinkDistance = 0.8f, 1.2)
+        val layoutManager = CenterZoomLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false, 0.03f, 1f, 1.2)
         binding.homeRatingRecView.layoutManager = layoutManager
         binding.homeRatingRecView.setHasFixedSize(true)
 

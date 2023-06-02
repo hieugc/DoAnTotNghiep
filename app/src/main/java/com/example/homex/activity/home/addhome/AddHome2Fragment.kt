@@ -41,4 +41,11 @@ class AddHome2Fragment : BaseFragment<FragmentAddHome2Binding>() {
             viewModel.name.postValue(it?.toString()?:"")
         }
     }
+
+    override fun setViewModel() {
+        viewModel.predict.observe(this){
+            if (it != null)
+                binding.homePredictTxt.text = getString(R.string.points_per_day, it)
+        }
+    }
 }

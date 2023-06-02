@@ -36,7 +36,7 @@ class UserFragment : BaseFragment<FragmentUserBinding>() {
     override fun setView() {
         if(prefUtil.profile == null && prefUtil.token == null){
             binding.userLayout.gone()
-            binding.notLoginLayout.visible()
+            binding.llProfileNoLogin.visible()
             isAuthenticated = false
         }
         else if(prefUtil.profile != null){
@@ -67,7 +67,7 @@ class UserFragment : BaseFragment<FragmentUserBinding>() {
             if (isAuthenticated)
                 findNavController().navigate(R.id.action_userFragment_to_pointHistoryFragment)
         }
-        binding.goToAuthBtn.setOnClickListener {
+        binding.btnLogin.setOnClickListener {
             startActivity(AuthActivity.open(requireContext()))
         }
         binding.btnPendingRequests.setOnClickListener {

@@ -23,6 +23,7 @@ class YourHomeViewModel(private val repository: YourHomeRepository): ViewModel()
     val cityLiveData = MediatorLiveData<ArrayList<BingLocation>?>()
     val districtLiveData = MediatorLiveData<ArrayList<BingLocation>?>()
     val wardLiveData = MediatorLiveData<ArrayList<BingLocation>?>()
+    val predictLiveData = MediatorLiveData<Int?>()
 
     fun createHome(body: RequestBody){
         AppEvent.showPopUp()
@@ -178,6 +179,24 @@ class YourHomeViewModel(private val repository: YourHomeRepository): ViewModel()
                 when (it) {
                     is ResultResponse.Success -> {
                         wardLiveData.value = it.data
+                    }
+                    is ResultResponse.Error ->{
+                        AppEvent.showPopUpError(it.message)
+                    }
+                    else -> {
+                        Log.d("Loading", "hello")
+                    }
+                }
+            }
+        }
+    }
+
+    fun predictHouse(idCity: Int, lat: Double, lng: Double, rating: Double, area: Int){
+        viewModelScope.launch {
+            predictLiveData.addSource(repository.predictHouse(idCity, lat, lng, rating, area)){
+                when (it) {
+                    is ResultResponse.Success -> {
+                        predictLiveData.value = it.data
                     }
                     is ResultResponse.Error ->{
                         AppEvent.showPopUpError(it.message)

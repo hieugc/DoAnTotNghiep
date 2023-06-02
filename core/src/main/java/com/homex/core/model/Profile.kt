@@ -26,13 +26,13 @@ class Profile(
         return "${lastName?:""} ${firstName?:""}"
     }
 
-    public fun getDobDDMMYYYY(): String {
-        val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+    fun getDobDDMMYYYY(): String {
+        val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
         formatter.timeZone = TimeZone.getTimeZone("UTC")
         val value = formatter.parse(birthDay)
-        val dateFormatter = SimpleDateFormat("dd/MM/yyyy") //this format changeable
+        val dateFormatter =
+            SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()) //this format changeable
         dateFormatter.timeZone = TimeZone.getDefault()
-        val dob = dateFormatter.format(value)
-        return dob
+        return dateFormatter.format(value)
     }
 }

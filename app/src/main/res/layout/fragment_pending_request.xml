@@ -7,28 +7,15 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-                <com.facebook.shimmer.ShimmerFrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/requestShimmer"
-                    app:layout_constraintTop_toTopOf="parent">
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        >
-                        <include layout="@layout/request_shimmer"/>
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/swipeRefreshLayout"
+            app:layout_constraintTop_toTopOf="parent">
 
-                        <include layout="@layout/request_shimmer"/>
 
-                        <include layout="@layout/request_shimmer"/>
-
-                    </LinearLayout>
-
-                </com.facebook.shimmer.ShimmerFrameLayout>
-
-                <androidx.recyclerview.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
@@ -41,25 +28,8 @@
                     tools:itemCount="3"
                     android:id="@+id/requestRecView"
                     app:layout_constraintTop_toTopOf="parent"/>
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/noHomeTxt"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="50dp"
-                    android:layout_marginBottom="25dp"
-                    android:textStyle="bold"
-                    android:gravity="center"
-                    android:text="@string/system_will_notify_you_when_new_request_come"
-                    android:textColor="@color/gray"
-                    android:textSize="16sp"
-                    android:visibility="gone"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:textAllCaps="true" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -77,7 +47,7 @@
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Chưa có yêu cầu nào"
+                android:text="@string/no_request"
                 android:textColor="@color/gray7"/>
 
         </LinearLayout>

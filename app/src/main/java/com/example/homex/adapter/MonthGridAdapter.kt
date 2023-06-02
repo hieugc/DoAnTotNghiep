@@ -13,12 +13,10 @@ import com.example.homex.extension.formatIso8601ToFormat
 import com.example.homex.extension.longToDate
 import com.homex.core.model.CalendarDate
 import com.homex.core.model.DateRange
-import java.text.SimpleDateFormat
-import java.util.*
-import kotlin.collections.ArrayList
+import java.util.Date
 
 
-class MonthGridAdapter(val dayOfMonth: ArrayList<CalendarDate> = arrayListOf(), val selectedDates: Pair<CalendarDate?, CalendarDate?> = Pair(null, null), val invalid: MutableList<DateRange>? = null, val onClick: (CalendarDate)->Unit): BaseAdapter(){
+class MonthGridAdapter(private val dayOfMonth: ArrayList<CalendarDate> = arrayListOf(), private val selectedDates: Pair<CalendarDate?, CalendarDate?> = Pair(null, null), private val invalid: MutableList<DateRange>? = null, val onClick: (CalendarDate)->Unit): BaseAdapter(){
     private lateinit var viewHolder: DateItemViewHolder
     override fun getCount(): Int {
         return dayOfMonth.size
@@ -120,26 +118,13 @@ class MonthGridAdapter(val dayOfMonth: ArrayList<CalendarDate> = arrayListOf(), 
                     )
                 }
             }else if(this.time.longToDate() == selectedDates.second?.time?.time?.longToDate()){
-                if(selectedDates.second != null){
-                    viewHolder.binding.root.background = ContextCompat.getDrawable(viewHolder.itemView.context, R.drawable.end_date_bg)
-                    viewHolder.binding.root.setTextColor(
-                        ContextCompat.getColorStateList(
-                            viewHolder.itemView.context,
-                            R.color.white
-                        )
-                    )
-                }else {
-                    viewHolder.binding.root.background = ContextCompat.getDrawable(
+                viewHolder.binding.root.background = ContextCompat.getDrawable(viewHolder.itemView.context, R.drawable.end_date_bg)
+                viewHolder.binding.root.setTextColor(
+                    ContextCompat.getColorStateList(
                         viewHolder.itemView.context,
-                        R.drawable.selected_date_bg
+                        R.color.white
                     )
-                    viewHolder.binding.root.setTextColor(
-                        ContextCompat.getColorStateList(
-                            viewHolder.itemView.context,
-                            R.color.white
-                        )
-                    )
-                }
+                )
             }
             else if(this.time.longToDate() == date.time.longToDate()){
                 viewHolder.binding.root.background = ContextCompat.getDrawable(

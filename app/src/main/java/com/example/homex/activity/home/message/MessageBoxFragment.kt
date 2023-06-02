@@ -1,7 +1,11 @@
 package com.example.homex.activity.home.message
 
+import android.content.Context
 import android.os.Bundle
+import android.os.IBinder
+import android.util.Log
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -26,12 +30,13 @@ import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class MessageBoxFragment : BaseFragment<FragmentMessageBoxBinding>() {
     override val layoutId: Int = R.layout.fragment_message_box
     private val args: MessageBoxFragmentArgs by navArgs()
-    private val viewModel: ChatViewModel by sharedViewModel()
+    private val viewModel: ChatViewModel by viewModel()
     private lateinit var adapter: MessageAdapter
     private val messageList = arrayListOf<Message>()
     private val userMessages = arrayListOf<UserMessage>()
@@ -40,23 +45,11 @@ class MessageBoxFragment : BaseFragment<FragmentMessageBoxBinding>() {
     private val limit = 20
     private val prefUtil : PrefUtil by inject()
     private var isShimmer = true
+    private var userChat: UserMessage? = null
+    private val sharedViewModel: ChatViewModel by sharedViewModel()
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        (activity as HomeActivity).setPropertiesScreen(
-            showLogo = false,
-            showBottomNav = false,
-            showTitleApp = Pair(false, ""),
-            showMessage = false,
-            showMenu = true,
-            showBoxChatLayout = Pair(false, null),
-        )
-        binding.messageShimmer.gone()
-        if (isShimmer){
-            binding.messageShimmer.startShimmer()
-            binding.messageShimmer.visible()
-            binding.messageRecView.visibility = View.INVISIBLE
-        }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         val param = Pagination(page++, limit)
         if (args.id != 0){
             viewModel.getMessagesInChatRoom(param = GetMessagesParam(idRoom = args.id, param))
@@ -64,78 +57,20 @@ class MessageBoxFragment : BaseFragment<FragmentMessageBoxBinding>() {
             body = "\"${args.id}\"".toRequestBody(mediaType)
             viewModel.seenAll(body)
         }
-    }
-
-    override fun setView() {
-        adapter = MessageAdapter(
-            messageList,
-            userMessages,
-            prefUtil.profile?.userAccess
-        )
-        binding.messageRecView.adapter = adapter
-        val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, true)
-        binding.messageRecView.layoutManager = layoutManager
-        binding.messageRecView.setHasFixedSize(true)
-    }
-
-    override fun setEvent() {
-        binding.addBtn.setOnClickListener {
-            if(binding.actionLayout.visibility == View.GONE)
-            {
-                binding.actionLayout.visible()
-                binding.addBtn.setImageDrawable(ContextCompat.getDrawable(requireContext(),
-                    R.drawable.ic_close_circle
-                ))
-            }
-            else if(binding.actionLayout.visibility == View.VISIBLE)
-            {
-                binding.actionLayout.gone()
-                binding.addBtn.setImageDrawable(ContextCompat.getDrawable(requireContext(),
-                    R.drawable.ic_pluscircle
-                ))
-            }
-        }
-
-        binding.createRequestBtn.setOnClickListener {
-            if (userMessages.isNotEmpty()){
-                val user = userMessages[0]
-                user.userAccess?.let {
-                    val action = MessageBoxFragmentDirections.actionMessageBoxFragmentToCreateRequestFragment(it)
-                    findNavController().navigate(action)
-                }
-            }
-
-        }
-        binding.sendBtn.setOnClickListener {
-            if(binding.msgEditText.text.toString() != ""){
-                val param = SendMessageParam(
-                    idRoom = args.id,
-                    idReply = 0,
-                    message = binding.msgEditText.text.toString()
-                )
-                viewModel.sendMessage(param)
-                binding.msgEditText.setText("")
-            }
-        }
-        binding.msgInputLayout.setOnClickListener {
-        }
-    }
-
-    override fun setViewModel() {
         viewModel.messages.observe(this){
             if(it != null){
-                userMessages.clear()
                 val users = it.userMessages
                 if(users != null){
                     userMessages.addAll(users)
                     if (users.size > 0){
+                        userChat = users.first()
                         (activity as HomeActivity).setPropertiesScreen(
                             showLogo = false,
                             showBottomNav = false,
                             showTitleApp = Pair(false, ""),
                             showMessage = false,
                             showMenu = true,
-                            showBoxChatLayout = Pair(true, it.userMessages?.get(0)),
+                            showBoxChatLayout = Pair(true, userChat),
                         )
                     }
                 }
@@ -199,10 +134,9 @@ class MessageBoxFragment : BaseFragment<FragmentMessageBoxBinding>() {
             }
         }
 
-        viewModel.seenAll.observe(this){}
-
-        viewModel.newMessage.observe(this){
+        sharedViewModel.newMessage.observe(this){
             if (it != null){
+                Log.d("newMessageBox", "${it.messages}")
                 val messages = it.messages
                 if (messages != null){
                     val date = messages[0].createdDate
@@ -229,11 +163,89 @@ class MessageBoxFragment : BaseFragment<FragmentMessageBoxBinding>() {
                     viewModel.seenAll(body)
                     binding.messageRecView.smoothScrollToPosition(0)
                 }
-                viewModel.newMessage.postValue(null)
+            }
+        }
+    }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        (activity as HomeActivity).setPropertiesScreen(
+            showLogo = false,
+            showBottomNav = false,
+            showTitleApp = Pair(false, ""),
+            showMessage = false,
+            showMenu = true,
+            showBoxChatLayout = Pair(true, userChat),
+        )
+        binding.messageShimmer.gone()
+        if (isShimmer){
+            binding.messageShimmer.startShimmer()
+            binding.messageShimmer.visible()
+            binding.messageRecView.visibility = View.INVISIBLE
+        }
+    }
+
+    override fun setView() {
+        adapter = MessageAdapter(
+            messageList,
+            userMessages,
+            prefUtil.profile?.userAccess
+        )
+        binding.messageRecView.adapter = adapter
+        val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, true)
+        binding.messageRecView.layoutManager = layoutManager
+        binding.messageRecView.setHasFixedSize(true)
+    }
+
+    override fun setEvent() {
+        binding.addBtn.setOnClickListener {
+            if(binding.actionLayout.visibility == View.GONE)
+            {
+                binding.actionLayout.visible()
+                binding.addBtn.setImageDrawable(ContextCompat.getDrawable(requireContext(),
+                    R.drawable.ic_close_circle
+                ))
+            }
+            else if(binding.actionLayout.visibility == View.VISIBLE)
+            {
+                binding.actionLayout.gone()
+                binding.addBtn.setImageDrawable(ContextCompat.getDrawable(requireContext(),
+                    R.drawable.ic_pluscircle
+                ))
             }
         }
 
-        viewModel.sendMessage.observe(this){}
+        binding.createRequestBtn.setOnClickListener {
+            if (userMessages.isNotEmpty()){
+                val user = userMessages[0]
+                user.userAccess?.let {
+                    val action = MessageBoxFragmentDirections.actionMessageBoxFragmentToCreateRequestFragment(it)
+                    findNavController().navigate(action)
+                }
+            }
+
+        }
+        binding.sendBtn.setOnClickListener {
+            if(binding.msgEditText.text.toString() != ""){
+                val param = SendMessageParam(
+                    idRoom = args.id,
+                    idReply = 0,
+                    message = binding.msgEditText.text.toString()
+                )
+                viewModel.sendMessage(param)
+                binding.msgEditText.setText("")
+            }
+        }
+        binding.msgInputLayout.setOnClickListener {
+        }
     }
 
+    override fun setViewModel() {
+        viewModel.seenAll.observe(this){}
+        viewModel.sendMessage.observe(this){}
+    }
+    fun hideKeyboard(windowToken: IBinder){
+        val imm =
+            activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(windowToken, 0)
+    }
 }

@@ -1,6 +1,5 @@
 package com.example.homex.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -11,8 +10,6 @@ import com.example.homex.databinding.MessageItemNoAvatarBinding
 import com.example.homex.databinding.MessageTimeItemBinding
 import com.example.homex.databinding.MyMessageItemBinding
 import com.example.homex.extension.convertToRelativeDate
-import com.example.homex.extension.dpToPx
-import com.example.homex.extension.formatIso8601ToFormat
 import com.homex.core.model.Message
 import com.homex.core.model.UserMessage
 
@@ -21,7 +18,7 @@ private const val MESSAGE = 2
 private const val TIME = 3
 private const val MESSAGE_NO_AVATAR = 4
 
-class MessageAdapter(var messageList: ArrayList<Message>?, var userMessages: ArrayList<UserMessage>?, var userAccess: String? = null): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class MessageAdapter(private var messageList: ArrayList<Message>?, private var userMessages: ArrayList<UserMessage>?, var userAccess: String? = null): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         if (viewType == TIME){
             return TimeViewHolder(
@@ -76,26 +73,25 @@ class MessageAdapter(var messageList: ArrayList<Message>?, var userMessages: Arr
             MY_MESSAGE->{
                 val tempHolder = holder as MyMessageViewHolder
                 tempHolder.binding.textMsg.text = item?.message
-                if(position > 0)
-                {
-                    val nextItem = messageList?.get(position - 1)
-                    if (nextItem?.idSend == userAccess){
-                        val lastParams = holder.itemView.layoutParams as ViewGroup.MarginLayoutParams
-                        lastParams.bottomMargin = 4f.dpToPx(holder.itemView.context)
-                        holder.itemView.requestLayout()
-                    }else{
-                        val lastParams = holder.itemView.layoutParams as ViewGroup.MarginLayoutParams
-                        lastParams.bottomMargin = 8f.dpToPx(holder.itemView.context)
-                        holder.itemView.requestLayout()
-                    }
-                }else{
-                    val lastParams = holder.itemView.layoutParams as ViewGroup.MarginLayoutParams
-                    lastParams.bottomMargin = 8f.dpToPx(holder.itemView.context)
-                    holder.itemView.requestLayout()
-                }
+//                if(position > 0)
+//                {
+//                    val nextItem = messageList?.get(position - 1)
+//                    if (nextItem?.idSend == userAccess){
+//                        val lastParams = holder.itemView.layoutParams as ViewGroup.MarginLayoutParams
+//                        lastParams.bottomMargin = 2f.dpToPx(holder.itemView.context)
+//                        holder.itemView.requestLayout()
+//                    }else{
+//                        val lastParams = holder.itemView.layoutParams as ViewGroup.MarginLayoutParams
+//                        lastParams.bottomMargin = 4f.dpToPx(holder.itemView.context)
+//                        holder.itemView.requestLayout()
+//                    }
+//                }else{
+//                    val lastParams = holder.itemView.layoutParams as ViewGroup.MarginLayoutParams
+//                    lastParams.bottomMargin = 4f.dpToPx(holder.itemView.context)
+//                    holder.itemView.requestLayout()
+//                }
             }
             TIME->{
-                Log.e("time", "${item?.createdDate}")
                 val tempHolder = holder as TimeViewHolder
                 tempHolder.binding.msgTimeTV.text = item?.createdDate.convertToRelativeDate()
             }

@@ -41,6 +41,7 @@
             android:id="@+id/homeImg"
             android:layout_width="match_parent"
             android:layout_height="170dp"
+            android:adjustViewBounds="true"
             loadImage="@{ !home.images.empty ? home.images.get(0).data : null}"
             app:layout_constraintTop_toTopOf="parent"
             android:src="@mipmap/location"/>
@@ -69,14 +70,14 @@
                 android:layout_gravity="center_vertical"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="@{home.location}"
+                android:text="@{home.fullLocation}"
                 android:textColor="@color/white" />
 
 
         </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@{home.name}"
             android:id="@+id/homeName"
@@ -84,6 +85,8 @@
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="24dp"
             style="@style/HomeTitle"
+            app:layout_constraintEnd_toStartOf="@id/appCompatTextView31"
+            android:layout_marginEnd="8dp"
             app:layout_constraintTop_toBottomOf="@id/homeImg"/>
 
         <androidx.appcompat.widget.AppCompatImageView

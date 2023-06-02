@@ -14,15 +14,15 @@ import com.example.homex.extension.gone
 import com.example.homex.extension.visible
 import com.example.homex.viewmodel.RequestViewModel
 import com.homex.core.model.response.CircleRequest
-import org.koin.androidx.viewmodel.ext.android.sharedViewModel
+import com.homex.core.util.AppEvent
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class CircleRequestPagerFragment : BaseFragment<FragmentCircleRequestPagerBinding>() {
     override val layoutId: Int = R.layout.fragment_circle_request_pager
     private lateinit var adapter: CircleRequestAdapter
     private var requestType: Int = StatusWaitingRequest.INIT.ordinal
-    private val viewModel: RequestViewModel by sharedViewModel()
+    private val viewModel: RequestViewModel by viewModel()
     private val requestList = arrayListOf<CircleRequest>()
-    private var isShimmer = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,16 +30,21 @@ class CircleRequestPagerFragment : BaseFragment<FragmentCircleRequestPagerBindin
         arguments?.takeIf { it.containsKey(REQUEST_STATUS) }?.apply {
             requestType = getInt(REQUEST_STATUS)
         }
+        viewModel.getCircleRequest()
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun setEvent() {
+        initSwipeLayout()
+    }
 
-        if (isShimmer) {
+    private fun initSwipeLayout(){
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            AppEvent.showPopUp()
             binding.noRequestLayout.gone()
-            binding.rvCircleRequest.gone()
-            binding.requestShimmer.visible()
-            binding.requestShimmer.startShimmer()
+            requestList.clear()
+            binding.rvCircleRequest.visibility = View.INVISIBLE
+            viewModel.getCircleRequest()
+            binding.swipeRefreshLayout.isRefreshing = false
         }
     }
 
@@ -74,11 +79,6 @@ class CircleRequestPagerFragment : BaseFragment<FragmentCircleRequestPagerBindin
 
     override fun setViewModel() {
         viewModel.circleRequestResponseListLiveDate.observe(viewLifecycleOwner) {
-            if (isShimmer) {
-                binding.requestShimmer.gone()
-                binding.requestShimmer.stopShimmer()
-                isShimmer = false
-            }
             if (it != null) {
                 requestList.clear()
                 val listRequest = ArrayList<CircleRequest>()
@@ -96,6 +96,7 @@ class CircleRequestPagerFragment : BaseFragment<FragmentCircleRequestPagerBindin
                     binding.noRequestLayout.visible()
                 }
             }
+            AppEvent.closePopup()
         }
     }
 }

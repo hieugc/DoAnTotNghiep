@@ -1,6 +1,5 @@
 package com.example.homex.activity.home.pending.viewpager
 
-import android.os.Bundle
 import android.view.View
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,6 +12,7 @@ import com.example.homex.extension.RequestStatus
 import com.example.homex.extension.gone
 import com.example.homex.extension.visible
 import com.homex.core.model.response.RequestResponse
+import com.homex.core.util.AppEvent
 
 class PendingRequestDoneFragment: BaseFragmentViewPager<FragmentPendingRequestBinding>() {
     override val layoutId: Int
@@ -20,14 +20,18 @@ class PendingRequestDoneFragment: BaseFragmentViewPager<FragmentPendingRequestBi
     override val requestType: Int
         get() = RequestStatus.DONE.ordinal
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun setEvent() {
+        initSwipeLayout()
+    }
 
-        binding.requestShimmer.gone()
-        if (isShimmer){
-            binding.requestShimmer.startShimmer()
-            binding.requestShimmer.visible()
+    private fun initSwipeLayout(){
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            AppEvent.showPopUp()
+            binding.noRequestLayout.gone()
+            requestList.clear()
             binding.requestRecView.visibility = View.INVISIBLE
+            viewModel.getPendingRequest()
+            binding.swipeRefreshLayout.isRefreshing = false
         }
     }
 
@@ -61,26 +65,16 @@ class PendingRequestDoneFragment: BaseFragmentViewPager<FragmentPendingRequestBi
                 requestList.addAll(tmpList)
                 adapter.notifyDataSetChanged()
                 if (requestList.isEmpty()){
-                    binding.requestShimmer.stopShimmer()
-                    binding.requestShimmer.gone()
-                    isShimmer = false
                     binding.noRequestLayout.visible()
                 }else{
-                    if (isShimmer){
-                        binding.requestShimmer.stopShimmer()
-                        binding.requestShimmer.gone()
-                        isShimmer = false
-                    }
                     binding.requestRecView.visible()
                     binding.noRequestLayout.gone()
                 }
             }else{
-                binding.requestShimmer.stopShimmer()
-                binding.requestShimmer.gone()
-                isShimmer = false
                 binding.noRequestLayout.visible()
                 binding.requestRecView.gone()
             }
+            AppEvent.closePopup()
         }
     }
 }

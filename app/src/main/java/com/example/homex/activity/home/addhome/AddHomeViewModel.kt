@@ -25,6 +25,7 @@ class AddHomeViewModel: ViewModel() {
     val utilities = MutableLiveData<List<Int>>(listOf())
     val rules = MutableLiveData<List<Int>>(listOf())
     val files =  MutableLiveData<MutableList<File>?>(mutableListOf())
+    val predict = MutableLiveData<Int>()
     //For edit
     val id = MutableLiveData(0)
     val status = MutableLiveData(HomeStatus.VALID.ordinal)

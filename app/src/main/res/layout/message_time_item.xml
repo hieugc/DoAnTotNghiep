@@ -10,7 +10,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/msgTimeTV"
-        android:text="Thứ năm"
         android:textColor="@color/gray6"
         android:textSize="14sp"
         app:layout_constraintTop_toTopOf="parent"

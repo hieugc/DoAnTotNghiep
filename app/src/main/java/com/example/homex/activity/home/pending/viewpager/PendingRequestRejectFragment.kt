@@ -1,7 +1,6 @@
 package com.example.homex.activity.home.pending.viewpager
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
@@ -19,6 +18,7 @@ import com.example.homex.extension.visible
 import com.example.homex.viewmodel.ChatViewModel
 import com.homex.core.model.response.RequestResponse
 import com.homex.core.param.chat.ContactUserParam
+import com.homex.core.util.AppEvent
 import com.homex.core.util.PrefUtil
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -34,7 +34,6 @@ class PendingRequestRejectFragment: BaseFragmentViewPager<FragmentPendingRequest
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         chatViewModel.connectToUser.observe(this){ messageRoom ->
-            Log.e("messageRoom", "$messageRoom")
             if (messageRoom != null){
                 messageRoom.idRoom?.let {
                     findNavController().navigate(
@@ -49,14 +48,17 @@ class PendingRequestRejectFragment: BaseFragmentViewPager<FragmentPendingRequest
     }
 
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun setEvent() {
+        initSwipeLayout()
+    }
 
-        binding.requestShimmer.gone()
-        if (isShimmer){
-            binding.requestShimmer.startShimmer()
-            binding.requestShimmer.visible()
+    private fun initSwipeLayout(){
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            binding.noRequestLayout.gone()
+            requestList.clear()
             binding.requestRecView.visibility = View.INVISIBLE
+            viewModel.getPendingRequest()
+            binding.swipeRefreshLayout.isRefreshing = false
         }
     }
 
@@ -97,26 +99,16 @@ class PendingRequestRejectFragment: BaseFragmentViewPager<FragmentPendingRequest
                 requestList.addAll(tmpList)
                 adapter.notifyDataSetChanged()
                 if (requestList.isEmpty()){
-                    binding.requestShimmer.stopShimmer()
-                    binding.requestShimmer.gone()
-                    isShimmer = false
                     binding.noRequestLayout.visible()
                 }else{
-                    if (isShimmer){
-                        binding.requestShimmer.stopShimmer()
-                        binding.requestShimmer.gone()
-                        isShimmer = false
-                    }
                     binding.requestRecView.visible()
                     binding.noRequestLayout.gone()
                 }
             }else{
-                binding.requestShimmer.stopShimmer()
-                binding.requestShimmer.gone()
-                isShimmer = false
                 binding.noRequestLayout.visible()
                 binding.requestRecView.gone()
             }
+            AppEvent.closePopup()
         }
     }
 }

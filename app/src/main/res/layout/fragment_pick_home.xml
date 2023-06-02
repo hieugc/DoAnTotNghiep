@@ -16,7 +16,7 @@
             android:layout_marginBottom="25dp"
             android:textStyle="bold"
             android:gravity="center"
-            android:text="Người dùng này hiện tại\nchưa có nhà trong hệ thống"
+            android:text="@string/no_home_txt_others"
             android:textColor="@color/gray"
             android:textSize="16sp"
             android:visibility="gone"
@@ -64,11 +64,18 @@
 
         </com.facebook.shimmer.ShimmerFrameLayout>
 
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/swipeRefreshLayout"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@+id/appCompatTextView28">
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/pickHomeRecView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:paddingBottom="16dp"
             android:clipToPadding="false"
             android:nestedScrollingEnabled="false"
             android:overScrollMode="never"
@@ -77,6 +84,7 @@
             tools:itemCount="3"
             tools:listitem="@layout/search_home_item"
             app:layout_constraintTop_toBottomOf="@+id/appCompatTextView28" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

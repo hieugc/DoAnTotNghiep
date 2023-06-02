@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
@@ -44,7 +43,7 @@
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         android:layout_marginStart="16dp"
-                        android:text="Trạng thái yêu cầu:"
+                        android:text="@string/request_status"
                         android:textColor="@color/black_60" />
 
                     <androidx.appcompat.widget.AppCompatTextView
@@ -95,7 +94,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     android:layout_marginStart="24dp"
                     android:layout_marginTop="16dp"
-                    android:text="Bạn được yêu cầu"
+                    android:text="@string/you_offered"
                     android:textColor="@color/black_60" />
 
                 <LinearLayout
@@ -130,7 +129,7 @@
                             android:layout_weight="1"
                             android:layout_marginStart="12dp"
                             android:layout_gravity="center_vertical"
-                            android:text="Bạn" />
+                            android:text="@{request.house.user.fullName}" />
                     </LinearLayout>
                     <com.google.android.material.divider.MaterialDivider
                         android:layout_width="match_parent"
@@ -230,7 +229,7 @@
                     android:layout_marginStart="24dp"
                     android:layout_marginTop="16dp"
                     android:id="@+id/appCompatTextView1"
-                    android:text="Để trao đổi với"
+                    android:text="@string/request_for"
                     android:textColor="@color/black_60" />
 
                 <LinearLayout
@@ -266,7 +265,8 @@
                             android:layout_gravity="center_vertical"
                             android:layout_marginStart="12dp"
                             android:layout_weight="1"
-                            android:text="@{request.request.user.userName}" />
+                            android:textColor="@color/primary"
+                            android:text="@string/you" />
                     </LinearLayout>
 
                     <com.google.android.material.divider.MaterialDivider
@@ -281,7 +281,7 @@
                         android:layout_marginTop="12dp"
                         android:layout_marginStart="12dp"
                         android:gravity="center_vertical"
-                        android:text="Tổng cộng: " />
+                        android:text="@string/total" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -309,7 +309,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="4dp"
-                            android:text="Point"
+                            android:text="@string/point"
                             android:textColor="@color/black"
                             android:textSize="22sp" />
                     </LinearLayout>
@@ -349,7 +349,8 @@
                             android:layout_gravity="center_vertical"
                             android:layout_marginStart="12dp"
                             android:layout_weight="1"
-                            android:text="@{request.request.user.userName}" />
+                            android:textColor="@color/primary"
+                            android:text="@string/you" />
                     </LinearLayout>
 
                     <com.google.android.material.divider.MaterialDivider
@@ -453,7 +454,7 @@
                     android:layout_marginStart="24dp"
                     android:layout_marginTop="16dp"
                     android:id="@+id/appCompatTextView2"
-                    android:text="Thời gian"
+                    android:text="@string/time"
                     android:textColor="@color/black_60" />
 
                 <LinearLayout
@@ -486,7 +487,7 @@
                             android:layout_marginTop="8dp"
                             android:drawableStart="@drawable/ic_from_date"
                             android:gravity="center"
-                            formatDate="@{request.request.startDate}" />
+                            dateFormat="@{request.request.startDate}" />
                     </LinearLayout>
 
                     <com.google.android.material.divider.MaterialDivider
@@ -499,7 +500,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:orientation="vertical"
-                        android:paddingStart="8dp">
+                        android:layout_marginStart="8dp">
 
                         <androidx.appcompat.widget.AppCompatTextView
                             style="@style/MediumText"
@@ -514,13 +515,13 @@
                             android:layout_marginTop="8dp"
                             android:drawableStart="@drawable/ic_to_date"
                             android:gravity="center"
-                            formatDate="@{request.request.endDate}" />
+                            dateFormat="@{request.request.endDate}" />
                     </LinearLayout>
                 </LinearLayout>
 
                 <androidx.appcompat.widget.AppCompatButton
                     style="@style/FlexLongButtonSecondary"
-                    android:text="Liên hệ"
+                    android:text="@string/contact"
                     android:id="@+id/contactBtn"
                     app:layout_constraintTop_toBottomOf="@id/linearLayout3"
                     android:layout_gravity="bottom"

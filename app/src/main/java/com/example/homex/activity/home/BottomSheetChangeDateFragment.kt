@@ -1,18 +1,8 @@
 package com.example.homex.activity.home
 
-import android.app.Dialog
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
-import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.ArrayAdapter
-import android.widget.FrameLayout
-import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -29,16 +19,15 @@ import com.example.homex.extension.enable
 import com.example.homex.extension.gone
 import com.example.homex.extension.longToDate
 import com.example.homex.extension.visible
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.example.homex.utils.CustomBottomSheet
 import com.homex.core.model.CalendarDate
 import java.util.Calendar
 import java.util.Date
 
 
-class BottomSheetChangeDateFragment : BottomSheetDialogFragment() {
-    private lateinit var binding: FragmentBottomSheetChangeDateBinding
+class BottomSheetChangeDateFragment : CustomBottomSheet<FragmentBottomSheetChangeDateBinding>() {
+    override val layoutId: Int
+        get() = R.layout.fragment_bottom_sheet_change_date
     private lateinit var adapter: CalendarAdapter
     private var loading = true
     private var end = false
@@ -46,22 +35,7 @@ class BottomSheetChangeDateFragment : BottomSheetDialogFragment() {
     private var numberOfPeople = 1
     private val args: BottomSheetChangeDateFragmentArgs by navArgs()
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        dialog?.window?.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-        dialog?.window?.navigationBarColor = ContextCompat.getColor(requireContext(), R.color.white)
-
-        binding = FragmentBottomSheetChangeDateBinding.inflate(layoutInflater)
-
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
+    override fun setView() {
         numberOfPeople = if (args.numberOfPeople != 0){
             binding.pickPeopleLayout.visible()
             binding.edtPeople.setText(args.numberOfPeople.toString())
@@ -69,29 +43,6 @@ class BottomSheetChangeDateFragment : BottomSheetDialogFragment() {
         }else{
             binding.pickPeopleLayout.gone()
             0
-        }
-
-
-        binding.edtPeople.addTextChangedListener {
-            numberOfPeople = if (it?.toString() == "") {
-                binding.edtPeople.setText("1")
-                1
-            } else if(it?.toString()?.toInt() == 0){
-                binding.edtPeople.setText("1")
-                1
-            }else{
-                it?.toString()?.toInt()?:1
-            }
-        }
-
-        binding.addPeople.setOnClickListener {
-            val num = binding.edtPeople.text.toString().toInt()
-            binding.edtPeople.setText(getString(R.string.int_input_string, num + 1))
-        }
-        binding.minusPeople.setOnClickListener {
-            val num = binding.edtPeople.text.toString().toInt()
-            if(num == 0) return@setOnClickListener
-            binding.edtPeople.setText(getString(R.string.int_input_string, num - 1))
         }
 
         selectedDates = Pair(args.startDate, args.endDate)
@@ -105,11 +56,6 @@ class BottomSheetChangeDateFragment : BottomSheetDialogFragment() {
         }
         else
             binding.applyButton.disable()
-
-
-        binding.closeBtn.setOnClickListener {
-            dismiss()
-        }
 
         val dayOfWeekList =
             listOf(
@@ -199,7 +145,6 @@ class BottomSheetChangeDateFragment : BottomSheetDialogFragment() {
         val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         binding.calendarRecView.layoutManager = layoutManager
 
-
         binding.calendarRecView.addOnScrollListener(object : RecyclerView.OnScrollListener(){
             private var visibleItemCount: Int = 0
             private var totalItemCount: Int = 0
@@ -240,6 +185,33 @@ class BottomSheetChangeDateFragment : BottomSheetDialogFragment() {
                 }
             }
         })
+    }
+
+    override fun setEvent() {
+        binding.edtPeople.addTextChangedListener {
+            numberOfPeople = if (it?.toString() == "") {
+                binding.edtPeople.setText("1")
+                1
+            } else if(it?.toString()?.toInt() == 0){
+                binding.edtPeople.setText("1")
+                1
+            }else{
+                it?.toString()?.toInt()?:1
+            }
+        }
+
+        binding.addPeople.setOnClickListener {
+            val num = binding.edtPeople.text.toString().toInt()
+            binding.edtPeople.setText(getString(R.string.int_input_string, num + 1))
+        }
+        binding.minusPeople.setOnClickListener {
+            val num = binding.edtPeople.text.toString().toInt()
+            if(num == 0) return@setOnClickListener
+            binding.edtPeople.setText(getString(R.string.int_input_string, num - 1))
+        }
+        binding.closeBtn.setOnClickListener {
+            dismiss()
+        }
 
         binding.applyButton.setOnClickListener {
             findNavController().previousBackStackEntry?.savedStateHandle?.set("DATE", selectedDates)
@@ -247,22 +219,5 @@ class BottomSheetChangeDateFragment : BottomSheetDialogFragment() {
                 findNavController().previousBackStackEntry?.savedStateHandle?.set("NOP", numberOfPeople)
             dialog?.dismiss()
         }
-    }
-
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dialog : BottomSheetDialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
-        dialog.setOnShowListener {
-            val d: BottomSheetDialog = it as BottomSheetDialog
-            val bottomSheet : FrameLayout? =
-                d.findViewById(com.google.android.material.R.id.design_bottom_sheet)
-            bottomSheet?.apply {
-                BottomSheetBehavior.from(bottomSheet).state = BottomSheetBehavior.STATE_EXPANDED
-                BottomSheetBehavior.from(bottomSheet).isDraggable = false
-                dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-                dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-            }
-
-        }
-        return dialog
     }
 }

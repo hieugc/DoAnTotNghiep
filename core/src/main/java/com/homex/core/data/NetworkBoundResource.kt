@@ -81,7 +81,6 @@ constructor(private val dispatcher: CoroutineDispatcher = Dispatchers.IO) {
 
             if (apiResponse.isSuccessful) {
                 val body = apiResponse.body()
-                Log.e("body", body.toString())
                 when (apiResponse.code()) {
                     200, 201, 204 -> {
                         body?.let {
@@ -98,10 +97,8 @@ constructor(private val dispatcher: CoroutineDispatcher = Dispatchers.IO) {
                         if (body == null) {
                             setValue(ResultResponse.Success(null, apiResponse.message()))
                         }
-                        Log.e("apiSuccess", body.toString())
                     }
                     else -> {
-                        Log.e("apiError", body.toString())
                         setValue(ResultResponse.Error(apiResponse.message(), apiResponse.code()))
                     }
                 }

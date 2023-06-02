@@ -102,7 +102,6 @@ class ProfileViewModel(private val repository: ProfileRepository): ViewModel() {
     }
 
     fun getHistoryAll(){
-        AppEvent.showPopUp()
         viewModelScope.launch {
             paymentHistoryAllLiveData.addSource(repository.getHistoryAll()){
                 when (it) {
@@ -121,7 +120,6 @@ class ProfileViewModel(private val repository: ProfileRepository): ViewModel() {
     }
 
     fun getHistoryReceived(){
-        AppEvent.showPopUp()
         viewModelScope.launch {
             paymentHistoryReceivedLiveData.addSource(repository.getHistoryReceived()){
                 when (it) {
@@ -140,7 +138,6 @@ class ProfileViewModel(private val repository: ProfileRepository): ViewModel() {
     }
 
     fun getHistoryUsed(){
-        AppEvent.showPopUp()
         viewModelScope.launch {
             paymentHistoryUsedLiveData.addSource(repository.getHistoryUsed()){
                 when (it) {

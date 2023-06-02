@@ -9,4 +9,4 @@
     android:padding="16dp"
     app:drawableTint="@color/black"
     android:gravity="center_vertical"
-    android:text="Wifi" />
+    android:text="@string/wifi" />

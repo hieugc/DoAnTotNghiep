@@ -2,11 +2,9 @@ package com.example.homex.activity.home.search
 
 import android.Manifest
 import android.graphics.BitmapFactory
-import android.graphics.Color
 import android.graphics.PointF
 import android.location.LocationManager
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
@@ -29,16 +27,12 @@ import com.homex.core.model.Filter
 import com.homex.core.model.Home
 import com.homex.core.util.AppEvent
 import com.microsoft.maps.GPSMapLocationProvider
-import com.microsoft.maps.Geopath
 import com.microsoft.maps.Geopoint
-import com.microsoft.maps.Geoposition
 import com.microsoft.maps.MapAnimationKind
 import com.microsoft.maps.MapElementLayer
 import com.microsoft.maps.MapFlyout
 import com.microsoft.maps.MapIcon
 import com.microsoft.maps.MapImage
-import com.microsoft.maps.MapPolygon
-import com.microsoft.maps.MapPolyline
 import com.microsoft.maps.MapRenderMode
 import com.microsoft.maps.MapScene
 import com.microsoft.maps.MapStyleSheet
@@ -263,7 +257,6 @@ class SearchResultFragment : BaseFragment<FragmentSearchResultBinding>(), EasyPe
     override fun setEvent() {
         binding.homeSearchItem.root.setOnClickListener {
             binding.selectedHouse?.id?.let {
-                Log.e("current", "${findNavController().currentDestination}")
                 val action = SearchResultFragmentDirections.actionSearchResultFragmentToHomeDetailFragment(it)
                 findNavController().navigate(action)
             }
@@ -361,7 +354,6 @@ class SearchResultFragment : BaseFragment<FragmentSearchResultBinding>(), EasyPe
                 homeList
             ){ home ->
                 home.id?.let {
-                    Log.e("current1", "${findNavController().currentDestination}")
                     if (findNavController().currentDestination?.id != R.id.searchResultFragment)
                         return@SearchHomeAdapter
                     val action = SearchResultFragmentDirections.actionSearchResultFragmentToHomeDetailFragment(it)
@@ -395,7 +387,6 @@ class SearchResultFragment : BaseFragment<FragmentSearchResultBinding>(), EasyPe
     }
 
     override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {
-        Log.e("granted", "hello")
         requestingLocationPermission = false
         trackingUserLocation()
     }
@@ -447,39 +438,39 @@ class SearchResultFragment : BaseFragment<FragmentSearchResultBinding>(), EasyPe
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
     }
 
-    fun drawLineOnMap() {
-        val center = mapView.center.position
-        val geopoints = ArrayList<Geoposition>()
-        geopoints.add(Geoposition(center.latitude - 0.0005, center.longitude - 0.001))
-        geopoints.add(Geoposition(center.latitude + 0.0005, center.longitude + 0.001))
-        val mapPolyline = MapPolyline()
-        mapPolyline.path = Geopath(geopoints)
-        mapPolyline.strokeColor = Color.BLACK
-        mapPolyline.strokeWidth = 3
-        mapPolyline.isStrokeDashed = true
-
-        // Add Polyline to a layer on the map control.
-        val linesLayer = MapElementLayer()
-        linesLayer.zIndex = 1.0f
-        linesLayer.elements.add(mapPolyline)
-        mapView.layers.add(linesLayer)
-    }
-
-    fun highlightArea() {
-        val center = mapView.center.position
-        val geopoints = ArrayList<Geoposition>()
-        geopoints.add(Geoposition(center.latitude + 0.0005, center.longitude - 0.001))
-        geopoints.add(Geoposition(center.latitude - 0.0005, center.longitude - 0.001))
-        geopoints.add(Geoposition(center.latitude - 0.0005, center.longitude + 0.001))
-        val mapPolygon = MapPolygon()
-        mapPolygon.paths = listOf(Geopath(geopoints))
-        mapPolygon.fillColor = Color.RED
-        mapPolygon.strokeColor = Color.BLUE
-        mapPolygon.strokeWidth = 3
-        mapPolygon.isStrokeDashed = false
-        val highlightsLayer = MapElementLayer()
-        highlightsLayer.zIndex = 1.0f
-        highlightsLayer.elements.add(mapPolygon)
-        mapView.layers.add(highlightsLayer)
-    }
+//    fun drawLineOnMap() {
+//        val center = mapView.center.position
+//        val geopoints = ArrayList<Geoposition>()
+//        geopoints.add(Geoposition(center.latitude - 0.0005, center.longitude - 0.001))
+//        geopoints.add(Geoposition(center.latitude + 0.0005, center.longitude + 0.001))
+//        val mapPolyline = MapPolyline()
+//        mapPolyline.path = Geopath(geopoints)
+//        mapPolyline.strokeColor = Color.BLACK
+//        mapPolyline.strokeWidth = 3
+//        mapPolyline.isStrokeDashed = true
+//
+//        // Add Polyline to a layer on the map control.
+//        val linesLayer = MapElementLayer()
+//        linesLayer.zIndex = 1.0f
+//        linesLayer.elements.add(mapPolyline)
+//        mapView.layers.add(linesLayer)
+//    }
+//
+//    fun highlightArea() {
+//        val center = mapView.center.position
+//        val geopoints = ArrayList<Geoposition>()
+//        geopoints.add(Geoposition(center.latitude + 0.0005, center.longitude - 0.001))
+//        geopoints.add(Geoposition(center.latitude - 0.0005, center.longitude - 0.001))
+//        geopoints.add(Geoposition(center.latitude - 0.0005, center.longitude + 0.001))
+//        val mapPolygon = MapPolygon()
+//        mapPolygon.paths = listOf(Geopath(geopoints))
+//        mapPolygon.fillColor = Color.RED
+//        mapPolygon.strokeColor = Color.BLUE
+//        mapPolygon.strokeWidth = 3
+//        mapPolygon.isStrokeDashed = false
+//        val highlightsLayer = MapElementLayer()
+//        highlightsLayer.zIndex = 1.0f
+//        highlightsLayer.elements.add(mapPolygon)
+//        mapView.layers.add(highlightsLayer)
+//    }
 }

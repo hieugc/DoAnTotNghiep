@@ -6,14 +6,11 @@ import com.example.homex.activity.home.HomeActivity
 import com.example.homex.adapter.CircleRequestViewPager
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentCircleRequestBinding
-import com.example.homex.viewmodel.RequestViewModel
 import com.google.android.material.tabs.TabLayoutMediator
-import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 class CircleRequestFragment : BaseFragment<FragmentCircleRequestBinding>() {
     override val layoutId: Int = R.layout.fragment_circle_request
     private lateinit var viewPagerAdapter: CircleRequestViewPager
-    private val viewModel: RequestViewModel by sharedViewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,7 +23,6 @@ class CircleRequestFragment : BaseFragment<FragmentCircleRequestBinding>() {
             showBoxChatLayout = Pair(false, null),
         )
 
-        viewModel.getCircleRequest()
     }
 
     override fun setView() {

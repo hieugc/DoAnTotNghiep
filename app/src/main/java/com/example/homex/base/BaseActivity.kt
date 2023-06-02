@@ -2,8 +2,11 @@ package com.example.homex.base
 
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.Rect
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import android.view.Window
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.homex.R
@@ -34,6 +37,21 @@ open class BaseActivity: PopupEventListener, AuthenticationListener , AppCompatA
     override fun onBackPressed() {
         moveTaskToBack(true)
         AppEvent.closePopup()
+    }
+
+    fun getContentHeight(): Int {
+        val rectangle = Rect()
+        val window: Window = window
+        window.decorView.getWindowVisibleDisplayFrame(rectangle)
+        val statusBarHeight = rectangle.top
+        val contentViewTop = window.findViewById<View>(Window.ID_ANDROID_CONTENT).height
+        val titleBarHeight = contentViewTop - statusBarHeight
+
+        Log.i(
+            "*** Height :: ",
+            "StatusBar Height= $statusBarHeight , TitleBar Height = $titleBarHeight, Content Top = $contentViewTop"
+        )
+        return contentViewTop
     }
 
     override fun onRequestPermissionsResult(
