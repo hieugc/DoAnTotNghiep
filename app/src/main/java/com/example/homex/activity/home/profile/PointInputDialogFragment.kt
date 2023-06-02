@@ -111,7 +111,7 @@ class PointInputDialogFragment(private val listener: EventListener) : DialogFrag
 
     private fun topUpPoint() {
         val input = binding.pointAmountInputEdtTxt.text.toString().trim()
-        val value = input.toLong()
+        val value = input.toLong()*1000
         viewModel.topUpPoint(TopUpPointParam(
             value
         ))
