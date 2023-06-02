@@ -175,8 +175,8 @@ class CreateRequestFragment : BaseFragment<FragmentCreateRequestBinding>() {
                 }
                 val house = viewModel.house.value
                 val idHouse = house?.id
-                val startDate = viewModel.startDate.value?.time?.time?.longToFormat("yyyy-MM-dd").toString()
-                val endDate = viewModel.endDate.value?.time?.time?.longToFormat("yyyy-MM-dd").toString()
+                val startDate = viewModel.startDate.value?.time?.time?.longToFormat("dd/MM/yyyy").toString()
+                val endDate = viewModel.endDate.value?.time?.time?.longToFormat("dd/MM/yyyy").toString()
                 val days = startDate.betweenDays(endDate)
                 var price = 0
                 val housePrice = house?.price
