@@ -18,8 +18,8 @@ function price(model1, model2) {
         price_1 = model1.price;
     }
     let price_2 = 0;
-    if (model2 != null) {
-        price_2 = model2.price;
+    if (model2 != null && model1 != null) {
+        price_2 = model1.price;
     }
 
     if (picker.options.endDate == null || picker.options.startDate == null) {
@@ -68,10 +68,12 @@ function confirmSelection(index) {
     if (index == 0) {
         model_1 = getModel(".list-house-1", listModel_1);
         $(".house-result")[index].innerHTML = houseItem(index, model_1);
+        $(".house-result")[index].classList.add("get");
     }
     else {
         model_2 = getModel(".list-house-2", listModel_2);
         $(".house-result")[index].innerHTML = houseItem(index, model_2);
+        $(".house-result")[index].classList.add("get");
     }
     hideListHouseModal(index);
     $(".contain-price").html(calPrice(model_1, model_2));
@@ -82,8 +84,8 @@ function getModel(tagList, listModel) {
             return listModel[0];
         }
         else {
-            let selected = $(tagList + " .house-card.selected");
-            let index = 0;
+            let selected = $(tagList + " .house-card.selected")[0].classList.value.replaceAll("house-card", "").replaceAll("selected", "").replaceAll("-", "").trim();
+            /*let index = 0;
             if (selected.length > 0) {
                 for (e in selected) {
                     if (selected[e].classList != undefined) {
@@ -93,8 +95,8 @@ function getModel(tagList, listModel) {
                         }
                     }
                 }
-            }
-            return listModel[index];
+            } */
+            return listModel[selected];
         }
     }
     return null;
@@ -180,7 +182,7 @@ function create(data) {
                             <div class="contain-issue bg-danger">
                                 ${error.responseJSON.message}
                             </div>
-                            <a href="/Member/History?action=true" class="btn btn-primary mt-3">Nạp thêm tiền</a>
+                            <a href="/Member/History?popup=true" class="btn btn-primary mt-3">Nạp thêm tiền</a>
                             `);
                 }
                 else {
@@ -226,4 +228,3 @@ function createRangeDate(model, minDate, maxDate) {
     }
     return new Litepicker(option);
 }
-

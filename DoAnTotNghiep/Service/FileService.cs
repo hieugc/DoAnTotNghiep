@@ -37,6 +37,21 @@ namespace DoAnTotNghiep.Service
             this._context.SaveChanges();
             return files;
         }
+        public void SaveRangeFileOfReport(UserReport report, List<Entity.File> files)
+        {
+            List<FileInUserReport> reportFiles = new List<FileInUserReport>();
+
+            foreach (var item in files)
+            {
+                reportFiles.Add(new FileInUserReport()
+                {
+                    IdFile = item.Id,
+                    IdUserReport = report.Id
+                });
+            }
+            this._context.FileInUserReports.AddRange(reportFiles);
+            this._context.SaveChanges();
+        }
         public void SaveRangeFileOfHouse(House house, List<Entity.File> files)
         {
             List<FileOfHouse> fileOfHouses = new List<FileOfHouse>();
@@ -55,7 +70,7 @@ namespace DoAnTotNghiep.Service
         public List<ImageBase> GetImageBases(House house, string host)
         {
             List<ImageBase> model = new List<ImageBase>();
-            if(house.FileOfHouses != null)
+            if (house.FileOfHouses != null)
             {
                 foreach (var f in house.FileOfHouses)
                 {
@@ -85,7 +100,7 @@ namespace DoAnTotNghiep.Service
             }
             return model;
         }
-        public List<Entity.File> AddFileHouse(House house, List<ImageBase?> imageBases, string rootPath)
+        public List<Entity.File> AddFile(List<ImageBase?> imageBases, string rootPath)
         {
             List<Entity.File> files = new List<Entity.File>();
             foreach (var item in imageBases)
@@ -101,7 +116,7 @@ namespace DoAnTotNghiep.Service
             }
             return files;
         }
-        public List<Entity.File> AddFileHouse(House house, IFormFileCollection formFile, string rootPath)
+        public List<Entity.File> AddFile(IFormFileCollection formFile, string rootPath)
         {
             List<Entity.File> files = new List<Entity.File>();
             foreach (var item in formFile)
@@ -247,12 +262,13 @@ namespace DoAnTotNghiep.Service
         public void Save(Entity.File files);
         public void Update(Entity.File files);
         public List<Entity.File> SaveRangeFile(List<Entity.File> files);
+        public void SaveRangeFileOfReport(UserReport report, List<Entity.File> files);
         public void SaveRangeFileOfHouse(House house, List<Entity.File> files);
         public List<ImageBase> GetImageBases(House house, string host);
         public List<ImageBase> GetImageBase(House house, string host);
         public Entity.File? GetFileById(int Id);
-        public List<Entity.File> AddFileHouse(House house, List<ImageBase?> imageBases, string rootPath);
-        public List<Entity.File> AddFileHouse(House house, IFormFileCollection formFile, string rootPath);
+        public List<Entity.File> AddFile(List<ImageBase?> imageBases, string rootPath);
+        public List<Entity.File> AddFile(IFormFileCollection formFile, string rootPath);
         public List<Entity.File> UpdateFileHouse(House house, List<ImageBase?> imageBases, string rootPath);
         public List<Entity.File> UpdateFileHouse(House house, IFormFileCollection formFile, List<int> IdRemove, string rootPath);
 

@@ -1,4 +1,10 @@
-﻿<form name="search" class="d-flex" id="container-explore" onload="getSuggest();">
-    <input type="text" class="rounded-start rounded-0 form-control" placeholder="Bạn muốn đi đâu?" name="explore" id="explore-input" onkeypress="return event.keyCode != 13;" />
-    <label class="btn btn-sm btn-primary rounded-0 rounded-end" onclick="explore()"><i class="fa-sharp fa-solid fa-magnifying-glass"></i></label>
-</form>
+﻿<div class="d-flex" id="container-explore">
+    <input type="text" class="rounded-start rounded-0 form-control" placeholder="Bạn muốn đi đâu?" name="explore" id="explore-input" autocomplete="off" />
+    <label class="btn btn-sm btn-primary rounded-0 rounded-end" onclick="selectSuggest(null)"><i class="fa-sharp fa-solid fa-magnifying-glass"></i></label>
+    <div id="explore-location-result">
+        <a class="position-relative" href="#" role="button" id="dropdownSuggest" data-bs-toggle="dropdown" aria-expanded="false"></a>
+        <div class="dropdown-menu" aria-labelledby="dropdownSuggest">
+            <div class="explore-location-result"></div>
+        </div>
+    </div>
+</div>

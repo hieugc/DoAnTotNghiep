@@ -47,7 +47,7 @@ namespace DoAnTotNghiep.ViewModels
         public UserMessageViewModel(User user, byte[] salt, string host)
         {
             this.UserAccess = Crypto.EncodeKey(user.Id.ToString(), salt);
-            this.UserName = user.FirstName + " " + user.LastName;
+            this.UserName = user.LastName + " " + user.FirstName;
             this.ImageUrl = (user.IdFile == null ? null :
                                     user.Files == null ? null :
                                     (host + "/" + user.Files.PathFolder + "/" + user.Files.FileName));

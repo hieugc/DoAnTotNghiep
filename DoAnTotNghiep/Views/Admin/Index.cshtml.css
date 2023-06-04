@@ -1,1 +1,6 @@
-﻿
+﻿.bx{
+    font-size: 24px;
+}
+#incomeChart{
+    padding: 24px;
+}

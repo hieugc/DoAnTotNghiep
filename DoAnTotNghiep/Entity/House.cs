@@ -30,7 +30,8 @@ namespace DoAnTotNghiep.Entity
                 IdUser = IdUser,
                 Status = Status,
                 StreetAddress = data.Location,
-                Bed = data.Bed
+                Bed = data.Bed,
+                CreatedDate = DateTime.Now
             };
         }
         public void EditHouse(EditHouse data)
@@ -64,6 +65,8 @@ namespace DoAnTotNghiep.Entity
                 context.Entry(this).Collection(m => m.Requests).Load();
             if (this.FeedBacks == null && !context.Entry(this).Collection(m => m.FeedBacks).IsLoaded)
                 context.Entry(this).Collection(m => m.FeedBacks).Load();
+            if (this.FeedBackOfCircles == null && !context.Entry(this).Collection(m => m.FeedBackOfCircles).IsLoaded)
+                context.Entry(this).Collection(m => m.FeedBackOfCircles).Load();
             if (this.FileOfHouses == null && !context.Entry(this).Collection(m => m.FileOfHouses).IsLoaded)
                 context.Entry(this).Collection(m => m.FileOfHouses).Load();
             if (this.RulesInHouses == null && !context.Entry(this).Collection(m => m.RulesInHouses).IsLoaded)
@@ -120,6 +123,9 @@ namespace DoAnTotNghiep.Entity
 
         [Column("bed")]
         public int? Bed { get; set; } = 0;
+
+        [Column("created_date")]
+        public DateTime CreatedDate { get; set; } = DateTime.Now;
 
         [Column("lat")]
         public double Lat { get; set; } = 0;

@@ -1,0 +1,72 @@
+﻿@model List<DoAnTotNghiep.Entity.User>
+@using Newtonsoft.Json;
+@{
+    Layout = "_LayoutAdmin";
+    ViewData["Title"] = "Danh sách người dùng";
+    List<int> ints = Model.Select(m => m.Id).ToList();
+}
+
+<div class="content-wrapper">
+    <div class="container-xxl flex-grow-1 container-p-y">
+        <div class="card">
+            <div class="d-flex align-items-start justify-content-between">
+                <h5 class="card-header">Danh sách người dùng</h5>
+            </div>
+            <div class="table-responsive text-nowrap">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Email</th>
+                            <th>Họ và tên</th>
+                            <th>Số điện thoại</th>
+                            <th>Tổng nhà</th>
+                            <th>Số lần trao đổi</th>
+                            <th>Tiền nạp vào</th>
+                            <th>Số báo cáo</th>
+                            <th>Tác vụ</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-border-bottom-0">
+                        @foreach (var item in Model)
+                        {
+                            <tr class="item_user_@item.Id">
+                                <td><strong># @item.Email</strong></td>
+                                <td>@item.LastName @item.FirstName</td>
+                                <td>@item.PhoneNumber</td>
+                                <td>@item.Houses.Count()</td>
+                                <th class="get_swap_@item.Id">_</th>
+                                <th>@item.Point</th>
+                                <th class="get_report_@item.Id">_</th>
+                                <td>
+                                    <div class="dropdown">
+                                        <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                            <i class="bx bx-dots-vertical-rounded"></i>
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            <a href="@Url.Action("Details", "User", new {idUser = item.Id})" class="dropdown-item" target="_blank"><i class='bx bx-info-circle me-1'></i> Chi tiết</a>
+                                            <span class="dropdown-item" onclick="Report(@item.Id)"><i class='bx bxs-message-rounded-minus me-1'></i> Xem báo cáo</span>
+                                            <span class="dropdown-item" onclick="Ban(@item.Id)"><i class="bx bx-trash me-1"></i> Khóa người dùng</span>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/js/Admin/user.js" type="text/javascript" async defer></script>
+    <script type="text/javascript">
+        let arrUsers = @Html.Raw(Json.Serialize(ints));
+        $(document).ready(function(){
+            for (e in arrUsers) {
+                NumberReport(arrUsers[e]);
+                NumberSwap(arrUsers[e]);
+            }
+        })
+    </script>
+}

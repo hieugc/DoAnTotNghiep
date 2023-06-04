@@ -58,6 +58,8 @@ namespace DoAnTotNghiep.Entity
                 context.Entry(this).Reference(m => m.Houses).Load();
             if (this.Users == null && !context.Entry(this).Reference(m => m.Users).IsLoaded)
                 context.Entry(this).Reference(m => m.Users).Load();
+            if (this.Citys == null && !context.Entry(this).Reference(m => m.Citys).IsLoaded)
+                context.Entry(this).Reference(m => m.Citys).Load();
         }
 
         [Key]

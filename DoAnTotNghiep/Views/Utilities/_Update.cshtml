@@ -1,0 +1,40 @@
+﻿@model DoAnTotNghiep.Entity.Utilities
+
+<div class="modal fade" id="utilitiesModal" tabindex="-1" aria-labelledby="utilitiesModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="text-danger fw-semibold branch">Khởi tạo tiện ích</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="@Url.Action("Create", "Utilities")" method="post" id="form-create">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="mb-3">
+                        <label asp-for="Id" class="control-label">Mã Id</label>
+                        <input asp-for="Id" class="form-control" />
+                        <span asp-validation-for="Id" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Content" class="control-label">Nội dung</label>
+                        <input asp-for="Content" class="form-control" />
+                        <span asp-validation-for="Content" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Icon" class="control-label">Icon</label>
+                        <input asp-for="Icon" class="form-control" />
+                        <span asp-validation-for="Icon" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <button type="button" class="btn btn-primary" onclick="submitCreate()">Lưu</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<button class="d-none" type="button" id="utilitiesModalClick" data-bs-toggle="modal" data-bs-target="#utilitiesModal"></button>
+
+<script type="text/javascript">
+    $("#utilitiesModalClick").click();
+</script>

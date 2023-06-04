@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DoAnTotNghiep.Entity
 {
-    [Table("File_in_user_response")]
+    [Table("Files_in_user_response")]
     public class FileInUserResponse
     {
         [Key]

@@ -184,7 +184,10 @@
                 <div class="description">
                     <h1>Khám phá những địa điểm của chúng tôi</h1>
                     <p><strong>VExchangeHome</strong> cung cấp cho bạn những trải nghiệm mới nhất qua từng nơi trên mọi miền đất nước.</p>
-                    <div><button class="btn btn-primary btn-lg">Khám phá</button></div>
+                    @if (Model.NumberCities > 0 && Model.PopularCities.Count() > 0)
+                    {
+                        <div><a class="btn btn-primary btn-lg" href="@Url.Action("Index", "Explore", new {IdCity = Model.PopularCities.First().Id})">Khám phá</a></div>
+                    }
                 </div>
                 <div class="list">
                     @foreach (var item in Model.PopularCities)

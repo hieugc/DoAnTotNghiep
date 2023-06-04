@@ -26,17 +26,20 @@ namespace DoAnTotNghiep.Entity
 
         public void CheckStatus(Request request, int IdUser)
         {
-            if (request.CheckOuts != null && request.CheckOuts.Any(m => m.IdUser == IdUser) && request.Status == (int)StatusRequest.CHECK_IN)
+            if(request.Status != (int)StatusRequest.ENDED)
             {
-                this.Status = (int)StatusRequest.CHECK_OUT;
-            }
-            else if (request.CheckIns != null && request.CheckIns.Any(m => m.IdUser == IdUser) && request.Status == (int)StatusRequest.ACCEPT)
-            {
-                this.Status = (int)StatusRequest.CHECK_IN;
-            }
-            else if (request.FeedBacks != null && request.FeedBacks.Any(m => m.IdUser == IdUser) && request.Status == (int)StatusRequest.CHECK_OUT)
-            {
-                this.Status = (int)StatusRequest.ENDED;
+                if (request.FeedBacks != null && request.FeedBacks.Any(m => m.IdUser == IdUser))
+                {
+                    this.Status = (int)StatusRequest.ENDED;
+                }
+                else if (request.CheckOuts != null && request.CheckOuts.Any(m => m.IdUser == IdUser))
+                {
+                    this.Status = (int)StatusRequest.CHECK_OUT;
+                }
+                else if (request.CheckIns != null && request.CheckIns.Any(m => m.IdUser == IdUser))
+                {
+                    this.Status = (int)StatusRequest.CHECK_IN;
+                }
             }
         }
         public void IncludeAll(DoAnTotNghiepContext context)

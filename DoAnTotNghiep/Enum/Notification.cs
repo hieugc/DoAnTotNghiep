@@ -6,10 +6,10 @@
         public const int RATING = 1; //
         public const int ADMIN_REPORT = 2;//
         public const int MESSAGE = 3;//
-        public const int CIRCLE_SWAP = 4;
+        public const int CIRCLE_SWAP = 4;//
         public const int DEMO = 5;
-        public const int PAYMENT = 6;
-        public const int CIRCLE_RATING = 7;
+        public const int PAYMENT = 6;//
+        public const int CIRCLE_RATING = 7;//
 
 
         public const string DemoTitle = "DEMO";
@@ -29,7 +29,11 @@
             {
                 return "requestView(" + idType + ", " + id + ")";
             }
-            return "circleRequestView(" + idType + ")";
+            else if(type == NotificationType.CIRCLE_RATING || type == NotificationType.CIRCLE_SWAP)
+            {
+                return "circleRequestView(" + idType + ", " + id + ")";
+            }
+            return "paymentView(" + idType + ", " + id + ")";
         }
     }
 }

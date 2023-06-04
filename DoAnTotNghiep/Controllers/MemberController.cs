@@ -226,7 +226,7 @@ namespace DoAnTotNghiep.Controllers
             }
             return View(model);
         }
-        public IActionResult History(string? action = null)
+        public IActionResult History(string? popup = null)
         {
             ViewData["active"] = 5;
             int IdUser = this.GetIdUser();
@@ -234,9 +234,9 @@ namespace DoAnTotNghiep.Controllers
                                             .Select(m => new HouseSelector(m))
                                             .ToList();
             HistoryViewModel model = new HistoryViewModel(house, 0, 0);
-            if (!string.IsNullOrEmpty(action))
+            if (!string.IsNullOrEmpty(popup))
             {
-                ViewData["action"] = action;
+                ViewData["action"] = popup;
             }
             if (IdUser != 0)
             {

@@ -23,9 +23,19 @@ namespace DoAnTotNghiep.Service
             this._context.Requests.Add(request);
             this._context.SaveChanges();
         }
+        public void SaveRequest(List<Request> request)
+        {
+            this._context.Requests.AddRange(request);
+            this._context.SaveChanges();
+        }
         public void UpdateRequest(Request request)
         {
             this._context.Requests.Update(request);
+            this._context.SaveChanges();
+        }
+        public void UpdateRequest(List<Request> request)
+        {
+            this._context.Requests.UpdateRange(request);
             this._context.SaveChanges();
         }
         public Request? GetRequestById(int Id)
@@ -45,11 +55,15 @@ namespace DoAnTotNghiep.Service
         public Request? GetRequestByIdWithEndTime(int Id, int status)
         {
             DateTime now = DateTime.Now;
-            return this._context.Requests
+            var model = this._context.Requests
                                     .Where(m => m.Id == Id
-                                                && m.Status >= status
-                                                && DateTime.Compare(now, m.EndDate.AddHours(-6)) >= 0)
+                                                && m.Status >= status)
                                     .FirstOrDefault();
+            if(model != null && DateTime.Compare(now, model.EndDate.AddHours(-6)) >= 0)
+            {
+                return model;
+            }
+            return null;
         }
         public Request? GetRequestByFeedBack(int idRequest, int idUser)
         {
@@ -65,12 +79,13 @@ namespace DoAnTotNghiep.Service
         public Request? GetRequestByIdWithLessStatus(int Id, int status) => this._context.Requests.FirstOrDefault(m => m.Id == Id && (m.Status <= (int)StatusRequest.CHECK_IN));
         public List<Request> GetAllSent(int IdUser)
         {
-            return this._context.Requests.Where(m => m.IdUser == IdUser && m.Status != (int)StatusRequest.DISABLE).ToList();
+            return this._context.Requests.OrderByDescending(m => m.StartDate).Where(m => m.IdUser == IdUser && m.Status != (int)StatusRequest.DISABLE).ToList();
         }
         public List<Request> GetValidRequestByUser(int IdUser)
         {
             return this._context.Requests
                             .Include(m => m.Houses)
+                            .OrderByDescending(m => m.StartDate)
                             .Where(m => (m.Status == (int)StatusRequest.ACCEPT
                                     || m.Status == (int)StatusRequest.CHECK_IN
                                     || m.Status == (int)StatusRequest.WAIT_FOR_SWAP)
@@ -82,6 +97,7 @@ namespace DoAnTotNghiep.Service
         {
             return this._context.Requests
                                 .Include(m => m.Houses)
+                                .OrderByDescending(m => m.StartDate)
                                 .Where(m => (m.Status == (int)StatusRequest.ACCEPT
                                                 || m.Status == (int)StatusRequest.CHECK_IN
                                                 || m.Status == (int)StatusRequest.CHECK_OUT
@@ -104,15 +120,15 @@ namespace DoAnTotNghiep.Service
                         join rq in this._context.Requests on h.Id equals rq.IdHouse
                         where h.Id == IdHouse && h.IdUser == IdUser && rq.Status == (int)StatusRequest.WAIT_FOR_SWAP
                         select rq;
-            return model.ToList();
+            return model.OrderByDescending(m => m.StartDate).ToList();
         }
         public List<Request> GetRequestByHouse(int IdHouse, int IdUser)
         {
             var model = from h in this._context.Houses
-                        join rq in this._context.Requests on h.Id equals rq.Id
+                        join rq in this._context.Requests on h.Id equals rq.IdHouse
                         where h.Id == IdHouse && h.IdUser == IdUser && rq.Status != (int)StatusRequest.DISABLE
                         select rq;
-            return model.ToList();
+            return model.OrderByDescending(m => m.StartDate).ToList();
         }
         public List<DetailRequest> GetValidRequestByUser(List<Request> requests, IFileService _fileService, IHouseService _houseService, IFeedBackService _feedBackService, int? Status, byte[] salt, string host, int IdUser = 0)
         {
@@ -208,12 +224,15 @@ namespace DoAnTotNghiep.Service
                                         .Select(m => new RequestStatistics(m))
                                         .ToList();
         }
+        public List<Request> All() => this._context.Requests.OrderByDescending(m => m.StartDate).ToList();
     }
 
     public interface IRequestService
     {
         public void SaveRequest(Request request);
+        public void SaveRequest(List<Request> request);
         public void UpdateRequest(Request request);
+        public void UpdateRequest(List<Request> request);
         public Request? GetRequestById(int Id);
         public Request? GetRequestById(int Id, int status);
         public Request? GetRequestByIdWithStartTime(int Id, int status);
@@ -225,6 +244,7 @@ namespace DoAnTotNghiep.Service
         public List<Request> GetWaitingRequestByHouse(int IdHouse, int IdUser);
         public List<Request> GetRequestByHouse(int IdHouse, int IdUser);
         public List<Request> GetAllSent(int IdUser);
+        public List<Request> All();
         public List<NotifyRequest> GetNotifyRequests(List<Request> requests, IFileService _fileService, IHouseService _houseService, byte[] salt, string host);
         public List<DetailRequest> GetValidRequestByUser(List<Request> requests, IFileService _fileService, IHouseService _houseService, IFeedBackService _feedBackService, int? Status, byte[] salt, string host, int IdUser = 0);
         public List<DetailRequest> GetValidRequestByUser(List<House> houses, IFileService _fileService, IHouseService _houseService, IFeedBackService _feedBackService, int? Status, byte[] salt, string host, int IdUser = 0);

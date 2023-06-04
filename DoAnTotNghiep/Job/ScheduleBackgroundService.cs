@@ -55,7 +55,8 @@ namespace DoAnTotNghiep.Job
                 timeToGo = TimeSpan.Zero;
             }
             FileSystem.WriteExceptionFile("startSchedule in " + now.ToString("hh:mm:ss dd/MM/yyyy"), "startSchedule_" + now.ToString("hh_mm_ss_dd_MM_yyyy"));
-            _timer = new Timer(ExecuteSchedule, null, timeToGo, TimeSpan.FromHours(12));
+            _timer = new Timer(ExecuteSchedule, null, timeToGo, TimeSpan.FromMinutes(5));
+            //_timer = new Timer(ExecuteSchedule, null, TimeSpan.Zero, TimeSpan.FromMinutes(1));
             return Task.CompletedTask;
         }
         private void ExecuteSchedule(object? Object)
@@ -88,34 +89,46 @@ namespace DoAnTotNghiep.Job
         private List<List<WaitingRequestForSearch>> MakeUnique(List<List<WaitingRequestForSearch>> requests)
         {
             List<List<WaitingRequestForSearch>> model = new List<List<WaitingRequestForSearch>>();
-            while(requests.Count() > 0)
+            foreach(var item in requests)
             {
-                List<WaitingRequestForSearch> request = requests.First();
-                requests.RemoveAt(0);
-                if (model.Count() == 0) model.Add(request);
+                if (model.Count() == 0) model.Add(item);
                 else
                 {
                     bool isExist = false;
-                    foreach (var item in model)
+                    foreach (var mitem in model)
                     {
-                        foreach(var node in request)
+                        if(mitem.Count() == item.Count())
                         {
-                            if (item.Contains(node))
+                            List<WaitingRequestForSearch> l_1 = mitem.OrderBy(m => m.IdUser).ToList();
+                            List<WaitingRequestForSearch> l_2 = item.OrderBy(m => m.IdUser).ToList();
+                            for(var index = 0; index < l_1.Count(); index++)
                             {
-                                isExist = true;
+                                if (l_1[index].IdUser == l_2[index].IdUser
+                                    && l_1[index].ToIdCity == l_2[index].ToIdCity
+                                    && l_1[index].FromIdCity == l_2[index].FromIdCity
+                                    && l_1[index].StartDate == l_2[index].StartDate
+                                    && l_1[index].EndDate == l_2[index].EndDate)
+                                {
+                                    isExist = true;
+                                }
+                                else
+                                {
+                                    isExist = false;
+                                }
+                            }
+                            if (isExist)
+                            {
                                 break;
                             }
                         }
                     }
 
-                    if (!isExist) model.Add(request);
+                    if (!isExist) model.Add(item);
                 }
             }
 
             return model;
         }
-
-
         private void Recursive(List<WaitingRequestForSearch> listBase, int size, List<WaitingRequestForSearch> prev, List<List<WaitingRequestForSearch>> res)
         {
             //điều kiện dừng

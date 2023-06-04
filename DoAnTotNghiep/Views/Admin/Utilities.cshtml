@@ -1,0 +1,53 @@
+﻿@model List<DoAnTotNghiep.Entity.Utilities>
+@{
+    Layout = "_LayoutAdmin";
+    ViewData["Title"] = "Tiện ích";
+}
+
+<div class="content-wrapper">
+    <div class="container-xxl flex-grow-1 container-p-y">
+        <div class="card">
+            <div class="d-flex align-items-start justify-content-between">
+                <h5 class="card-header">Danh sách tiện ích</h5>
+                <span class="btn btn-primary m-3" onclick="create()"><i class='bx bx-plus'></i> Thêm</span>
+            </div>
+            <div class="table-responsive text-nowrap">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Nội dung</th>
+                            <th>Icon</th>
+                            <th>Tác vụ</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-border-bottom-0" id="list-admin_item">
+                        @foreach(var item in Model)
+                        {
+                            <tr>
+                                <td><strong>#@item.Id</strong></td>
+                                <td>@item.Content</td>
+                                <td>@item.Icon</td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                            <i class="bx bx-dots-vertical-rounded"></i>
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            <span class="dropdown-item" onclick="update(@item.Id)"><i class="bx bx-edit-alt me-1"></i> Chỉnh sửa</span>
+                                            <span class="dropdown-item" onclick="remove(@item.Id)"><i class="bx bx-trash me-1"></i> Xóa</span>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+        <script src="~/js/Admin/utilities.js" type="text/javascript" async defer></script>
+}

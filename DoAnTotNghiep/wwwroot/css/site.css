@@ -51,13 +51,28 @@ body {
         display: none;
     }
 
-    .lg-device > .lg-device-control > form {
+    .lg-device > .lg-device-control > #container-explore {
         margin-right: 12px;
+        position: relative;
     }
-
-        .lg-device > .lg-device-control > form > input {
-            min-width: 250px;
-        }
+#explore-location-result{
+    position: absolute;
+    top: 38px;
+    left: 0px;
+}
+.item-suggest:hover{
+    cursor: pointer;
+    color: var(--bs-primary);
+}
+#explore-location-result > div.dropdown-menu.show {
+    position: absolute;
+    inset: 0px auto auto 0px;
+    margin: 0px;
+    transform: translate(0px, 2px);
+}
+.lg-device > .lg-device-control > #container-explore > input {
+    min-width: 250px;
+}
 
 .sm-device {
     display: none;
@@ -124,7 +139,7 @@ body {
             background-size: cover;
         }
 
-            .lg-device > .lg-device-control > form {
+            .lg-device > .lg-device-control > #container-explore {
                 margin-right: unset;
                 position: absolute;
                 top: 50%;
@@ -132,7 +147,7 @@ body {
                 right: 12px;
             }
 
-                .lg-device > .lg-device-control > form > input {
+                .lg-device > .lg-device-control > #container-explore > input {
                     min-width: unset;
                 }
 
@@ -530,19 +545,6 @@ i.fa-solid.fa-bell {
     cursor: pointer;
 }
 
-.notification {
-    position: fixed;
-    background: white;
-    right: 32px;
-    top: 150px;
-    z-index: 99999;
-    border-radius: 8px;
-    box-shadow: 0 0.125rem 0.25rem rgba(var(--bs-primary-rgb), 0.1);
-    min-width: 350px;
-    display: none;
-    transition: all 0.23s ease 0.1s;
-    transform: translate(23px, -25px);
-}
 
 .authorize {
     display: flex;
@@ -829,6 +831,9 @@ i.fa-solid.fa-bell {
         background: #1b6ec2;
     }
 
+.house-result.get{
+    width: 100%;
+}
 .house-result .house-card,
 .house-card {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
@@ -875,6 +880,13 @@ i.fa-solid.fa-bell {
 
 .house-img-container {
     padding: 0 16px;
+    display: flex;
+    flex-flow: column;
+    height: calc(100% - 250px);
+}
+
+.house-img-container > p:last-child{
+    margin-top: auto;
 }
 
     .house-img-container .title {

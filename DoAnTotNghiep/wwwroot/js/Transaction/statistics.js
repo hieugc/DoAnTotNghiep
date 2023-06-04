@@ -132,14 +132,13 @@ function showInfo(arr, month) {
 }
 function itemTransaction(item, position) {
     let status = "valid";
-    let content = "Bạn đã nạp " + item.amount + " vào hệ thống";
-    if (item.status == true) { status = "used"; content = "Bạn đã sử dụng " + item.amount; }
+    if (item.status == true) { status = "used";}
     return `<div class="container ${position} ${status}">
-    <div class="content ${status}">
-        <h5>${item.createdDate.split("T")[1].split(".")[0]} ${dateFormat(item.createdDate.split("T")[0])}</h5>
-        <p>${content}</p>
-    </div>
-  </div>`;
+                <div class="content ${status}">
+                    <h5>${item.createdDate.split("T")[1].split(".")[0]}</h5>
+                    <p>${item.content}</p>
+                </div>
+            </div>`;
 }
 function zaloTransaction() {
     //render loader
@@ -163,7 +162,7 @@ function zaloTransaction() {
                     }
                 }
 
-                let data_1 = setUpData(arrValid, "Điểm nạp vào", 'rgb(255, 99, 132)', 'rgb(255, 99, 132, 0.5)', 1);
+                let data_1 = setUpData(arrValid, "Điểm nạp và khuyến mãi", 'rgb(255, 99, 132)', 'rgb(255, 99, 132, 0.5)', 1);
                 let data_2 = setUpData(arrUsed, "Điểm sử dụng", 'rgb(54, 162, 235)', 'rgb(54, 162, 235, 0.5)', 1);
                 let config = setConfig([data_1, data_2], "Lịch sử giao dịch", 'line', zaloDetail);
                 chart = renderChart(config);

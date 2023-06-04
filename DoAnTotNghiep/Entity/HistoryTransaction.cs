@@ -15,14 +15,14 @@ namespace DoAnTotNghiep.Entity
             return new HistoryTransaction()
             {
                 Amount = request.Point,
-                IdUser = IdUser,
+                IdUser = idUser,
                 CreatedDate = DateTime.Now,
                 Status = (int)StatusTransaction.USED,
                 Content = "Bạn thanh toán "
-                            + request.Point + ""
-                            + " điểm trao đổi nhà "
+                            + request.Point
+                            + " điểm khi trao đổi nhà "
                             + request.Houses.Name + " của "
-                            + user.FirstName + " " + user.LastName
+                            + user.LastName + " " + user.FirstName
                             + " vào lúc" + DateTime.Now.ToString("hh:mm:ss dd/MM/yyyy")
             };
         }

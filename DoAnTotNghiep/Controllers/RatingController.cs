@@ -31,6 +31,7 @@ using Azure.Core;
 using DoAnTotNghiep.Hubs;
 using Microsoft.AspNetCore.SignalR;
 using DoAnTotNghiep.Service;
+using Org.BouncyCastle.Asn1.Ocsp;
 
 namespace DoAnTotNghiep.Controllers
 {
@@ -46,6 +47,7 @@ namespace DoAnTotNghiep.Controllers
         private readonly IHouseService _houseService;
         private readonly IUserService _userService;
         private readonly INotificationService _notificationService;
+        private readonly ITransactionService _transactionService;
 
         public RatingController(
                                 DoAnTotNghiepContext context, 
@@ -57,7 +59,8 @@ namespace DoAnTotNghiep.Controllers
                                 IFileService fileService,
                                 IHouseService houseService,
                                 IUserService userService,
-                                INotificationService notificationService) : base(environment)
+                                INotificationService notificationService,
+                                ITransactionService transactionService) : base(environment)
         {
             _context = context;
             _configuration = configuration;
@@ -68,7 +71,8 @@ namespace DoAnTotNghiep.Controllers
             _houseService = houseService;
             _userService = userService;
             _notificationService = notificationService;
-        }
+            _transactionService = transactionService;
+    }
 
         [HttpGet("/Rating/Form")]
         public IActionResult FormCreateRating(int IdRequest, int? IdRating)
@@ -369,6 +373,5 @@ namespace DoAnTotNghiep.Controllers
                 }
             });
         }
-
     }
 }

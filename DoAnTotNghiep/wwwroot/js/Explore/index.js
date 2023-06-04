@@ -67,19 +67,8 @@ function getRangeDate() {
 function getPage(page, limit) {
     return "&page=" + page + "&limit=" + limit;
 }
-function getFilter(page, limit) {
+function getFilter(idCity, page, limit) {
     let idDistrict = null;
-    let idCity = 0;
-    if (window.location.href.toLowerCase().indexOf("idcity") != -1) {
-        let arr = window.location.href.split("?")[1].split("&");
-        for (e in arr) {
-            if (arr[e].toLowerCase().indexOf("idcity") != -1) {
-                idCity = arr[e].split("=").pop();
-                break;
-            }
-        }
-    }
-    if (suggest != null) idCity = includeIdCity();
     return "?idCity=" + idCity +
         getOptionSort() +
         getPeople() +
@@ -98,9 +87,16 @@ function initFilter() {
     $(".filter-option input[type=checkbox]:checked").prop("checked", false);
     picker.clearSelection();
 }
-function search(page, limit) {
+function filter() {
+    let idCity = idCitySuggest;
+    if (idCity == null) {
+        idCity = window.location.href.split("idCity=")[1];
+    }
+    search(idCity, 1, 12);
+}
+function search(idCity, page, limit) {
     $.get(
-        window.location.origin + "/Explore/Search" + getFilter(page, limit),
+        window.location.origin + "/Explore/Search" + getFilter(idCity, page, limit),
         function (data) {
             $("#render-result").html(data);
             GetMap();
@@ -131,9 +127,6 @@ function initRangeDate() {
             return totalDays;
         }   
     });
-}
-function filter() {
-    search(1, 12);
 }
 function infoboxTemplate(title, index, description) {
     return `<div class="customInfobox">

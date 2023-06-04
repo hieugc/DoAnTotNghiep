@@ -1,0 +1,18 @@
+﻿@model DoAnTotNghiep.Entity.Utilities
+
+<tr>
+    <td><strong>#@Model.Id</strong></td>
+    <td>@Model.Content</td>
+    <td>@Model.Icon</td>
+    <td>
+        <div class="dropdown">
+            <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                <i class="bx bx-dots-vertical-rounded"></i>
+            </button>
+            <div class="dropdown-menu">
+                <span class="dropdown-item" onclick="update(@Model.Id)"><i class="bx bx-edit-alt me-1"></i> Chỉnh sửa</span>
+                <span class="dropdown-item" onclick="remove(@Model.Id)"><i class="bx bx-trash me-1"></i> Xóa</span>
+            </div>
+        </div>
+    </td>
+</tr>

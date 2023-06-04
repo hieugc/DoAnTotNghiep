@@ -54,18 +54,18 @@ namespace DoAnTotNghiep.Controllers
         }
 
         [HttpPost("/CircleRequest/UpdateStatus")]
-        public IActionResult UpdateStatus([FromBody] UpdateStatusCircleViewModel model)
+        public async Task<IActionResult> UpdateStatusAsync([FromBody] UpdateStatusCircleViewModel model)
         {
-            return this.Update(model.Id, model.IdCircle, model.Status);
+            return await this.UpdateAsync(model.Id, model.IdCircle, model.Status);
         }
 
         [HttpPost("/api/CircleRequest/UpdateStatus")]
-        public IActionResult ApiUpdateStatus([FromBody] UpdateStatusCircleViewModel model)
+        public async Task<IActionResult> ApiUpdateStatus([FromBody] UpdateStatusCircleViewModel model)
         {
-            return this.Update(model.Id, model.IdCircle, model.Status);
+            return await this.UpdateAsync(model.Id, model.IdCircle, model.Status);
         }
         //Update
-        private IActionResult Update(int IdWaitingRequest, int Circle, int Status)
+        private async Task<IActionResult> UpdateAsync(int IdWaitingRequest, int Circle, int Status)
         {
             int IdUser = this.GetIdUser();
             var rq = this._circleRequestService.GetWaitingRequestById(Circle, IdUser);
@@ -83,6 +83,8 @@ namespace DoAnTotNghiep.Controllers
             {
                 rq.CircleExchangeHouse.IncludeAll(this._context);
                 DateTime now = DateTime.Now;
+                byte[] salt = Crypto.Salt(this._configuration);
+                string host = this.GetWebsitePath();
                 switch (Status)
                 {
                     case (int)StatusWaitingRequest.DISABLE:
@@ -92,20 +94,27 @@ namespace DoAnTotNghiep.Controllers
                         {
                             if (rq.CircleExchangeHouse.Status == (int)StatusWaitingRequest.ACCEPT)
                             {
-                                /*
-                                List<int> ListUsers = new List<int>();
-                                Notification notification = new Notification()
+                                List<User> users = this._userService.GetByCircle(rq.CircleExchangeHouse.Id);
+                                List<WaitingRequest> requests = this._circleRequestService.GetByCircle(rq.IdCircleExchangeHouse);
+                                foreach (var item in requests) item.IncludeAll(this._context);
+                                foreach(var item in users)
                                 {
-                                    Title = NotificationType.RequestTitle,
-                                    CreatedDate = DateTime.Now,
-                                    Type = NotificationType.CIRCLE_SWAP,
-                                    IdUser = rq.CircleExchangeHouse.Id,
-                                    IdType = rq.CircleExchangeHouse.Id,
-                                    IsSeen = false,
-                                    ImageUrl = NotificationImage.Alert,
-                                    Content = "Yêu cầu của bạn đến " + " bị từ chối"
-                                };
-                                await this.SendNotificationAndMail(notification, salt, host, user, subject);*/
+                                    WaitingRequest myRequest = requests.First(m => m.IdUser == item.Id);
+                                    WaitingRequest nextRequest = requests.First(m => m.IdCity == myRequest.IdCity);
+
+                                    Notification notification = new Notification()
+                                    {
+                                        Title = NotificationType.RequestTitle,
+                                        CreatedDate = DateTime.Now,
+                                        Type = NotificationType.CIRCLE_SWAP,
+                                        IdUser = item.Id,
+                                        IdType = rq.CircleExchangeHouse.Id,
+                                        IsSeen = false,
+                                        ImageUrl = NotificationImage.Alert,
+                                        Content = "Yêu cầu của bạn đến nhà " + nextRequest.Houses.Name + " của " + nextRequest.Users.LastName + " " + nextRequest.Users.FirstName + " ở " + nextRequest.Citys.Name + " bị từ chối"
+                                    };
+                                    await this.SendNotificationAndMail(notification, salt, host, item, Subject.SendReject());
+                                }
                             }
                             rq.CircleExchangeHouse.Status = (int)StatusWaitingRequest.DISABLE;
                             this._circleRequestService.Update(rq.CircleExchangeHouse);
@@ -122,48 +131,119 @@ namespace DoAnTotNghiep.Controllers
                         }
                         break;
                     case (int)StatusWaitingRequest.ACCEPT:
-                        if (rq.CircleExchangeHouse.RequestInCircles != null)
+                        if (rq.Status == (int)StatusWaitingRequest.IN_CIRCLE && 
+                            rq.CircleExchangeHouse.Status == (int)StatusWaitingRequest.INIT)
                         {
-                            if (!rq.CircleExchangeHouse.RequestInCircles.Any(m => m.Status < (int) StatusWaitingRequest.ACCEPT && m.IdWaitingRequest != rq.IdWaitingRequest))
+                            if (rq.CircleExchangeHouse.RequestInCircles != null)
                             {
-                                rq.CircleExchangeHouse.Status = (int)StatusWaitingRequest.ACCEPT;
-                                this._circleRequestService.Update(rq.CircleExchangeHouse);
+                                if (!rq.CircleExchangeHouse.RequestInCircles.Any(m => m.Status < (int)StatusWaitingRequest.ACCEPT && m.IdWaitingRequest != rq.IdWaitingRequest))
+                                {
+                                    rq.CircleExchangeHouse.Status = (int)StatusWaitingRequest.ACCEPT;
+                                    this._circleRequestService.Update(rq.CircleExchangeHouse);
 
-                                //gửi chi tiết
-                                //gửi thông báo ngày sẽ Check In
+                                    List<User> users = this._userService.GetByCircle(rq.CircleExchangeHouse.Id);
+                                    List<WaitingRequest> requests = this._circleRequestService.GetByCircle(rq.IdCircleExchangeHouse);
+                                    foreach (var item in requests) item.IncludeAll(this._context);
+                                    foreach (var item in users)
+                                    {
+                                        WaitingRequest myRequest = requests.First(m => m.IdUser == item.Id);
+                                        WaitingRequest nextRequest = requests.First(m => m.IdCity == myRequest.IdCity);
+
+                                        Notification notification = new Notification()
+                                        {
+                                            Title = NotificationType.RequestTitle,
+                                            CreatedDate = DateTime.Now,
+                                            Type = NotificationType.CIRCLE_SWAP,
+                                            IdUser = item.Id,
+                                            IdType = rq.CircleExchangeHouse.Id,
+                                            IsSeen = false,
+                                            ImageUrl = NotificationImage.Alert,
+                                            Content = "Yêu cầu của bạn đến nhà " + nextRequest.Houses.Name + " của " + nextRequest.Users.LastName + " " + nextRequest.Users.FirstName + " ở " + nextRequest.Citys.Name + " đã được chấp nhận"
+                                        };
+                                        await this.SendNotificationAndMail(notification, salt, host, item, Subject.SendRequestDetail());
+                                    }
+                                    TimeSpan timeToGo = rq.CircleExchangeHouse.StartDate.AddDays(-1) - DateTime.Now;
+                                    if (timeToGo <= TimeSpan.Zero) timeToGo = TimeSpan.Zero;
+                                    await this.InitTimerAsync(rq.CircleExchangeHouse.Id, TargetFunction.ExecuteCheckInCircleRequest, timeToGo, 2, host);
+                                }
                             }
+                            rq.Status = (int)StatusWaitingRequest.ACCEPT;
+                            this._circleRequestService.Update(rq);
                         }
-                        rq.Status = (int)StatusWaitingRequest.ACCEPT;
-                        this._circleRequestService.Update(rq);
+                        else
+                        {
+                            return BadRequest(new
+                            {
+                                Status = 404,
+                                Message = "Yêu cầu không tìm thấy"
+                            });
+                        }
                         break;
                     case (int)StatusWaitingRequest.CHECK_IN:
-                        if (rq.CircleExchangeHouse.RequestInCircles != null)
+                        if (rq.Status == (int)StatusWaitingRequest.ACCEPT && rq.CircleExchangeHouse.Status == (int)StatusWaitingRequest.ACCEPT)
                         {
-                            if (!rq.CircleExchangeHouse.RequestInCircles
-                                .Any(m => m.Status < (int)StatusWaitingRequest.CHECK_IN &&
-                                m.IdWaitingRequest != rq.IdWaitingRequest))
+                            if (rq.CircleExchangeHouse.RequestInCircles != null)
                             {
-                                rq.CircleExchangeHouse.Status = (int)StatusWaitingRequest.CHECK_IN;
-                                this._circleRequestService.Update(rq.CircleExchangeHouse);
+                                if (!rq.CircleExchangeHouse.RequestInCircles
+                                    .Any(m => m.Status < (int)StatusWaitingRequest.CHECK_IN &&
+                                    m.IdWaitingRequest != rq.IdWaitingRequest))
+                                {
+                                    rq.CircleExchangeHouse.Status = (int)StatusWaitingRequest.CHECK_IN;
+                                    this._circleRequestService.Update(rq.CircleExchangeHouse);
+                                }
                             }
+
+                            TimeSpan timeToGo = rq.CircleExchangeHouse.EndDate.AddDays(-1) - DateTime.Now;
+                            if (timeToGo <= TimeSpan.Zero) timeToGo = TimeSpan.Zero;
+                            await this.InitTimerAsync(rq.CircleExchangeHouse.Id, TargetFunction.ExecuteCheckOutCircleRequest, timeToGo, 1, host);
+
+                            rq.Status = (int)StatusWaitingRequest.CHECK_IN;
+                            this._circleRequestService.Update(rq);
                         }
-                        //gửi thông báo ngày sẽ Check Out
-                        rq.Status = (int)StatusWaitingRequest.CHECK_IN;
-                        this._circleRequestService.Update(rq);
+                        else
+                        {
+                            return BadRequest(new
+                            {
+                                Status = 404,
+                                Message = "Tất cả mọi người chưa chấp nhận"
+                            });
+                        }
                         break;
                     case (int)StatusWaitingRequest.CHECK_OUT:
-                        if (rq.CircleExchangeHouse.RequestInCircles != null)
+                        if (rq.Status == (int)StatusWaitingRequest.CHECK_IN)
                         {
-                            if (!rq.CircleExchangeHouse.RequestInCircles
-                                .Any(m => m.Status < (int)StatusWaitingRequest.CHECK_OUT 
-                                && m.IdWaitingRequest != rq.IdWaitingRequest))
+                            if (DateTime.Compare(DateTime.Now, rq.CircleExchangeHouse.EndDate.AddHours(-6)) >= 0)
                             {
-                                rq.CircleExchangeHouse.Status = (int)StatusWaitingRequest.CHECK_OUT;
-                                this._circleRequestService.Update(rq.CircleExchangeHouse);
+                                if (rq.CircleExchangeHouse.RequestInCircles != null)
+                                {
+                                    if (!rq.CircleExchangeHouse.RequestInCircles
+                                        .Any(m => m.Status < (int)StatusWaitingRequest.CHECK_OUT
+                                        && m.IdWaitingRequest != rq.IdWaitingRequest))
+                                    {
+                                        rq.CircleExchangeHouse.Status = (int)StatusWaitingRequest.CHECK_OUT;
+                                        this._circleRequestService.Update(rq.CircleExchangeHouse);
+                                    }
+                                }
+                                rq.Status = (int)StatusWaitingRequest.CHECK_OUT;
+                                this._circleRequestService.Update(rq);
+                            }
+                            else
+                            {
+                                return BadRequest(new
+                                {
+                                    Status = 401,
+                                    Message = "Chưa đến thời gian check out"
+                                });
                             }
                         }
-                        rq.Status = (int)StatusWaitingRequest.CHECK_OUT;
-                        this._circleRequestService.Update(rq);
+                        else
+                        {
+                            return BadRequest(new
+                            {
+                                Status = 401,
+                                Message = "Bạn chưa check in nhà"
+                            });
+                        }
                         break;
                 }
             }
@@ -175,6 +255,15 @@ namespace DoAnTotNghiep.Controllers
             });
         }
 
+        private async Task InitTimerAsync(int IdCircle, string Function, TimeSpan timeStart, int limit, string host)
+        {
+            CancellationTokenSource source = new CancellationTokenSource();
+            CancellationToken token = source.Token;
+            DoAnTotNghiepContext inputContext = new DoAnTotNghiepContext(this._context.GetConfig());
+            CircleRequestBackground Object = new CircleRequestBackground(new ChatHub(this._signalContext), IdCircle, this._configuration);
+            TimedHostedService timer = new TimedHostedService(inputContext, host, Function, token, limit, timeStart, Object);
+            await timer.StartAsync(token);
+        }
         private async Task SendNotificationAndMail(Notification notification, byte[] salt, string host, User? user, string subject)
         {
             await this.SendNotification(notification, salt, host);

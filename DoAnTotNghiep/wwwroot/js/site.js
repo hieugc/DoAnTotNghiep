@@ -1,5 +1,4 @@
-﻿
-function showNotification(head, body, status) {
+﻿function showNotification(head, body, status) {
     if (status == 1) {
         $("#notification-head").addClass("text-success");
         $("#notification-head").removeClass("text-danger");

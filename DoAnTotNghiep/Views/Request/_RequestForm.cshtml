@@ -45,7 +45,7 @@ else
                         <label class="">Chọn nhà muốn trao đổi</label>
                         @if (Model.UserHouses.Count() == 1)
                         {
-                            <div class="house-request">
+                            <div class="house-request get">
                                 <div class="house-result">
                                     @foreach (var item in Model.UserHouses)
                                     {
@@ -67,7 +67,7 @@ else
                                             }
                                             <div class="house-img-container">
                                                 <h2>@item.Name</h2>
-                                                <p class="attribute"><i class="fa-solid fa-map-location-dot"></i><span>@item.Location</span></p>
+                                                <p class="attribute"><i class="fa-solid fa-map-location-dot"></i><span>@item.Location, @item.WardName, @item.DistrictName, @item.CityName</span></p>
                                                 <div class="list-attribute">
                                                     <p class="attribute"><span>@item.Rating (@item.NumberRating)</span><i class="fa-solid fa-star"></i></p>
                                                     <p class="attribute"><i class="fa-solid fa-users"></i><span>@item.People</span></p>
@@ -140,7 +140,7 @@ else
                                     index = 0;
                                 }
                                 <div class="house-request">
-                                    <div class="house-result">
+                                    <div class="house-result get">
                                         @foreach (var item in Model.MyHouses)
                                         {
                                             <div class="house-card house-card-@(index++)">
@@ -223,7 +223,7 @@ else
                                 }
                                 <div class="house-img-container">
                                     <h2>@item.Name</h2>
-                                    <p class="attribute"><i class="fa-solid fa-map-location-dot"></i><span>@item.Location</span></p>
+                                    <p class="attribute"><i class="fa-solid fa-map-location-dot"></i><span>@item.Location, @item.WardName, @item.DistrictName, @item.CityName</span></p>
                                     <div class="list-attribute">
                                         <p class="attribute"><span>@item.Rating (@item.NumberRating)</span><i class="fa-solid fa-star"></i></p>
                                         <p class="attribute"><i class="fa-solid fa-users"></i><span>@item.People</span></p>
@@ -275,7 +275,7 @@ else
                                 }
                                 <div class="house-img-container">
                                     <h2>@item.Name</h2>
-                                    <p class="attribute"><i class="fa-solid fa-map-location-dot"></i><span>@item.Location</span></p>
+                                    <p class="attribute"><i class="fa-solid fa-map-location-dot"></i><span>@item.Location, @item.WardName, @item.DistrictName, @item.CityName</span></p>
                                     <div class="list-attribute">
                                         <p class="attribute"><span>@item.Rating (@item.NumberRating)</span><i class="fa-solid fa-star"></i></p>
                                         <p class="attribute"><i class="fa-solid fa-users"></i><span>@item.People</span></p>

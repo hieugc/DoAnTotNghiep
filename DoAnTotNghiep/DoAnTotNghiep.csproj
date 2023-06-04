@@ -32,5 +32,6 @@
   <ItemGroup>
     <Folder Include="Exception\" />
 	<Folder Include="Job\" />
+	<Folder Include="wwwroot\Uploads\" />
   </ItemGroup>
 </Project>

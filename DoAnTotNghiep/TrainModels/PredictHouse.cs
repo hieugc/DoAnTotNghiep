@@ -262,10 +262,10 @@ namespace DoAnTotNghiep.TrainModels
             IDataView dataTest = this._mLContext.Data.LoadFromTextFile<NewHouseData>(@"TrainModels/test_data.csv", hasHeader: true, separatorChar: ',');
 
             var pipeline = this._mLContext.Transforms.CopyColumns(outputColumnName: "Label", inputColumnName: "price")
-                    .Append(this._mLContext.Transforms.Categorical.OneHotEncoding(outputColumnName: "addressEncoded", inputColumnName: "address"))
-                    .Append(this._mLContext.Transforms.Categorical.OneHotEncoding(outputColumnName: "capacityEncoded", inputColumnName: "capaciity"))
-                    .Append(this._mLContext.Transforms.Concatenate("Features", new string[] { "addressEncoded", "distance", "area", "rating", "capacityEncoded" }))
-                    .Append(this._mLContext.Regression.Trainers.FastTree());
+                                .Append(this._mLContext.Transforms.Categorical.OneHotEncoding(outputColumnName: "addressEncoded", inputColumnName: "address"))
+                                .Append(this._mLContext.Transforms.Categorical.OneHotEncoding(outputColumnName: "capacityEncoded", inputColumnName: "capaciity"))
+                                .Append(this._mLContext.Transforms.Concatenate("Features", new string[] { "addressEncoded", "distance", "area", "rating", "capacityEncoded" }))
+                                .Append(this._mLContext.Regression.Trainers.FastTree());
 
             this.trainedModel = pipeline.Fit(dataTrain);
 

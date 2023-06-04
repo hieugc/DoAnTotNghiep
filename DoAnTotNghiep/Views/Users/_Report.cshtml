@@ -1,0 +1,41 @@
+﻿@model List<DetailReportViewModel>
+@using DoAnTotNghiep.Enum;
+
+
+<div class="list">
+    <h2> Danh sách báo cáo</h2>
+    <div class="list-frame">
+        @foreach(var item in Model)
+        {
+            <div class="report-item">
+                <div>
+                    <div>
+                        @if (string.IsNullOrEmpty(item.User.ImageUrl))
+                    {
+                        <img src="~/Image/user.svg" class="avt" alt="Avatar @item.User.UserName"/>
+                    }
+                    else
+                    {
+                        <img src="@item.User.ImageUrl" class="avt" alt="Avatar @item.User.UserName" /> 
+                    }
+                    <span class="name">@item.User.UserName</span>
+                    </div>
+                </div>
+                <div>
+                    <h5 class="text-danger">Lí do:</h5>
+                    <div class="content">@Html.Raw(item.Content.Replace("\n", "<br>"))</div>
+                    <h5 class="text-danger">Tệp đính kèm:</h5>
+                    <div class="list-img">
+                        @for(var index = 0; index <= 4; index++)
+                        {
+                            @foreach(var image in item.Images)
+                            {
+                                <div class="item-img"><img src="@image.Data" class="img-view" /></div>   
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

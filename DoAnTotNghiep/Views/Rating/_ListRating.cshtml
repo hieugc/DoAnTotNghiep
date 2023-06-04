@@ -1,7 +1,7 @@
 ﻿@model ListRating
 @using DoAnTotNghiep.Enum;
 @{
-    double rating = Model.OverView.Rating();
+    double rating = Math.Ceiling(Model.OverView.Rating());
 }
     <span class="heading">Người dùng đánh giá</span>
     <span class="fa fa-star @if(rating >= 1){@Html.Raw("checked")}"></span>
@@ -18,7 +18,7 @@
             </div>
             <div class="middle">
                 <div class="bar-container">
-                <div class="bar-5" style="width: @Math.Ceiling((double) (Model.OverView.FiveStar  / Model.OverView.Total() * 100))%"></div>
+                <div class="bar-5" style="width: @(((double) Model.OverView.FiveStar / (double) Model.OverView.Total()) * 100)%"></div>
                 </div>
             </div>
             <div class="side right">
@@ -32,7 +32,7 @@
             </div>
             <div class="middle">
                 <div class="bar-container">
-                <div class="bar-4" style="width: @Math.Ceiling((double) (Model.OverView.FourStar  / Model.OverView.Total() * 100))%"></div>
+                <div class="bar-4" style="width: @Math.Ceiling(((double) Model.OverView.FourStar / (double) Model.OverView.Total()) * 100)%"></div>
                 </div>
             </div>
             <div class="side right">
@@ -46,7 +46,7 @@
             </div>
             <div class="middle">
                 <div class="bar-container">
-                <div class="bar-3" style="width: @Math.Ceiling((double) (Model.OverView.ThreeStar  / Model.OverView.Total() * 100))%"></div>
+                <div class="bar-3" style="width: @Math.Ceiling(((double) Model.OverView.ThreeStar /(double) Model.OverView.Total()) * 100)%"></div>
                 </div>
             </div>
             <div class="side right">
@@ -60,7 +60,7 @@
             </div>
             <div class="middle">
                 <div class="bar-container">
-                <div class="bar-2" style="width: @Math.Ceiling((double) (Model.OverView.TwoStar  / Model.OverView.Total() * 100))%"></div>
+                <div class="bar-2" style="width: @Math.Ceiling(((double)Model.OverView.TwoStar / (double) Model.OverView.Total()) * 100)%"></div>
                 </div>
             </div>
             <div class="side right">
@@ -74,7 +74,7 @@
             </div>
             <div class="middle">
                 <div class="bar-container">
-                <div class="bar-1" style="width: @Math.Ceiling((double) (Model.OverView.OneStar  / Model.OverView.Total() * 100))%"></div>
+                <div class="bar-1" style="width: @Math.Ceiling(((double) Model.OverView.OneStar/(double)Model.OverView.Total()) * 100)%"></div>
             </div>
             </div>
             <div class="side right">

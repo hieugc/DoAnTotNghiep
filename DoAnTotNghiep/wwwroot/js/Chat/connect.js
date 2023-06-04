@@ -221,16 +221,16 @@ function updateNoti(data) {
     prependNewNotification(".dropdown-item" + tag_message);
 }
 function returnFunction(model) {
-    if (model.type == 0 || model.type == 1) {//request
+    if (model.type == 0 || model.type == 1) {//REQUEST_0 + RATING_1
         return `requestView(${model.idType}, ${model.id})`;
     }
-    else if (model.type == 2) { //admin report
-        return window.location.origin + "/Report/";
+    else if (model.type == 2) { //ADMIN_REPORT_2
+        return ``;//chưa có api
     }
-    else if (model.type == 4) {
-        return window.location.origin + "/Request/Suggest";
+    else if (model.type == 4 || model.type == 7) {//CIRCLE_SWAP_4 CIRCLE_RATING_7
+        return `circleRequestView(${model.idType}, ${model.id})`;
     }
-    else if (model.type == 6) {
+    else if (model.type == 6) { //PAYMENT_6
         return `paymentView(${model.idType}, ${model.id})`;
     }
 }
@@ -354,16 +354,17 @@ function circleRequestView(idType, id) {
         }
     )
 }
+//check lại
 function updatePointUser() {
     $.get(
         window.location.origin + "/User/Point",
         function (data) {
-            userAccess.Point = data;
+            userAccess.Point = data.data;
             if (window.location.href.indexOf("Member") != -1) {
                 //show successfull
-                if ($(".main .infomation .name .point").length > 0) {
-                    let str = $(".main .infomation .name .point").html(data + " Point");
-                    //userAccess
+                if ($("main .infomation .name .point").length > 0) {
+                    $("main .infomation .name .point").html(data.data + " Point");
+                    console.log(data);
                 }
             }
         }

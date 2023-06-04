@@ -101,16 +101,11 @@ namespace DoAnTotNghiep.Service
             List<DetailRatingWithUser> model = new List<DetailRatingWithUser>();
             if (house.FeedBacks != null)
             {
-                foreach (var item in house.FeedBacks)
-                {
-                    item.IncludeAll(this._context);
-                    if (item.Users != null)
-                    {
-                        DetailRatingViewModel rating = new DetailRatingViewModel(item);
-                        UserInfo user = new UserInfo(item.Users, salt, host);
-                        model.Add(new DetailRatingWithUser() { User = user, FeedBack = rating });
-                    }
-                }
+                model.AddRange(this.GetRatingByHouse(house.FeedBacks.ToList(), host, salt));
+            }
+            if (house.FeedBackOfCircles != null)
+            {
+                model.AddRange(this.GetRatingByHouse(house.FeedBackOfCircles.Select(m => new FeedBack().Create(m)).ToList(), host, salt));
             }
             return model;
         }
@@ -122,11 +117,16 @@ namespace DoAnTotNghiep.Service
         }
         public List<FeedBack> GetRatingByHouse(int IdHouse)
         {
-            var model = from h in this._context.Houses
-                        join fb in this._context.FeedBacks on h.Id equals fb.IdHouse
-                        where h.Id == IdHouse
-                        select fb;
-            if (model == null) return new List<FeedBack>();
+            var model = this._context.FeedBacks.Where(m => m.IdHouse == IdHouse).ToList();
+            var cmodel = this._context.FeedBackOfCircles.Where(m => m.IdHouse == IdHouse).Select(m => new FeedBack().Create(m)).ToList();
+            model.AddRange(cmodel);
+            return model.OrderByDescending(m => m.CreatedDate).ToList();
+        }
+        public List<FeedBack> All()
+        {
+            var model = this._context.FeedBacks.ToList();
+            var cmodel = this._context.FeedBackOfCircles.Select(m => new FeedBack().Create(m)).ToList();
+            model.AddRange(cmodel);
             return model.OrderByDescending(m => m.CreatedDate).ToList();
         }
     }
@@ -141,6 +141,7 @@ namespace DoAnTotNghiep.Service
         public DetailRatingViewModel? GetRatingByRequestDiffUser(ICollection<FeedBack>? feedBacks, int idUser);
         public DetailRatingViewModel? GetRatingByRequest(ICollection<FeedBack>? feedBacks, int idUser);
         public List<FeedBack> GetRatingByHouse(int IdHouse);
+        public List<FeedBack> All();
         public List<DetailRatingWithUser> GetRatingByHouse(List<FeedBack> feedBacks, string host, byte[] salt);
         public List<DetailRatingWithUser> GetRatingByHouse(House house, string host, byte[] salt);
         public List<DetailRatingWithUser> GetRatingById(int IdAnotherUser, string host, byte[] salt);

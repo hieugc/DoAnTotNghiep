@@ -18,7 +18,7 @@
         <div class="carousel-inner">
             @for (var item = 0; item < Model.Images.Count(); item++)
             {
-                <div class="carousel-item @if(item == 0){@Html.Raw("active")}">
+                <div class="carousel-item @(item == 0? "active": "")">
                     <img src="@(Model.Images.ElementAt(item)?.Data)" class="d-block w-100" alt="Step @(item + 1)">
                 </div>
             }
@@ -37,12 +37,12 @@
 <div class="frame">
     <div class="left">
         <div class="option-control">
-            <div class="tab-pane tab-active"><a href="#tab1">Thông tin chung</a></div>
-            <div class="tab-pane"><a href="#tab2">Giới thiệu</a></div>
-            <div class="tab-pane"><a href="#tab3">Tiện nghi</a></div>
-            <div class="tab-pane"><a href="#tab4">Quy tắc</a></div>
-            <div class="tab-pane"><a href="#tab5">Địa chỉ</a></div>
-            <div class="tab-pane"><a href="#tab6">Đánh giá</a></div>
+            <div class="tab-pane tab-active" onclick="ScrollTo(1)"><a href="#tab1">Thông tin chung</a></div>
+            <div class="tab-pane" onclick="ScrollTo(2)"><a href="#tab2">Giới thiệu</a></div>
+            <div class="tab-pane" onclick="ScrollTo(3)"><a href="#tab3">Tiện nghi</a></div>
+            <div class="tab-pane" onclick="ScrollTo(4)"><a href="#tab4">Quy tắc</a></div>
+            <div class="tab-pane" onclick="ScrollTo(5)"><a href="#tab5">Địa chỉ</a></div>
+            <div class="tab-pane" onclick="ScrollTo(6)"><a href="#tab6">Đánh giá</a></div>
         </div>
         <div class="content">
             <section id="tab1">
@@ -68,7 +68,7 @@
             <section id="tab2">
                 <h5>Giới thiệu</h5>
                 <p>
-                    @Model.Description
+                    @Html.Raw(Model.Description.Replace("\n", "<br/>"))
                 </p>
             </section>
 
@@ -191,9 +191,6 @@
             });
             infobox.setMap(map);
         }
-        if($(".material-symbols-outlined").length > 3){
-            $(".material-symbols-outlined")[3].innerHTML = "mic";
-        }
         function infoboxTemplate(title, index, description) {
             return `<div class="customInfobox">
                         <div class="content">
@@ -242,6 +239,7 @@
             );
         });
     </script>
+    <script src="~/js/House/index.js" type="text/javascript" async defer></script>
     <script src="~/js/Report/index.js" type="text/javascript" async defer></script>
     <script src="~/js/Request/create.js" type="text/javascript"></script>
     <script src="~/js/Request/getFormByHouseId.js" type="text/javascript"></script>

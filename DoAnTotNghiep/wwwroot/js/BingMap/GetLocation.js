@@ -111,18 +111,11 @@ function getDataDistrict() {
             }
             else {
                 if ($("#district-select").length > 0) {
-                    changeDataForSelect2("#district-select", getDataFormat(dataLocation[id].district, "Quận / Huyện"));
+                    changeDataForSelect2("#district-select", getDataFormat(dataLocation[id].district, "Quận / Huyện", data.idDistrict));
                 }
             }
         }
     }
-}
-function getDataFormat(data, text) {
-    let arr = [{"id": -1, "text": text}];
-    for (index in data) {
-        arr[arr.length] = { "id": data[index]["id"], "text": data[index]["name"] }
-    }
-    return arr;
 }
 function getDataWard() {
     if (dataLocation == null) {
@@ -141,14 +134,14 @@ function getDataWard() {
                 $("#ward-select").prop("disabled", true);
             }
         }
-        else if(dataLocation[id_city].district == null || !(id in dataLocation[id_city].district)) {
+        else if (dataLocation[id_city].district == null || !(id in dataLocation[id_city].district)) {
 
             if ($("#ward-select").length > 0) {
                 changeDataForSelect2("#ward-select", [{ "id": -1, "text": "Phường / Xã" }]);
                 $("#ward-select").prop("disabled", true);
             }
         }
-        else{
+        else {
             if (dataLocation[id_city].district[id].ward == null) {
                 $.ajax({
                     url: "/api/Location/Ward?IdDistrict=" + id,
@@ -188,11 +181,23 @@ function getDataWard() {
             }
             else {
                 if ($("#ward-select").length > 0) {
-                    changeDataForSelect2("#ward-select", getDataFormat(dataLocation[id_city].district[id].ward, "Phường / Xã"));
+                    changeDataForSelect2("#ward-select", getDataFormat(dataLocation[id_city].district[id].ward, "Phường / Xã", data.idWard));
                 }
             }
         }
     }
+}
+function getDataFormat(data, text, _id) {
+    let arr = [{"id": -1, "text": text}];
+    for (index in data) {
+        if (_id == null || data[index]["id"] != _id) {
+            arr[arr.length] = { "id": data[index]["id"], "text": data[index]["name"] }
+        }
+        else {
+            arr[arr.length] = { "id": data[index]["id"], "text": data[index]["name"], "selected": true };
+        }
+    }
+    return arr;
 }
 function changeDataForSelect2(tag, data) {
     if ($(tag)[0].disabled) {
@@ -250,10 +255,13 @@ function showMainForm() {
         data.location = $("#map-location").val();
         if ($("#city-select").val() != -1) {
             data.idCity = $("#city-select").val();
+            data.cityName = dataLocation[data.idCity].name;
             if ($("#district-select").val() != -1) {
                 data.idDistrict = $("#district-select").val();
+                data.districtName = dataLocation[data.idCity].district[data.idDistrict].name;
                 if ($("#ward-select").val() != -1) {
                     data.idWard = $("#ward-select").val();
+                    data.wardName = dataLocation[data.idCity].district[data.idDistrict].ward[data.idWard].name;
                 }
             }
         }        
@@ -278,14 +286,9 @@ function reloadMap(address) {
     });
 
     infobox = new Microsoft.Maps.Infobox(loc, {
-        title: data.name,
-        description: address
+        htmlContent: infoboxHouse(data.name, 1, address)
     });
-
-    pin = new Microsoft.Maps.Pushpin(loc, {
-        title: data.name,
-        subTitle: address
-    });
+    pin = createFontPushpin(loc, '\uF3C5', 'FontAwesome', 45, '#2c3e59', data.name, address);
 
     map.entities.push(pin);
     infobox.setMap(map);
@@ -297,9 +300,11 @@ function getLocation(temp_address) {
             address = temp_address
         }
         else {
-            address = "adminDistrict=" + encodeURIComponent(dataLocation[$("#city-select").val()].bingName)
-                + "&locality=" + encodeURIComponent(dataLocation[$("#city-select").val()].district[$("#district-select").val()].bingName)
-                + "&addressLine=" + encodeURIComponent($("#map-location").val() + ", " + dataLocation[$("#city-select").val()].district[$("#district-select").val()].ward[$("#ward-select").val()].bingName);
+            if ($("#city-select").val() != -1) {
+                address = "adminDistrict=" + encodeURIComponent(dataLocation[$("#city-select").val()].name)
+                    + "&locality=" + encodeURIComponent(dataLocation[$("#city-select").val()].district[$("#district-select").val()].name)
+                    + "&addressLine=" + encodeURIComponent($("#map-location").val() + ", " + dataLocation[$("#city-select").val()].district[$("#district-select").val()].ward[$("#ward-select").val()].name);
+            }
         }
         var url_temp = window.location.protocol + '//dev.virtualearth.net/REST/v1/Locations?CountryRegion=VN&' + address + '&key=' + key;
 

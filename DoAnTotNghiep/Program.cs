@@ -40,6 +40,7 @@ builder.Services.AddScoped<ICheckOutService, CheckOutService>();
 builder.Services.AddScoped<IMessageService, MessageService>();
 builder.Services.AddScoped<ICircleRequestService, CircleRequestService>();
 builder.Services.AddScoped<ICircleFeedBackService, CircleFeedBackService>();
+builder.Services.AddScoped<IReportService, ReportService>();
 
 builder.Services.AddAuthentication(Scheme.Authentication())
     .AddJwtBearer(Scheme.AuthenticationJWT(), options =>

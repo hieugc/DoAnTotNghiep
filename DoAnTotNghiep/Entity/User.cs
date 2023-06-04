@@ -90,6 +90,9 @@ namespace DoAnTotNghiep.Entity
         [Column("role")]
         public int Role { get; set; } = 0;
 
+        [Column("is_ban")]
+        public bool IsBan { get; set; } = false;
+
         [Column("gender")]
         public bool? Gender { get; set; } = false;
         [Column("birth_day")]
@@ -103,6 +106,8 @@ namespace DoAnTotNghiep.Entity
 
         [Column("number_user_rating")]
         public int NumberUserRating { get; set; } = 0;
+        [Column("created_date")]
+        public DateTime CreatedDate { get; set; } = DateTime.Now;
 
         [Column("id_file")]
         public virtual int? IdFile { get; set; }

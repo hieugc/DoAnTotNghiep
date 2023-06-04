@@ -2,11 +2,13 @@
 using DoAnTotNghiep.Entity;
 using DoAnTotNghiep.Enum;
 using DoAnTotNghiep.Hubs;
+using DoAnTotNghiep.Service;
 using DoAnTotNghiep.ViewModels;
 using Hangfire;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -61,7 +63,7 @@ namespace DoAnTotNghiep.Modules
             }
             else if(_function == TargetFunction.ExecuteCheckTransaction)
             {
-                _timer = new Timer(ExecuteCheckTransaction, null, this._startTime, TimeSpan.FromMinutes(1));
+                _timer = new Timer(ExecuteCheckTransaction, null, this._startTime, TimeSpan.FromSeconds(10));
             }
             else if (_function == TargetFunction.ExecuteCreateWaiting)
             {
@@ -156,7 +158,7 @@ namespace DoAnTotNghiep.Modules
                                 this.SendNotificationAndMail(notificationList, requestBackground, Subject.SendCheckIn());
 
                                 this._limit += 1;
-                                TimeSpan timeToGo = rq.EndDate.AddHours(-36) - DateTime.Now;
+                                TimeSpan timeToGo = rq.EndDate.AddDays(-1) - DateTime.Now;
                                 if (timeToGo <= TimeSpan.Zero)
                                 {
                                     timeToGo = TimeSpan.Zero;
@@ -196,8 +198,7 @@ namespace DoAnTotNghiep.Modules
                                                 houseRequest,
                                                 requestBackground,
                                                 (requestBackground.Request.Type == 2 && requestBackground.Request.IdSwapHouse.HasValue),
-                                                " cần check-out")
-                    );
+                                                " cần check-out"));
             var DBtransaction = this._context.Database.BeginTransaction();
             try
             {
@@ -215,7 +216,6 @@ namespace DoAnTotNghiep.Modules
             }
             this.StopAsync(this._cancel);
         }
-
         private List<Notification> CreateNotification(User? userRequest, House? houseRequest, RequestBackground requestBackground, bool condition, string content)
         {
             List<Notification> notificationList = new List<Notification>();
@@ -248,7 +248,6 @@ namespace DoAnTotNghiep.Modules
         }
         private void SendNotificationAndMail(List<Notification> notifications, RequestBackground requestBackground, string title)
         {
-            //=> gửi signalR
             foreach (var item in notifications)
             {
                 requestBackground.ChatHub.SendNotification(
@@ -257,7 +256,32 @@ namespace DoAnTotNghiep.Modules
                         model: new NotificationViewModel(item, this._host)).Wait(TimeSpan.FromMinutes(1));
             }
 
-            //=> gửi mail
+            foreach (var item in notifications)
+            {
+                var u = this._context.Users.FirstOrDefault(m => m.Id == item.IdUser);
+                if (u != null)
+                {
+                    string? moduleEmail = requestBackground.Configuration.GetConnectionString(ConfigurationEmail.Email());
+                    string? modulePassword = requestBackground.Configuration.GetConnectionString(ConfigurationEmail.Password());
+                    if (!string.IsNullOrEmpty(moduleEmail) && !string.IsNullOrEmpty(modulePassword))
+                    {
+                        EmailSender sender = new EmailSender(moduleEmail, modulePassword);
+                        string body = item.Content;
+                        sender.SendMail(item.Users.Email, title, body, null, string.Empty);
+                    }
+                }
+            }
+        }
+        private void SendNotificationAndMail(List<Notification> notifications, CircleRequestBackground requestBackground, string title)
+        {
+            foreach (var item in notifications)
+            {
+                requestBackground.ChatHub.SendNotification(
+                        group: Crypto.EncodeKey(item.IdUser.ToString(), Crypto.Salt(requestBackground.Configuration)),
+                        target: TargetSignalR.Notification(),
+                        model: new NotificationViewModel(item, this._host)).Wait(TimeSpan.FromMinutes(1));
+            }
+
             foreach (var item in notifications)
             {
                 var u = this._context.Users.FirstOrDefault(m => m.Id == item.IdUser);
@@ -300,8 +324,6 @@ namespace DoAnTotNghiep.Modules
                 this.StopAsync(this._cancel);
             }
         }
-
-        //transaction
         private void ExecuteCheckTransaction(object? Object)
         {
             CheckTransactionBackground checkObject = (CheckTransactionBackground)this._functionObject;
@@ -440,7 +462,6 @@ namespace DoAnTotNghiep.Modules
             context.SaveChanges();
         }
 
-        //waiting
         private void ExecuteCreateWaiting(object? Object)
         {
             //chạy 1 lần
@@ -502,22 +523,164 @@ namespace DoAnTotNghiep.Modules
 
         private void ExecuteCheckInCircleRequest(object? Object)
         {
-            //danh sách user
-            //  => gửi noti
-            //  => gửi email
+            if (this.executionCount < this._limit)
+            {
+                var count = Interlocked.Increment(ref executionCount);
+                CircleRequestBackground requestBackground = (CircleRequestBackground)this._functionObject;
+                //thông báo checkIn
+                //checkIn
+                    //chưa check => check => alert checkout
+                    //
+                if (count == 1)
+                {
+                    List<Notification> notifications = this.CreateNotiForCircle(requestBackground.IdCircle, " cần check in");                    
+                    var DBtransaction = this._context.Database.BeginTransaction();
 
-            //chạy 2 lần
-            // lần 1 thông báo
-            // lần 2 checkIn
-            // lần 3 đợi checkOut
+                    try
+                    {
+                        this._context.Notifications.AddRange(notifications);
+                        this._context.SaveChanges();
+                        Console.WriteLine(count.ToString() + " Time: " + DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"));
+                        DBtransaction.Commit();
+                        this.SendNotificationAndMail(notifications, requestBackground, Subject.SendCheckIn());
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e);
+                        this.StopAsync(this._cancel);
+                        DBtransaction.Rollback();
+                    }
+                }
+                else if (count == 2)
+                {
+                    var circleRequest = this._context.CircleExchangeHouses.FirstOrDefault(m => m.Id == requestBackground.IdCircle && m.Status == (int)StatusWaitingRequest.ACCEPT);
+                    if(circleRequest != null)//chưa accept full
+                    {
+                        List<Notification> notifications = this.CreateNotiForCircle(requestBackground.IdCircle, " đã được hệ thống check in");
+
+                        circleRequest.Status = (int)StatusWaitingRequest.CHECK_IN; //tự động CheckIn
+                        var DBtransaction = this._context.Database.BeginTransaction();
+                        try
+                        {
+                            this._context.Notifications.AddRange(notifications);
+                            this._context.SaveChanges();
+
+                            this._context.CircleExchangeHouses.Update(circleRequest);
+                            this._context.SaveChanges();
+                            DBtransaction.Commit();
+                            this.SendNotificationAndMail(notifications, requestBackground, Subject.SendCheckIn());
+
+                            this._limit += 1;
+                            TimeSpan timeToGo = circleRequest.EndDate.AddDays(-1) - DateTime.Now;
+                            if (timeToGo <= TimeSpan.Zero)
+                            {
+                                timeToGo = TimeSpan.Zero;
+                            }
+                            this._timer?.Change(timeToGo, TimeSpan.FromMinutes(1));
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e);
+                            DBtransaction.Rollback();
+                        }
+                    }
+                    else
+                    {
+                        this.StopAsync(this._cancel);
+                    }
+                }
+                else if (count == 3)
+                {
+                    List<Notification> notifications = this.CreateNotiForCircle(requestBackground.IdCircle, " cần check out");
+                    var DBtransaction = this._context.Database.BeginTransaction();
+                    try
+                    {
+                        this._context.Notifications.AddRange(notifications);
+                        this._context.SaveChanges();
+                        DBtransaction.Commit();
+                        this.SendNotificationAndMail(notifications, requestBackground, Subject.SendCheckOut());
+                        Console.WriteLine(count.ToString() + " Time: " + DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"));
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e);
+                        DBtransaction.Rollback();
+                    }
+                    this.StopAsync(this._cancel);
+                }
+            }
+            else
+            {
+                this.StopAsync(this._cancel);
+            }
         }
         private void ExecuteCheckOutCircleRequest(object? Object)
         {
-
+            if (this.executionCount < this._limit)
+            {
+                var count = Interlocked.Increment(ref executionCount);
+                CircleRequestBackground requestBackground = (CircleRequestBackground)this._functionObject;
+                List<Notification> notifications = this.CreateNotiForCircle(requestBackground.IdCircle, " cần check out");
+                var DBtransaction = this._context.Database.BeginTransaction();
+                try
+                {
+                    this._context.Notifications.AddRange(notifications);
+                    this._context.SaveChanges();
+                    DBtransaction.Commit();
+                    this.SendNotificationAndMail(notifications, requestBackground, Subject.SendCheckOut());
+                    Console.WriteLine(count.ToString() + " Time: " + DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"));
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    DBtransaction.Rollback();
+                }
+                this.StopAsync(this._cancel);
+            }
+            else
+            {
+                this.StopAsync(this._cancel);
+            }
         }
 
+        private List<Notification> CreateNotiForCircle(int idCircle, string content)
+        {
+            List<Notification> notifications = new List<Notification>();
+            List<User> users = new List<User>();
 
+            var itemU = from cr in this._context.CircleExchangeHouses
+                        join cru in this._context.CircleExchangeHouseOfUsers on cr.Id equals cru.IdCircleExchangeHouse
+                        join u in this._context.Users on cru.IdUser equals u.Id
+                        where cr.Id == idCircle
+                        select u;
+            if (itemU != null) users.AddRange(itemU.ToList());
+            List<WaitingRequest> requests = new List<WaitingRequest>();
+            var itemRQ = from rcr in this._context.RequestsInCircleExchangeHouses
+                         join wr in this._context.WaitingRequests on rcr.IdWaitingRequest equals wr.Id
+                         where rcr.IdCircleExchangeHouse == idCircle
+                         select wr;
+            if (itemRQ != null) requests.AddRange(itemRQ.ToList());
+            foreach (var i in requests) i.IncludeAll(this._context);
+            foreach (var item in users)
+            {
+                WaitingRequest myRequest = requests.First(m => m.IdUser == item.Id);
+                WaitingRequest nextRequest = requests.First(m => m.IdCity == myRequest.IdCity);
 
+                Notification notification = new Notification()
+                {
+                    Title = NotificationType.RequestTitle,
+                    CreatedDate = DateTime.Now,
+                    Type = NotificationType.CIRCLE_SWAP,
+                    IdUser = item.Id,
+                    IdType = idCircle,
+                    IsSeen = false,
+                    ImageUrl = NotificationImage.Alert,
+                    Content = "Yêu cầu của bạn đến nhà " + nextRequest.Houses.Name + " của " + nextRequest.Users.LastName + " " + nextRequest.Users.FirstName + " ở " + nextRequest.Citys.Name + content
+                };
+                notifications.Add(notification);
+            }
+            return notifications;
+        }
         public Task StopAsync(CancellationToken stoppingToken)
         {
             Console.WriteLine("Timed Hosted Service is stopping. Time: " + DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"));
@@ -525,7 +688,6 @@ namespace DoAnTotNghiep.Modules
             this.Dispose();
             return Task.CompletedTask;
         }
-
         public void Dispose()
         {
             _timer?.Dispose();
@@ -542,6 +704,19 @@ namespace DoAnTotNghiep.Modules
         {
             ChatHub = chatHub;
             Request = request;
+            Configuration = configuration;
+        }
+    }
+    public class CircleRequestBackground
+    {
+        public ChatHub ChatHub { get; set; }
+        public int IdCircle { get; set; }
+        public IConfiguration Configuration { get; set; }
+
+        public CircleRequestBackground(ChatHub chatHub, int idCircle, IConfiguration configuration)
+        {
+            ChatHub = chatHub;
+            this.IdCircle = idCircle;
             Configuration = configuration;
         }
     }
@@ -585,19 +760,6 @@ namespace DoAnTotNghiep.Modules
             this.IdUser = IdUser;
             this.DateEnd = DateEnd;
             this.DateStart = DateStart;
-        }
-    }
-    public class CircleRequestBackground
-    {
-        public ChatHub ChatHub { get; set; }
-        public CircleExchangeHouse Request { get; set; }
-        public IConfiguration Configuration { get; set; }
-
-        public CircleRequestBackground(ChatHub chatHub, CircleExchangeHouse request, IConfiguration configuration)
-        {
-            ChatHub = chatHub;
-            Request = request;
-            Configuration = configuration;
         }
     }
 }

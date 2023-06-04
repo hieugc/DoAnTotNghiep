@@ -80,16 +80,18 @@ namespace DoAnTotNghiep.Controllers
                         this._ruleService.AddRuleForHouse(house, data.Rules);
                         this._utilitiesService.AddUtilitiesForHouse(house, data.Utilities);
 
+                        house.IncludeAll(this._context);
+
                         //thêm hình
                         List<Entity.File> files = new List<Entity.File>();
 
                         if (data.Files == null)
                         {
-                            files.AddRange(this._fileService.SaveRangeFile(this._fileService.AddFileHouse(house, data.Images, this.environment.ContentRootPath)));
+                            files.AddRange(this._fileService.SaveRangeFile(this._fileService.AddFile(data.Images, this.environment.ContentRootPath)));
                         }
                         else
                         {
-                            files.AddRange(this._fileService.SaveRangeFile(this._fileService.AddFileHouse(house, data.Files, this.environment.ContentRootPath)));
+                            files.AddRange(this._fileService.SaveRangeFile(this._fileService.AddFile(data.Files, this.environment.ContentRootPath)));
                         }
                         this._fileService.SaveRangeFileOfHouse(house, files);
                         transaction.Commit();
@@ -99,9 +101,9 @@ namespace DoAnTotNghiep.Controllers
                         DetailHouseViewModel detailHouseViewModel = new DetailHouseViewModel(house, salt);
                         detailHouseViewModel.Rules = data.Rules;
                         detailHouseViewModel.Utilities = data.Utilities;
-                        detailHouseViewModel.CityName = data.CityName;
-                        detailHouseViewModel.DistrictName = data.DistrictName;
-                        detailHouseViewModel.WardName = data.WardName;
+                        detailHouseViewModel.CityName = house.Citys?.Name;
+                        detailHouseViewModel.DistrictName = house.Districts?.Name;
+                        detailHouseViewModel.WardName = house.Wards?.Name;
 
                         string host = this.GetWebsitePath();
                         List<ImageBase> images = new List<ImageBase>();

@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Razor.Language.Extensions;
 using QRCoder;
 using System.Drawing;
 using DoAnTotNghiep.Service;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace DoAnTotNghiep.Controllers
 {
@@ -92,13 +93,13 @@ namespace DoAnTotNghiep.Controllers
                     HistoryTransaction transaction = new HistoryTransaction()
                     {
                         CreatedDate = DateTime.Now,
-                        Amount = amount.Price,
-                        Status = (int)StatusTransaction.PENDING,
-                        IdUser = IdUser,
                         Content = "Bạn đã nạp "
-                                    + amount.Price
-                                    + " VNĐ vào hệ thống tích lũy điểm lúc "
-                                    + DateTime.Now.ToString("hh:mm:ss dd/MM/yyyy")
+                                    + PriceFormat.VNDFormat(amount.Price)
+                                    + " vào hệ thống tích lũy điểm lúc "
+                                    + DateTime.Now.ToString("hh:mm:ss dd/MM/yyyy"),
+                        Amount = (int)Math.Floor((double)amount.Price / 1000),
+                        Status = (int)StatusTransaction.PENDING,
+                        IdUser = IdUser
                     };
                     using (var tran = this._context.Database.BeginTransaction())
                     {
@@ -109,7 +110,7 @@ namespace DoAnTotNghiep.Controllers
                             {
                                 this._transactionService.Save(transaction);
                                 tran.Commit();
-
+                                transaction.Amount = amount.Price;
                                 Uri url = RequestAPI.CreateOrderZaloRequest();
                                 Dictionary<string, string> model = new ZaloViewModel().CreateOrder(user, transaction, this.GetWebsitePath(), key1, AppId);
 

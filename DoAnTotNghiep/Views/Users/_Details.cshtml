@@ -1,0 +1,84 @@
+﻿@model UserProfile
+@using DoAnTotNghiep.Enum;
+@{
+    ViewData["Title"] = "Thông tin người dùng";
+}
+@if(Model != null){
+    <div class="profile">
+        <div class="avt">
+            @if (string.IsNullOrEmpty(Model.User.UrlImage))
+            {
+                <img src="/Image/user.svg" alt="avatar của Hiếu" class="img-avt" />
+            }
+            else
+            {
+                <img src="@Model.User.UrlImage" alt="avatar của Hiếu" class="img-avt" />
+            }
+        </div>
+        <div class="info">
+            <div class="name"><strong>@Model.User.LastName @Model.User.FirstName</strong></div>
+            <div class="rate">
+                <div class="frame-start">
+                    <span class="fa fa-star @if(Model.User.UserRating >= 1){@Html.Raw("checked")}"></span>
+                    <span class="fa fa-star @if(Model.User.UserRating >= 2){@Html.Raw("checked")}"></span>
+                    <span class="fa fa-star @if(Model.User.UserRating >= 3){@Html.Raw("checked")}"></span>
+                    <span class="fa fa-star @if(Model.User.UserRating >= 4){@Html.Raw("checked")}"></span>
+                    <span class="fa fa-star @if(Model.User.UserRating >= 5){@Html.Raw("checked")}"></span>
+                </div>
+                <div class="number-rate"><strong>@Model.User.NumberRating</strong> người đánh giá</div>
+            </div>
+            <div class="swap">
+                <div class="label"><span>Số lượt trao đổi: </span><strong>@Model.User.NumberSwap</strong></div>
+                <div class="label"><span>Email: </span><strong>@Model.User.Email</strong></div>
+                <div class="label"><span>Số điện thoại: </span><strong>@Model.User.PhoneNumber</strong></div>
+                <div class="label"><span>Ngày sinh: </span><strong>@Model.User.BirthDay.Value.ToString("dd/MM/yyyy")</strong></div>
+                <div class="label"><span>Giới tính: </span><strong>@((!Model.User.Gender.HasValue || Model.User.Gender.Value == true) ? "Nam" : "Nữ")</strong></div>
+            </div>
+        </div>
+    </div>
+    <div class="list-house">
+        <h2 class="title">Danh sách nhà của người dùng</h2>
+        <div class="list">
+            @foreach(var item in Model.Houses)
+            {
+                <div class="house-result">
+                    <div class="house-card">
+                        <img src="@item.Images.FirstOrDefault()?.Data" alt="Mike" style="width:100%">
+                        <div class="house-img-container">
+                            <h2>@item.Name</h2>
+                            <p class="attribute">
+                                <i class="fa-solid fa-map-location-dot"></i><span>
+                                    @item.Location, @item.WardName, @item.DistrictName, @item.CityName
+                                </span>
+                            </p>
+                            <div class="list-attribute">
+                                <p class="attribute"><span>@item.Rating (@item.NumberRating)</span><i class="fa-solid fa-star"></i></p>
+                                <p class="attribute"><i class="fa-solid fa-users"></i><span>@item.People</span></p>
+                                <p class="attribute"><i class="fa-solid fa-bed"></i><span>@item.BedRoom</span></p>
+                            </div>
+                            <p>
+                                <button class="item-button">
+                                    <span>@item.Price @HouseEnum.UnitPrice</span>
+                                </button>
+                            </p>
+                        </div>
+                        <a target="_blank" href='@Url.Action("Details", "Houses", new {Id = item.Id})' class="finding">
+                            <i class="fa-sharp fa-solid fa-magnifying-glass"></i>
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="list-review">
+        <h2 class="title">Nhận xét từ người dùng</h2>
+        @foreach(var item in Model.Rating)
+        {
+            @(await Html.PartialAsync("~/Views/Rating/_Comment.cshtml", item))
+        }
+    </div>
+}
+else{
+    <h3 class="text-danger">Không tìm thấy thông tin người dùng.</h3>
+}

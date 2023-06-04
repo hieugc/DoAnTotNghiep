@@ -3,7 +3,7 @@
 
 <div class="card mb-3 status-@Model.Status house-id-@Model.Id">
     <div class="row g-0">
-        <div class="col-md-8">
+        <div class="col-md-6">
             @if(Model.Images.Any())
             {
                 foreach(var item in Model.Images)
@@ -19,7 +19,7 @@
                 <img src="~/Image/logo.png" class="img-fluid rounded-start" alt="hình ảnh nhà">
             }
         </div>
-        <div class="col-md-4">
+        <div class="col-md-6">
             <div class="card-body">
                 <div class="body-head">
                     <h5 class="card-title">@Model.Name</h5>

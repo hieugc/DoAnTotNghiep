@@ -179,6 +179,20 @@ function refreshHouseModal() {
             removePiture(index);
         }
     }
+    if (dataLocation == null) {
+        getDataCity();
+    }
+    else {
+        changeDataForSelect2("#district-select", getDataFormat(dataLocation, "Tỉnh/Thành", 0));
+    }
+    if ($("#district-select").length > 0) {
+        changeDataForSelect2("#district-select", [{ "id": -1, "text": "Quận / Huyện" }]);
+        $("#district-select").prop("disabled", true);
+    }
+    if ($("#ward-select").length > 0) {
+        changeDataForSelect2("#ward-select", [{ "id": -1, "text": "Phường / Xã" }]);
+        $("#ward-select").prop("disabled", true);
+    }
 }
 function pickOption(element) {
     if (element.classList.value.indexOf("option-selected") != -1) {
@@ -412,10 +426,10 @@ function houseItem(data) {
     return `
         <div class="card mb-3 status-${data.status}">
                 <div class="row g-0">
-                    <div class="col-md-8">
+                    <div class="col-md-6">
                         <img src="${image}" class="img-fluid rounded-start" alt="hình ảnh nhà">
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <div class="card-body">
                             <div class="body-head">
                                 <h5 class="card-title">${data.name}</h5>
@@ -438,7 +452,7 @@ function houseItem(data) {
                             </div>
                             <p class="attribute"><i class="fa-solid fa-map-location-dot px-2"></i><span>${data.location}, ${data.wardName}, ${data.districtName}, ${data.cityName}</span></p>
                             <p class="card-control">
-                                <a href="${(window.location.origin + "/House/Details?Id=" + data.id)}" class="btn btn-primary" title="Xem chi tiết">Chi tiết</a>
+                                <a href="${(window.location.origin + "/Houses/HouseOverView?Id=" + data.id)}" class="btn btn-primary" title="Xem chi tiết">Chi tiết</a>
                                 <button type="button" class="btn btn-warning" onclick="editHouse(${data.id})">Chỉnh sửa</button>
                                 <button type="button" class="btn btn-danger" onclick="deleteHouse(${data.id})">Xóa</button>
                             </p>
@@ -582,14 +596,26 @@ function distanceTo(lat1, lon1, lat2, lon2) {
     return dist;
 }
 function checkAddress() {
+    let res = true;
+    let str = "";
+    if ($("#city-select").val() == -1) {
+        str += "Hãy chọn Tỉnh/thành <br/>";
+        res = false;
+    }
+    if ($("#district-select").val() == -1) {
+        str += "Hãy chọn Quận/huyện <br/>";
+        res = false;
+    }
+    if ($("#ward-select").val() == -1) {
+        str += "Hãy chọn phường/xã <br/>";
+        res = false;
+    }
     if ($("#map-location").val().length == 0) {
-        $("#map-location-validate").html("Hãy điền địa chỉ nhà");
-        return false;
+        str += "Hãy điền địa chỉ nhà <br/>";
+        res = false;
     }
-    else {
-        $("#map-location-validate").html("");
-        return true;
-    }
+    $("#map-location-validate").html(str);
+    return res;
 }
 function getPredict() {
     if (data.people != null && data.square != null && data.lat != 0 && data.lng != 0 && data.idCity != 0) {

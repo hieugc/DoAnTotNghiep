@@ -44,13 +44,11 @@ namespace DoAnTotNghiep.ViewModels
         [Required(ErrorMessage = "Hãy thêm hình ảnh nhà của bạn")]
         public List<ImageBase?> Images { get; set; } = new List<ImageBase?>();
     }
-
     public class EditHouseViewModel: CreateHouseViewModel
     {
         [Required(ErrorMessage = "Không tìm thấy mã định danh. Hãy tải lại trang!")]
         public int Id { get; set; }
     }
-
     public class DetailHouseViewModel: EditHouseViewModel
     {
         public DetailHouseViewModel() { }
@@ -213,6 +211,9 @@ namespace DoAnTotNghiep.ViewModels
                 this.Rules = mobileCreateHouseViewModel.Rules;
                 this.Files = mobileCreateHouseViewModel.Files;
                 this.Bed = mobileCreateHouseViewModel?.Bed;
+                this.CityName = createHouseViewModel.CityName;
+                this.DistrictName = createHouseViewModel.DistrictName;
+                this.WardName = createHouseViewModel.WardName;
             }
             else if(createHouseViewModel != null)
             {
@@ -236,6 +237,10 @@ namespace DoAnTotNghiep.ViewModels
                 this.Files = null;
                 this.Images = createHouseViewModel.Images;
                 this.Bed = createHouseViewModel.Bed;
+                this.CityName = createHouseViewModel.CityName;
+                this.DistrictName = createHouseViewModel.DistrictName;
+                this.WardName = createHouseViewModel.WardName;
+
             }
         }
         public string Name { get; set; } = string.Empty;
@@ -261,7 +266,6 @@ namespace DoAnTotNghiep.ViewModels
         public List<ImageBase?> Images { get; set; } = new List<ImageBase?>();
         public IFormFileCollection? Files { get; set; }
     }
-
     public class EditHouse: CreateHouse
     {
         public EditHouse(MobileEditHouseViewModel? mobile, EditHouseViewModel? web): base(mobile, web)
@@ -280,7 +284,6 @@ namespace DoAnTotNghiep.ViewModels
         public List<int> IdRemove { get; set; } = new List<int>();
         public int Status { get; set; } = (int)StatusHouse.VALID;
     }
-
     public class ImageBase
     {
         public ImageBase(Entity.File file, string host)
@@ -295,7 +298,6 @@ namespace DoAnTotNghiep.ViewModels
         public int? Id { get; set; } = 0; //Id FILE  => cập hình 
         public string Data { get; set; } = string.Empty; //image url :)) t còn base64
     }
-
     public class ListDetailHouses
     {
         public List<DetailHouseViewModel> Houses { get; set; } = new List<DetailHouseViewModel>();
@@ -323,7 +325,6 @@ namespace DoAnTotNghiep.ViewModels
         public int Limit { get; set; } = 10;
         public int Total { get; set; } = 0;
     }
-
     public class HouseSelector
     {
         public HouseSelector(House house)
@@ -334,7 +335,6 @@ namespace DoAnTotNghiep.ViewModels
         public int Id { get; set; }
         public string Name { get; set; }
     }
-
     public class HistoryViewModel
     {
         public HistoryViewModel(List<HouseSelector> house, double lat, double lng)

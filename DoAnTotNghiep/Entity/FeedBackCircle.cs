@@ -74,7 +74,7 @@ namespace DoAnTotNghiep.Entity
 
         [Column("id_user_rating")]
         [Required]
-        public virtual int IdUserRating { get; set; } //người đc đánh giá
+        public virtual int IdUserRating { get; set; } //người đánh giá
 
         [ForeignKey(nameof(IdUserRating))]
         public virtual User? UserRating { get; set; }
@@ -94,7 +94,7 @@ namespace DoAnTotNghiep.Entity
 
         [Required]
         [Column("id_user_rated")]
-        public virtual int IdUserRated { get; set; }//đánh giá
+        public virtual int IdUserRated { get; set; }// được đánh giá
 
         [ForeignKey(nameof(IdUserRated))]
         public virtual User? UserRated { get; set; }

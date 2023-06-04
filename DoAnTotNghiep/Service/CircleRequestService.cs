@@ -73,7 +73,7 @@ namespace DoAnTotNghiep.Service
                         foreach (var ud in oldWaitingNode) ud.Status = (int)StatusWaitingRequest.IN_CIRCLE;
                         this._context.WaitingRequests.UpdateRange(oldWaitingNode);//update Status
                         this._context.SaveChanges();
-                        CircleExchangeHouse circleExchange = new CircleExchangeHouse() { Status = (int)StatusWaitingRequest.INIT };
+                        CircleExchangeHouse circleExchange = new CircleExchangeHouse() { Status = (int)StatusWaitingRequest.INIT,StartDate = item.First().StartDate.Value,EndDate = item.First().EndDate.Value};
                         this._context.CircleExchangeHouses.AddRange(circleExchange);
                         this._context.SaveChanges();
                         objectCircleAdds.Add(new ObjectCircleAdd(circleExchange, listObj));
@@ -86,7 +86,7 @@ namespace DoAnTotNghiep.Service
                     foreach (var u in item.WaitingRequests)
                     {
                         newUser.Add(new CircleExchangeHouseOfUser() { IdCircleExchangeHouse = item.CircleExchanges.Id, IdUser = u.IdUser });
-                        newLink.Add(new RequestInCircleExchangeHouse() { IdCircleExchangeHouse = item.CircleExchanges.Id, IdWaitingRequest = u.Id });
+                        newLink.Add(new RequestInCircleExchangeHouse() { IdCircleExchangeHouse = item.CircleExchanges.Id, IdWaitingRequest = u.Id , Status = (int)StatusWaitingRequest.IN_CIRCLE });
                     }
                     this._context.CircleExchangeHouseOfUsers.AddRange(newUser);
                     this._context.RequestsInCircleExchangeHouses.AddRange(newLink);
@@ -345,6 +345,16 @@ namespace DoAnTotNghiep.Service
             if (rq == null) return new List<WaitingRequest>();
             return rq.ToList();
         }
+        public List<WaitingRequest> GetByCircle(int idCircle)
+        {
+            List<WaitingRequest> requests = new List<WaitingRequest>();
+            var item = from rcr in this._context.RequestsInCircleExchangeHouses
+                        join wr in this._context.WaitingRequests on rcr.IdWaitingRequest equals wr.Id
+                        where rcr.IdCircleExchangeHouse == idCircle
+                        select wr;
+            if (item != null) requests.AddRange(item.ToList());
+            return requests;
+        }
         public List<CircleRequestViewModel> GetSuggest(int IdUser, IUserService _userService, byte[] salt, string host)
         {
             var circle = this.GetByUser(IdUser);
@@ -416,6 +426,7 @@ namespace DoAnTotNghiep.Service
         public CircleRequestDetail? CircleRequestDetail(WaitingRequest request, IUserService userService, byte[] salt, string host);
         public List<CircleExchangeHouse> GetByUser(int IdUser);
         public List<WaitingRequest> GetByCircle(ICollection<RequestInCircleExchangeHouse> requests);
+        public List<WaitingRequest> GetByCircle(int idCircle);
         public List<CircleRequestViewModel> GetSuggest(int IdUser, IUserService _userService, byte[] salt, string host);
         public CircleRequestViewModel? GetCircleRequestDetail(CircleExchangeHouse circle, int IdUser, IUserService _userService, byte[] salt, string host);
     }

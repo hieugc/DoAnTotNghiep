@@ -23,6 +23,11 @@ namespace DoAnTotNghiep.Service
             this._context.Notifications.Add(notification);
             this._context.SaveChanges();
         }
+        public void SaveNotification(List<Notification> notification)
+        {
+            this._context.Notifications.AddRange(notification);
+            this._context.SaveChanges();
+        }
         public void SeenAll(int idUser)
         {
             var model = this._context.Notifications
@@ -68,6 +73,7 @@ namespace DoAnTotNghiep.Service
     public interface INotificationService
     {
         public void SaveNotification(Notification notification);
+        public void SaveNotification(List<Notification> notification);
         public void SeenAll(int idUser);
         public void Seen(int idUser, int id);
         public List<NotificationViewModel> GetByUser(int idUser, string host);

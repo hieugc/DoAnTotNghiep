@@ -30,7 +30,7 @@ namespace DoAnTotNghiep.Service
             this._context.SaveChanges();
         }
         public FeedBackOfCircle? GetByCircleRequest(int idUser, int idFeedBack)
-            => this._context.FeedBackOfCircles.Where(m => m.Id == idFeedBack && m.IdUserRated == idUser).FirstOrDefault();
+            => this._context.FeedBackOfCircles.Where(m => m.Id == idFeedBack && m.IdUserRating == idUser).FirstOrDefault();
         public FeedBackOfCircle? GetById(int idFeedBack) => this._context.FeedBackOfCircles.Where(m => m.Id == idFeedBack).FirstOrDefault();
     }
 

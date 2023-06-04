@@ -39,6 +39,22 @@ namespace DoAnTotNghiep.Entity
                 context.Entry(this).Reference(m => m.Houses).Load();
         }
 
+        public FeedBack Create(FeedBackOfCircle feedBack)
+        {
+            return new FeedBack()
+            {
+                Id = feedBack.Id,
+                Content = feedBack.Content,
+                Rating = feedBack.RateHouse,
+                RatingUser = feedBack.RateUser,
+                CreatedDate = feedBack.CreatedDate,
+                UpdatedDate = feedBack.UpdatedDate,
+                IdUser = feedBack.IdUserRating,
+                IdUserRated = feedBack.IdUserRated,
+                IdHouse = feedBack.IdHouse,
+            };
+        }
+
         [Key]
         [Column("id")]
         public int Id { get; set; }

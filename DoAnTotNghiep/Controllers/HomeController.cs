@@ -25,6 +25,7 @@ namespace DoAnTotNghiep.Controllers
         private readonly IHouseService _houseService;
         private readonly IRequestService _requestService;
         private readonly IFeedBackService _feedBackService;
+        private readonly IUserService _userService;
 
         public HomeController(  DoAnTotNghiepContext context, 
                                 IConfiguration _configuration,
@@ -33,7 +34,8 @@ namespace DoAnTotNghiep.Controllers
                                 IHouseService houseService,
                                 IFileService fileService,
                                 IRequestService requestService,
-                                IFeedBackService feedBackService) : base(environment)
+                                IFeedBackService feedBackService,
+                                IUserService userService) : base(environment)
         {
             this._context = context;
             this._configuration = _configuration;
@@ -42,6 +44,7 @@ namespace DoAnTotNghiep.Controllers
             this._fileService = fileService;
             this._requestService = requestService;
             this._feedBackService = feedBackService;
+            this._userService = userService;
         }
 
         public IActionResult Index()

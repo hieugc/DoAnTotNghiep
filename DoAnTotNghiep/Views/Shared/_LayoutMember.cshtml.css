@@ -4,6 +4,7 @@
     background: white;
     border-right: 1px solid rgba(161, 172, 184, 0.4);
     position: sticky;
+    height: 100%;
 }
 
 .tab-left > .infomation {
@@ -87,8 +88,7 @@
 main{
     clear: both;
     display: flex;
-    position: fixed;
-    height: calc(100% - 145px);
+    height: calc(100vh - 120px);
     width: 100%;
     overflow: auto;
 }

@@ -5,6 +5,7 @@ using DoAnTotNghiep.Modules;
 using DoAnTotNghiep.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.ML;
+using Newtonsoft.Json.Linq;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using static QRCoder.PayloadGenerator;
@@ -20,11 +21,11 @@ namespace DoAnTotNghiep.Service
         }
         public User? GetByEmail(string email)
         {
-            return this._context.Users.Where(m => m.Email== email).FirstOrDefault();
+            return this._context.Users.Where(m => m.Email== email && m.IsBan == false).FirstOrDefault();
         }
         public User? GetById(int Id)
         {
-            return this._context.Users.Where(m => m.Id == Id).FirstOrDefault();
+            return this._context.Users.Where(m => m.Id == Id && m.IsBan == false).FirstOrDefault();
         }
         public bool IsExistEmail(string email)
         {
@@ -71,21 +72,73 @@ namespace DoAnTotNghiep.Service
         }
         public List<int> CalRate(int idUser)
         {
-            var rate = from u in this._context.Users
-                       join f in this._context.FeedBacks on u.Id equals f.IdUserRated
-                       where u.Id == idUser
-                       select f;
-            if(rate != null)
+            int number = 0;
+            int value = 0;
+            var rate = this._context.FeedBacks.Where(m => m.IdUserRated == idUser).ToList();
+            foreach (var item in rate.ToList())
             {
-                int value = 0;
-                foreach(var item in rate.ToList())
-                {
-                    value += item.RatingUser;
-                }
-                int number = rate.ToList().Count();
-                return new List<int>() { value, number <= 0? 1: number };
+                value += item.RatingUser;
             }
-            return new List<int>() { 0, 1 };
+            number += rate.ToList().Count();
+            var crate = this._context.FeedBackOfCircles.Where(m => m.IdUserRated == idUser).ToList();
+            foreach (var item in crate)
+            {
+                value += item.RateUser;
+            }
+            number += crate.ToList().Count();
+            return new List<int>() { value, number <= 0 ? 1 : number };
+        }
+        public List<User> GetByCircle(int idCircle)
+        {
+            List<User> users = new List<User>();
+
+            var item = from cru in this._context.CircleExchangeHouseOfUsers
+                       join u in this._context.Users on cru.IdUser equals u.Id
+                       where cru.IdCircleExchangeHouse == idCircle
+                       select u;
+            if(item != null ) users.AddRange(item.ToList());
+            return users;
+        }
+        public List<User> All()
+        {
+            return this._context.Users.Where(m => m.Role != (int)Role.AdminCode && m.IsBan == false).ToList();
+        }
+        public void Demo(IConfiguration configuration)
+        {
+            //thêm người
+            List<User> users = new List<User>();
+            List<string> firstName = new List<string>() { "Kim", "Ánh", "Hào", "Tài" };
+            List<string> lastName = new List<string>() { "Hàn", "Hồng", "Nhật", "Phát" };
+            List<string> emails = new List<string>() {
+                "kimhan@gmail.com",
+                "anhhong@gmail.com",
+                "haonhat@gmail.com",
+                "abcc@gmail.com"
+            };
+            for (var item = 0; item < 4; item++)
+            {
+                byte[] salt = Crypto.Salt();
+                int point = item < 3 ? 0 : 2000;
+                User user = new User()
+                {
+                    FirstName = firstName.ElementAt(item),
+                    LastName = lastName.ElementAt(item),
+                    Gender = true,
+                    BirthDay = new DateTime(2001, 01, 01),
+                    Email = emails.ElementAt(item),
+                    Password = Crypto.HashPass("Vinova123", salt),
+                    Salt = Crypto.SaltStr(salt),
+                    PhoneNumber = "0973409127",
+                    Point = point,
+                    BonusPoint = 0,
+                    IdFile = null,
+                    UserRating = 0,
+                    Role = Role.MemberCode
+                };
+                users.Add(user);
+            }
+            this._context.Users.AddRange(users);
+            this._context.SaveChanges();
         }
     }
 
@@ -99,5 +152,8 @@ namespace DoAnTotNghiep.Service
         public bool UpdateUser(User user);
         public int NumberSwap(int id);
         public List<int> CalRate(int idUser);
+        public List<User> GetByCircle(int idCircle);
+        public List<User> All();
+        public void Demo(IConfiguration configuration);
     }
 }

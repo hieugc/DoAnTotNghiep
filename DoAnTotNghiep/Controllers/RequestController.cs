@@ -35,6 +35,7 @@ using static System.Net.Mime.MediaTypeNames;
 using Microsoft.Extensions.Hosting.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using DoAnTotNghiep.Service;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace DoAnTotNghiep.Controllers
 {
@@ -521,7 +522,7 @@ namespace DoAnTotNghiep.Controllers
 
                                 if (request.Type == 1 && request.Point > 0)
                                 {
-                                    if (user != null)
+                                    if (user != null && request.IdUser == user.Id)
                                     {
                                         if ((user.BonusPoint + user.Point - user.PointUsing) < request.Point)
                                         {
@@ -538,15 +539,6 @@ namespace DoAnTotNghiep.Controllers
                                             this._userService.UpdateUser(user);
                                         }
                                     }
-                                    else
-                                    {
-                                        DBtransaction.Rollback();
-                                        return BadRequest(new
-                                        {
-                                            Status = 401,
-                                            Message = "Không tìm thấy người dùng"
-                                        });
-                                    }
                                 }
                                 this._notificationService.SaveNotification(notification3);
                                 DBtransaction.Commit();
@@ -558,7 +550,7 @@ namespace DoAnTotNghiep.Controllers
                                 Notification notification4 = new Notification().CheckOutRequestNotification(request.Houses, request, IdUser);
                                 if (request.Type == 1 && request.Point > 0)
                                 {
-                                    if (user != null)
+                                    if (user != null && request.IdUser == user.Id)
                                     {
                                         if ((user.BonusPoint + user.Point - user.PointUsing) < request.Point)
                                         {
@@ -581,15 +573,6 @@ namespace DoAnTotNghiep.Controllers
                                             this._userService.UpdateUser(user);
                                             this._transactionService.Save(new HistoryTransaction().RequestTransaction(request, user, IdUser));
                                         }
-                                    }
-                                    else
-                                    {
-                                        DBtransaction.Rollback();
-                                        return BadRequest(new
-                                        {
-                                            Status = 404,
-                                            Message = "Không tìm thấy người dùng"
-                                        });
                                     }
                                 }
                                 this._notificationService.SaveNotification(notification4);
@@ -645,13 +628,13 @@ namespace DoAnTotNghiep.Controllers
         }
         private async Task TimerCheckInNotificationAsync(Request request, string host)
         {
-            TimeSpan timeToGo = request.StartDate.AddHours(-36) - DateTime.Now;
+            TimeSpan timeToGo = request.StartDate.AddDays(-1) - DateTime.Now;
             if (timeToGo <= TimeSpan.Zero) timeToGo = TimeSpan.Zero;
             await InitTimerAsync(request, TargetFunction.ExecuteCheckIn, timeToGo, 2, host);
         }
         private async Task TimerCheckOutNotificationAsync(Request request, string host)
         {
-            TimeSpan timeToGo = request.EndDate.AddHours(-36) - DateTime.Now;
+            TimeSpan timeToGo = request.EndDate.AddDays(-1) - DateTime.Now;
             if (timeToGo <= TimeSpan.Zero) timeToGo = TimeSpan.Zero;
             await InitTimerAsync(request, TargetFunction.ExecuteCheckOut, timeToGo, 1, host);
         }

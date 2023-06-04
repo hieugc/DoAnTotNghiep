@@ -203,6 +203,7 @@ namespace DoAnTotNghiep.Service
                                 .Where(m => m.Status == (int)StatusHouse.VALID)
                                 .ToList();
         }
+        public List<House> All() => this._context.Houses.ToList();
         public DetailHouseViewModel GetDetailHouse(House house, string host, byte[] salt)
         {
             house.IncludeAll(this._context);
@@ -280,24 +281,23 @@ namespace DoAnTotNghiep.Service
         public int NumberHouse() => this._context.Houses
                                 .Where(m => m.Status == (int)StatusHouse.VALID)
                                 .ToList().Count();
-
         public List<int> CalRating(int idHouse)
         {
-            var rate = from h in this._context.Houses
-                       join f in this._context.FeedBacks on h.Id equals f.IdHouse
-                       where h.Id == idHouse
-                       select f;
-            if(rate != null)
+            int number = 0;
+            int value = 0;
+            var rate = this._context.FeedBacks.Where(m => m.IdHouse == idHouse).ToList();
+            foreach (var item in rate.ToList())
             {
-                int number = 0;
-                foreach (var item in rate.ToList())
-                {
-                    number += item.Rating;
-                }
-                int count = rate.ToList().Count();
-                return new List<int>() { number,  count <= 0 ? 1: count};
+                value += item.Rating;
             }
-            return new List<int>() { 0, 1};
+            number += rate.ToList().Count();
+            var crate = this._context.FeedBackOfCircles.Where(m => m.IdHouse == idHouse).ToList();
+            foreach (var item in crate)
+            {
+                value += item.RateHouse;
+            }
+            number += crate.ToList().Count();
+            return new List<int>() { value, number <= 0 ? 1 : number };
         }
     }
 
@@ -316,6 +316,7 @@ namespace DoAnTotNghiep.Service
         public List<House> GetListHouseByPagination(Pagination pagination);
         public List<House> GetListHouseByFilter(Filter filter);
         public List<House> GetListPopularHouse(int number = 10);
+        public List<House> All();
         public DetailHouseViewModel GetDetailHouse(House house, string host, byte[] salt);
         public List<DetailHouseViewModel> GetListDetailHouseWithManyImages(List<House> houses, IFileService fileService, string host, byte[] salt);
         public List<DetailHouseViewModel> GetListDetailHouseWithOneImage(List<House> houses, IFileService fileService, string host, byte[] salt);

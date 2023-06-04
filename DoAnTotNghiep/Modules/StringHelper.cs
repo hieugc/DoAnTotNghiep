@@ -49,4 +49,21 @@ namespace DoAnTotNghiep.Modules
             return dist;
         }
     }
+
+    public static class PriceFormat
+    {
+        public static string VNDFormat(int number)
+        {
+            string price = string.Empty;
+            while (true){
+                int temp = (number % 1000);
+                price = temp.ToString() + price;
+                number /= 1000;
+                if (number <= 0) break;
+                price = "." + (temp < 10 ? "00"+ temp : temp < 100? "0"+ temp : temp);
+            }
+            price += " (VNĐ)";
+            return price;
+        }
+    }
 }

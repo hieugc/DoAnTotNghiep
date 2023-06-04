@@ -110,12 +110,14 @@ namespace DoAnTotNghiep.Service
                 this._context.SaveChanges();
             }
         }
+        public Utilities? GetById(int id) => this._context.Utilities.FirstOrDefault(M => M.Id == id);
     }
 
     public interface IUtilitiesService
     {
         public bool SaveUtilities(Utilities utilities);
         public bool UpdateUtilities(Utilities utilities);
+        public Utilities? GetById(int id);
         public List<Utilities> All();
         public void AddUtilitiesForHouse(House house, List<int> currentUtilities);
         public void UpdateUtilitiesForHouse(House house, List<int> currentUtilities);

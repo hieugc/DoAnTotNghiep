@@ -1,3 +1,239 @@
 ﻿@{
     Layout = "_LayoutAdmin";
 }
+
+<div class="content-wrapper">
+    <div class="container-xxl flex-grow-1 container-p-y">
+        <div class="row">
+            <div class="col-lg-4 col-md-2 order-0">
+                <div class="row">
+                    <div class="col-lg-6 col-md-12 col-12 mb-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="card-title d-flex align-items-start justify-content-between">
+                                    <div class="avatar flex-shrink-0">
+                                        <i class='bx bxs-user'></i>
+                                    </div>
+                                    <div class="dropdown">
+                                        <button class="btn p-0"
+                                                type="button"
+                                                id="cardOpt3"
+                                                data-bs-toggle="dropdown"
+                                                aria-haspopup="true"
+                                                aria-expanded="false">
+                                            <i class="bx bx-dots-vertical-rounded"></i>
+                                        </button>
+                                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt3">
+                                            <span class="dropdown-item" onclick="getUser(0)">Tuần</span>
+                                            <span class="dropdown-item" onclick="getUser(1)">Tháng</span>
+                                            <span class="dropdown-item" onclick="getUser(2)">Năm</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <span class="fw-semibold d-block mb-1">Người dùng</span>
+                                <h3 class="card-title mb-2 num_user">__</h3>
+                                <small class="text-success fw-semibold cent_user"><i class="bx bx-up-arrow-alt"></i> __</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-12 col-12 mb-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="card-title d-flex align-items-start justify-content-between">
+                                    <div class="avatar flex-shrink-0">
+                                        <i class='bx bxs-report'></i>
+                                    </div>
+                                    <div class="dropdown">
+                                        <button class="btn p-0"
+                                                type="button"
+                                                id="cardOpt3"
+                                                data-bs-toggle="dropdown"
+                                                aria-haspopup="true"
+                                                aria-expanded="false">
+                                            <i class="bx bx-dots-vertical-rounded"></i>
+                                        </button>
+                                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt3">
+                                            <span class="dropdown-item" onclick="getReport(0)">Tuần</span>
+                                            <span class="dropdown-item" onclick="getReport(1)">Tháng</span>
+                                            <span class="dropdown-item" onclick="getReport(2)">Năm</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <span class="fw-semibold d-block mb-1">Báo cáo hành vi</span>
+                                <h3 class="card-title mb-2 num_report">__</h3>
+                                <small class="text-danger fw-semibold cent_report"><i class="bx bx-up-arrow-alt"></i> __</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- House -->
+            <div class="col-md-5 col-lg-4 order-1 mb-4">
+                <div class="card h-100">
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                        <h5 class="card-title m-0 me-2">Nhà được khởi tạo</h5>
+                        <div class="dropdown">
+                            <button class="btn p-0"
+                                    type="button"
+                                    id="transactionID"
+                                    data-bs-toggle="dropdown"
+                                    aria-haspopup="true"
+                                    aria-expanded="false">
+                                <i class="bx bx-dots-vertical-rounded"></i>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-end">
+                                <span class="dropdown-item" onclick="getHouse(0)">Tuần</span>
+                                <span class="dropdown-item" onclick="getHouse(1)">Tháng</span>
+                                <span class="dropdown-item" onclick="getHouse(2)">Năm</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <ul class="p-0 m-0">
+                            <li class="d-flex mb-4 pb-1">
+                                <div class="avatar flex-shrink-0 me-3 d-flex flex-wrap align-items-center">
+                                    <i class='bx bx-home text-info'></i>
+                                </div>
+                                <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                                    <div class="me-2">
+                                        <h6 class="mb-0">Tổng số nhà</h6>
+                                    </div>
+                                    <div class="user-progress d-flex align-items-center gap-1">
+                                        <h6 class="mb-0 num_house">___</h6>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="d-flex mb-4 pb-1">
+                                <div class="avatar flex-shrink-0 me-3 d-flex flex-wrap align-items-center">
+                                    <i class='bx bx-comment-detail  text-success'></i>
+                                </div>
+                                <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                                    <div class="me-2">
+                                        <h6 class="mb-0">Tổng bài viết đánh giá</h6>
+                                    </div>
+                                    <div class="user-progress d-flex align-items-center gap-1">
+                                        <h6 class="mb-0 num_feedback">___</h6>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!--/ House -->
+            <!-- Request -->
+            <div class="col-md-5 col-lg-4 order-2 mb-4">
+                <div class="card h-100">
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                        <h5 class="card-title m-0 me-2">Yêu cầu trao đổi</h5>
+                        <div class="dropdown">
+                            <button class="btn p-0"
+                                    type="button"
+                                    id="transactionID"
+                                    data-bs-toggle="dropdown"
+                                    aria-haspopup="true"
+                                    aria-expanded="false">
+                                <i class="bx bx-dots-vertical-rounded"></i>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="transactionID">
+                                <span class="dropdown-item" onclick="getReuqest(0)">Tuần</span>
+                                <span class="dropdown-item" onclick="getReuqest(1)">Tháng</span>
+                                <span class="dropdown-item" onclick="getReuqest(2)">Năm</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <ul class="p-0 m-0">
+                            <li class="d-flex mb-4 pb-1">
+                                <div class="avatar flex-shrink-0 me-3 d-flex flex-wrap align-items-center">
+                                    <i class='bx bxs-megaphone text-info'></i>
+                                </div>
+                                <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                                    <div class="me-2">
+                                        <h6 class="mb-0">Tổng số yêu cầu</h6>
+                                    </div>
+                                    <div class="user-progress d-flex align-items-center gap-1">
+                                        <h6 class="mb-0 num_request">___</h6>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="d-flex mb-4 pb-1">
+                                <div class="avatar flex-shrink-0 me-3 d-flex flex-wrap align-items-center">
+                                    <i class='bx bxs-megaphone text-success'></i>
+                                </div>
+                                <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                                    <div class="me-2">
+                                        <h6 class="mb-0">Yêu cầu chấp nhận</h6>
+                                    </div>
+                                    <div class="user-progress d-flex align-items-center gap-1">
+                                        <h6 class="mb-0 num_request_accept">___</h6>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="d-flex mb-4 pb-1">
+                                <div class="avatar flex-shrink-0 me-3 d-flex flex-wrap align-items-center">
+                                    <i class='bx bxs-megaphone text-danger'></i>
+                                </div>
+                                <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                                    <div class="me-2">
+                                        <h6 class="mb-0">Yêu cầu từ chối</h6>
+                                    </div>
+                                    <div class="user-progress d-flex align-items-center gap-1">
+                                        <h6 class="mb-0 num_request_reject">___</h6>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!--/ Request -->
+        </div>
+        <div class="row">
+            <!-- Transaction -->
+            <div class="col-12 mb-4 order-1">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <ul class="nav nav-pills" role="tablist">
+                            <li class="nav-item">
+                                <button type="button"
+                                        class="nav-link active"
+                                        role="tab"
+                                        data-bs-toggle="tab"
+                                        data-bs-target="#navs-tabs-line-card-income"
+                                        aria-controls="navs-tabs-line-card-income"
+                                        aria-selected="true">
+                                    Người dùng nạp vào
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body px-0">
+                        <div class="tab-content p-0">
+                            <div class="tab-pane fade show active" id="navs-tabs-line-card-income" role="tabpanel">
+                                <div id="incomeChart"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Transaction-->
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    <link href="~/assets/vendor/libs/apex-charts/apex-charts.css" rel="stylesheet" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="~/assets/vendor/libs/apex-charts/apexcharts.js" type="text/javascript" async defer></script>
+    <script src="~/js/Admin/index.js" type="text/javascript" async defer></script>
+    <script type="text/javascript" async defer>
+        $(document).ready(function(){
+            getReport(0);
+            getRequest(0);
+            getFeedBack(0);
+            getHouse(0);
+            getUser(0);
+        });
+        </script>
+}

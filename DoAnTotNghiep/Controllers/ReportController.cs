@@ -23,22 +23,38 @@ using Newtonsoft.Json.Linq;
 using static System.Net.WebRequestMethods;
 using System.Composition;
 using Microsoft.Extensions.Hosting;
+using DoAnTotNghiep.Service;
+using Microsoft.AspNetCore.Routing;
 
 namespace DoAnTotNghiep.Controllers
 {
-    [Authorize(Roles = Role.Member)]
     public class ReportController: BaseController
     {
         private readonly DoAnTotNghiepContext _context;
         private readonly IConfiguration _configuration;
+        private readonly IReportService _reportService;
+        private readonly IFileService _fileService;
+        private readonly IHouseService _houseService;
+        private readonly IUserService _userService;
 
-        public ReportController(DoAnTotNghiepContext context, IConfiguration configuration, IHostEnvironment environment) : base(environment)
+        public ReportController(DoAnTotNghiepContext context, 
+                                IConfiguration configuration, 
+                                IHostEnvironment environment,
+                                IReportService reportService,
+                                IFileService fileService,
+                                IHouseService houseService,
+                                IUserService userService) : base(environment)
         {
             _context = context;
             _configuration = configuration;
+            _reportService = reportService;
+            _fileService = fileService;
+            _houseService = houseService;
+            _userService = userService;
         }
 
         [HttpGet("/Report/Form")]
+        [Authorize(Roles = Role.Member)]
         public IActionResult FormReport(string UserAccess)
         {
             int IdUser = 0;
@@ -54,10 +70,10 @@ namespace DoAnTotNghiep.Controllers
         }
 
 
-
         //create
         //HINH ANH + TIEU DE + ID NHA + NOI DUNG
         [HttpPost("/Report/Create")]
+        [Authorize(Roles = Role.Member)]
         public IActionResult CreateReport([FromBody] ReportViewModel model)
         {
             int IdUser = 0;
@@ -89,7 +105,9 @@ namespace DoAnTotNghiep.Controllers
             });
             
         }
+
         [HttpPost("/api/Report/Create")]
+        [Authorize(Roles = Role.Member)]
         public IActionResult ApiCreateReport(MobileReportViewModel model)
         {
             int IdUser = 0;
@@ -125,8 +143,13 @@ namespace DoAnTotNghiep.Controllers
         {
             if (ModelState.IsValid)
             {
-                if(model.IdHouse != null || model.IdUser != null)
+                if (model.IdHouse != null || model.IdUser != null)
                 {
+                    if (model.IdUser == null && model.IdHouse != null)
+                    {
+                        var house = this._houseService.GetHouseByIdStatus(model.IdHouse.Value, (int)StatusHouse.VALID);
+                        if (house != null) model.IdUser = house.IdUser;
+                    }
                     int IdUser = this.GetIdUser();
                     using (var context = _context)
                     {
@@ -143,45 +166,20 @@ namespace DoAnTotNghiep.Controllers
                                     IdUserReport = model.IdUser,
                                     IsResponsed = false
                                 };
-                                context.UserReports.Add(user);
-                                context.SaveChanges();
+                                this._reportService.Save(user);
 
                                 List<Entity.File> files = new List<Entity.File>();
-                                foreach (var item in model.Images)
+
+                                if (model.Files == null)
                                 {
-                                    Entity.File? file = this.SaveFile(item);
-                                    if (file != null)
-                                    {
-                                        files.Add(file);
-                                    }
+                                    files.AddRange(this._fileService.AddFile(model.Images, this.environment.ContentRootPath));
                                 }
-                                if (model.Files != null)
+                                else
                                 {
-                                    foreach (var item in model.Files)
-                                    {
-                                        Entity.File? file = this.SaveFile(item);
-                                        if (file != null)
-                                        {
-                                            files.Add(file);
-                                        }
-                                    }
+                                    files.AddRange(this._fileService.AddFile(model.Files, this.environment.ContentRootPath));
                                 }
 
-                                context.Files.AddRange(files);
-                                context.SaveChanges();
-
-                                List<FileInUserReport> reportFiles = new List<FileInUserReport>();
-
-                                foreach (var item in files)
-                                {
-                                    FileInUserReport fileInUser = new FileInUserReport()
-                                    {
-                                        IdFile = item.Id,
-                                        IdUserReport = user.Id
-                                    };
-                                }
-                                context.FileInUserReports.AddRange(reportFiles);
-                                context.SaveChanges();
+                                this._fileService.SaveRangeFileOfReport(user, this._fileService.SaveRangeFile(files));
                                 transaction.Commit();
 
                                 return Json(new
@@ -211,12 +209,9 @@ namespace DoAnTotNghiep.Controllers
         //Get report by houseId
         [HttpGet("/Report/GetByHouse")]
         [Authorize(Roles = Role.Admin)]
-        public IActionResult GetReportByHouse(int houseId)
+        public IActionResult GetByHouse(int houseId)
         {
-            var rp = this._context.UserReports
-                                    .Include(m => m.Users)
-                                    .Include(m => m.Files)
-                                    .Where(m => m.IdHouse == houseId).ToList();
+            var rp = this._reportService.GetByHouse(houseId);
             List<DetailReportViewModel> model = new List<DetailReportViewModel>();
             string host = this.GetWebsitePath();
             byte[] salt = Crypto.Salt(this._configuration);
@@ -250,6 +245,55 @@ namespace DoAnTotNghiep.Controllers
             {
                 Status = 200,
                 Data = model
+            });
+        }
+
+        [HttpGet("/Report/GetByUser")]
+        [Authorize(Roles = Role.Admin)]
+        public IActionResult GetByUser(int userId)
+        {
+            var rp = this._reportService.GetByUser(userId);
+            List<DetailReportViewModel> model = new List<DetailReportViewModel>();
+            string host = this.GetWebsitePath();
+            byte[] salt = Crypto.Salt(this._configuration);
+            foreach (var report in rp)
+            {
+                if (report.Users != null)
+                {
+                    List<ImageBase> images = new List<ImageBase>();
+                    if (report.Files != null)
+                    {
+                        foreach (var file in report.Files)
+                        {
+                            this._context.Entry(file).Reference(m => m.Files).Load();
+                            if (file.Files != null)
+                            {
+                                images.Add(new ImageBase(file.Files, host));
+                            }
+                        }
+                    }
+                    report.Users.InCludeAll(this._context);
+                    model.Add(new DetailReportViewModel()
+                    {
+                        Content = report.Content,
+                        User = new UserMessageViewModel(report.Users, salt, host),
+                        Images = images
+                    });
+                }
+            }
+
+            return PartialView("~/Views/Users/_Report.cshtml", model);
+        }
+
+        [HttpGet("/Report/GetNumberByUser")]
+        [Authorize(Roles = Role.Admin)]
+        public IActionResult GetNumberByUser(int userId)
+        {
+            var rp = this._reportService.GetByUser(userId);
+            return Json(new
+            {
+                Status = 200,
+                Data = rp.Count()
             });
         }
     }

@@ -216,4 +216,39 @@
             customMapStyle: StyleMap()
         });
     }
+    function infoboxHouse(title, index, description, price) {
+        return `<div class="customInfobox">
+                            <div class="content">
+                                <div class="title">${title}</div>
+                                <div class="address"><strong>Địa chỉ:</strong> ${description}</div>
+                            </div>
+                        </div>`;
+    }
+    function createFontPushpin(location, text, fontName, fontSizePx, color, title, address) {
+        var c = document.createElement('canvas');
+        var ctx = c.getContext('2d');
+
+        //Define font style
+        var font = fontSizePx + 'px ' + fontName;
+        ctx.font = font
+
+        //Resize canvas based on sie of text.
+        var size = ctx.measureText(text);
+        c.width = size.width;
+        c.height = fontSizePx;
+
+        //Reset font as it will be cleared by the resize.
+        ctx.font = font;
+        ctx.textBaseline = 'top';
+        ctx.fillStyle = color;
+
+        ctx.fillText(text, 0, 0);
+
+        return new Microsoft.Maps.Pushpin(location, {
+            icon: c.toDataURL(),
+            anchor: new Microsoft.Maps.Point(c.width / 2, c.height / 2),
+            title: title,
+            subTitle: address
+        });
+    }
 </script>

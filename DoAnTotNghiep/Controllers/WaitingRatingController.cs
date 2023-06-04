@@ -107,7 +107,7 @@ namespace DoAnTotNghiep.Controllers
                                     {
                                         try
                                         {
-                                            this._circleFeedBackService.Save(new FeedBackOfCircle().Create(feedBack, IdUser, request.WaitingRequests.Houses.Users.Id, request.WaitingRequests.Houses.Id));
+                                            this._circleFeedBackService.Save(new FeedBackOfCircle().Create(feedBack, request.WaitingRequests.Houses.Users.Id, IdUser, request.WaitingRequests.Houses.Id));
 
                                             request.Status = (int)StatusWaitingRequest.ENDED;
                                             this._circleRequestService.Update(request);

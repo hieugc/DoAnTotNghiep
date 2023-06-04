@@ -69,11 +69,11 @@ namespace DoAnTotNghiep.ViewModels
             this.Rating = feedBack.RateHouse;
             this.RatingUser = feedBack.RateUser;
             this.Id = feedBack.Id;
-            if (feedBack.UserRated != null)
+            if (feedBack.UserRating != null)
             {
-                this.UserName = feedBack.UserRated.FirstName + " " + feedBack.UserRated.LastName;
+                this.UserName = feedBack.UserRating.FirstName + " " + feedBack.UserRating.LastName;
             }
-            this.IsOwner = IdUser == feedBack.IdUserRated;
+            this.IsOwner = IdUser == feedBack.IdUserRating;
             this.IdRequest = feedBack.IdCircle;
         }
 

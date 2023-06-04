@@ -57,10 +57,7 @@ namespace DoAnTotNghiep.Service
         }
         public List<PopularCityViewModel> GetPopularCity(string host, int number = 10)
         {
-            var cities = from c in this._context.Cities
-                         join h in this._context.Houses on c.Id equals h.IdCity
-                         where h.Status == (int)StatusHouse.VALID
-                         select c;
+            var cities = this._context.Cities.Include(m => m.houses).Where(m => m.houses != null && m.houses.Any(m => m.Status == (int)StatusHouse.VALID)).ToList();
             List<City> cities1 = (cities != null ? cities.ToList() : new List<City>());
             List<PopularCityViewModel> cityList = cities1
                                                 .OrderByDescending(m => m.Count)
@@ -69,7 +66,7 @@ namespace DoAnTotNghiep.Service
                                                 {
                                                     Name = m.Name,
                                                     Id = m.Id,
-                                                    ImageUrl = host + "/Image/house-demo.png",
+                                                    ImageUrl = host + "/Image/img-city.jpg",
                                                     IsDeleted = false,
                                                     Location = new PointViewModel()
                                                     {
@@ -112,6 +109,9 @@ namespace DoAnTotNghiep.Service
                 Rating = (float)Rating * 20
             };
         }
+
+        public List<City> AllCity() => this._context.Cities.ToList();
+        public List<District> AllDistrict() => this._context.Districts.ToList();
     }
 
     public interface ILocationService
@@ -122,5 +122,7 @@ namespace DoAnTotNghiep.Service
         public List<BingViewModel> GetBingViewModel(int option, int? id);
         public List<LocationViewModel> GetDistrictViewModel(int option, int? id);
         public int NumberCity();
+        public List<City> AllCity();
+        public List<District> AllDistrict();
     }
 }

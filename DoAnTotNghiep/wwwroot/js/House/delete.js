@@ -28,7 +28,7 @@ function confirmDeleteHouse(bool) {
                         return model.id != Id;
                     })
                     $(`.house-id-${Id}`).remove();
-//                    reloadPage();
+                    reloadPage();
                 }
             },
             error: function (error) {
