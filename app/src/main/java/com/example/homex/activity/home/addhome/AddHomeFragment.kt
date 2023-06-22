@@ -48,6 +48,7 @@ class AddHomeFragment : BaseFragment<FragmentAddHomeBinding>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        fileViewModel.file.postValue(mutableListOf())
         viewModel.idCity.observe(this){
             if (it != null && it != 0){
                 predictHouse()

@@ -51,5 +51,8 @@ class NotificationDialogFragment : DialogFragment() {
         binding.btnCancel.setOnClickListener {
             dismiss()
         }
+        binding.background.setOnClickListener {
+            dismiss()
+        }
     }
 }

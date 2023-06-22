@@ -12,7 +12,7 @@ class CircleNode(
     val idRequest: Int? = null,
     val rating: Rating? = null,
     val user: Profile? = null,
-    val imgHouse: ImgHouse? = null,
+    val imageHouse: ImgHouse? = null,
     val status: Int? = null
 ) : Parcelable
 

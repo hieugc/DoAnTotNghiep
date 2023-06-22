@@ -7,6 +7,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.homex.R
 import com.example.homex.activity.home.HomeActivity
+import com.example.homex.activity.home.homepage.HomeDetailFragmentDirections
 import com.example.homex.app.CONTACT_USER
 import com.example.homex.app.ID
 import com.example.homex.base.BaseFragment
@@ -82,6 +83,22 @@ class CircleRequestDetailFragment : BaseFragment<FragmentCircleRequestDetailBind
                         )
                     )
                 }
+            }
+        }
+
+        binding.targetHomeLayout.setOnClickListener {
+            if (binding.request != null){
+                val targetHome = binding.request?.nextNode?.house?.id?:return@setOnClickListener
+                val action = HomeDetailFragmentDirections.actionGlobalHomeDetailFragment(targetHome)
+                findNavController().navigate(action)
+            }
+        }
+
+        binding.homeLayout.setOnClickListener {
+            if (binding.request != null){
+                val targetHome = binding.request?.myNode?.house?.id?:return@setOnClickListener
+                val action = HomeDetailFragmentDirections.actionGlobalHomeDetailFragment(targetHome)
+                findNavController().navigate(action)
             }
         }
     }

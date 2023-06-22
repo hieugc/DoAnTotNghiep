@@ -145,14 +145,15 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
+                        android:id="@+id/targetHomeLayout"
                         android:padding="12dp">
 
                         <androidx.appcompat.widget.AppCompatImageView
-                            loadImage="@{request.nextNode.imgHouse.data}"
+                            loadImage="@{request.nextNode.imageHouse.data}"
                             android:layout_width="100dp"
                             android:layout_height="100dp"
                             android:layout_gravity="center"
-                            android:scaleType="fitXY"
+                            android:scaleType="centerCrop"
                             android:src="@mipmap/location" />
 
                         <LinearLayout
@@ -292,14 +293,15 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
+                        android:id="@+id/homeLayout"
                         android:padding="12dp">
 
                         <androidx.appcompat.widget.AppCompatImageView
-                            loadImage="@{request.myNode.imgHouse.data}"
+                            loadImage="@{request.myNode.imageHouse.data}"
                             android:layout_width="100dp"
                             android:layout_height="100dp"
                             android:layout_gravity="center"
-                            android:scaleType="fitXY"
+                            android:scaleType="centerCrop"
                             android:src="@mipmap/location" />
 
                         <LinearLayout
@@ -468,7 +470,7 @@
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/rejectBtn"
-                style="@style/ButtonOutline"
+                style="@style/FlexLongButtonSecondary"
                 fullStatusCircle="@{request.status}"
                 myStatusCircle="@{request.myNode.status}"
                 android:layout_width="0dp"
@@ -477,7 +479,7 @@
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/acceptBtn"
-                style="@style/ButtonPrimary"
+                style="@style/FlexLongButtonPrimary"
                 endDateCircle="@{request.endDate}"
                 fullStatusCircle="@{request.status}"
                 myStatusCircle="@{request.myNode.status}"

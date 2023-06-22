@@ -40,6 +40,18 @@
                 android:defaultValue="0"
                 app:argType="integer" />
         </action>
+        <action
+            android:id="@+id/action_notificationFragment_to_pendingRequestDetailFragment"
+            app:destination="@id/pendingRequestDetailFragment"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_out_right"
+            app:popExitAnim="@anim/slide_in_right">
+                <argument
+                    android:name="id"
+                    android:defaultValue="0"
+                    app:argType="integer" />
+        </action>
     </fragment>
     <fragment
         android:id="@+id/userFragment"
@@ -610,6 +622,14 @@
                 android:name="type"
                 android:defaultValue="1"
                 app:argType="integer" />
+        </action>
+        <action
+            android:id="@+id/action_pendingRequestDetailFragment_to_rateBottomSheetFragment"
+            app:destination="@id/rateBottomSheetFragment">
+            <argument
+                android:name="request"
+                app:argType="com.homex.core.model.response.RequestResponse"
+                app:nullable="true" />
         </action>
     </fragment>
     <dialog

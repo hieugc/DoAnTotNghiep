@@ -56,6 +56,7 @@ class PendingRequestRejectFragment: BaseFragmentViewPager<FragmentPendingRequest
         binding.swipeRefreshLayout.setOnRefreshListener {
             binding.noRequestLayout.gone()
             requestList.clear()
+            adapter.notifyDataSetChanged()
             binding.requestRecView.visibility = View.INVISIBLE
             viewModel.getPendingRequest()
             binding.swipeRefreshLayout.isRefreshing = false

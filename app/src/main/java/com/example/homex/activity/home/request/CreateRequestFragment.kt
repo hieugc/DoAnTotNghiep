@@ -145,7 +145,7 @@ class CreateRequestFragment : BaseFragment<FragmentCreateRequestBinding>() {
         binding.createRequestBtn.setOnClickListener {
             if (viewModel.type.value == 2){
                 if (viewModel.house.value == null || viewModel.houseSwap.value == null){
-                    AppEvent.showPopUpError("Hãy chọn các căn nhà để tạo yêu cầu")
+                    (activity as BaseActivity).displayError("Hãy chọn các căn nhà để tạo yêu cầu")
                     return@setOnClickListener
                 }
                 val house = viewModel.house.value
@@ -167,10 +167,10 @@ class CreateRequestFragment : BaseFragment<FragmentCreateRequestBinding>() {
                     requestViewModel.createNewRequest(param)
                     return@setOnClickListener
                 }
-                AppEvent.showPopUpError("Hệ thống không tạo được yêu cầu\nVui lòng thử lại sau.")
+                (activity as BaseActivity).displayError("Hệ thống không tạo được yêu cầu\nVui lòng thử lại sau.")
             }else{
                 if (viewModel.house.value == null){
-                    AppEvent.showPopUpError("Hãy chọn căn nhà muốn trao đổi để tạo yêu cầu")
+                    (activity as BaseActivity).displayError("Hãy chọn căn nhà muốn trao đổi để tạo yêu cầu")
                     return@setOnClickListener
                 }
                 val house = viewModel.house.value
@@ -183,7 +183,12 @@ class CreateRequestFragment : BaseFragment<FragmentCreateRequestBinding>() {
                 if (days != null && housePrice != null){
                     price = days * housePrice
                 }
-                if (idHouse != null && price <= 0){
+                val point = prefUtil.profile?.point
+                if (point == null || point < price){
+                    (activity as BaseActivity).displayError("Không đủ Points để tạo yêu cầu")
+                    return@setOnClickListener
+                }
+                if (idHouse != null && price >= 0){
                     val param = CreateRequestParam(
                         idHouse = idHouse,
                         type = 1,
@@ -195,7 +200,7 @@ class CreateRequestFragment : BaseFragment<FragmentCreateRequestBinding>() {
                     requestViewModel.createNewRequest(param)
                     return@setOnClickListener
                 }
-                AppEvent.showPopUpError("Hệ thống không tạo được yêu cầu\nVui lòng thử lại sau.")
+                (activity as BaseActivity).displayError("Hệ thống không tạo được yêu cầu\nVui lòng thử lại sau.")
             }
         }
     }

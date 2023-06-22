@@ -61,8 +61,13 @@ class ChangePasswordFragment : BaseFragment<FragmentChangePasswordBinding>() {
     private fun checkMatchPassword(){
         val newPassword = binding.newPasswordInputEdtTxt.text.toString()
         val confirmPassword = binding.confirmPasswordInputEdtTxt.text.toString()
+        val character = newPassword.length in 8..32
+        val upperAndLowCase = newPassword.checkPassword()
 
-        if(newPassword == confirmPassword && newPassword.checkPassword())
+        if (!character || !upperAndLowCase){
+            binding.btnChangePwd.disable()
+        }
+        else if(newPassword == confirmPassword && newPassword.checkPassword())
         {
             binding.btnChangePwd.enable()
         }

@@ -84,7 +84,7 @@
                         style="@style/TextItemProfile"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@{user.firstName}"
+                        android:text="@{user.lastName}"
                         android:textAlignment="viewEnd"
                         android:textColor="@color/gray6" />
                 </LinearLayout>
@@ -113,7 +113,7 @@
                         style="@style/TextItemProfile"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@{user.lastName}"
+                        android:text="@{user.firstName}"
                         android:textAlignment="viewEnd"
                         android:textColor="@color/gray6" />
                 </LinearLayout>

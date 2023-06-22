@@ -22,6 +22,7 @@ import com.example.homex.app.IMAGE
 import com.example.homex.base.BaseActivity
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentUpdateProfileBinding
+import com.example.homex.extension.isValidEmail
 import com.example.homex.viewmodel.ProfileViewModel
 import com.homex.core.CoreApplication
 import com.homex.core.param.profile.UpdateProfileParam
@@ -300,7 +301,7 @@ class UpdateProfileFragment : BaseFragment<FragmentUpdateProfileBinding>() {
         val email = binding.emailInputEdtTxt.text.toString().trim()
         val format = SimpleDateFormat(DATE_TIME_FORMAT, Locale.getDefault())
         val userFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-        var dob = ""
+        val dob: String
         try {
             val res = userFormat.parse(binding.dobInputEdtTxt.text.toString())
 
@@ -311,7 +312,7 @@ class UpdateProfileFragment : BaseFragment<FragmentUpdateProfileBinding>() {
                 return false
             }
             if (email.isEmpty()
-                || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
+                || !email.isValidEmail()
             ) {
                 AppEvent.showPopUpError(getString(R.string.error_invalid_email))
                 return false
@@ -324,12 +325,13 @@ class UpdateProfileFragment : BaseFragment<FragmentUpdateProfileBinding>() {
                 AppEvent.showPopUpError(getString(R.string.error_invalid_dob))
                 return false
             }
-        } catch (e: Exception) {
-            AppEvent.showPopUpError(e.message)
+        } catch (_: Exception) {
+            AppEvent.showPopUpError(getString(R.string.error_invalid_dob))
+            return false
         }
         updateProfileParam = UpdateProfileParam(
-            firstname,
             lastname,
+            firstname,
             phoneNumber,
             email,
             dob

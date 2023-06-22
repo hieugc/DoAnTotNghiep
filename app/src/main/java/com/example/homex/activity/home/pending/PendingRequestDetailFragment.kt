@@ -156,7 +156,14 @@ class PendingRequestDetailFragment : BaseFragment<FragmentPendingRequestDetailBi
                 }
 
                 getString(R.string.rate)->{
-                    val action = RequestFragmentDirections.actionRequestFragmentToRateBottomSheetFragment(binding.request)
+                    val action = PendingRequestDetailFragmentDirections.actionPendingRequestDetailFragmentToRateBottomSheetFragment(binding.request)
+                    findNavController().navigate(action)
+                }
+
+                getString(R.string.view_rating)->{
+                    val action = PendingRequestDetailFragmentDirections.actionPendingRequestDetailFragmentToRateBottomSheetFragment(
+                            binding.request
+                        )
                     findNavController().navigate(action)
                 }
             }

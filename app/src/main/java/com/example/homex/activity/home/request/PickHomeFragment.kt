@@ -56,6 +56,7 @@ class PickHomeFragment : BaseFragment<FragmentPickHomeBinding>() {
                 binding.homeShimmer.startShimmer()
                 binding.homeShimmer.visible()
                 homeList.clear()
+                adapter.notifyDataSetChanged()
                 binding.pickHomeRecView.visibility = View.INVISIBLE
                 arguments?.getString(USER_ACCESS)?.let {
                     yourHomeViewModel.getHomeByUser(it)

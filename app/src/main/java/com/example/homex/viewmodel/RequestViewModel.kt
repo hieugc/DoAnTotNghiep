@@ -172,6 +172,7 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
     }
 
     fun createRating(param: CreateRatingParam){
+        AppEvent.showPopUp()
         viewModelScope.launch {
             messageLiveData.addSource(repository.createRating(param)){
                 when (it) {

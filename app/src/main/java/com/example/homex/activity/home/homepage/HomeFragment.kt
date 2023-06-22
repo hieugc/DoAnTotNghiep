@@ -75,6 +75,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                 binding.locationShimmer.visible()
                 homeList.clear()
                 locationList.clear()
+                adapter.notifyDataSetChanged()
+                homeAdapter.notifyDataSetChanged()
                 binding.popularHomeRecView.visibility = View.INVISIBLE
                 binding.popularLocationRecView.visibility = View.INVISIBLE
                 viewModel.getPopularHome()

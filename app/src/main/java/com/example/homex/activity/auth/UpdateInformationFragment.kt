@@ -15,7 +15,8 @@ import com.homex.core.param.auth.UpdateInfoParam
 import com.homex.core.util.AppEvent
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Locale
 
 
 class UpdateInformationFragment : BaseFragment<FragmentUpdateInformationBinding>() {
@@ -38,7 +39,7 @@ class UpdateInformationFragment : BaseFragment<FragmentUpdateInformationBinding>
         binding.btnContinue.setOnClickListener {
             val firstname = binding.firstnameInputEdtTxt.text.toString().trim()
             val lastname = binding.lastnameInputEdtTxt.text.toString().trim()
-            val sex = pos != 0
+            val sex = pos == 0
             val phoneNumber = binding.phoneInputEdtTxt.text.toString().trim()
             val format = SimpleDateFormat(DATE_TIME_FORMAT, Locale.getDefault())
             val userFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
@@ -47,8 +48,20 @@ class UpdateInformationFragment : BaseFragment<FragmentUpdateInformationBinding>
 
                 val dob = res?.let { it1->format.format(it1) } ?:""
 
-                if(firstname.isEmpty() || lastname.isEmpty() || pos == -1 || dob.isEmpty() || !validTime){
-                    AppEvent.showPopUpError(message = getString(R.string.please_fill_in_correctly))
+                if (firstname.isEmpty() || lastname.isEmpty()) {
+                    AppEvent.showPopUpError(getString(R.string.error_invalid_name))
+                    return@setOnClickListener
+                }
+                if (pos == -1){
+                    AppEvent.showPopUpError("Giới tính không hợp lệ")
+                    return@setOnClickListener
+                }
+                if (phoneNumber.isEmpty()) {
+                    AppEvent.showPopUpError(getString(R.string.error_invalid_phone))
+                    return@setOnClickListener
+                }
+                if (dob.isEmpty() || !validTime) {
+                    AppEvent.showPopUpError(getString(R.string.error_invalid_dob))
                     return@setOnClickListener
                 }
 
@@ -61,7 +74,7 @@ class UpdateInformationFragment : BaseFragment<FragmentUpdateInformationBinding>
                 )
                 viewModel.updateInformation(prof)
             }catch (e: Exception){
-                AppEvent.showPopUpError(e.message)
+                AppEvent.showPopUpError(getString(R.string.error_invalid_dob))
             }
         }
 

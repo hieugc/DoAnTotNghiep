@@ -10,20 +10,24 @@ import com.example.homex.activity.auth.AuthActivity
 import com.example.homex.adapter.NotificationAdapter
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentNotificationBinding
+import com.example.homex.extension.NotificationType
 import com.example.homex.extension.gone
 import com.example.homex.extension.visible
 import com.example.homex.viewmodel.NotificationViewModel
+import com.example.homex.viewmodel.RequestViewModel
 import com.homex.core.model.Notification
 import com.homex.core.util.AppEvent
 import com.homex.core.util.PrefUtil
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class NotificationFragment : BaseFragment<FragmentNotificationBinding>() {
     override val layoutId: Int = R.layout.fragment_notification
 
     private val viewModel: NotificationViewModel by sharedViewModel()
+    private val requestViewModel: RequestViewModel by viewModel()
     private val notificationList = arrayListOf<Notification>()
     private lateinit var adapter: NotificationAdapter
     private val prefUtil: PrefUtil by inject()
@@ -42,6 +46,8 @@ class NotificationFragment : BaseFragment<FragmentNotificationBinding>() {
                         binding.shimmer.stopShimmer()
                         binding.shimmer.gone()
                         isShimmer = false
+                        binding.noRequestLayout.visible()
+                        binding.readAllBtn.gone()
                     }else{
                         if (isShimmer){
                             binding.shimmer.stopShimmer()
@@ -49,18 +55,24 @@ class NotificationFragment : BaseFragment<FragmentNotificationBinding>() {
                             isShimmer = false
                         }
                         binding.notificationRecView.visible()
+                        binding.noRequestLayout.gone()
+                        binding.readAllBtn.visible()
                     }
                 }else{
                     binding.shimmer.stopShimmer()
                     binding.shimmer.gone()
                     isShimmer = false
                     binding.notificationRecView.gone()
+                    binding.noRequestLayout.visible()
+                    binding.readAllBtn.gone()
                 }
             }else{
                 binding.shimmer.stopShimmer()
                 binding.shimmer.gone()
                 isShimmer = false
                 binding.notificationRecView.gone()
+                binding.noRequestLayout.visible()
+                binding.readAllBtn.gone()
             }
             if (binding.shimmer.isGone)
                 AppEvent.closePopup()
@@ -69,10 +81,28 @@ class NotificationFragment : BaseFragment<FragmentNotificationBinding>() {
         viewModel.notificationLiveData.observe(this) {
             if (it != null) {
                 adapter.add(it)
-                adapter.notifyItemInserted(0)
-                adapter.notifyItemRangeChanged(0, 1)
                 viewModel.notificationLiveData.postValue(null)
             }
+        }
+
+        requestViewModel.requestResponseLiveData.observe(this){
+            val id = it?.request?.id
+            if (id != null){
+                if (it.request?.isOwner == true){
+                    val action =
+                        NotificationFragmentDirections.actionNotificationFragmentToRequestDetailFragment(
+                            id = id
+                        )
+                    findNavController().navigate(action)
+                }else if (it.request?.isOwner == false){
+                    val action =
+                        NotificationFragmentDirections.actionNotificationFragmentToPendingRequestDetailFragment(
+                            id = id
+                        )
+                    findNavController().navigate(action)
+                }
+            }
+            requestViewModel.requestResponseLiveData.postValue(null)
         }
 
     }
@@ -111,6 +141,7 @@ class NotificationFragment : BaseFragment<FragmentNotificationBinding>() {
                 binding.shimmer.startShimmer()
                 binding.shimmer.visible()
                 notificationList.clear()
+                adapter.notifyDataSetChanged()
                 binding.noHomeTxt.gone()
                 binding.goToAuthBtn.gone()
                 binding.notificationRecView.visibility = View.INVISIBLE
@@ -132,16 +163,26 @@ class NotificationFragment : BaseFragment<FragmentNotificationBinding>() {
         adapter = NotificationAdapter(
             notificationList,
             onClick = {
-                idType, id ->
+                idType, id, type ->
                 if (id != null) {
                     viewModel.updateSeenNotification(id)
                 }
                 if (idType != null) {
-                    val action =
-                        NotificationFragmentDirections.actionNotificationFragmentToRequestDetailFragment(
-                            id = idType
-                        )
-                    findNavController().navigate(action)
+                    when(type){
+                        NotificationType.REQUEST.ordinal -> {
+                            requestViewModel.getRequestDetail(idType)
+                        }
+                        NotificationType.COMMENT.ordinal -> {
+
+                        }
+                        NotificationType.RESPONSE.ordinal -> {}
+                        NotificationType.ADMIN_REPORT.ordinal -> {}
+                        NotificationType.MESSAGE.ordinal -> {}
+                        NotificationType.CIRCLE_SWAP.ordinal -> {}
+                        NotificationType.PAYMENT.ordinal -> {
+
+                        }
+                    }
                 }
             }
         )

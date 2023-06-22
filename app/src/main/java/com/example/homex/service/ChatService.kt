@@ -137,47 +137,51 @@ class ChatService: Service() {
         hubConnection.onClosed {
             if (it != null){
                 Log.d(TAG, "${it.message}. Reconnecting...")
-                runBlocking {
-                    try {
-                        hubConnection.start()
-                            .doOnComplete {
-                                connectToChat()
-                            }
-                            .doOnError { throwable->
-                                throw throwable
-                            }
-                            .blockingAwait()
-                    }catch (e: InterruptedException){
-                        e.printStackTrace()
-                    }catch (e: ExecutionException){
-                        e.printStackTrace()
-                    }catch (e: Exception){
-                        e.printStackTrace()
+                Thread {
+                    kotlin.run {
+                        try {
+                            hubConnection.start()
+                                .doOnComplete {
+                                    connectToChat()
+                                }
+                                .doOnError { throwable->
+                                    throw throwable
+                                }
+                                .blockingAwait()
+                        }catch (e: InterruptedException){
+                            e.printStackTrace()
+                        }catch (e: ExecutionException){
+                            e.printStackTrace()
+                        }catch (e: Exception){
+                            e.printStackTrace()
+                        }
                     }
+                }.start()
+            }
+        }
+
+
+        Thread {
+            kotlin.run {
+                try {
+                    hubConnection.start()
+                        .doOnComplete {
+                            connectToChat()
+                        }
+                        .doOnError {
+                            throw it
+                        }
+                        .blockingAwait()
+                }catch (e: InterruptedException){
+                    e.printStackTrace()
+                }catch (e: ExecutionException){
+                    e.printStackTrace()
+                }
+                catch (e: Exception){
+                    e.printStackTrace()
                 }
             }
-        }
-
-
-        runBlocking {
-            try {
-                hubConnection.start()
-                    .doOnComplete {
-                        connectToChat()
-                    }
-                    .doOnError {
-                        throw it
-                    }
-                    .blockingAwait()
-            }catch (e: InterruptedException){
-                e.printStackTrace()
-            }catch (e: ExecutionException){
-                e.printStackTrace()
-            }
-            catch (e: Exception){
-                e.printStackTrace()
-            }
-        }
+        }.start()
     }
 }
 

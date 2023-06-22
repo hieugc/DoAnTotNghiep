@@ -11,6 +11,7 @@ import com.example.homex.activity.home.homepage.HomeDetailFragmentDirections
 import com.example.homex.activity.home.pending.PendingRequestDetailFragmentArgs
 import com.example.homex.app.CONTACT_USER
 import com.example.homex.app.ID
+import com.example.homex.base.BaseActivity
 import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentRequestDetailBinding
 import com.example.homex.extension.RequestStatus
@@ -157,6 +158,18 @@ class RequestDetailFragment : BaseFragment<FragmentRequestDetailBinding>() {
                 binding.request = it
             }
             AppEvent.closePopup()
+        }
+
+        viewModel.messageLiveData.observe(this){
+            when(binding.acceptBtn.text){
+                getString(R.string.check_in)->{
+                    (activity as BaseActivity).displayMessage(getString(R.string.checkin_request_success))
+                }
+                getString(R.string.check_out)->{
+                    (activity as BaseActivity).displayMessage(getString(R.string.checkout_request_success))
+                }
+            }
+            findNavController().popBackStack()
         }
     }
 

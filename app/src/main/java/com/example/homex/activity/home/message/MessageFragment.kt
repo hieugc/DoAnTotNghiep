@@ -56,6 +56,7 @@ class MessageFragment : BaseFragment<FragmentMessageBinding>() {
                         binding.messageShimmer.stopShimmer()
                         binding.messageShimmer.gone()
                         isShimmer = false
+                        binding.noRequestLayout.visible()
                     }else{
                         if (isShimmer){
                             binding.messageShimmer.stopShimmer()
@@ -63,18 +64,21 @@ class MessageFragment : BaseFragment<FragmentMessageBinding>() {
                             isShimmer = false
                         }
                         binding.messageBoxRecView.visible()
+                        binding.noRequestLayout.gone()
                     }
                 }else{
                     binding.messageShimmer.stopShimmer()
                     binding.messageShimmer.gone()
                     isShimmer = false
                     binding.messageBoxRecView.gone()
+                    binding.noRequestLayout.visible()
                 }
             }else{
                 binding.messageShimmer.stopShimmer()
                 binding.messageShimmer.gone()
                 isShimmer = false
                 binding.messageBoxRecView.gone()
+                binding.noRequestLayout.visible()
             }
             if (binding.messageShimmer.isGone)
                 AppEvent.closePopup()
@@ -132,6 +136,7 @@ class MessageFragment : BaseFragment<FragmentMessageBinding>() {
                 binding.messageShimmer.startShimmer()
                 binding.messageShimmer.visible()
                 boxChatList.clear()
+                adapter.notifyDataSetChanged()
                 binding.messageBoxRecView.visibility = View.INVISIBLE
                 page = 0
                 viewModel.getChatRoom(page++)

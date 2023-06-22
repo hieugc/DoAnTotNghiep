@@ -39,7 +39,6 @@ class TransHistoryPageFragment : BaseFragment<FragmentTransHistoryPageBinding>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.getRequestHistory()
         chatViewModel.connectToUser.observe(this){ messageRoom->
             if (messageRoom != null){
                 messageRoom.idRoom?.let {
@@ -64,6 +63,7 @@ class TransHistoryPageFragment : BaseFragment<FragmentTransHistoryPageBinding>()
             showBottomNav = false,
             showBoxChatLayout = Pair(false, null),
         )
+        viewModel.getRequestHistory()
         arguments?.takeIf { it.containsKey(REQUEST_STATUS) }?.apply {
             requestType = getInt(REQUEST_STATUS)
         }
@@ -75,6 +75,7 @@ class TransHistoryPageFragment : BaseFragment<FragmentTransHistoryPageBinding>()
             AppEvent.showPopUp()
             binding.noRequestLayout.gone()
             requestList.clear()
+            adapter.notifyDataSetChanged()
             binding.rvTransHis.visibility = View.INVISIBLE
             viewModel.getRequestHistory()
             binding.swipeRefreshLayout.isRefreshing = false

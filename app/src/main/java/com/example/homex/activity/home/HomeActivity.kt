@@ -350,9 +350,12 @@ class HomeActivity : BaseActivity() {
         if(notification != null){
             notificationViewModel.notificationLiveData.postValue(notification)
 
-            val snackbar: Snackbar = Snackbar.make(findViewById(R.id.rootView), "", Snackbar.LENGTH_LONG)
+            val snackbar: Snackbar = Snackbar.make(findViewById(R.id.main_view), "", Snackbar.LENGTH_LONG)
 
-            val customSnackView: View = layoutInflater.inflate(R.layout.layout_snackbar_notification, binding.rootView)
+            val snackbarLayout: Snackbar.SnackbarLayout =
+                snackbar.view as Snackbar.SnackbarLayout
+
+            val customSnackView: View = layoutInflater.inflate(R.layout.layout_snackbar_notification, snackbarLayout)
             val tvTitle = customSnackView.findViewById<TextView>(R.id.tvTitle)
             val tvContent = customSnackView.findViewById<TextView>(R.id.tvContent)
             tvTitle.text = notification.title
@@ -363,12 +366,7 @@ class HomeActivity : BaseActivity() {
             }
             snackbar.view.setBackgroundColor(Color.TRANSPARENT)
 
-            val snackbarLayout: Snackbar.SnackbarLayout =
-                snackbar.view as Snackbar.SnackbarLayout
-
             snackbarLayout.setPadding(0, 0, 0, 0)
-
-            snackbarLayout.addView(customSnackView, 0)
 
             snackbar.show()
         }

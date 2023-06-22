@@ -16,7 +16,7 @@
 
 <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
-    android:layout_height="250dp">
+    android:layout_height="300dp">
 
     <androidx.appcompat.widget.AppCompatImageView
         android:layout_width="match_parent"
@@ -24,14 +24,14 @@
         app:layout_constraintTop_toTopOf="parent"
         android:id="@+id/locationImg"
         android:scaleType="fitXY"
-        android:background="@color/grey_light"/>
+        android:background="@color/gray7"/>
 
     <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:id="@+id/locationTxt"
         style="@style/LightText"
-        android:background="@color/gray7"
+        android:background="@color/grey_light"
         android:textSize="32sp"
         android:textStyle="bold"
         app:layout_constraintTop_toTopOf="parent"

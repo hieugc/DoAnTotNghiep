@@ -63,11 +63,11 @@
             android:padding="12dp">
 
             <androidx.appcompat.widget.AppCompatImageView
-                loadImage="@{request.nextNode.imgHouse.data}"
+                loadImage="@{request.nextNode.imageHouse.data}"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_gravity="center"
-                android:scaleType="fitXY"
+                android:scaleType="centerCrop"
                 android:src="@mipmap/location" />
 
             <LinearLayout

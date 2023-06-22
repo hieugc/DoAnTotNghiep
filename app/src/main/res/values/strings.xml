@@ -245,6 +245,7 @@
     <string name="similiar_house">Các căn nhà tương tự</string>
     <string name="login_to_your_account">Đăng nhập vào tài khoản của bạn</string>
     <string name="no_contact">Chưa có liên lạc nào trong hệ thống</string>
+    <string name="no_notification">Chưa có thông báo nào trong hệ thống</string>
     <string name="no_home_txt">Bạn chưa đăng căn nhà nào \nvui lòng thêm nhà của bạn vào hệ thống để thực hiện trao đổi</string>
     <string name="dont_forget_this_time">Và lần này cố gắng đừng quên nữa nhé.</string>
     <string name="havent_login">Bạn hiện tại chưa đăng nhập\nHãy đăng nhập để xem các thông báo ngay nào</string>

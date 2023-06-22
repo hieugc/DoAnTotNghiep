@@ -59,24 +59,16 @@ abstract class CustomBottomSheet<ViewBinding: ViewDataBinding>(private val isDra
             val layoutParams = bottomSheet?.layoutParams
             if (layoutParams != null) {
                 layoutParams.height = (activity as BaseActivity).getContentHeight()
+                bottomSheet.layoutParams = layoutParams
             }
-            bottomSheet?.layoutParams = layoutParams
             bottomSheet?.apply {
                 BottomSheetBehavior.from(bottomSheet).state = BottomSheetBehavior.STATE_EXPANDED
+                //Add these code to sheet callback behavior if needed
+                //In the EXPANDED STATE apply a new MaterialShapeDrawable with rounded corners
+                val newMaterialShapeDrawable = createMaterialShapeDrawable(bottomSheet)
+                ViewCompat.setBackground(bottomSheet, newMaterialShapeDrawable)
             }
-            val behavior = d.behavior
-            behavior.isDraggable = isDraggable
-            behavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
-                override fun onStateChanged(bottomSheet: View, newState: Int) {
-                    if (newState == BottomSheetBehavior.STATE_EXPANDED) {
-                        //In the EXPANDED STATE apply a new MaterialShapeDrawable with rounded corners
-                        val newMaterialShapeDrawable = createMaterialShapeDrawable(bottomSheet)
-                        ViewCompat.setBackground(bottomSheet, newMaterialShapeDrawable)
-                    }
-                }
-
-                override fun onSlide(bottomSheet: View, slideOffset: Float) {}
-            })
+            d.behavior.isDraggable = isDraggable
         }
         return dialog
     }

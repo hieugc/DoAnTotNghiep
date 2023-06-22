@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.databinding.DataBindingUtil
@@ -48,9 +49,13 @@ class WebviewActivity : BaseActivity() {
         binding.webView.settings.mediaPlaybackRequiresUserGesture = true
         binding.webView.settings.allowContentAccess = true
         binding.webView.webViewClient = object : WebViewClient() {
-            override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
+            override fun shouldOverrideUrlLoading(
+                view: WebView?,
+                request: WebResourceRequest?
+            ): Boolean {
+                val url = request?.url.toString()
                 return if(url.contains("http")) {
-                    view.loadUrl(url)
+                    view?.loadUrl(url)
                     true
                 } else {
                     false

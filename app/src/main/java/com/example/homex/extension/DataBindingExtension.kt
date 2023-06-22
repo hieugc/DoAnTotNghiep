@@ -85,9 +85,9 @@ fun AppCompatTextView.getAge(dob: String?, gender: Boolean?){
             age--
         var gen = ""
         if(gender == true){
-            gen = "Nữ"
-        }else if(gender == false){
             gen = "Nam"
+        }else if(gender == false){
+            gen = "Nữ"
         }
 
         if(age < 0){
@@ -281,8 +281,7 @@ fun AppCompatButton.setRequestPrimary(requestStatus: Int?, startDate: String?, e
             this.text = context.getString(R.string.rate)
         }
         RequestStatus.DONE.ordinal->{
-            this.visibility = View.GONE
-            this.text = ""
+            this.text = context.getString(R.string.view_rating)
         }
     }
 }
@@ -341,12 +340,16 @@ fun AppCompatButton.setRequestSent(requestSent: Int?, startDate: String?, endDat
 fun AppCompatButton.setCircleRequestPrimary(myStatus: Int?, fullStatus: Int?, startDate: String?, endDate: String?){
     when(fullStatus){
         StatusWaitingRequest.INIT.ordinal->{
-            if(myStatus == fullStatus) {
+            if(myStatus == fullStatus || myStatus == StatusWaitingRequest.IN_CIRCLE.ordinal) {
                 this.text = context.getString(R.string.accept_request)
                 this.enable()
             } else {
-                this.text = context.getString(R.string.status_accepted)
-                this.disable()
+                if (myStatus == StatusWaitingRequest.ACCEPT.ordinal){
+                    this.text = context.getString(R.string.status_accepted)
+                    this.disable()
+                }else{
+                    this.gone()
+                }
             }
         }
         StatusWaitingRequest.ACCEPT.ordinal->{
@@ -389,12 +392,16 @@ fun AppCompatButton.setCircleRequestPrimary(myStatus: Int?, fullStatus: Int?, st
 fun AppCompatButton.setCircleRequestSecondary(myStatusSecondary: Int?, fullStatusSecondary: Int?){
     when(fullStatusSecondary){
         StatusWaitingRequest.INIT.ordinal->{
-            if(fullStatusSecondary == myStatusSecondary){
+            if(fullStatusSecondary == myStatusSecondary || myStatusSecondary == StatusWaitingRequest.IN_CIRCLE.ordinal){
                 this.enable()
                 this.text = context.getString(R.string.reject_request)
             } else {
-                this.text = context.getString(R.string.status_rejected)
-                this.disable()
+                if (myStatusSecondary == StatusWaitingRequest.DISABLE.ordinal){
+                    this.text = context.getString(R.string.status_rejected)
+                    this.disable()
+                }else{
+                    this.gone()
+                }
             }
         }
         else -> {

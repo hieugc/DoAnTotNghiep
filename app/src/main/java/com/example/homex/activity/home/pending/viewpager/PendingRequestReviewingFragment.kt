@@ -29,6 +29,7 @@ class PendingRequestReviewingFragment: BaseFragmentViewPager<FragmentPendingRequ
             AppEvent.showPopUp()
             binding.noRequestLayout.gone()
             requestList.clear()
+            adapter.notifyDataSetChanged()
             binding.requestRecView.visibility = View.INVISIBLE
             viewModel.getPendingRequest()
             binding.swipeRefreshLayout.isRefreshing = false

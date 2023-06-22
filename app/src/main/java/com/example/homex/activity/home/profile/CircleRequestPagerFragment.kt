@@ -30,6 +30,10 @@ class CircleRequestPagerFragment : BaseFragment<FragmentCircleRequestPagerBindin
         arguments?.takeIf { it.containsKey(REQUEST_STATUS) }?.apply {
             requestType = getInt(REQUEST_STATUS)
         }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         viewModel.getCircleRequest()
     }
 
@@ -42,15 +46,11 @@ class CircleRequestPagerFragment : BaseFragment<FragmentCircleRequestPagerBindin
             AppEvent.showPopUp()
             binding.noRequestLayout.gone()
             requestList.clear()
+            adapter.notifyDataSetChanged()
             binding.rvCircleRequest.visibility = View.INVISIBLE
             viewModel.getCircleRequest()
             binding.swipeRefreshLayout.isRefreshing = false
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        viewModel.getCircleRequest()
     }
 
     override fun setView() {

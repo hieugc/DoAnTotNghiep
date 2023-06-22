@@ -63,7 +63,7 @@
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_gravity="center"
-            android:scaleType="fitXY"
+            android:scaleType="centerCrop"
             loadImage="@{ !request.house.images.empty ? request.house.images.get(0).data : null}"
             android:src="@mipmap/location" />
 
