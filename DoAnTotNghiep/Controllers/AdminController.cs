@@ -240,12 +240,9 @@ namespace DoAnTotNghiep.Controllers
             return Json(houses);
         }
 
-
-        [HttpGet("/PredictSquare")]
-        [AllowAnonymous]
-        public IActionResult GetSquared()
+        public IActionResult Model()
         {
-            return Json(new PredictHouse().GetSquare());
+            return View("~/Views/Admin/Model.cshtml", new PredictHouse().GetSquare());
         }
         [HttpGet("/UpdateTransaction")]
         public IActionResult UpdateTransaction()

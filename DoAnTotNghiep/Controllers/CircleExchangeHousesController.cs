@@ -136,7 +136,8 @@ namespace DoAnTotNghiep.Controllers
                         {
                             if (rq.CircleExchangeHouse.RequestInCircles != null)
                             {
-                                if (!rq.CircleExchangeHouse.RequestInCircles.Any(m => m.Status < (int)StatusWaitingRequest.ACCEPT && m.IdWaitingRequest != rq.IdWaitingRequest))
+                                var crcheck = this._circleRequestService.GetRequestInCircleExchangeHouseByCircle(rq.IdCircleExchangeHouse);
+                                if (!crcheck.Any(m => m.Status < (int)StatusWaitingRequest.ACCEPT && m.IdWaitingRequest != rq.IdWaitingRequest))
                                 {
                                     rq.CircleExchangeHouse.Status = (int)StatusWaitingRequest.ACCEPT;
                                     this._circleRequestService.Update(rq.CircleExchangeHouse);
@@ -184,7 +185,8 @@ namespace DoAnTotNghiep.Controllers
                         {
                             if (rq.CircleExchangeHouse.RequestInCircles != null)
                             {
-                                if (!rq.CircleExchangeHouse.RequestInCircles
+                                var crcheck = this._circleRequestService.GetRequestInCircleExchangeHouseByCircle(rq.IdCircleExchangeHouse);
+                                if (!crcheck
                                     .Any(m => m.Status < (int)StatusWaitingRequest.CHECK_IN &&
                                     m.IdWaitingRequest != rq.IdWaitingRequest))
                                 {

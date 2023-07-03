@@ -446,8 +446,13 @@ function houseItem(data) {
                                     <div><i class="fa-solid fa-bath"></i><span>${data.bathRoom}</span></div>
                                     <div><i class="fa-solid fa-maximize"></i><span>${data.square} &#13217;</span></div>
                                 </div>
-                                <div class="alert-swap">
-                                    
+                                <div class="alert-swap model-house-${data.id}">
+                                    <label class="position-relative" title="Người dùng yêu cầu" onclick="showRequest(${data.id})">
+                                        <i class="fa-solid fa-bell"></i>
+                                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger value-request">
+                                            ${data.request}
+                                        </span>
+                                    </label>
                                 </div>
                             </div>
                             <p class="attribute"><i class="fa-solid fa-map-location-dot px-2"></i><span>${data.location}, ${data.wardName}, ${data.districtName}, ${data.cityName}</span></p>

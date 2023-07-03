@@ -120,6 +120,9 @@ namespace DoAnTotNghiep.TrainModels
         [ColumnName("price")]
         public float Price { get; set; } = 0f;
         [ColumnName("Label")]
+        public float Label { get; set; }
+
+        [ColumnName("Score")]
         public float Score { get; set; }
     }
 

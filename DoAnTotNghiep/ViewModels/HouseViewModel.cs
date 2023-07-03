@@ -211,9 +211,9 @@ namespace DoAnTotNghiep.ViewModels
                 this.Rules = mobileCreateHouseViewModel.Rules;
                 this.Files = mobileCreateHouseViewModel.Files;
                 this.Bed = mobileCreateHouseViewModel?.Bed;
-                this.CityName = createHouseViewModel.CityName;
-                this.DistrictName = createHouseViewModel.DistrictName;
-                this.WardName = createHouseViewModel.WardName;
+                this.CityName = mobileCreateHouseViewModel?.CityName;
+                this.DistrictName = mobileCreateHouseViewModel?.DistrictName;
+                this.WardName = mobileCreateHouseViewModel?.WardName;
             }
             else if(createHouseViewModel != null)
             {

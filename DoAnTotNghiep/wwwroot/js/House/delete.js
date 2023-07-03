@@ -20,7 +20,7 @@ function confirmDeleteHouse(bool) {
             contentType: "application/json",
             type: "POST",
             success: function (result) {
-                deleteHouse = null;
+                IdHouseDelete = null;
                 console.log(result);
                 if (result.status == 200) {
                     showNotification("Thao tác thành công", result.message, 1);
@@ -37,6 +37,6 @@ function confirmDeleteHouse(bool) {
         });
     }
     else {
-        deleteHouse = null;
+        IdHouseDelete = null;
     }
 }

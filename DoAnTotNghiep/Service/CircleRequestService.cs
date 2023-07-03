@@ -22,22 +22,24 @@ namespace DoAnTotNghiep.Service
 
         public List<WaitingRequestForSearch> GetInitWaitingRequest()
         {
+            DateTime now = DateTime.Now;
             var waitingRq = this._context.WaitingRequests
                                         .Include(m => m.Houses)
                                         .Where(m => (m.Status == (int)StatusWaitingRequest.INIT)
                                                         && m.Houses != null
-                                                        && m.Houses.IdCity != null)
+                                                        && m.Houses.IdCity != null
+                                                        && (m.StartDate == null || m.StartDate != null
+                                                        && DateTime.Compare(now, m.StartDate.Value) <= 0))
                                         .Select(m => new WaitingRequestForSearch(m, m.IdCity, m.Houses.IdCity.Value, m.StartDate, m.EndDate))
                                         .ToList();
 
             List<WaitingRequestForSearch> requestSearch = new List<WaitingRequestForSearch>();
             requestSearch.AddRange(waitingRq.Where(m => m != null).ToList());
-            DateTime now = DateTime.Now;
             var userRq = this._context.Requests
                                         .Include(m => m.Houses)
                                         .Include(m => m.SwapHouses)
                                         .Where(m => (m.Status == (int)StatusRequest.WAIT_FOR_SWAP || m.Status == (int)StatusRequest.REJECT)
-                                                    && DateTime.Compare(now, m.EndDate) < 0
+                                                    && DateTime.Compare(now, m.StartDate) < 0
                                                     && m.IdSwapHouse != null && m.Type == 2
                                                     && m.SwapHouses != null
                                                     && m.Houses != null
@@ -291,13 +293,13 @@ namespace DoAnTotNghiep.Service
             return model;
         }
         public CircleExchangeHouse? GetById(int idRequest) => this._context.CircleExchangeHouses.Where(m => m.Id == idRequest && m.Status != (int)StatusWaitingRequest.DISABLE).FirstOrDefault();
-        public RequestInCircleExchangeHouse? GetWaitingRequestById(int idRequest, int idUser)
+        public RequestInCircleExchangeHouse? GetWaitingRequestById(int idCircle, int idUser)
         {
             return (from cr in this._context.CircleExchangeHouses
-                    join cru in this._context.CircleExchangeHouseOfUsers on cr.Id equals cru.IdCircleExchangeHouse
-                    join wr in this._context.RequestsInCircleExchangeHouses on cr.Id equals wr.IdCircleExchangeHouse
-                    where cru.IdUser == idUser && cr.Id == idRequest && cr.Status != (int) StatusWaitingRequest.DISABLE
-                    select wr).FirstOrDefault();
+                    join rwr in this._context.RequestsInCircleExchangeHouses on cr.Id equals rwr.IdCircleExchangeHouse
+                    join wr in this._context.WaitingRequests on rwr.IdWaitingRequest equals wr.Id
+                    where wr.IdUser == idUser && cr.Id == idCircle && cr.Status != (int) StatusWaitingRequest.DISABLE
+                    select rwr).FirstOrDefault();
         }
         public CircleRequestDetail? CircleRequestDetail(WaitingRequest request, IUserService userService, byte[] salt, string host)
         {
@@ -352,6 +354,15 @@ namespace DoAnTotNghiep.Service
                         join wr in this._context.WaitingRequests on rcr.IdWaitingRequest equals wr.Id
                         where rcr.IdCircleExchangeHouse == idCircle
                         select wr;
+            if (item != null) requests.AddRange(item.ToList());
+            return requests;
+        }
+        public List<RequestInCircleExchangeHouse> GetRequestInCircleExchangeHouseByCircle(int idCircle)
+        {
+            List<RequestInCircleExchangeHouse> requests = new List<RequestInCircleExchangeHouse>();
+            var item = from rcr in this._context.RequestsInCircleExchangeHouses
+                       where rcr.IdCircleExchangeHouse == idCircle
+                       select rcr;
             if (item != null) requests.AddRange(item.ToList());
             return requests;
         }
@@ -422,11 +433,12 @@ namespace DoAnTotNghiep.Service
         public void Update(CircleExchangeHouse request);
         public List<List<WaitingRequestForSearch>> IsExist(List<List<WaitingRequestForSearch>> waitingRequestForSearches);
         public CircleExchangeHouse? GetById(int idRequest);
-        public RequestInCircleExchangeHouse? GetWaitingRequestById(int idRequest, int idUser);
+        public RequestInCircleExchangeHouse? GetWaitingRequestById(int idCircle, int idUser);
         public CircleRequestDetail? CircleRequestDetail(WaitingRequest request, IUserService userService, byte[] salt, string host);
         public List<CircleExchangeHouse> GetByUser(int IdUser);
         public List<WaitingRequest> GetByCircle(ICollection<RequestInCircleExchangeHouse> requests);
         public List<WaitingRequest> GetByCircle(int idCircle);
+        public List<RequestInCircleExchangeHouse> GetRequestInCircleExchangeHouseByCircle(int idCircle);
         public List<CircleRequestViewModel> GetSuggest(int IdUser, IUserService _userService, byte[] salt, string host);
         public CircleRequestViewModel? GetCircleRequestDetail(CircleExchangeHouse circle, int IdUser, IUserService _userService, byte[] salt, string host);
     }

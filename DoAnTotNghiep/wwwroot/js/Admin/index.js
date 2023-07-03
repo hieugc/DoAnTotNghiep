@@ -141,7 +141,7 @@ function Income(months, data) {
                 min: 10,
                 tickAmount: 4
             }
-    };
+        };
     if (typeof incomeChartEl !== undefined && incomeChartEl !== null) {
         const incomeChart = new ApexCharts(incomeChartEl, incomeChartConfig);
         incomeChart.render();
