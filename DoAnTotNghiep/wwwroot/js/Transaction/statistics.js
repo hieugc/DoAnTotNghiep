@@ -135,7 +135,6 @@ function itemTransaction(item, position) {
     if (item.status == true) { status = "used";}
     return `<div class="container ${position} ${status}">
                 <div class="content ${status}">
-                    <h5>${item.createdDate.split("T")[1].split(".")[0]}</h5>
                     <p>${item.content}</p>
                 </div>
             </div>`;

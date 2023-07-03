@@ -1,0 +1,62 @@
+﻿@model DoAnTotNghiep.TrainModels.ViewModelTrained
+@using Newtonsoft.Json;
+@{
+    Layout = "_LayoutAdmin";
+    ViewData["Title"] = "Đánh giá model";
+}
+
+<div class="content-wrapper">
+    <div class="container-xxl flex-grow-1 container-p-y">
+        <div class="row">
+            <div class="col-lg-6 col-md-2">
+                <div class="row">
+                    <div class="col-lg-6 col-md-12 col-12 mb-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <span class="fw-semibold d-block mb-1">Độ tin cậy</span>
+                                <h3 class="card-title mb-2 num_squared">@Model.Squared.ToString("0.000")</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-12 col-12 mb-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <span class="fw-semibold d-block mb-1">Độ lệch</span>
+                                <h3 class="card-title mb-2 num_error">@((Model.MeanError / 1000).ToString("0,0.000"))</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Transaction -->
+            <div class="col-12 mb-4 order-1">
+                <div class="card h-100">
+                    <h3 class="card-header">
+                        <u class="text-primary" role="tablist">
+                            Đồ thị biểu diễn dữ liệu.
+                        </u>
+                    </h3>
+                    <div class="card-body px-0">
+                        <div class="tab-content p-0">
+                            <div class="tab-pane fade show active" id="navs-tabs-line-card-income" role="tabpanel">
+                                <div id="modelChart"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <link href="~/assets/vendor/libs/apex-charts/apex-charts.css" rel="stylesheet" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="~/assets/vendor/libs/apex-charts/apexcharts.js" type="text/javascript" async defer></script>
+    <script src="~/js/Admin/model.js" type="text/javascript" async defer></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            let dataTest = @Html.Raw(Json.Serialize(Model.DataTest));
+            let dataPredict = @Html.Raw(Json.Serialize(Model.DataPredict));
+            ModelChart(dataTest, dataPredict);
+        });
+    </script>
+}

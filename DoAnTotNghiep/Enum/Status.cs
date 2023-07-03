@@ -132,6 +132,8 @@
         {
             switch (status)
             {
+                case (int)StatusWaitingRequest.IN_CIRCLE:
+                    return "Gợi ý mới";
                 case (int)StatusWaitingRequest.INIT:
                     return "Gợi ý mới";
                 case (int)StatusWaitingRequest.ACCEPT:

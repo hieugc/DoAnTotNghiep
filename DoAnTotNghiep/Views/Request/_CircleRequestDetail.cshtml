@@ -100,7 +100,7 @@
                         <span class="value">Chờ người khác chấp nhận</span>
                     </div>
                 }
-                @if (Model.MyNode.Status == (int)StatusWaitingRequest.INIT)
+                @if (Model.MyNode.Status == (int)StatusWaitingRequest.INIT || Model.MyNode.Status == (int)StatusWaitingRequest.IN_CIRCLE)
                 {
                     <div class="control">
                         <button class="btn btn-outline-secondary" onclick="deleteRequest(@Model.Id, '@Html.Raw("Bạn muốn ẩn gợi ý này chứ?")')">Bỏ qua</button>

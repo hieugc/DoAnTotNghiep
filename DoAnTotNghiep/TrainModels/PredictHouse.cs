@@ -40,26 +40,26 @@ namespace DoAnTotNghiep.TrainModels
             this._mLContext = new MLContext(seed: 0);
             this.trainedModel = this._mLContext.Model.Load(this._modelPath, out this.modelSchema);
         }
-        public void LoadAndMakeNewFile()
+        public void LoadAndMakeNewFile(string dataPath)
         {
-            string[] filePaths = Directory.GetFiles(@"TrainModels/dataNew", "*.csv");
-            string outputPath = @"TrainModels/newData_out_put.csv";
+            string[] filePaths = Directory.GetFiles(@"TrainModels/data", "*.csv");
 
             if (filePaths.Length > 0)
             {
                 var headerLine = System.IO.File.ReadLines(filePaths[0]).First();
-                System.IO.File.WriteAllText(outputPath, headerLine + Environment.NewLine);
+                System.IO.File.WriteAllText(dataPath, headerLine + Environment.NewLine);
 
                 foreach (var filePath in filePaths)
                 {
-                    var lines = System.IO.File.ReadAllLines(filePath).Skip(1);
-                    System.IO.File.AppendAllLines(outputPath, lines);
+                    var lines = System.IO.File.ReadAllLines(filePath).Skip(1).Select(m => m.Replace("adult", "").Trim());
+                    System.IO.File.AppendAllLines(dataPath, lines);
                 }
             }
+            PrepareData(dataPath);
         }
-        public void PrepareData()
+        public void PrepareData(string dataPath)
         {
-            var dataFrame = DataFrame.LoadCsv(@"TrainModels/newData_out_put.csv");
+            var dataFrame = DataFrame.LoadCsv(dataPath);
             Console.WriteLine(dataFrame.Info());
             string pattern = @"[^0-9]+";
             for (int x = 0; x < dataFrame.Rows.Count; x++)
@@ -125,7 +125,7 @@ namespace DoAnTotNghiep.TrainModels
                     {
                         float value = float.Parse(Regex.Replace(dataFrame["area"][x].ToString(), pattern, "").Trim());
                         if (value == 0) dataFrame["area"][x] = null;
-                        else dataFrame["area"][x] = value;
+                        else dataFrame["area"][x] = value.ToString();
                     }
                     if (dataFrame["price"][x] != null)
                     {
@@ -134,7 +134,7 @@ namespace DoAnTotNghiep.TrainModels
                 }
             }
 
-            DataFrame.SaveCsv(dataFrame.DropNulls(), @"TrainModels/newData_out_put.csv");
+            DataFrame.SaveCsv(dataFrame.DropNulls(), dataPath);
         }
         public void ClearData(string filePath, string outPath)
         {
@@ -188,21 +188,13 @@ namespace DoAnTotNghiep.TrainModels
                 train.AddRange(item.GetRange(numtest, numtrain));
             }
 
-
-            Console.WriteLine("Train------------" + train.Count());
-            foreach(var item in train)
-            {
-                Console.WriteLine(item.ToJson());
-            }
-
-            Console.WriteLine("Test------------" + test.Count());
-            foreach (var item in test)
-            {
-                Console.WriteLine(item.ToJson());
-            }
+            Console.WriteLine("After clear data:");
+            Console.WriteLine("Total: " + (train.Count() + test.Count()));
+            Console.WriteLine("Train: " + train.Count());
+            Console.WriteLine("Test: " + test.Count());
 
             WriteCsv(train, @"TrainModels/train_data.csv");
-            WriteCsv(train, @"TrainModels/test_data.csv");
+            WriteCsv(test, @"TrainModels/test_data.csv");
 
             return new List<List<NewHouseData>>() { train, test};
         }
@@ -256,9 +248,9 @@ namespace DoAnTotNghiep.TrainModels
 
         public ViewModelTrained NewTrainAndSave(string dataPath)
         {
+            LoadAndMakeNewFile(dataPath);
             List<List<NewHouseData>> datas = this.GetList(dataPath);
             IDataView dataTrain = this._mLContext.Data.LoadFromTextFile<NewHouseData>(@"TrainModels/train_data.csv", hasHeader: true, separatorChar: ',');
-
             IDataView dataTest = this._mLContext.Data.LoadFromTextFile<NewHouseData>(@"TrainModels/test_data.csv", hasHeader: true, separatorChar: ',');
 
             var pipeline = this._mLContext.Transforms.CopyColumns(outputColumnName: "Label", inputColumnName: "price")
@@ -281,10 +273,11 @@ namespace DoAnTotNghiep.TrainModels
             Console.WriteLine($"*************************************************");
             Console.WriteLine($"*       Model quality metrics evaluation         ");
             Console.WriteLine($"*------------------------------------------------");
-            Console.WriteLine($"*       RSquared Score:      {metrics.RSquared:0.##}");
+            Console.WriteLine($"*       RSquared Score:      {metrics.RSquared:0.#######}");
             Console.WriteLine($"*       Root Mean Squared Error:      {metrics.RootMeanSquaredError:#.##}");
+            Console.WriteLine($"*------------------------------------------------\n\n");
 
-            return new ViewModelTrained(metrics.RSquared, metrics.RootMeanSquaredError);
+            return new ViewModelTrained(metrics.RSquared, metrics.RootMeanSquaredError, new List<float>(), new List<float>());
         }
 
         private ViewModelTrained TrainAndSave(string dataPath, string outModel, float num)
@@ -320,7 +313,7 @@ namespace DoAnTotNghiep.TrainModels
             Console.WriteLine($"*       RSquared Score:      {metrics.RSquared:0.##}");
             Console.WriteLine($"*       Root Mean Squared Error:      {metrics.RootMeanSquaredError:#.##}");
 
-            return new ViewModelTrained(metrics.RSquared, metrics.RootMeanSquaredError);
+            return new ViewModelTrained(metrics.RSquared, metrics.RootMeanSquaredError, new List<float>(), new List<float>());
         }
         public float GetPrediction(ModelTrainInput input)
         {
@@ -343,25 +336,33 @@ namespace DoAnTotNghiep.TrainModels
         }
 
         //get Param so sánh giữa 2 cái model
+        public List<float> GetData(string filePath)
+        {
+            var res = new List<float>();
+            var dataFrame = DataFrame.LoadCsv(filePath).DropNulls();
 
+            for (var row = 0; row < dataFrame.Rows.Count; row++)
+            {
+                if (dataFrame["price"][row] != null)
+                {
+                    res.Add((float) dataFrame["price"][row]);
+                }
+            }
+
+            return res;
+        }
         public ViewModelTrained GetSquare()
         {
-            IDataView dataView = this._mLContext.Data.LoadFromTextFile<HouseData>(this._outPath, hasHeader: true, separatorChar: ',');
-            DataOperationsCatalog.TrainTestData dataSplit = this._mLContext.Data.TrainTestSplit(dataView, testFraction: 0.2);
-            IDataView trainData = dataSplit.TrainSet;
-            IDataView testData = dataSplit.TestSet;
-            var predictions = this.trainedModel.Transform(dataView);
+            IDataView dataTest = this._mLContext.Data.LoadFromTextFile<NewHouseData>(@"TrainModels/test_data.csv", hasHeader: true, separatorChar: ',');
+            
+            var predictions = this.trainedModel.Transform(dataTest);
             var metrics = this._mLContext.Regression.Evaluate(predictions);
 
-            Console.WriteLine("=============== End of model evaluation ===============");
-            Console.WriteLine();
-            Console.WriteLine($"*************************************************");
-            Console.WriteLine($"*       Model quality metrics evaluation         ");
-            Console.WriteLine($"*------------------------------------------------");
-            Console.WriteLine($"*       RSquared Score:      {metrics.RSquared:0.##}");
-            Console.WriteLine($"*       Root Mean Squared Error:      {metrics.RootMeanSquaredError:#.##}");
-
-            return new ViewModelTrained(metrics.RSquared, metrics.RootMeanSquaredError);
+            return new ViewModelTrained(
+                metrics.RSquared, 
+                metrics.RootMeanSquaredError,
+                this.GetData(@"TrainModels/test_data.csv"),
+                this._mLContext.Data.CreateEnumerable<NewModelTrainCheck>(predictions, false).Select(t => (float) t.Score).ToList());
         }
         public float GetPredict(NewModelTrainInput input)
         {
@@ -389,13 +390,17 @@ namespace DoAnTotNghiep.TrainModels
 
     public class ViewModelTrained
     {
-        public ViewModelTrained(double squared, double meanError)
+        public ViewModelTrained(double squared, double meanError, List<float> dataTest, List<float> dataPredict)
         {
             Squared = squared;
             MeanError = meanError;
+            DataTest = dataTest;
+            DataPredict = dataPredict;
         }
         public double Squared { get; set; }
         public double MeanError { get; set; }
+        public List<float> DataTest { get; set; }
+        public List<float> DataPredict { get; set; }
     }
 
 }

@@ -55,8 +55,8 @@ namespace DoAnTotNghiep.Job
                 timeToGo = TimeSpan.Zero;
             }
             FileSystem.WriteExceptionFile("startSchedule in " + now.ToString("hh:mm:ss dd/MM/yyyy"), "startSchedule_" + now.ToString("hh_mm_ss_dd_MM_yyyy"));
-            _timer = new Timer(ExecuteSchedule, null, timeToGo, TimeSpan.FromMinutes(5));
-            //_timer = new Timer(ExecuteSchedule, null, TimeSpan.Zero, TimeSpan.FromMinutes(1));
+            //_timer = new Timer(ExecuteSchedule, null, timeToGo, TimeSpan.FromMinutes(5));
+            _timer = new Timer(ExecuteSchedule, null, TimeSpan.Zero, TimeSpan.FromMinutes(3));
             return Task.CompletedTask;
         }
         private void ExecuteSchedule(object? Object)

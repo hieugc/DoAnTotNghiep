@@ -75,7 +75,7 @@ builder.Services.AddAuthentication(Scheme.Authentication())
             SameSite = Microsoft.AspNetCore.Http.SameSiteMode.Lax,
             SecurePolicy = CookieSecurePolicy.SameAsRequest
         };
-    })// this is the key piece!
+    })
     .AddPolicyScheme(Scheme.Authentication(), Scheme.Authentication(), options =>
     {
         // runs on each request
@@ -93,6 +93,8 @@ builder.Services.AddAuthentication(Scheme.Authentication())
         };
     });
 
+
+//new PredictHouse().NewTrainAndSave(@"TrainModels/out_clear_data.csv");
 
 builder.Services.AddHostedService<ScheduleBackgroundService>();
 
