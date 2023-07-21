@@ -72,4 +72,5 @@ dependencies {
     implementation 'org.slf4j:slf4j-jdk14:1.7.25'
     //shimmer
     implementation deps.shimmer.facebook
+    implementation 'com.hbb20:ccp:2.6.1'
 }

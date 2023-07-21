@@ -15,9 +15,9 @@
 <!--    android:layout_marginEnd="8dp"-->
 <!--    android:background="@drawable/shadow_layout"-->
 <!--    android:layout_marginBottom="16dp">-->
-<androidx.cardview.widget.CardView android:layout_width="match_parent"
+<com.google.android.material.card.MaterialCardView android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardCornerRadius="8dp"
+    style="?attr/materialCardViewElevatedStyle"
     android:layout_marginStart="8dp"
     android:layout_marginEnd="8dp"
     android:layout_marginBottom="16dp">
@@ -120,6 +120,6 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>
 <!--</LinearLayout>-->
 </layout>

@@ -27,9 +27,10 @@ class MessageBoxAdapter(private var messageBoxList: ArrayList<MessageRoom>?, pri
 
     override fun onBindViewHolder(holder: MessageBoxViewHolder, position: Int) {
         val item = messageBoxList?.get(position)
+        val context = holder.itemView.context
         if (item?.userMessages?.isNotEmpty() == true){
             holder.binding.boxName.text = item.userMessages?.get(0)?.userName
-            Glide.with(holder.itemView.context)
+            Glide.with(context)
                 .load(item.userMessages?.get(0)?.imageUrl)
                 .placeholder(R.drawable.ic_baseline_image_24)
                 .error(R.mipmap.avatar)
@@ -37,16 +38,19 @@ class MessageBoxAdapter(private var messageBoxList: ArrayList<MessageRoom>?, pri
         }
         if (item?.messages?.isNotEmpty() == true){
             if (item.messages?.get(0)?.idSend == userAccess){
-                holder.binding.lastMsg.text = holder.itemView.context.getString(R.string.your_message, item.messages?.get(0)?.message)
+                holder.binding.lastMsg.text = context.getString(R.string.your_message, item.messages?.get(0)?.message)
             }else{
                 holder.binding.lastMsg.text = item.messages?.get(0)?.message
             }
             holder.binding.msgTime.text = item.messages?.get(0)?.createdDate.convertToRelativeDateTime()
             if(item.messages?.get(0)?.isSeen == true){
-                notificationWasRead(holder.binding, holder.itemView.context)
+                notificationWasRead(holder.binding, context)
             }else{
-                notificationWasNotRead(holder.binding, holder.itemView.context)
+                notificationWasNotRead(holder.binding, context)
             }
+        }else{
+            holder.binding.lastMsg.text = context.getString(R.string.you_are_connected)
+            notificationWasRead(holder.binding, context)
         }
         holder.binding.root.setOnClickListener {
             if (item != null) {

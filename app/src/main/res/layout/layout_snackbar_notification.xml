@@ -7,11 +7,11 @@
     android:layout_height="match_parent"
     tools:ignore="HardcodedText">
 
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
-        android:elevation="4dp"
+        style="?attr/materialCardViewOutlinedStyle"
         app:layout_constraintTop_toTopOf="parent"
         app:cardPreventCornerOverlap="true"
         app:cardUseCompatPadding="true">
@@ -59,5 +59,5 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

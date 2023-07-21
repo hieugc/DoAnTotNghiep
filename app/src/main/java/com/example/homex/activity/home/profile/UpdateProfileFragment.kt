@@ -2,9 +2,11 @@ package com.example.homex.activity.home.profile
 
 import android.graphics.Bitmap
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.text.Editable
+import android.text.InputType
 import android.text.TextWatcher
 import android.view.View
 import androidx.lifecycle.Lifecycle
@@ -24,6 +26,9 @@ import com.example.homex.base.BaseFragment
 import com.example.homex.databinding.FragmentUpdateProfileBinding
 import com.example.homex.extension.isValidEmail
 import com.example.homex.viewmodel.ProfileViewModel
+import com.google.android.material.datepicker.CalendarConstraints
+import com.google.android.material.datepicker.DateValidatorPointBackward
+import com.google.android.material.datepicker.MaterialDatePicker
 import com.homex.core.CoreApplication
 import com.homex.core.param.profile.UpdateProfileParam
 import com.homex.core.util.AppEvent
@@ -41,6 +46,7 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import java.util.Random
+import java.util.TimeZone
 
 class UpdateProfileFragment : BaseFragment<FragmentUpdateProfileBinding>() {
     override val layoutId: Int = R.layout.fragment_update_profile
@@ -119,6 +125,7 @@ class UpdateProfileFragment : BaseFragment<FragmentUpdateProfileBinding>() {
     }
 
     override fun setView() {
+        binding.ccp.registerCarrierNumberEditText(binding.phoneInputEdtTxt)
         if (prefUtil.profile != null) {
             binding.user = prefUtil.profile
             Glide.with(requireContext())
@@ -127,6 +134,17 @@ class UpdateProfileFragment : BaseFragment<FragmentUpdateProfileBinding>() {
                 .error(R.mipmap.avatar)
                 .into(binding.ivAvatar)
         }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            binding.dobInputEdtTxt.focusable = View.NOT_FOCUSABLE
+            binding.dobInputEdtTxt.importantForAutofill = View.IMPORTANT_FOR_AUTOFILL_NO
+        } else {
+            binding.dobInputEdtTxt.isFocusable = false
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
+            binding.dobInputEdtTxt.importantForAutofill = View.IMPORTANT_FOR_AUTOFILL_NO
+        }
+        binding.dobInputEdtTxt.inputType = InputType.TYPE_NULL
     }
 
     override fun setViewModel() {
@@ -145,12 +163,39 @@ class UpdateProfileFragment : BaseFragment<FragmentUpdateProfileBinding>() {
     }
 
     override fun setEvent() {
-        binding.tvEditProfile.setOnClickListener {
+        binding.changeAvatarBtn.setOnClickListener {
             findNavController().navigate(R.id.action_updateProfileFragment_to_bottomSheetDialogSelectImage)
         }
 
         binding.btnUpdate.setOnClickListener {
             updateProfile()
+        }
+
+        binding.dobInputEdtTxt.setOnClickListener {
+            val format = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            format.timeZone = TimeZone.getTimeZone("UTC")
+            val calendarConstraints = CalendarConstraints.Builder()
+            calendarConstraints.setValidator(DateValidatorPointBackward.before(Date().time - 1000 * 60 * 60 *24))
+            val builder = MaterialDatePicker.Builder.datePicker()
+                .setTheme(R.style.AppTheme_DatePicker)
+                .setTitleText(getString(R.string.choose_birthday))
+                .setCalendarConstraints(calendarConstraints.build())
+
+            try {
+                val dob = binding.dobInputEdtTxt.text.toString()
+                var date : Date? = Date()
+                if (dob.isNotEmpty()){
+                    date = format.parse(dob)
+                }
+                builder.setSelection(date?.time?:MaterialDatePicker.todayInUtcMilliseconds())
+            }catch (_: Exception){ }
+
+            val daterPicker = builder.build()
+            daterPicker.addOnPositiveButtonClickListener {
+                val selected = Date(it)
+                binding.dobInputEdtTxt.setText(format.format(selected))
+            }
+            daterPicker.show(parentFragmentManager, "datePicker")
         }
 
         binding.dobInputEdtTxt.addTextChangedListener(object : TextWatcher {
@@ -317,7 +362,7 @@ class UpdateProfileFragment : BaseFragment<FragmentUpdateProfileBinding>() {
                 AppEvent.showPopUpError(getString(R.string.error_invalid_email))
                 return false
             }
-            if (phoneNumber.isEmpty()) {
+            if (phoneNumber.isEmpty() || !binding.ccp.isValidFullNumber) {
                 AppEvent.showPopUpError(getString(R.string.error_invalid_phone))
                 return false
             }

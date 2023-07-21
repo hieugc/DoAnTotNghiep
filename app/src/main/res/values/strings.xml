@@ -22,11 +22,11 @@
     <string name="final_step">Bước cuối cùng</string>
     <string name="finish">Hoàn thành</string>
     <string name="phone">Số điện thoại</string>
-    <string name="dob">Ngày sinh (DD/MM/YYYY)</string>
+    <string name="dob">Ngày sinh</string>
     <string name="sex">Giới tính</string>
     <string name="first_name">Tên</string>
     <string name="middle_last">Họ và tên lót</string>
-    <string name="forgot_password">Quên mật khẩu</string>
+    <string name="forgot_password">Quên mật khẩu?</string>
     <string name="back_to_login">Trở về đăng nhập</string>
     <string name="send_email_verification">Gửi email xác thực</string>
     <string name="enter_verify_code">Nhập mã xác thực</string>
@@ -96,7 +96,7 @@
     <string name="create_request">Tạo yêu cầu</string>
     <string name="pick_your_home">Chọn nhà của bạn dùng để trao đổi</string>
     <string name="pick_home">Chọn nhà bạn muốn trao đổi</string>
-    <string name="status">Trạng thái</string>
+    <string name="status">Trạng thái:</string>
     <string name="add_home_title_1">Xin chào, nhà của bạn là loại nhà gì?</string>
     <string name="add_home_small_txt_1">Hãy cho chúng tôi biết về nhà loại nhà của bạn</string>
     <string name="update_profile">Cập nhật thông tin</string>
@@ -275,4 +275,6 @@
     <string name="map">Bản đồ</string>
     <string name="points_2">1000 Points</string>
     <string name="points_1">100 Points</string>
+    <string name="choose_birthday">Chọn ngày sinh</string>
+    <string name="you_are_connected">Các bạn đã được kết nối qua tin nhắn</string>
 </resources>

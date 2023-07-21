@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="AppTheme.TextInputLayout" parent="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+    <style name="AppTheme.TextInputLayout" parent="@style/Widget.Material3.TextInputLayout.FilledBox">
         <item name="android:textColorHint">@color/secondary_60</item>
         <item name="hintTextColor">@color/primary</item>
         <item name="boxStrokeColor">@color/primary</item>
         <item name="hintTextAppearance">@style/AppTheme.HintTextAppearance</item>
         <item name="android:importantForAutofill">no</item>
+        <item name="boxBackgroundColor">@color/white</item>
+    </style>
+
+    <style name="AppTheme.HintTextAppearance" parent="AppTheme.TextViewStyle">
+        <item name="android:textSize">13sp</item>
+        <item name="android:textStyle">bold</item>
     </style>
 </resources>

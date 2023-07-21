@@ -70,6 +70,7 @@
             app:rippleColor="@android:color/darker_gray"
             android:backgroundTint="@color/white"
             android:src="@drawable/ic_left_arrow"
+            app:borderWidth="2dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             tools:ignore="ContentDescription" />

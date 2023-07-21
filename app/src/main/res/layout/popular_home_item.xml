@@ -7,13 +7,12 @@
             name="home"
             type="com.homex.core.model.Home" />
     </data>
-<androidx.cardview.widget.CardView android:layout_width="match_parent"
+<com.google.android.material.card.MaterialCardView android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="16dp"
     android:layout_marginHorizontal="7dp"
     android:layout_marginTop="6dp"
-    app:cardElevation="6dp"
-    app:cardCornerRadius="10dp">
+    style="?attr/materialCardViewElevatedStyle">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -147,6 +146,6 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>
 
 </layout>

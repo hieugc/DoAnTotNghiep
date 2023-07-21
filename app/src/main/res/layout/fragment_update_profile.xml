@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
         <variable
@@ -20,12 +21,41 @@
             android:paddingTop="24dp"
             android:paddingBottom="24dp">
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/ivAvatar"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:src="@mipmap/avatar" />
+                android:id="@+id/changeAvatarBtn">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/ivAvatar"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:src="@mipmap/avatar" />
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="100dp"
+                    android:layout_margin="3dp"
+                    app:cardBackgroundColor="@color/light_blue"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="12dp"
+                        android:src="@drawable/ic_avatar_camera">
+
+                    </androidx.appcompat.widget.AppCompatImageView>
+
+                </androidx.cardview.widget.CardView>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvEditProfile"
@@ -33,6 +63,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:visibility="gone"
                 android:layout_marginTop="10dp"
                 android:text="@string/update_avatar"
                 android:textColor="@color/blue_60"
@@ -52,10 +83,10 @@
                     android:id="@+id/middleLastInputEdtTxt"
                     style="@style/AppTheme.TextViewStyle"
                     android:layout_width="match_parent"
-                    android:layout_height="52dp"
+                    android:layout_height="wrap_content"
                     android:inputType="text"
                     android:text="@{user.lastName}"
-                    android:textAlignment="center" />
+                    android:textAlignment="viewStart" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -72,10 +103,10 @@
                     android:id="@+id/firstNameInputEdtTxt"
                     style="@style/AppTheme.TextViewStyle"
                     android:layout_width="match_parent"
-                    android:layout_height="52dp"
+                    android:layout_height="wrap_content"
                     android:inputType="text"
                     android:text="@{user.firstName}"
-                    android:textAlignment="center" />
+                    android:textAlignment="viewStart" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -92,10 +123,10 @@
                     android:id="@+id/emailInputEdtTxt"
                     style="@style/AppTheme.TextViewStyle"
                     android:layout_width="match_parent"
-                    android:layout_height="52dp"
+                    android:layout_height="wrap_content"
                     android:inputType="textEmailAddress"
                     android:text="@{user.email}"
-                    android:textAlignment="center" />
+                    android:textAlignment="viewStart" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -112,11 +143,19 @@
                     android:id="@+id/phoneInputEdtTxt"
                     style="@style/AppTheme.TextViewStyle"
                     android:layout_width="match_parent"
-                    android:layout_height="52dp"
+                    android:layout_height="wrap_content"
                     android:inputType="phone"
                     android:text="@{user.phoneNumber}"
-                    android:textAlignment="center" />
+                    android:textAlignment="viewStart" />
             </com.google.android.material.textfield.TextInputLayout>
+
+            <com.hbb20.CountryCodePicker
+                android:id="@+id/ccp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:ccp_defaultNameCode="VN" />
+
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/dobInputLayout"
@@ -132,10 +171,10 @@
                     android:id="@+id/dobInputEdtTxt"
                     style="@style/AppTheme.TextViewStyle"
                     android:layout_width="match_parent"
-                    android:layout_height="52dp"
+                    android:layout_height="wrap_content"
                     android:inputType="date"
                     android:text="@{user.getDobDDMMYYYY()}"
-                    android:textAlignment="center" />
+                    android:textAlignment="viewStart" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <androidx.appcompat.widget.AppCompatButton

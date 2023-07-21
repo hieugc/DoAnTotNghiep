@@ -132,6 +132,7 @@
                     android:layout_marginStart="8dp"
                     android:text="@string/see_maps"
                     android:textColor="@color/link"
+                    android:background="@drawable/ripple_white_bg"
                     app:layout_constraintHorizontal_bias="0"
                     android:layout_marginEnd="8dp"
                     app:layout_constraintBottom_toBottomOf="@id/homeLocation"

@@ -9,6 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="250dp"
         android:src="@mipmap/location"
+        android:adjustViewBounds="true"
         app:layout_constraintTop_toTopOf="parent"
         android:id="@+id/imgView"/>
 

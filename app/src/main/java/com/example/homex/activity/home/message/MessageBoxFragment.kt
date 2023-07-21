@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
 import android.view.View
+import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
@@ -112,6 +113,7 @@ class MessageBoxFragment : BaseFragment<FragmentMessageBoxBinding>() {
                         binding.messageShimmer.stopShimmer()
                         binding.messageShimmer.gone()
                         isShimmer = false
+                        binding.connectTxt.visible()
                     }else{
                         if (isShimmer){
                             binding.messageShimmer.stopShimmer()
@@ -119,18 +121,21 @@ class MessageBoxFragment : BaseFragment<FragmentMessageBoxBinding>() {
                             isShimmer = false
                         }
                         binding.messageRecView.visible()
+                        binding.connectTxt.gone()
                     }
                 }else{
                     binding.messageShimmer.stopShimmer()
                     binding.messageShimmer.gone()
                     isShimmer = false
                     binding.messageRecView.gone()
+                    binding.connectTxt.gone()
                 }
             }else{
                 binding.messageShimmer.stopShimmer()
                 binding.messageShimmer.gone()
                 isShimmer = false
                 binding.messageRecView.gone()
+                binding.connectTxt.gone()
             }
         }
 
@@ -139,6 +144,8 @@ class MessageBoxFragment : BaseFragment<FragmentMessageBoxBinding>() {
                 Log.d("newMessageBox", "${it.messages}")
                 val messages = it.messages
                 if (messages != null){
+                    binding.messageRecView.visible()
+                    binding.connectTxt.gone()
                     val date = messages[0].createdDate
                     var item : Message? = null
                     for(msg in messageList){
@@ -204,6 +211,7 @@ class MessageBoxFragment : BaseFragment<FragmentMessageBoxBinding>() {
                 binding.addBtn.setImageDrawable(ContextCompat.getDrawable(requireContext(),
                     R.drawable.ic_close_circle
                 ))
+                hideKeyboard(binding.msgEditText.windowToken)
             }
             else if(binding.actionLayout.visibility == View.VISIBLE)
             {
@@ -233,17 +241,28 @@ class MessageBoxFragment : BaseFragment<FragmentMessageBoxBinding>() {
                 )
                 viewModel.sendMessage(param)
                 binding.msgEditText.setText("")
+            }else{
+                showKeyboard()
             }
         }
         binding.msgInputLayout.setOnClickListener {
         }
     }
 
+    private fun showKeyboard() {
+        activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
+        binding.msgEditText.requestFocus()
+        val imm =
+            activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.showSoftInput(binding.msgEditText, 0)
+    }
+
+
     override fun setViewModel() {
         viewModel.seenAll.observe(this){}
         viewModel.sendMessage.observe(this){}
     }
-    fun hideKeyboard(windowToken: IBinder){
+    private fun hideKeyboard(windowToken: IBinder){
         val imm =
             activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(windowToken, 0)

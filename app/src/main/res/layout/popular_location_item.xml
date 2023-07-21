@@ -6,14 +6,13 @@
 <!--    android:layout_marginHorizontal="7dp"-->
 <!--    android:layout_marginBottom="8dp"-->
 <!--    android:background="@drawable/shadow_layout">-->
-<androidx.cardview.widget.CardView android:layout_width="match_parent"
+<com.google.android.material.card.MaterialCardView android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:cardElevation="6dp"
-    app:cardCornerRadius="10dp"
     android:layout_marginTop="6dp"
     android:layout_marginHorizontal="7dp"
     android:layout_marginBottom="8dp"
+    style="?attr/materialCardViewElevatedStyle"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
 <androidx.constraintlayout.widget.ConstraintLayout
@@ -45,5 +44,5 @@
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>
 <!--</LinearLayout>-->

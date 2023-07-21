@@ -193,6 +193,8 @@ class MyHomeDetailFragment : BaseFragment<FragmentMyHomeDetailBinding>() {
 
         binding.showMap.setOnClickListener {
             if (binding.home != null){
+                editFinish = true
+                actionMode?.finish()
                 findNavController().navigate(R.id.action_myHomeDetailFragment_to_mapFragment, bundleOf(
                     HOME to binding.home))
             }

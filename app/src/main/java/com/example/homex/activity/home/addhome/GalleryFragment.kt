@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.homex.R
+import com.example.homex.activity.home.HomeActivity
 import com.example.homex.adapter.GalleryAdapter
 import com.example.homex.app.IMAGE
 import com.example.homex.base.BaseFragment
@@ -33,6 +34,15 @@ class GalleryFragment : BaseFragment<FragmentGalleryBinding>() {
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        (activity as HomeActivity).setPropertiesScreen(
+            showLogo = false,
+            showBoxChatLayout = Pair(false, null),
+            showTitleApp = Pair(true, "Thư viện ảnh"),
+            showBottomNav = false,
+            showMenu = false,
+            showMessage = false,
+            showSearchLayout = false
+        )
         requestPermission()
     }
 

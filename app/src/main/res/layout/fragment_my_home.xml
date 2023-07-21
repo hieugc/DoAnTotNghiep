@@ -65,6 +65,7 @@
             android:layout_margin="16dp"
             android:id="@+id/addHomeFAB"
             android:src="@drawable/ic_plus"
+            app:fabSize="auto"
             app:layout_constraintBottom_toBottomOf="parent"
             tools:ignore="contentDescription" />
 
